@@ -44,3 +44,5 @@ PRs should identify task and requirement IDs, summarize decisions, list verifica
 ## Agent Workflow
 
 Follow `action_plan.md` dependencies using one cycle: **one task → verify → one focused commit → stop**. Never begin the next task, skip gates, mark unverified work complete, or start Bonus before `G6`.
+
+When a task requires human input, explicitly record it as `Blocked` / `Ask`, immediately ask the user one concrete question, and state the `needed-by` gate. Until the answer arrives, work only on tasks that are independent of that input; if none are available, stop and wait for the user's decision.
