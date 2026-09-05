@@ -1,0 +1,108 @@
+{
+  "fixture_version": 1,
+  "purpose": "SPK-02 curated list contract; full third-party HTML is intentionally not committed",
+  "new_releases": {
+    "captured_at": "2026-09-05T14:56:02Z",
+    "source_url": "https://www.metacritic.com/game/",
+    "source_sha256": "7835514FA5AC7EF0898E3C122C3E96774E2FEB3A19DE04DA6ACEEA6812C4421F",
+    "section_marker": "aria-label=New Releases content",
+    "items": [
+      { "position": 1, "title": "Onimusha: Way of the Sword", "path": "/game/onimusha-way-of-the-sword/", "metascore": 85 },
+      { "position": 2, "title": "NBA 2K27", "path": "/game/nba-2k27/", "metascore": 79 },
+      { "position": 3, "title": "Wo Long: Fallen Dynasty - Complete Edition", "path": "/game/wo-long-fallen-dynasty-complete-edition/", "metascore": 67 },
+      { "position": 4, "title": "The Blood of Dawnwalker", "path": "/game/the-blood-of-dawnwalker/", "metascore": 83 },
+      { "position": 5, "title": "Marsupilami 2 - Salsa Palombia", "path": "/game/marsupilami-2-salsa-palombia/", "metascore": 79 },
+      { "position": 6, "title": "BioEden", "path": "/game/bioeden/", "metascore": 65 },
+      { "position": 7, "title": "Orbitals", "path": "/game/orbitals/", "metascore": 82 },
+      { "position": 8, "title": "Moonlighter 2: The Endless Vault", "path": "/game/moonlighter-2-the-endless-vault/", "metascore": 77 },
+      { "position": 9, "title": "Crimson Moon", "path": "/game/crimson-moon/", "metascore": 72 },
+      { "position": 10, "title": "Captain Tsubasa 2: World Fighters", "path": "/game/captain-tsubasa-2-world-fighters/", "metascore": 75 },
+      { "position": 11, "title": "Elden Ring: Tarnished Edition", "path": "/game/elden-ring-tarnished-edition/", "metascore": 90 },
+      { "position": 12, "title": "Aggelos 2", "path": "/game/aggelos-2/", "metascore": 76 },
+      { "position": 13, "title": "Brigandine Abyss", "path": "/game/brigandine-abyss/", "metascore": 67 },
+      { "position": 14, "title": "Metal Gear Solid: Master Collection Vol. 2", "path": "/game/metal-gear-solid-master-collection-vol-2/", "metascore": 85 },
+      { "position": 15, "title": "Lou's Lagoon", "path": "/game/lous-lagoon/", "metascore": 71 },
+      { "position": 16, "title": "Resonance: A Plague Tale Legacy", "path": "/game/resonance-a-plague-tale-legacy/", "metascore": 78 },
+      { "position": 17, "title": "Star Wars Zero Company", "path": "/game/star-wars-zero-company/", "metascore": 85 },
+      { "position": 18, "title": "Aliens: Fireteam Elite 2", "path": "/game/aliens-fireteam-elite-2/", "metascore": 66 },
+      { "position": 19, "title": "Blood Dungeon", "path": "/game/blood-dungeon/", "metascore": 74 },
+      { "position": 20, "title": "STEINS;GATE RE:BOOT", "path": "/game/steinsgate-reboot/", "metascore": 83 }
+    ]
+  },
+  "all_new": {
+    "source_url": "https://www.metacritic.com/browse/game/all/all/all-time/new/",
+    "pages": [
+      {
+        "page": 1,
+        "captured_at": "2026-09-05T14:56:09Z",
+        "source_sha256": "DB9383F919B889220CD05881A72FBC622E74F1A6F0E3AE59AFBD7C9D0AFC8ACC",
+        "items": [
+          { "position": 1, "title": "Water Margin Heroes: Eight Acts of Battle", "path": "/game/water-margin-heroes-eight-acts-of-battle/" },
+          { "position": 2, "title": "Parables of Jesus", "path": "/game/parables-of-jesus/" },
+          { "position": 3, "title": "The Last Brazilian", "path": "/game/the-last-brazilian/" },
+          { "position": 4, "title": "Crustacean Station!", "path": "/game/crustacean-station/" },
+          { "position": 5, "title": "KUPAR: Horror Mystery", "path": "/game/kupar-horror-mystery/" },
+          { "position": 6, "title": "Frog Parkour Obby", "path": "/game/frog-parkour-obby/" },
+          { "position": 7, "title": "Squad Legends - Battle Royale", "path": "/game/squad-legends-battle-royale/" },
+          { "position": 8, "title": "Motelet", "path": "/game/motelet/" },
+          { "position": 9, "title": "Carriers Together", "path": "/game/carriers-together/" },
+          { "position": 10, "title": "Akelarre", "path": "/game/akelarre/" },
+          { "position": 11, "title": "Paleo Dive", "path": "/game/paleo-dive/" },
+          { "position": 12, "title": "Carrot Revenge", "path": "/game/carrot-revenge/" },
+          { "position": 13, "title": "Moonbringer", "path": "/game/moonbringer/" },
+          { "position": 14, "title": "DieLessEndLess", "path": "/game/dielessendless/" },
+          { "position": 15, "title": "Phonemae", "path": "/game/phonemae/" },
+          { "position": 16, "title": "ANT SIMULATOR: stock market game", "path": "/game/ant-simulator-stock-market-game/" },
+          { "position": 17, "title": "Blackwire", "path": "/game/blackwire/" },
+          { "position": 18, "title": "Paper Airplane Flying Game", "path": "/game/paper-airplane-flying-game/" },
+          { "position": 19, "title": "The Swashbugglers", "path": "/game/the-swashbugglers/" },
+          { "position": 20, "title": "Mess in the Toy Shop", "path": "/game/mess-in-the-toy-shop/" },
+          { "position": 21, "title": "Ninja's Vengeance", "path": "/game/ninjas-vengeance/" },
+          { "position": 22, "title": "Escape from Company", "path": "/game/escape-from-company/" },
+          { "position": 23, "title": "VOXEL ISLE SIMULATOR", "path": "/game/voxel-isle-simulator/" },
+          { "position": 24, "title": "Five Minute Dating", "path": "/game/five-minute-dating/" }
+        ]
+      },
+      {
+        "page": 2,
+        "captured_at": "2026-09-05T15:07:07Z",
+        "source_sha256": "568217A3C40F8796133D9C24C2E964D76D8105CF255818CC8B94B8C68E91A5E2",
+        "items": [
+          { "position": 1, "title": "Mess in the Toy Shop", "path": "/game/mess-in-the-toy-shop/" },
+          { "position": 2, "title": "FreeState: San Francisco", "path": "/game/freestate-san-francisco/" },
+          { "position": 3, "title": "Froggy Logic", "path": "/game/froggy-logic/" },
+          { "position": 4, "title": "Thornwake: Forest Adventure", "path": "/game/thornwake-forest-adventure/" },
+          { "position": 5, "title": "Five Minute Dating", "path": "/game/five-minute-dating/" },
+          { "position": 6, "title": "PENCILS DOWN", "path": "/game/pencils-down/" },
+          { "position": 7, "title": "Moonbringer", "path": "/game/moonbringer/" },
+          { "position": 8, "title": "DieLessEndLess", "path": "/game/dielessendless/" },
+          { "position": 9, "title": "Phonemae", "path": "/game/phonemae/" },
+          { "position": 10, "title": "ANT SIMULATOR: stock market game", "path": "/game/ant-simulator-stock-market-game/" },
+          { "position": 11, "title": "Wyrdwic: At the Heart of a New World", "path": "/game/wyrdwic-at-the-heart-of-a-new-world/" },
+          { "position": 12, "title": "Flip-Off", "path": "/game/flip-off/" },
+          { "position": 13, "title": "Record of Chaos - Korean Chapter", "path": "/game/record-of-chaos-korean-chapter/" },
+          { "position": 14, "title": "Operation: Outbreak Idle", "path": "/game/operation-outbreak-idle/" },
+          { "position": 15, "title": "When The Road Darkens", "path": "/game/when-the-road-darkens/" },
+          { "position": 16, "title": "DATA BREACH", "path": "/game/data-breach/" },
+          { "position": 17, "title": "Deepforge Brawl", "path": "/game/deepforge-brawl/" },
+          { "position": 18, "title": "Kupala", "path": "/game/kupala/" },
+          { "position": 19, "title": "Worming from Home", "path": "/game/worming-from-home/" },
+          { "position": 20, "title": "Pile Up", "path": "/game/pile-up-3/" },
+          { "position": 21, "title": "Serve Or Die", "path": "/game/serve-or-die/" },
+          { "position": 22, "title": "Isle of Reveries", "path": "/game/isle-of-reveries/" },
+          { "position": 23, "title": "Craving Wisps", "path": "/game/craving-wisps/" },
+          { "position": 24, "title": "Phantom: Phantom of Inferno", "path": "/game/phantom-phantom-of-inferno/" }
+        ]
+      }
+    ],
+    "observed_overlap_paths": [
+      "/game/moonbringer/",
+      "/game/dielessendless/",
+      "/game/phonemae/",
+      "/game/ant-simulator-stock-market-game/",
+      "/game/mess-in-the-toy-shop/",
+      "/game/five-minute-dating/"
+    ],
+    "unique_union_count": 42
+  }
+}

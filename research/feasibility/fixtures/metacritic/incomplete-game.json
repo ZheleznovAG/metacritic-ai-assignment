@@ -1,0 +1,50 @@
+{
+  "fixture_version": 1,
+  "case": "fresh valid card with absent scores, reviews, and video plus suspicious source description",
+  "captured_at": "2026-09-05T14:59:00Z",
+  "source_url": "https://www.metacritic.com/game/water-margin-heroes-eight-acts-of-battle/",
+  "source_sha256": "6D3D65DE102F3D47B4C94E2DD2650569B9C874FB5A616AA717F36FB5949E7E00",
+  "game": {
+    "canonical_path": "/game/water-margin-heroes-eight-acts-of-battle/",
+    "title": "Water Margin Heroes: Eight Acts of Battle",
+    "cover_url": "https://www.metacritic.com/a/img/resize/22c1084c636165c1302c87a2bce81d6db9459773/catalog/provider/6/12/6-1-1275916-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+    "developer": "dztdash",
+    "description": {
+      "source_excerpt": "Basketball Shooter is a free throw game of a basketball.Get an item by stage clear.From the stage2, the goal moves to right and left.",
+      "source_text_sha256": "2B46924FD4C3122DB098BDE0CB878429E501F4A11C44437A3ABD814A170C72B9",
+      "source_chars": 665,
+      "truncated": true
+    },
+    "video": null,
+    "platforms": [
+      {
+        "slug": "pc",
+        "name": "PC",
+        "metascore": null,
+        "userscore": null,
+        "critic_reviews_path": null,
+        "user_reviews_path": null
+      }
+    ],
+    "reviews": {
+      "critic": [],
+      "user": []
+    }
+  },
+  "expected_null_fields": [
+    "video",
+    "platforms[pc].metascore",
+    "platforms[pc].userscore",
+    "platforms[pc].critic_reviews_path",
+    "platforms[pc].user_reviews_path"
+  ],
+  "observed_anomalies": [
+    "title and source description are semantically inconsistent; the fixture preserves source values without inventing a correction"
+  ],
+  "absence_signals": {
+    "metascore": "Critic reviews are not available yet / tbd",
+    "userscore": "Available after 4 ratings / tbd",
+    "user_reviews": "User reviews are not available for this game yet",
+    "video": "JSON-LD VideoGame.trailer absent"
+  }
+}

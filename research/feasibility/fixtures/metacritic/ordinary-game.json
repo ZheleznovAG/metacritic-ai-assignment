@@ -1,0 +1,44 @@
+{
+  "fixture_version": 1,
+  "case": "ordinary single-platform game with natural optional absence",
+  "captured_at": "2026-09-05T14:56:16Z",
+  "source_url": "https://www.metacritic.com/game/twisted-tower/",
+  "source_sha256": "0BCE6358E76CAF9A1F2AF2DB2F5B04B7D87A3882A3D6578A66643E2F1276D486",
+  "game": {
+    "canonical_path": "/game/twisted-tower/",
+    "title": "Twisted Tower",
+    "cover_url": "https://www.metacritic.com/a/img/resize/792e486a2a6393b864d24c959c3268eb350fb004/catalog/provider/7/2/7-1787065860.jpg?auto=webp&fit=crop&height=675&width=1200",
+    "developer": "Atmos Games",
+    "description": {
+      "source_excerpt": "Fight off a horrifying cult in the Garden of Eden in search of your wayward daughter, Eve.",
+      "source_text_sha256": "7ADF6263CFBFE1213A3B6478A7A16BE22BAFFBE9AF1924DC3E82F5064CCF1139",
+      "source_chars": 377,
+      "truncated": true
+    },
+    "video": null,
+    "platforms": [
+      {
+        "slug": "pc",
+        "name": "PC",
+        "metascore": 75,
+        "userscore": 5.2,
+        "critic_reviews_path": "/game/twisted-tower/critic-reviews/?platform=pc",
+        "user_reviews_path": "/game/twisted-tower/user-reviews/?platform=pc"
+      }
+    ],
+    "reviews": {
+      "critic": { "available": true, "reported_count": 13 },
+      "user": { "available": true, "reported_rating_count": 13 }
+    }
+  },
+  "expected_null_fields": ["video"],
+  "field_sources": {
+    "title": "JSON-LD VideoGame.name + product hero h1",
+    "cover_url": "JSON-LD VideoGame.image",
+    "developer": "DOM hero metadata labelled Developer",
+    "description": "JSON-LD VideoGame.description + product summary; fixture stores a short excerpt and full-value hash",
+    "video": "absent JSON-LD VideoGame.trailer",
+    "platforms.metascore": "DOM All Platforms card",
+    "platforms.userscore": "DOM selected-platform user score"
+  }
+}

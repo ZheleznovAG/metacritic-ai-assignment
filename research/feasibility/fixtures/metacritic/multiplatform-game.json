@@ -1,0 +1,113 @@
+{
+  "fixture_version": 1,
+  "case": "mature multiplatform game with per-platform scores and separated review audiences",
+  "captured_at": "2026-09-05T14:56:33Z",
+  "source_url": "https://www.metacritic.com/game/elden-ring/",
+  "source_sha256": "F67F75FCFFEDEAAC076B4FAD45F8A1FF35B994D19B118B6D687E7079CB35ED0F",
+  "text_normalization": "HTML-decode, trim, and collapse whitespace only; do not semantically rewrite source text",
+  "excerpt_policy": "verbatim source excerpts of at most 24 words; full third-party text is not committed",
+  "game": {
+    "canonical_path": "/game/elden-ring/",
+    "title": "Elden Ring",
+    "cover_url": "https://www.metacritic.com/a/img/resize/86c7a59722e76cf9cb2c83bfac863f18f815bc2a/catalog/provider/6/12/6-1-824956-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+    "developer": "From Software",
+    "description": {
+      "source_excerpt": "A New World Created By Hidetaka Miyazaki And George R. R. Martin",
+      "source_text_sha256": "9827979E11749766A52D79E20E6935816EBF6D8E700D3437C58B75CA428832B6",
+      "source_chars": 1059,
+      "truncated": true
+    },
+    "video": {
+      "embed_url": "https://cdn.jwplayer.com/players/OXExoEAD.html",
+      "content_url": "https://cdn.jwplayer.com/manifests/OXExoEAD.m3u8"
+    },
+    "platforms": [
+      {
+        "slug": "xbox-one",
+        "name": "Xbox One",
+        "metascore": null,
+        "userscore": 7.0,
+        "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=xbox-one",
+        "user_reviews_path": "/game/elden-ring/user-reviews/?platform=xbox-one",
+        "user_source_sha256": "8D21F42E4BAA2F4AD69CF2D2D84A4D0C0B8AF920AD836D9CB89903A45B6007DB"
+      },
+      {
+        "slug": "pc",
+        "name": "PC",
+        "metascore": 94,
+        "userscore": 7.6,
+        "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=pc",
+        "user_reviews_path": "/game/elden-ring/user-reviews/?platform=pc",
+        "user_source_sha256": "5DC17103F2C0E96E69403788319390F42C509232CE270E81C9605697FBAC21EE"
+      },
+      {
+        "slug": "playstation-4",
+        "name": "PlayStation 4",
+        "metascore": null,
+        "userscore": 7.5,
+        "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=playstation-4",
+        "user_reviews_path": "/game/elden-ring/user-reviews/?platform=playstation-4",
+        "user_source_sha256": "0FA0F37F3FABF21B23A68D672353CD68F7B9FE0A8AB3F447541FE6EFF9BE09E9"
+      },
+      {
+        "slug": "xbox-series-x",
+        "name": "Xbox Series X",
+        "metascore": 96,
+        "userscore": 8.0,
+        "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=xbox-series-x",
+        "user_reviews_path": "/game/elden-ring/user-reviews/?platform=xbox-series-x",
+        "user_source_sha256": "9B397549A1536B4D889DE2728D5206B7D9FAD0CD25C7A7B6C0E594A06DF8FE13"
+      },
+      {
+        "slug": "playstation-5",
+        "name": "PlayStation 5",
+        "metascore": 96,
+        "userscore": 8.4,
+        "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=playstation-5",
+        "user_reviews_path": "/game/elden-ring/user-reviews/?platform=playstation-5"
+      }
+    ],
+    "review_samples": {
+      "critic": [
+        {
+          "author": "LEVEL (Czech Republic)",
+          "score": 100,
+          "platform": "PlayStation 5",
+          "date": "Jan 30, 2024",
+          "excerpt": "Elden Ring is simply a game that the player naturally adapts to their own style of play."
+        },
+        {
+          "author": "PLAY",
+          "score": 80,
+          "platform": "PlayStation 5",
+          "date": "Mar 7, 2022",
+          "excerpt": "Elden Ring needed to be fresh and bold, and it succeeds, putting you in charge of your own adventure."
+        }
+      ],
+      "user": [
+        {
+          "author": "sephcast",
+          "score": 10,
+          "platform": "PlayStation 5",
+          "date": "Aug 28, 2026",
+          "excerpt": "Top 3 game of all time. Amazing in every way shape or form."
+        },
+        {
+          "author": "C0Ward",
+          "score": 4,
+          "platform": "PlayStation 5",
+          "date": "Aug 29, 2025",
+          "excerpt": "Tried getting into Elden Ring a few times, but it just doesn’t click for me."
+        }
+      ]
+    }
+  },
+  "expected_null_fields": [
+    "platforms[xbox-one].metascore",
+    "platforms[playstation-4].metascore"
+  ],
+  "observed_anomalies": [
+    "JSON-LD and hero/critic sections reported different critic review counts while agreeing on Metascore",
+    "the base game URL query parameter did not select a platform; review endpoints did"
+  ]
+}
