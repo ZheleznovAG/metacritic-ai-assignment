@@ -8,6 +8,7 @@
 
 - **Состав и порядок внешнего списка:** датированная [`lists.json`](../../research/feasibility/fixtures/metacritic/lists.json), вручную сверенная с Metacritic в `SPK-02`; она фиксирует New Releases, две SEE ALL pages и наблюдаемый overlap.
 - **Карточка и поля:** три curated fixtures и ручная [карта происхождения полей](../../research/feasibility/metacritic-contract.md) для обычной, мультиплатформенной и неполной карточки.
+- **Идентичность и обновление:** [`identity-cases.json`](../../research/feasibility/fixtures/metacritic/identity-cases.json) и [ID-first contract](../../research/feasibility/game-identity.md) для list/detail/review matches, game/platform boundary и конфликтов.
 - **Состояние:** известный seed базы до действия и полный снимок релевантного состояния после него.
 - **Время:** управляемые часы и явно выбранная бизнес-зона.
 - **AI:** неизменяемый eval-набор, рубрика, блокирующие ошибки и порог, принятые до финальной настройки.
@@ -30,10 +31,10 @@
 
 | Acceptance ID | Requirement | Given / When / Then | Оракул | Метод и будущий evidence |
 |---|---|---|---|---|
-| `AC-DATA-01` | `DATA-01` | Given валидная игра отсутствует в базе; When её обработка завершается; Then создана ровно одна игра со связанными данными | Нормализованное ожидаемое представление fixture | Integration test состояния после insert |
-| `AC-DATA-02` | `DATA-01` | Given игра уже сохранена; When тот же источник обработан с изменённым валидным значением; Then существующая запись обновлена, а количество игр и платформенных пар не увеличилось ошибочно | Стабильная идентичность из `SPK-03`, state before/after | Integration idempotency/upsert test |
+| `AC-DATA-01` | `DATA-01` | Given валидная игра отсутствует в базе; When её обработка завершается; Then создана ровно одна игра со связанными данными | Identity fixture и нормализованное ожидаемое представление | Integration test состояния и unique constraints после insert |
+| `AC-DATA-02` | `DATA-01` | Given игра уже сохранена; When тот же source game ID обработан с изменённым валидным значением или новым свободным canonical locator; Then существующая запись обновлена, alias сохранён, а количество игр и платформенных пар не увеличилось ошибочно | Identity transitions `SPK-03`, state before/after | Integration idempotency/upsert/alias test |
 | `AC-DATA-03` | `DATA-02` | Given репрезентативная страница игры; When она извлечена и сохранена; Then название, обложка, разработчик, описание и ссылка на видео совпадают с картой источников полей | Вручную сверенная fixture и field map | Fixture/contract + integration test |
-| `AC-DATA-04` | `DATA-03` | Given игра имеет несколько платформ с разными оценками; When карточка извлечена, сохранена и показана; Then каждая платформа присутствует один раз и содержит именно свои Metascore/Userscore | Multiplatform fixture с ручной разметкой ожидаемых пар | Contract + integration + UI test |
+| `AC-DATA-04` | `DATA-03` | Given игра имеет несколько платформ с разными оценками; When карточка извлечена, сохранена и показана; Then каждая source platform присутствует один раз под одной игрой и содержит именно свои Metascore/Userscore | Multiplatform field fixture и platform identity mapping `SPK-03` | Contract + unique/integration + UI test |
 | `AC-DATA-05` | `DATA-02`, `DATA-03` | Given источник действительно не содержит необязательное поле или оценку; When игра обрабатывается; Then сохраняется согласованное состояние «нет данных», UI остаётся рабочим и отсутствие не превращается в ноль | Fixture естественно неполной страницы и классификация `SPK-02` | Contract/integration/E2E edge-case test |
 | `AC-DATA-06` | `DATA-01`, `DATA-02` | Given в базе есть корректные данные; When новый внешний ответ структурно повреждён или теряет ранее присутствовавшее поле; Then хорошие данные не затираются, а попытка получает заметную ошибку/неполный статус | Корректная и повреждённая пары fixtures | Failure/integration test before/after |
 

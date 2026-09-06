@@ -28,9 +28,9 @@
 
 | ID | Класс | Источник | Однозначная трактовка | Acceptance | Допущения | Будущая проверка / evidence | Статус |
 |---|---|---|---|---|---|---|---|
-| `DATA-01` | Explicit Must | Строка 7 | При первом обнаружении игра создаётся в собственной базе, при повторном — обновляется как та же игра без дубликата | `AC-DATA-01`, `AC-DATA-02`, `AC-DATA-06` | `ASM-10`, `ASM-11` | Integration tests состояния и количества записей | Ready |
+| `DATA-01` | Explicit Must | Строка 7 | При первом обнаружении игра создаётся в собственной базе, при повторном — обновляется как та же игра без дубликата | `AC-DATA-01`, `AC-DATA-02`, `AC-DATA-06` | `ASM-10`, `ASM-11` | Identity contract/fixture `SPK-03`; unique/upsert integration tests | Ready |
 | `DATA-02` | Explicit Must | Строки 16–23 | Для игры извлекаются и сохраняются название, обложка, разработчик, описание и ссылка на видео либо согласованное представление их естественного отсутствия | `AC-DATA-03`, `AC-DATA-05`, `AC-DATA-06` | `ASM-11`, `ASM-12` | Field map и full/incomplete fixtures `SPK-02`; executable contract tests `HRD-01` | Ready |
-| `DATA-03` | Explicit Must | Строка 20 | Одна игра может содержать несколько платформ; каждой платформе соответствуют собственные Metascore и Userscore | `AC-DATA-04`, `AC-DATA-05` | `ASM-10`, `ASM-12`, `ASM-13` | Multiplatform score fixture `SPK-02` + integration/UI checks | Ready |
+| `DATA-03` | Explicit Must | Строка 20 | Одна игра может содержать несколько платформ; каждой платформе соответствуют собственные Metascore и Userscore | `AC-DATA-04`, `AC-DATA-05` | `ASM-10`, `ASM-12`, `ASM-13` | Multiplatform fixture `SPK-02` + identity fixture `SPK-03` + integration/UI checks | Ready |
 
 ## AI-резюме отзывов
 

@@ -1,0 +1,149 @@
+{
+  "fixture_version": 1,
+  "purpose": "SPK-03 curated identity observations and expected decisions; full third-party HTML is intentionally not committed",
+  "captured_at_window": {
+    "from": "2026-09-06T14:37:29Z",
+    "to": "2026-09-06T14:42:43Z"
+  },
+  "source_contract": {
+    "game_key": ["metacritic", "source_game_id"],
+    "source_game_id_location": "SSR Nuxt game-title.id",
+    "game_locator": "normalized canonical /game/<slug>/ path",
+    "game_platform_key": ["game_key", "source_platform_id"],
+    "source_platform_id_location": "SSR related-platform.id",
+    "source_game_platform_id_location": "SSR related-platform.relatedGameId",
+    "ids_are_opaque_strings": true,
+    "title_is_identity": false,
+    "slug_is_primary_identity": false
+  },
+  "list_identity_summary": {
+    "source_snapshot": "browse-new",
+    "game_title_items": 24,
+    "items_with_source_game_id": 24,
+    "unique_source_game_ids": 24
+  },
+  "snapshots": [
+    {
+      "label": "browse-new",
+      "source_url": "https://www.metacritic.com/browse/game/all/all/all-time/new/",
+      "captured_at": "2026-09-06T14:40:22Z",
+      "bytes": 347149,
+      "sha256": "7CCB705414ED031115C9A969E55793020F9957CE5D8136F83E83A9EFD5846F85"
+    },
+    {
+      "label": "water-margin-detail",
+      "source_url": "https://www.metacritic.com/game/water-margin-heroes-eight-acts-of-battle/",
+      "captured_at": "2026-09-06T14:42:43Z",
+      "bytes": 597194,
+      "sha256": "CCA321280101C40C60956AE9CF1A56C91795DA0FA0002E011883B9145824EB16"
+    },
+    {
+      "label": "elden-ring-detail",
+      "source_url": "https://www.metacritic.com/game/elden-ring/",
+      "captured_at": "2026-09-06T14:37:29Z",
+      "bytes": 760033,
+      "sha256": "D4598A0F555624421E0652FE5663C9E53E17174178D7020F4BF07EB1465927DB"
+    },
+    {
+      "label": "elden-ring-critic-pc",
+      "source_url": "https://www.metacritic.com/game/elden-ring/critic-reviews/?platform=pc",
+      "captured_at": "2026-09-06T14:37:30Z",
+      "bytes": 307294,
+      "sha256": "CA39A1DADF3ED49A2B5354569C5241432381337D4989901BF562B8AA443C61DC"
+    },
+    {
+      "label": "sonic-original",
+      "source_url": "https://www.metacritic.com/game/sonic-the-hedgehog/",
+      "captured_at": "2026-09-06T14:37:31Z",
+      "bytes": 726340,
+      "sha256": "B31BAD457F9F5CAA01AD3B604739560F9107A53BACF30DC93B44C30794C5B1AA"
+    },
+    {
+      "label": "sonic-2006",
+      "source_url": "https://www.metacritic.com/game/sonic-the-hedgehog-2006/",
+      "captured_at": "2026-09-06T14:37:33Z",
+      "bytes": 728519,
+      "sha256": "E22B3C479EA26EDD208D0D38A12141C97B72B5B0EC5565DD7BEF93B58AA59C01"
+    }
+  ],
+  "observed_cases": [
+    {
+      "case": "list-to-detail match",
+      "source_game_id": "1300758826",
+      "title": "Water Margin Heroes: Eight Acts of Battle",
+      "canonical_path": "/game/water-margin-heroes-eight-acts-of-battle/",
+      "seen_in": ["browse-new", "water-margin-detail"],
+      "expected_game_count": 1,
+      "expected_decision": "match by source_game_id"
+    },
+    {
+      "case": "detail-to-review match",
+      "source_game_id": "1300501979",
+      "title": "Elden Ring",
+      "canonical_path": "/game/elden-ring/",
+      "seen_in": ["elden-ring-detail", "elden-ring-critic-pc"],
+      "expected_game_count": 1,
+      "expected_decision": "review route belongs to the existing game"
+    },
+    {
+      "case": "similar human name collision",
+      "records": [
+        {
+          "source_game_id": "1300003250",
+          "title": "Sonic the Hedgehog",
+          "canonical_path": "/game/sonic-the-hedgehog/"
+        },
+        {
+          "source_game_id": "1300025436",
+          "title": "Sonic the Hedgehog (2006)",
+          "canonical_path": "/game/sonic-the-hedgehog-2006/"
+        }
+      ],
+      "expected_game_count": 2,
+      "expected_decision": "never merge by normalized title"
+    },
+    {
+      "case": "multiplatform parent",
+      "source_game_id": "1300501979",
+      "title": "Elden Ring",
+      "platforms": [
+        { "source_platform_id": "1500000121", "source_game_platform_id": "1400570837", "slug": "xbox-one" },
+        { "source_platform_id": "1500000019", "source_game_platform_id": "1400570838", "slug": "pc" },
+        { "source_platform_id": "1500000120", "source_game_platform_id": "1400570841", "slug": "playstation-4" },
+        { "source_platform_id": "1500000129", "source_game_platform_id": "1400627894", "slug": "xbox-series-x" },
+        { "source_platform_id": "1500000128", "source_game_platform_id": "1400627895", "slug": "playstation-5" }
+      ],
+      "expected_game_count": 1,
+      "expected_game_platform_count": 5,
+      "expected_decision": "upsert children by game_key plus source_platform_id"
+    },
+    {
+      "case": "mutable list overlap",
+      "source_fixture": "lists.json",
+      "repeated_canonical_path_count": 6,
+      "expected_decision": "one daily candidate per game_key"
+    }
+  ],
+  "transition_cases": [
+    {
+      "given": "known source_game_id with a changed non-empty title",
+      "expected": "update the existing game and retain identity"
+    },
+    {
+      "given": "known source_game_id with a new canonical path",
+      "expected": "retain the game, add the new alias, and mark it current"
+    },
+    {
+      "given": "known canonical path associated with a different source_game_id",
+      "expected": "identity_conflict; do not merge or mutate either game"
+    },
+    {
+      "given": "new candidate without source_game_id",
+      "expected": "identity_unresolved; do not create a game from title or slug alone"
+    },
+    {
+      "given": "known game omits an existing platform in a partial response",
+      "expected": "retain the platform; absence is not deletion evidence"
+    }
+  ]
+}

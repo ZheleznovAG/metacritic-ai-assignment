@@ -46,14 +46,14 @@
 
 | Поле | Значение |
 |---|---|
-| Версия плана | Discovery baseline 0.6 |
-| Дата | 2026-09-05 |
+| Версия плана | Discovery baseline 0.7 |
+| Дата | 2026-09-06 |
 | Исходник | `assignment.md`, SHA-256 `C8987F684CFDF693AB188FA2AC5875044C93EBF486B708C36FDF7E7748C2125C` |
 | Методология | `methodology.md` |
 | Завершённая стадия | 1 — Формализация |
-| Активная стадия | 2 — снятие критических неизвестных; контракт Metacritic подтверждён с ограничениями, следующая задача `SPK-03` |
+| Активная стадия | 2 — снятие критических неизвестных; identity игры и платформ подтверждена с ограничениями, следующая задача `SPK-05` |
 | Реализация | Не начата |
-| Текущие блокеры | Для `SPK-06` не заданы budget/accounts/hosting candidate (`Ask`, `needed-by: G2`). Для `SPK-05` выбран бесплатный Grok и доступны samples, но точный model/interface contract ещё должен быть зафиксирован spike |
+| Текущие блокеры | Для `SPK-06` не заданы budget/accounts/hosting candidate (`Ask`, `needed-by: G2`). `SPK-05` не заблокирован: выбран бесплатный Grok и доступны samples, но model/interface contract и quality baseline ещё должны быть зафиксированы spike |
 
 ### Карта стадий
 
@@ -96,6 +96,13 @@
 - **Затронуты:** `SEL-01–SEL-02`, `DATA-02–DATA-03`, `AI-01–AI-03`; `ASM-06–ASM-08`, `ASM-11–ASM-13`, `ASM-16`, `ASM-20–ASM-21`; `R-EXT-03–R-EXT-04`, `R-SIM-01`, `R-TST-01`; `SPK-02–SPK-03`, `SPK-05`.
 - **Порядок:** `SPK-02` завершена с `Proceed with limitation`; `SPK-03` и `SPK-05` стали `Ready`, следующая задача по порядку зависимостей — `SPK-03`.
 - **Повторные проверки:** реализовать JSON-LD + DOM contract на sanitised fixtures; Userscore/reviews получать platform-specific routes; `tbd` хранить как `null`; source overlap фильтровать по дневной identity; semantic anomalies не исправлять выдуманными данными.
+
+### Изменение baseline 0.7
+
+- **Новый факт:** `SPK-03` обнаружил `game-title.id` в SSR payload list/detail/review и отдельные `source_platform_id`/`relatedGameId`; ID совпали между list/detail и detail/review, а близкие страницы Sonic имели разные game IDs.
+- **Затронуты:** `SEL-01–SEL-03`, `DATA-01`, `DATA-03`; `ASM-10–ASM-13`; `R-ID-01`, `R-TIM-01`, `R-DAT-01`; модель `SPK-04`.
+- **Порядок:** `SPK-03` завершена с `Proceed with limitation`; следующая независимая задача — `SPK-05`; `SPK-06` остаётся `Blocked / Ask`, `needed-by: G2`.
+- **Повторные проверки:** реализовать ID-first resolution, alias history, game/platform unique constraints и conflict branches до business-field update; disappearance/change недокументированных SSR IDs считать заметной ошибкой, а не поводом для merge по title/slug.
 
 ---
 
@@ -264,7 +271,7 @@
 - **Зависимости:** `SPK-02`.
 - **Оценка / timebox:** `S`, до 3 часов.
 - **Критерий выхода:** правило достаточно для будущих уникальных ограничений и upsert-сценариев.
-- **Статус:** `Ready` — `SPK-02` зафиксировал URL/platform cases и mutable-overlap, необходимые для проверки identity.
+- **Статус:** `Verified` — решение `Proceed with limitation`; ID-first identity, platform boundary, aliases и conflict rules подтверждены; evidence: [`research/feasibility/game-identity.md`](research/feasibility/game-identity.md) и [`identity-cases.json`](research/feasibility/fixtures/metacritic/identity-cases.json).
 
 ### `SPK-04` Смоделировать время, партии и прогресс
 
@@ -324,7 +331,7 @@
 ### Ворота `G2` — Критическая неизвестность снята
 
 - [x] Есть подтверждённый путь получения обязательных данных Metacritic.
-- [ ] Правило идентичности игры и платформенных версий проверено.
+- [x] Правило идентичности игры и платформенных версий проверено.
 - [x] Календарные переходы и восстановление однозначно описаны.
 - [ ] AI-суммаризация имеет baseline, рубрику и проходной порог.
 - [ ] Публичная среда способна хранить состояние и выполнять фоновую работу.
@@ -818,4 +825,4 @@ Human input, `needed-by: G2`:
 
 Какие budget, существующие hosting accounts или заранее одобренная бесплатная площадка доступны для `SPK-06` с persistent state и почасовым scheduler?
 
-До ответа работа продолжается только по независимой ветке: ближайшая задача — `SPK-03`; `SPK-05` также `Ready`, но следует после неё по порядку плана.
+До ответа работа продолжается только по независимой ветке: ближайшая задача — `SPK-05` (`Ready`). После неё независимых задач стадии 2 не останется.

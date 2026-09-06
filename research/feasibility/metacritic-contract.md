@@ -89,13 +89,15 @@ Elden Ring одновременно показал внутреннюю изме
 
 ## Ограничения реализации
 
+Стабильная identity, на которую ссылается этот контракт, уточнена последующим `SPK-03`: правила `game-title.id`, платформенных ID, aliases и конфликтов находятся в [`game-identity.md`](game-identity.md) и [`identity-cases.json`](fixtures/metacritic/identity-cases.json).
+
 - Парсеру нужны одновременно JSON-LD и устойчивые semantic/test attributes DOM; одного источника недостаточно.
 - Полная матрица и review corpus требуют bounded fan-out по платформам. Нужны cache, timeout/backoff, лимит запросов и отсутствие повторного GET при неизменном source fingerprint.
 - `null` разрешён только после успешной классификации валидной карточки; исчезновение ранее присутствовавшего selector или массовый рост `null` — структурная ошибка.
 - Все внешние тексты недоверенные: user reviews уже содержат нерелевантные утверждения, multilingual content и потенциально инструктивный текст. До `SPK-05` они считаются data, а не инструкциями.
 - Curated JSON fixtures фиксируют наблюдаемую структуру, короткие excerpts, hashes и expected values. После выбора parser stack в `HRD-01` нужно добавить минимальные sanitised SSR fragments для executable selector tests, не превращая обычный CI в live scrape.
-- Точная identity и upsert-граница остаются задачей `SPK-03`; здесь URL/slug используется только как наблюдаемый candidate key.
+- `SPK-03` определил ID-first identity и upsert-границу; URL/slug из этого spike используется только как наблюдаемый locator, не как первичный ключ.
 
 ## Диспозиция
 
-`SPK-02` проходит критерий выхода с решением `Proceed with limitation`: для каждого обязательного поля известен источник либо явное ограничение, не отменяющее Must. `SPK-03` и `SPK-05` получают необходимые URL/platform cases и раздельные review samples. Остаточный риск будущих вариантов разметки остаётся у `R-EXT-04` и должен закрываться schema validation, fixture/failure tests и отдельным controlled live contract check.
+`SPK-02` проходит критерий выхода с решением `Proceed with limitation`: для каждого обязательного поля известен источник либо явное ограничение, не отменяющее Must. URL/platform cases использованы в `SPK-03`, а раздельные review samples готовы для `SPK-05`. Остаточный риск будущих вариантов разметки остаётся у `R-EXT-04` и должен закрываться schema validation, fixture/failure tests и отдельным controlled live contract check.

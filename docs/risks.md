@@ -48,7 +48,7 @@
 | 2 | `SPK-02` | `R-EXT-03`, `R-EXT-04`, часть `R-SIM-01`, `R-TST-01` | Нужно подтвердить все поля и варианты страниц до модели данных и парсера | `SPK-01: Proceed*` | Verified — `Proceed with limitation` |
 | 2 | `SPK-04` | `R-TIM-01`, `R-TIM-02` | Высокое влияние, но проверяется без сети на уже зафиксированных допущениях | `RSK-01` | Verified — `Proceed with limitation` |
 | 2 | `SPK-06` | `R-DEP-01`, `R-DEP-02`, `R-OPS-01` | Публичная ссылка и реальный scheduler являются Must и опасны при поздней проверке | Доступная кандидатура среды | Blocked — `Ask`, needed by `G2` |
-| 3 | `SPK-03` | `R-ID-01`, часть `R-DAT-01` | Правило identity зависит от фактических URL и платформенного контракта | `SPK-02: Proceed*` | Ready |
+| 3 | `SPK-03` | `R-ID-01`, часть `R-DAT-01` | Правило identity зависит от фактических URL и платформенного контракта | `SPK-02: Proceed*` | Verified — `Proceed with limitation` |
 | 3 | `SPK-05` | `R-AI-01`, `R-AI-02` | Eval требует репрезентативных отзывов или согласованного substitute | `SPK-02` либо допустимые samples | Ready — free Grok and separated samples available |
 | После `G6` | `BON-11` | `R-BON-YT-01`, `R-BON-YT-02` | Bonus не должен отнимать время у обязательного контура | Bonus 1 выбран | Deferred bonus |
 
@@ -161,13 +161,14 @@
 
 - **Связи:** `DATA-01`, `DATA-03`, `SEL-01–SEL-03`; `ASM-10`, `ASM-13`.
 - **Проверяемый риск:** title, slug или URL меняются/повторяются, а платформенные страницы ошибочно трактуются как отдельные игры либо разные игры объединяются.
-- **Оценка:** `P=4`, `I=5`, `U=4`; Exposure `20`, Discovery `20`; приоритет `P0`.
+- **Оценка после `SPK-03`:** `P=2`, `I=5`, `U=2`; Exposure `10`, Discovery `10`; приоритет `P1` до автоматической проверки unique/conflict branches. Источник публикует game/platform IDs, но их долговременная стабильность не документирована.
 - **Ранний сигнал:** один title имеет разные canonical URLs, URL включает platform, одинаковый slug ведёт к разным объектам.
-- **Проверка:** `SPK-03` на примерах совпадений, платформенных вариантов и коллизий из `SPK-02`.
-- **Митигация:** устойчивая внешняя identity, явная граница game/platform, уникальные ограничения и idempotent upsert.
-- **Владелец:** `SPK-03`.
-- **Остаточный риск:** источник может изменить URL/канонизацию без стабильного ID.
-- **Текущая диспозиция:** `Open — investigate`.
+- **Проверка:** `SPK-03` на list/detail/review matches, пяти платформенных вариантах, близких названиях и конфликтных переходах; позднее integration/concurrency tests.
+- **Митигация:** ID-first identity `(source, source_game_id)`, platform membership `(game, source_platform_id)`, `relatedGameId` assertion, locator aliases, unique constraints и запрет эвристического merge.
+- **Владелец:** `SPK-03`, затем `IMP-01–IMP-02` и `HRD-02–HRD-03`.
+- **Evidence:** [`research/feasibility/game-identity.md`](../research/feasibility/game-identity.md) и [`identity-cases.json`](../research/feasibility/fixtures/metacritic/identity-cases.json).
+- **Остаточный риск:** недокументированные SSR IDs могут исчезнуть, измениться или конфликтовать с reused locator; такая запись должна остановиться заметной ошибкой до update.
+- **Текущая диспозиция:** `Open — mitigate`; `SPK-03: Proceed with limitation`, финальное доказательство — unique/upsert/conflict/concurrency tests.
 
 ### `R-TIM-01` Дневная семантика приводит к пропускам или повторной выборке
 
@@ -179,7 +180,7 @@
 - **Митигация:** единая state model, разделение discovery и enrichment, явная business timezone, детерминированный selector.
 - **Владелец:** `SPK-04`.
 - **Evidence:** [`research/feasibility/processing-state.md`](../research/feasibility/processing-state.md).
-- **Остаточный риск:** live source может менять порядок перед сохранённым cursor; фактические pagination, exhaustion и game identity требуют `SPK-02–SPK-03`.
+- **Остаточный риск:** live source может менять порядок перед сохранённым cursor; pagination/identity известны, но mutable source не гарантирует snapshot и требует selector tests.
 - **Текущая диспозиция:** `Open — mitigate`; решение `Proceed with limitation`, окончательная проверка — selector/state tests после выбора стека.
 
 ### `R-TIM-02` Рестарт или пересечение запусков нарушает прогресс
@@ -201,11 +202,11 @@
 - **Проверяемый риск:** пустой parser result, сбой на платформе или AI-ошибка затирают валидные поля, откатывают успешные элементы либо оставляют неразличимый partial state.
 - **Оценка:** `P=3`, `I=5`, `U=3`; Exposure `15`, Discovery `15`; приоритет `P1`.
 - **Ранний сигнал:** update принимает null без provenance, batch имеет одну общую транзакцию, status только boolean.
-- **Проверка:** входные варианты `SPK-02–SPK-03`; окончательно failure tests `HRD-01–HRD-02`.
-- **Митигация:** валидация до commit, scoped atomic update, non-destructive merge policy, отдельные состояния enrichment.
+- **Проверка:** full/incomplete fixtures `SPK-02`, identity/conflict transitions `SPK-03`; окончательно failure tests `HRD-01–HRD-02`.
+- **Митигация:** identity validation до commit, scoped atomic update, non-destructive merge policy, отсутствие platform не означает delete, отдельные состояния enrichment.
 - **Владелец:** `SPK-02–SPK-03`, затем `HRD-01–HRD-02`.
 - **Остаточный риск:** новое семантически неверное, но формально валидное значение может пройти schema validation.
-- **Текущая диспозиция:** `Open — investigate`.
+- **Текущая диспозиция:** `Open — mitigate`; входные и identity transitions определены, executable destructive-update tests остаются у `HRD-01–HRD-02`.
 
 ### `R-SIM-01` Похожие игры формально работают, но нерелевантны
 
@@ -374,7 +375,7 @@
 | Почасовая работа доказуема | `R-DEP-01`, `R-OPS-01` | `SPK-06` | Есть владелец и early signal |
 | Дневная выборка однозначна | `R-TIM-01` | `HRD-02` после реализации модели `SPK-04` | Модель проверена на бумажных сценариях; нужен automated evidence |
 | Рестарт и пересечение безопасны | `R-TIM-02` | `HRD-02–HRD-03`, deployment restart | Модель проверена; нужен failure/concurrency evidence |
-| Игра и платформы не дублируются | `R-ID-01` | `SPK-03` | Есть владелец и примеры коллизий |
+| Игра и платформы не дублируются | `R-ID-01` | `IMP-01–IMP-02`, `HRD-02–HRD-03` после `SPK-03` | ID-first contract и коллизии проверены; нужны executable unique/concurrency tests |
 | Частичный ответ не портит данные | `R-EXT-04`, `R-DAT-01` | `SPK-02`, позднее `HRD-01–HRD-02` | Есть ранняя и финальная проверка |
 | AI grounded и разделяет аудитории | `R-AI-01` | `SPK-05` | Есть eval gate |
 | Similarity не формальна | `R-SIM-01` | `SPK-02`, затем `PLN-02/IMP-06` | Есть data и quality gates |
@@ -391,4 +392,4 @@
 - [x] Bonus-риски не блокируют Must.
 - [x] Ни один spike не был выполнен в рамках `RSK-01`.
 
-**Итог:** `RSK-01`, `SPK-01`, `SPK-02` и `SPK-04` завершены. `SPK-02` подтвердил data contract с решением `Proceed with limitation`, поэтому `SPK-03` и `SPK-05` имеют статус `Ready`; следующая задача по порядку — `SPK-03`. `SPK-06` остаётся `Blocked — Ask`, needed by `G2`.
+**Итог:** `RSK-01`, `SPK-01–SPK-04` завершены. `SPK-03` подтвердил ID-first game/platform identity с решением `Proceed with limitation`; следующая независимая задача `SPK-05` имеет статус `Ready`. `SPK-06` остаётся `Blocked — Ask`, needed by `G2`.
