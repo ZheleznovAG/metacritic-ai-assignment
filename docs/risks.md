@@ -64,7 +64,7 @@
 - **Ранний сигнал:** 403/429/challenge, пустой HTML, контент появляется только после сложного client-side исполнения, локальный и cloud-ответы различаются.
 - **Проверка:** `SPK-01`, минимальные повторяемые запросы/браузерные сценарии локально и в кандидатной среде.
 - **Митигация:** допустимый способ получения, rate limit, timeout/backoff; при отсутствии пути — `Replan` или `Ask`, а не скрытая подмена источника.
-- **Владелец:** `SPK-01`.
+- **Владелец:** `SPK-01`, затем `HRD-01/PUB-01`.
 - **Evidence:** [`research/feasibility/metacritic-access.md`](../research/feasibility/metacritic-access.md).
 - **Остаточный риск:** второй обязательный route, рабочая частота, Cloudflare и структура ответа могут отличаться от одиночного VDS-запроса.
 - **Текущая диспозиция:** `Open — mitigate`; решение `Proceed with limitation` подтверждено локальной пробой, разрешением владельца и репрезентативным VDS-запросом; полный live contract остаётся у implementation/public checks.
@@ -77,7 +77,7 @@
 - **Ранний сигнал:** явный запрет пути/user-agent, условия против автоматизированного доступа или повторного использования материалов.
 - **Проверка:** датированная проверка документов и поведения в `SPK-01`; спорное толкование не выдаётся за юридический факт.
 - **Митигация:** минимальная частота и хранение, ссылки на источник, отказ от запрещённого способа; при блокирующем конфликте — `Ask/Replan`.
-- **Владелец:** `SPK-01`.
+- **Владелец:** `SPK-01`, затем `REL-02`.
 - **Evidence:** [`research/feasibility/metacritic-access.md`](../research/feasibility/metacritic-access.md).
 - **Остаточный риск:** само разрешение не добавлено отдельным артефактом в репозиторий; перед release нужно сохранить доступное подтверждение scope и повторно проверить Terms/`robots.txt`.
 - **Текущая диспозиция:** `Open — mitigate`; `Ask` разрешён ответом владельца 2026-09-05, решение `Proceed with limitation` в пределах сформулированного hourly access/storage/display scope.
@@ -90,7 +90,7 @@
 - **Ранний сигнал:** поле отсутствует в HTML, разные platform URLs несогласованы, вкладки отзывов загружаются отдельно, данные видны человеку, но не в ответе, либо title/description явно не соответствуют друг другу.
 - **Проверка:** `SPK-02` на обычной, мультиплатформенной и неполной игре с ручной картой происхождения полей.
 - **Митигация:** составной JSON-LD + DOM contract; bounded platform-specific requests; классифицировать естественное отсутствие отдельно от parser failure; хранить provenance; семантическую аномалию не «исправлять» выдуманным значением.
-- **Владелец:** `SPK-02`.
+- **Владелец:** `SPK-02`, затем `HRD-01`.
 - **Остаточный риск:** отдельные будущие игры могут иметь новый вариант представления или ошибочные данные самого источника.
 - **Текущая диспозиция:** `Open — mitigate`; `SPK-02: Proceed with limitation`, evidence: [`research/feasibility/metacritic-contract.md`](../research/feasibility/metacritic-contract.md).
 
@@ -139,7 +139,7 @@
 - **Ранний сигнал:** ephemeral filesystem, запрет cron/background worker, sleep меньше часа, недоступные logs/secrets.
 - **Проверка:** минимальный публичный probe `SPK-06` на выбранной Ubuntu 24.04 VDS с внешним HTTP check, перезапуском и реальным фоновым событием; preflight contract в [`deployment.md`](../research/feasibility/deployment.md).
 - **Митигация:** в `PLN-01` выбрать production supervision/TLS и явно задать business timezone UTC; до `G6` проверить host reboot и два application schedule windows; при утрате capability выбрать иной hosting/managed scheduler/persistent store.
-- **Владелец:** `SPK-06`.
+- **Владелец:** `SPK-06`, затем `PLN-01/PUB-01–PUB-02`.
 - **Остаточный риск:** non-interactive `sudo` недоступен, systemd linger выключен; `@reboot` не проверен host reboot; network policy и ресурсы могут измениться после probe.
 - **Текущая диспозиция:** `Open — mitigate`; `SPK-06: Verified — Proceed with limitation`, evidence в [`deployment.md`](../research/feasibility/deployment.md).
 
@@ -178,7 +178,7 @@
 - **Ранний сигнал:** невозможно однозначно назвать следующую партию по заданному состоянию; один кандидат появляется дважды или теряется.
 - **Проверка:** таблица переходов и бумажные сценарии `SPK-04` с fake time.
 - **Митигация:** единая state model, разделение discovery и enrichment, явная business timezone, детерминированный selector.
-- **Владелец:** `SPK-04`.
+- **Владелец:** `SPK-04`, затем `IMP-03/HRD-02`.
 - **Evidence:** [`research/feasibility/processing-state.md`](../research/feasibility/processing-state.md).
 - **Остаточный риск:** live source может менять порядок перед сохранённым cursor; pagination/identity известны, но mutable source не гарантирует snapshot и требует selector tests.
 - **Текущая диспозиция:** `Open — mitigate`; решение `Proceed with limitation`, окончательная проверка — selector/state tests после выбора стека.
@@ -212,13 +212,13 @@
 
 - **Связи:** `SIM-01–SIM-03`; `ASM-20–ASM-21`.
 - **Проверяемый риск:** доступные поля недостаточны для осмысленной похожести или алгоритм возвращает self-match, внешние записи и случайные результаты.
-- **Оценка после `SPK-02`:** `P=3`, `I=4`, `U=3`; Exposure `12`, Discovery `12`; приоритет `P2`. Доступны title, description, developer, platform и genre, но метод ещё не выбран.
+- **Оценка после `SPK-02`/`RSK-02`:** `P=3`, `I=4`, `U=2`; Exposure `12`, Discovery `8`; приоритет `P2`. Доступны title, description, developer, platform и genre; оставшийся выбор метода локализован в design/eval и не требует нового внешнего spike.
 - **Ранний сигнал:** у страниц нет жанров/признаков, очевидные пары не сближаются, результат меняется без изменения данных.
 - **Проверка:** доступные признаки в `SPK-02`; метод, golden set и threshold в `PLN-02/IMP-06` до финальной оценки.
 - **Митигация:** простой объяснимый baseline на реально доступных признаках, жёсткие инварианты, ручной golden set.
 - **Владелец:** `SPK-02`, затем `PLN-02/IMP-06`.
 - **Остаточный риск:** субъективность релевантности на малом наборе.
-- **Текущая диспозиция:** `Open — investigate`; data-часть подтверждена `SPK-02`, quality contract остаётся у `PLN-02/IMP-06`.
+- **Текущая диспозиция:** `Open — mitigate`; решение `Proceed to design with constraint`: простой объяснимый baseline только на сохранённых признаках и заранее замороженный relevance golden set в `PLN-02/IMP-06`.
 
 ## 6. Риски доказуемости, поставки и безопасности
 
@@ -240,11 +240,11 @@
 - **Проверяемый риск:** обычный CI зависит от текущего Metacritic, платной модели, сети или mutable данных и даёт ложные падения/успехи.
 - **Оценка:** `P=4`, `I=3`, `U=3`; Exposure `12`, Discovery `9`; приоритет `P2`.
 - **Ранний сигнал:** один тест проходит повторно без изменения кода, расходует API budget или требует secrets.
-- **Проверка:** Metacritic contract fixtures определены в `SPK-02`; AI fixtures/fake provider уточняются в `SPK-05`; live contract выделяется отдельно.
+- **Проверка:** Metacritic contract fixtures определены в `SPK-02`; frozen AI cases/schema/runner — в `SPK-05`; executable fake-provider suite создаётся в `HRD-06`, live contract запускается отдельно.
 - **Митигация:** deterministic fixtures/mocks, замороженные eval inputs, отдельные контролируемые live checks.
 - **Владелец:** `SPK-02/SPK-05`, затем `HRD-06`.
 - **Остаточный риск:** offline suite не гарантирует текущую совместимость; её покрывает отдельный live check.
-- **Текущая диспозиция:** `Open — mitigate`; curated Metacritic fixtures сохранены, executable sanitised HTML и AI fixtures ещё нужны.
+- **Текущая диспозиция:** `Open — mitigate`; curated Metacritic fixtures и frozen AI cases сохранены, executable sanitised HTML/fake-provider suite ещё нужен в `HRD-06`.
 
 ### `R-SEC-01` Секреты или недоверенный контент попадают в публичные артефакты
 
@@ -378,7 +378,7 @@
 | Игра и платформы не дублируются | `R-ID-01` | `IMP-01–IMP-02`, `HRD-02–HRD-03` после `SPK-03` | ID-first contract и коллизии проверены; нужны executable unique/concurrency tests |
 | Частичный ответ не портит данные | `R-EXT-04`, `R-DAT-01` | `SPK-02`, позднее `HRD-01–HRD-02` | Есть ранняя и финальная проверка |
 | AI grounded и разделяет аудитории | `R-AI-01` | `IMP-04/HRD-04` после baseline `SPK-05` | `9/9` structural, rubric `96/98`, `0` blockers; нужны executable provider-fake/regression tests |
-| Similarity не формальна | `R-SIM-01` | `SPK-02`, затем `PLN-02/IMP-06` | Есть data и quality gates |
+| Similarity не формальна | `R-SIM-01` | `PLN-02/IMP-06` после подтверждённых признаков `SPK-02` | Принято ограничение: объяснимый stored-feature baseline и frozen relevance golden set |
 | UI работает единым сценарием | `R-UI-01` | `IMP-07/PUB-03` | Не требует отдельного spike |
 | Сдача воспроизводима и безопасна | `R-SEC-01`, `R-DEL-01`, `R-REP-01` | implementation/release tasks | Есть непрерывная митигация |
 
@@ -392,4 +392,15 @@
 - [x] Bonus-риски не блокируют Must.
 - [x] Ни один spike не был выполнен в рамках `RSK-01`.
 
-**Итог:** `RSK-01` и `SPK-01–SPK-06` завершены решениями `Proceed with limitation`. `SPK-05` подтвердил Groq Free Plan / `openai/gpt-oss-20b`: `9/9` structural cases, rubric `96/98`, `0` blockers; Free TPD, extractive policy и variable latency остаются митигациями. Следующая задача — `RSK-02`, итоговая фиксация рисков и review ворот `G2`.
+**Итог `RSK-01`:** реестр и очередь исследований созданы; `SPK-01–SPK-06` впоследствии завершены решениями `Proceed with limitation`.
+
+## 9. Итоговая проверка `RSK-02`
+
+- Проверено 24 risk blocks: 20 Must и 4 Bonus.
+- У всех 20 Must-рисков есть проверка, митигация, владелец, остаточный риск и текущая диспозиция.
+- После spikes нет текущих рисков `P0`, решений `Replan` или незакрытых `Blocked / Ask`.
+- 16 рисков `P1` и 4 риска `P2` переданы конкретным design/implementation/hardening/public/release задачам.
+- Все 4 Bonus-риска имеют приоритет `B`, статус `Deferred bonus` и не влияют на `G2`.
+- `R-SIM-01` переведён из внешнего исследования в design mitigation: признаки подтверждены, метод и golden set выбираются в `PLN-02/IMP-06`.
+
+**Решение:** `G2` пройдены с ограничениями; подробная матрица evidence, остаточных рисков, владельцев и stop conditions находится в [`requirements/g2_review.md`](requirements/g2_review.md). Следующая задача — `PLN-01` (`Ready`).
