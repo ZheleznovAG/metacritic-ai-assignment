@@ -75,7 +75,7 @@ Process-restart oracle выполнен: до и после рестарта с�
 
 Ожидаемые ограничения решения:
 
-1. Probe использует user cron и `nohup`, потому что non-interactive `sudo` отсутствует, а systemd linger выключен. На `PLN-01` нужно выбрать production supervision/restart contract, явно применить business timezone UTC из `ASM-01` вместо системной зоны VDS и повторить host-reboot check до `G6`.
+1. Probe использует user cron и `nohup`, потому что non-interactive `sudo` отсутствует, а systemd linger выключен. Последующее решение [`ADR-0001`](../../docs/decisions/0001-minimal-stack-and-architecture.md) выбрало Docker Compose с отдельным UTC scheduler container и restart policies; Docker/Compose на VDS нужно проверить в `IMP-01`, а host reboot — до `G6`.
 2. Порт probe работает по HTTP без TLS и предназначен только для не чувствительного read-only state. Production URL требует отдельного ingress/TLS решения.
 3. Один фактический часовой trigger доказывает capability, но не удовлетворяет двухоконному `AC-RUN-01`; два последовательных окна и реальный application outcome проверяются в `PUB-02`.
 4. Финальная доступность service URL повторно проверяется в `REL-04`; наблюдавшиеся восстановившиеся resets во время длительного polling не нарушают не заданный для probe SLO, но подтверждают необходимость retry/health monitoring и повторного внешнего smoke перед сдачей.

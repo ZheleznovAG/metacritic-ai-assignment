@@ -126,10 +126,10 @@
 - **Ранний сигнал:** отсутствующий доступ, высокая оценка токенов, частые 429, timeout на небольшом sample.
 - **Проверка:** измерения количества входа, latency, rate limits и стоимости в `SPK-05` без запуска полного production batch.
 - **Подтверждённый кандидат:** Groq Free Plan, `openai/gpt-oss-20b`, Chat Completions API. Финальный run: `9/9` responses, `11,687` total tokens, median `7.638s`, max `12.134s`; опубликованы `30 RPM`, `1,000 RPD`, `8,000 TPM`, `200,000 TPD`.
-- **Митигация:** детерминированная выборка и input fingerprint/cache, persistent async queue, bounded retry/backoff, ограничение concurrency, provider abstraction, диагностируемый delayed/capacity state и запрет paid fallback.
-- **Владелец:** `SPK-05`, затем `PLN-01/IMP-04/HRD-04`.
+- **Митигация:** `PLN-01` выбрала PostgreSQL-backed persistent AI queue без Redis/Celery; детерминированная выборка и input fingerprint/cache, bounded retry/backoff, ограничение concurrency, provider abstraction, диагностируемый delayed/capacity state и запрет paid fallback.
+- **Владелец:** `SPK-05/PLN-01`, затем `IMP-04/HRD-04`.
 - **Остаточный риск:** при наблюдаемом среднем размере Free TPD покрывает примерно 154 audience summaries/77 games в день против теоретических 960 summaries; тарифы, квоты, latency и доступность меняются внешне.
-- **Текущая диспозиция:** `Open — mitigate`; решение `Proceed with limitation` допустимо только с кэшем/очередью, а устойчивый объём выше capacity требует `Replan` до заявления production throughput.
+- **Текущая диспозиция:** `Open — mitigate`; storage/worker contour принят в [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md), реализация кэша/очереди остаётся обязательной; устойчивый объём выше capacity требует `Replan` до заявления production throughput.
 
 ### `R-DEP-01` Публичная среда не поддерживает обязательный runtime
 
@@ -138,10 +138,10 @@
 - **Оценка после `SPK-06`:** `P=2`, `I=5`, `U=2`; Exposure `10`, Discovery `10`; приоритет `P1`. Persistent `ext4`, user cron, public ingress, process restart и реальное фоновое событие подтверждены; production supervision и host reboot ещё не проверены.
 - **Ранний сигнал:** ephemeral filesystem, запрет cron/background worker, sleep меньше часа, недоступные logs/secrets.
 - **Проверка:** минимальный публичный probe `SPK-06` на выбранной Ubuntu 24.04 VDS с внешним HTTP check, перезапуском и реальным фоновым событием; preflight contract в [`deployment.md`](../research/feasibility/deployment.md).
-- **Митигация:** в `PLN-01` выбрать production supervision/TLS и явно задать business timezone UTC; до `G6` проверить host reboot и два application schedule windows; при утрате capability выбрать иной hosting/managed scheduler/persistent store.
-- **Владелец:** `SPK-06`, затем `PLN-01/PUB-01–PUB-02`.
-- **Остаточный риск:** non-interactive `sudo` недоступен, systemd linger выключен; `@reboot` не проверен host reboot; network policy и ресурсы могут измениться после probe.
-- **Текущая диспозиция:** `Open — mitigate`; `SPK-06: Verified — Proceed with limitation`, evidence в [`deployment.md`](../research/feasibility/deployment.md).
+- **Митигация:** `PLN-01` выбрала Docker Compose: Caddy, Gunicorn/Django web, UTC scheduler, AI worker и PostgreSQL с named volumes; до `G4` проверить Engine/Compose и deploy permission, до `G6` — DNS/80/443, volume persistence, host reboot и два application schedule windows; при утрате capability выбрать иной hosting/managed scheduler/persistent store.
+- **Владелец:** `SPK-06/PLN-01`, затем `IMP-01/PUB-01–PUB-02`.
+- **Остаточный риск:** Docker/Compose и право deploy-user управлять daemon на VDS не подтверждены; non-interactive `sudo` недоступен, hostname и 80/443 ещё не проверены; host reboot, memory budget и volume lifecycle требуют evidence.
+- **Текущая диспозиция:** `Open — mitigate`; production contour принят в [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md), но public deployment нельзя считать доказанным до `PUB-01–PUB-02`.
 
 ### `R-DEP-02` Ссылки доступны автору, но не проверяющему
 
@@ -190,11 +190,11 @@
 - **Оценка после `SPK-04`:** `P=3`, `I=5`, `U=2`; Exposure `15`, Discovery `10`; приоритет `P1` сохраняется до failure/concurrency evidence.
 - **Ранний сигнал:** состояния нельзя восстановить только из persistent data; нет различия attempt/success/failure; duplicate counters.
 - **Проверка:** сначала модель `SPK-04`, затем failure/concurrency tests `HRD-02–HRD-03`.
-- **Митигация:** persistent state transitions, atomic ownership/idempotency, явные retryable состояния.
-- **Владелец:** `SPK-04`, затем `HRD-02–HRD-03`.
+- **Митигация:** `PLN-01` выбрала PostgreSQL transactions, constraints и row/advisory locking как основу; persistent lease/run record, atomic ownership, idempotency keys и retry states конкретизируются в `PLN-02`.
+- **Владелец:** `SPK-04/PLN-01`, затем `PLN-02/HRD-02–HRD-03`.
 - **Evidence:** [`research/feasibility/processing-state.md`](../research/feasibility/processing-state.md).
 - **Остаточный риск:** конкретная БД/hosting может не дать нужную atomic ownership/fencing семантику; инфраструктурные at-least-once события требуют постоянного invariant test.
-- **Текущая диспозиция:** `Open — mitigate`; решение `Proceed with limitation`, окончательная проверка — `HRD-02–HRD-03` и deployment restart.
+- **Текущая диспозиция:** `Open — mitigate`; PostgreSQL выбран в [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md), точные транзакционные примитивы и executable concurrency evidence остаются у `PLN-02/HRD-02–HRD-03`.
 
 ### `R-DAT-01` Частичная обработка повреждает хорошее состояние
 
@@ -289,7 +289,7 @@
 - **Оценка:** `P=3`, `I=4`, `U=3`; Exposure `12`, Discovery `12`; приоритет `P1`.
 - **Ранний сигнал:** setup не выполнялся с чистого checkout, отсутствует config template, state создаётся вручную.
 - **Проверка:** ранний reproducible bootstrap `IMP-01`, окончательный clean-run `REL-01–REL-02`.
-- **Митигация:** lockfiles, миграции, конфигурационный шаблон, seed/fixtures, исполнимые README-команды и CI.
+- **Митигация:** `PLN-01` зафиксировала canonical Python 3.12, Django 5.2 LTS, PostgreSQL 16, один application image, Compose production contour, `pyproject.toml`, exact resolved lock и project-local `.venv`; локальный Docker Engine подтверждён. Миграции, конфигурационный шаблон, seed/fixtures, исполнимые README-команды и CI создаются в `IMP-01`.
 - **Владелец:** `IMP-01`, затем `REL-01–REL-02`.
 - **Остаточный риск:** внешние package registries/hosting остаются изменчивыми.
 - **Текущая диспозиция:** `Open — mitigate`.
@@ -403,4 +403,4 @@
 - Все 4 Bonus-риска имеют приоритет `B`, статус `Deferred bonus` и не влияют на `G2`.
 - `R-SIM-01` переведён из внешнего исследования в design mitigation: признаки подтверждены, метод и golden set выбираются в `PLN-02/IMP-06`.
 
-**Решение:** `G2` пройдены с ограничениями; подробная матрица evidence, остаточных рисков, владельцев и stop conditions находится в [`requirements/g2_review.md`](requirements/g2_review.md). Следующая задача — `PLN-01` (`Ready`).
+**Решение:** `G2` пройдены с ограничениями; подробная матрица evidence, остаточных рисков, владельцев и stop conditions находится в [`requirements/g2_review.md`](requirements/g2_review.md). На момент `RSK-02` следующей задачей была `PLN-01`; принятое решение теперь находится в [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md).

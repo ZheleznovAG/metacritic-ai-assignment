@@ -2,13 +2,14 @@
 
 ## Project Structure & Sources of Truth
 
-This repository is currently in discovery; it does not yet contain application source, tests, or runtime assets.
+This repository is currently defining its implementation baseline; it does not yet contain application source, tests, or runtime assets.
 
 - `assignment.md` is the primary specification.
 - `methodology.md` defines the evidence-driven delivery process.
 - `action_plan.md` is the workflow and task/gate tracker.
 - `intake.md` captures the assignment baseline.
 - `docs/requirements/` contains context, requirements, assumptions, acceptance criteria, and gate reviews.
+- `docs/decisions/` contains accepted architecture decision records.
 - `docs/risks.md` is the prioritized risk register.
 - `research/methodology/` preserves prompts and exploration; it is evidence, not a requirements source.
 
@@ -16,7 +17,7 @@ Add source and test directories only after `PLN-01–PLN-03` establish the imple
 
 ## Build, Test, and Development Commands
 
-No application build or test command exists yet. Do not invent one before the stack is selected. Current repository checks are:
+The stack is selected in `docs/decisions/0001-minimal-stack-and-architecture.md`, but application tooling is not scaffolded until `IMP-01`. Current repository checks are:
 
 ```powershell
 git status --short          # inspect pending changes
