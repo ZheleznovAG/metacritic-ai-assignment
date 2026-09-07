@@ -33,7 +33,7 @@
 | `R-TIM-01` | `Proceed with limitation` | State model и fake-time scenarios `SPK-04` | Mutable ordering не является source snapshot | Selector/state tests — `IMP-03/HRD-02` |
 | `R-TIM-02` | `Proceed with limitation` | Restart/overlap transitions `SPK-04` | Atomic ownership зависит от выбранной БД и at-least-once scheduler | DB contract и recovery/concurrency tests — `PLN-02/HRD-02–HRD-03` |
 | `R-DAT-01` | `Proceed with limitation` | Incomplete fixtures `SPK-02`, conflict cases `SPK-03` | Формально валидное, но семантически неверное значение | Non-destructive update tests — `HRD-01–HRD-02` |
-| `R-SIM-01` | `Proceed to design with constraint` | Сохранённые признаки подтверждены `SPK-02` | Релевантность субъективна на малой базе | Explainable baseline и frozen golden set — `PLN-02/IMP-06` |
+| `R-SIM-01` | `Proceed to design with constraint` | Сохранённые признаки подтверждены `SPK-02` | Релевантность субъективна на малой базе | Explainable candidate — `PLN-02`; frozen oracle — `SIM-EVAL-01`; выбор метода — `IMP-06` |
 | `R-OPS-01` | `Proceed with limitation` | Persistent cron event `SPK-06` | Один capability event не доказывает полный application outcome | Structured run records и два public windows — `HRD-05/PUB-02` |
 | `R-TST-01` | `Proceed with mitigation` | Metacritic fixtures `SPK-02`, frozen AI cases `SPK-05` | Offline suite не доказывает текущие внешние contracts | Fake-provider/offline suite плюс отдельные live checks — `HRD-06` |
 | `R-SEC-01` | `Proceed with mitigation` | Secret boundaries в `SPK-05–SPK-06`, repository policy | Scanner может не распознать новый секрет; внешний/AI-текст остаётся недоверенным | Security/escaping/secret checks — `HRD-05/REL-03` |
@@ -54,7 +54,7 @@
 | Время, batch, restart и overlap однозначно моделируются | Выполнено с ограничениями | Transition model `SPK-04` |
 | AI имеет измеримый baseline, а не единичный пример | Выполнено с ограничениями | Frozen nine-case eval, rubric and scored report `SPK-05` |
 | Публичная среда поддерживает обязательный эксплуатационный сценарий | Выполнено с ограничениями | Public/persistence/restart/cron probe `SPK-06` |
-| Неразрешённые вопросы являются явными допущениями или design parameters | Выполнено | `assumptions.md`; `ASM-21` перенесён из spike в design |
+| Неразрешённые вопросы являются явными допущениями или design parameters | Выполнено | `assumptions.md`; `ASM-21` перенесён из spike в design/eval и остаётся candidate до независимого oracle |
 | Bonus-риски не блокируют Must | Выполнено | Все четыре `R-BON-*` имеют приоритет `B`, статус `Deferred bonus`; Bonus расположен после `G6` |
 
 ## Переданные ограничения и stop conditions

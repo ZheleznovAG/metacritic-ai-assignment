@@ -1,6 +1,6 @@
 # Внутренние контракты и модель данных
 
-- **Статус:** Accepted design baseline
+- **Статус:** Candidate design — `PLN-02` changes requested
 - **Дата:** 2026-09-08
 - **Задача:** `PLN-02`
 - **Архитектура:** [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md)
@@ -87,7 +87,7 @@ Identity check, non-destructive Game/GamePlatform upsert, закрытие `core
 
 Если Metacritic отдаёт стабильный review ID, `identity_key=id:<value>`. Иначе используется `fallback:<SHA-256>` от audience, platform ID, author/source label, published label, score и полного нормализованного текста. Изменение текста со стабильным ID создаёт новую immutable version и `superseded` link; без стабильного ID система не заявляет, что две разные версии — один логический отзыв.
 
-Для каждого известного platform/audience route collection job получает одну подтверждённую review page и сохраняет все cards из ответа. Непроверенная pagination не обходится. Failed route не удаляет прошлые observations; corpus использует последние valid snapshots и фиксирует `fresh/stale/failed/expected` coverage. Восстановившийся route создаёт новый source-set fingerprint.
+Для каждого известного platform/audience route collection job получает одну подтверждённую review page и сохраняет все cards из ответа. Непроверенная pagination не обходится. Failed route не удаляет прошлые observations; corpus использует последние valid snapshots и фиксирует `fresh/stale/failed/expected` coverage. Восстановившийся route создаёт новый source-set fingerprint. Это безопасное временное ограничение, но не доказательство полноты: pagination, ordering, exhaustion и reported-versus-fetched counts должны быть подтверждены до повторного принятия `PLN-02`.
 
 Corpus для одной игры и ровно одной аудитории строится детерминированно:
 
@@ -144,7 +144,7 @@ Summary и claims сохраняются одной транзакцией то�
 | `CatalogQuery.detail(game_id)` | internal game ID | game/platforms/current summaries/staleness/similar games либо not found |
 | `SimilarityService.rank(game_id)` | current saved catalog | до пяти versioned deterministic results с score components |
 
-## Similarity policy `1.0.0`
+## Candidate similarity policy `0.1.0`
 
 Baseline считается в Python по текущей базе, без сохранённого similarity index:
 
@@ -152,7 +152,7 @@ Baseline считается в Python по текущей базе, без со�
 
 Кандидат допустим, если это другая Game, есть хотя бы один общий genre либо тот же non-empty normalized developer, и `score >= 0.15`. Результаты сортируются по score descending, затем title casefold и internal ID; возвращаются первые пять уникальных Game. Пустые признаки дают вклад `0`, а не фиктивное совпадение. На карточке можно объяснить совпавшие genres/platforms/developer.
 
-Политика использует только уже необходимые сохранённые признаки, не переводит description и не добавляет embeddings/vector service. `IMP-06` замораживает relevance golden set; непройденный threshold требует пересмотра policy version, а не скрытой подстройки теста.
+Формула является кандидатом, а не принятой policy. Она использует только уже необходимые сохранённые признаки, не переводит description и не добавляет embeddings/vector service. `SIM-EVAL-01` независимо замораживает examples/golden set, metric, threshold и hard invariants до сравнения методов; `IMP-06` сравнивает этот и более простой baseline без изменения oracle. Только прошедший вариант получает release policy version. Непройденный threshold требует пересмотра кандидата, а не скрытой подстройки теста.
 
 ## Транзакционные инварианты
 
@@ -175,7 +175,7 @@ Baseline считается в Python по текущей базе, без со�
 | `RUN-01`, `SEL-01–SEL-03`, `R-TIM-01–R-TIM-02` | Unique UTC slot, cycle/candidate state, lease/fencing, checkpoint | `IMP-03`, `HRD-02–HRD-03`, `PUB-02` |
 | `AI-01–AI-03`, `R-AI-01–R-AI-02` | Persisted reviews, immutable corpus, versioned attempts/model/time/usage, grounded claims, cache | `IMP-04`, `HRD-04`, frozen eval |
 | `UI-01–UI-05`, `R-UI-01` | Read-only deterministic list/detail queries and visible summary provenance/staleness | `IMP-05`, `IMP-07`, `PUB-03` |
-| `SIM-01–SIM-03`, `R-SIM-01` | Versioned local scoring, hard exclusions, deterministic tie-break | `IMP-06` invariant tests + golden set |
+| `SIM-01–SIM-03`, `R-SIM-01` | Candidate local scoring, hard exclusions, deterministic tie-break | `SIM-EVAL-01` frozen oracle; `IMP-06` comparison; `SIM-VER-01` integration evidence |
 | `NFR-01–NFR-05`, `R-OPS-01` | Persistent state, isolated failure, unique work, run/job timestamps and counters | `HRD-02–HRD-05`, `PUB-02` |
 | `NFR-06`, `R-TST-01`, `R-SEC-01`, `R-REP-01` | External protocols replaceable by fakes; no live calls/secrets/raw envelopes in CI | `IMP-01`, `HRD-06`, `REL-01–REL-03` |
 

@@ -37,6 +37,10 @@ Use UTF-8 Markdown with LF line endings (`.gitattributes` enforces LF). Keep hea
 
 Every change must reference a requirement, risk, or workflow task and state how it was verified. Follow `docs/requirements/acceptance.md`. Deterministic CI must use fixtures/fakes rather than live Metacritic or paid AI calls; keep live contract checks separate. A task is complete only when its evidence exists and its status is updated accurately.
 
+A document being authored is not sufficient evidence for its own substantive claims. Before marking a task `Verified`, map every exit criterion to an independent artifact, executable check, or explicitly accepted limitation. If required evidence belongs to a future task, keep the current decision `Proposed` or `Candidate`; do not mark it `Accepted` and do not mark the task `Verified`.
+
+For ranking, recommendation, AI-quality, or other heuristic decisions, freeze representative examples or a golden set, the metric, the acceptance threshold, and hard invariants before selecting or tuning the method. For external list or review ingestion, verify pagination or cursor behavior, ordering, exhaustion, duplicates, reported-versus-fetched counts, and worst-case volume before freezing the data contract. Enforce provider limits in provider units such as tokens, requests, and time, and verify the production maximum; character or item caps alone are not verification evidence.
+
 ## Commits & Pull Requests
 
 Use focused Conventional Commits, matching history: `docs(risks): add prioritized risk register`, `research: add methodology exploration`, or `chore: normalize line endings`. Commit one completed task or coherent correction at a time.
@@ -45,6 +49,8 @@ PRs should identify task and requirement IDs, summarize decisions, list verifica
 
 ## Agent Workflow
 
-Follow `action_plan.md` dependencies using one cycle: **one task → verify → one focused commit → stop**. Never begin the next task, skip gates, mark unverified work complete, or start Bonus before `G6`.
+Follow `action_plan.md` dependencies using one cycle: **one task → author → adversarial review → verify → one focused commit → stop**. The review must check requirements, acceptance criteria, risks, counterexamples, boundary conditions, and missing evidence. Unresolved material findings prevent `Verified`. Never begin the next task, skip gates, mark unverified work complete, or start Bonus before `G6`.
+
+Keep `action_plan.md` as a concise task, dependency, status, gate, and evidence tracker—not as the detailed implementation specification. Put architecture decisions in ADRs, data and interface contracts in design documents, exploratory observations in `research/`, and examples, datasets, metrics, and thresholds in `evals/` or test artifacts. Link those artifacts from the plan instead of duplicating their content.
 
 When a task requires human input, explicitly record it as `Blocked` / `Ask`, immediately ask the user one concrete question, and state the `needed-by` gate. Until the answer arrives, work only on tasks that are independent of that input; if none are available, stop and wait for the user's decision.
