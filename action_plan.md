@@ -46,12 +46,12 @@
 
 | Поле | Значение |
 |---|---|
-| Версия плана | Design baseline 0.14 |
-| Дата | 2026-09-07 |
+| Версия плана | Design baseline 0.15 |
+| Дата | 2026-09-08 |
 | Исходник | `assignment.md`, SHA-256 `C8987F684CFDF693AB188FA2AC5875044C93EBF486B708C36FDF7E7748C2125C` |
 | Методология | `methodology.md` |
 | Завершённая стадия | 2 — Снятие критической неизвестности (`G2` пройдены с ограничениями) |
-| Активная стадия | 3 — детализация implementation baseline; `PLN-01` завершена, следующая задача `PLN-02` (`Ready`) |
+| Активная стадия | 3 — детализация implementation baseline; `PLN-01–PLN-02` завершены, следующая задача `PLN-03` (`Ready`) |
 | Реализация | Не начата |
 | Текущие блокеры | Нет; известные ограничения Groq Free TPD, extractive summary и VDS оформлены с владельцами дальнейших проверок |
 
@@ -148,10 +148,17 @@
 
 ### Изменение baseline 0.14
 
-- **Новый факт:** `PLN-01` выбрала контейнеризованный модульный монолит на Python 3.12 / Django 5.2 LTS: один application image для web/scheduler/AI worker, PostgreSQL 16 и Caddy TLS под Docker Compose на single VDS. Redis/Celery, SPA, Kubernetes и vector DB не входят в baseline. Локально подтверждены Docker Engine 29.7.2 и Compose 5.4.0; Python development/tests остаются в `.venv`.
+- **Новый факт:** `PLN-01` выбрала контейнеризованный модульный монолит на Python 3.12 / Django 5.2 LTS: один application image для web/scheduler/enrichment worker, PostgreSQL 16 и Caddy TLS под Docker Compose на single VDS. Redis/Celery, SPA, Kubernetes и vector DB не входят в baseline. Локально подтверждены Docker Engine 29.7.2 и Compose 5.4.0; Python development/tests остаются в `.venv`.
 - **Затронуты:** все Must; `R-AI-02`, `R-DEP-01`, `R-TIM-02`, `R-OPS-01`, `R-REP-01`; `PLN-01–PLN-02`, `G3`.
 - **Порядок:** `PLN-01` завершена; следующая задача — `PLN-02` (`Ready`) для внутренних контрактов и модели данных. Source scaffold и реализация не начинаются до отдельного цикла и `G3`.
 - **Повторные проверки:** exact dependency/image lock, Compose config, VDS Docker capability и чистый setup — `IMP-01`, `needed-by: G4`; PostgreSQL ownership/queue semantics — `PLN-02/HRD-02–HRD-03`; hostname/DNS, TLS, named-volume persistence, host reboot и два application schedule windows — `PUB-01–PUB-02`, `needed-by: G6`.
+
+### Изменение baseline 0.15
+
+- **Новый факт:** `PLN-02` зафиксировала тестируемые module/persistence contracts. Каждый фактически скачанный отзыв сохраняется в PostgreSQL в исходном языке; отдельный immutable corpus хранит точный ограниченный input модели. Каждая AI-попытка и summary связываются с corpus/input fingerprint и фиксируют requested/returned model, доступный provider fingerprint, версии/hashes контура, UTC-время, latency, usage и outcome.
+- **Затронуты:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01–DATA-03`, `AI-01–AI-03`, `UI-01–UI-05`, `SIM-01–SIM-03`, `NFR-01–NFR-06`; `ASM-16`, `ASM-19`, `ASM-21`; `R-AI-01–R-AI-02`, `R-TIM-02`, `R-DAT-01`, `R-SIM-01`, `R-OPS-01`; `PLN-02–PLN-03`.
+- **Порядок:** `PLN-02` завершена; следующая задача — `PLN-03` (`Ready`) для зависимостей, оценок, критического пути и резерва. Отсутствие календарного дедлайна остаётся явным ограничением, а не препятствует относительному implementation baseline. Реализация не начинается до отдельного цикла и прохождения `G3`.
+- **Повторные проверки:** schema/transaction/concurrency contracts реализовать test-first в `IMP-02–IMP-04/HRD-01–HRD-04`; similarity policy `1.0.0` проверить frozen golden set в `IMP-06`; не добавлять broker, vector store, отдельный API/SPA или monitoring service без измеренной необходимости и нового решения.
 
 ---
 
@@ -409,15 +416,15 @@
 ### `PLN-02` Зафиксировать внутренние контракты и модель данных
 
 - **Тип:** Decision / Verification design.
-- **Связи:** `DATA-01–DATA-03`, `AI-01–AI-03`, `SIM-01–SIM-02`, `RUN-01`, `SEL-01–SEL-03`.
+- **Связи:** `DATA-01–DATA-03`, `AI-01–AI-03`, `SIM-01–SIM-03`, `RUN-01`, `SEL-01–SEL-03`.
 - **Предусловия:** `PLN-01`.
-- **Результат:** определены границы внешнего адаптера, доменных правил, persistence, AI-enrichment, presentation и observability; описаны данные и инварианты без лишней детализации.
-- **Проверка:** модель выражает несколько платформ, обновление, дневной прогресс, provenance и состояния обработки.
+- **Результат:** определены границы внешнего адаптера, доменных правил, persistence, review/AI-enrichment, presentation и observability; полные исходные отзывы отделены от точного model corpus, а summary связан с моделью, конфигурацией и временем создания.
+- **Проверка:** модель выражает несколько платформ, обновление, дневной прогресс, все фактически скачанные отзывы, точный AI input, summary provenance и состояния обработки.
 - **Evidence:** `docs/design.md` и применимые ADR.
 - **Зависимости:** `PLN-01`, результаты spikes.
 - **Оценка / timebox:** `M`, до 1 рабочего дня.
 - **Критерий выхода:** на контракты можно написать тесты, не зная внутренних деталей реализации.
-- **Статус:** `Ready` — архитектурный контур и ответственность процессов зафиксированы в [`ADR-0001`](docs/decisions/0001-minimal-stack-and-architecture.md); точные контракты остаются результатом этой задачи.
+- **Статус:** `Verified` — module boundaries, PostgreSQL entities, transaction invariants, review/corpus provenance, summary attempts и similarity policy зафиксированы в [`docs/design.md`](docs/design.md); новые infrastructure components не добавлены.
 
 ### `PLN-03` Перебазировать задачи, зависимости и оценки
 
@@ -430,7 +437,7 @@
 - **Зависимости:** `PLN-01`, `PLN-02`.
 - **Оценка / timebox:** `S`, до 3 часов.
 - **Критерий выхода:** выполнены все проверки `G3`.
-- **Статус:** `Planned`.
+- **Статус:** `Ready` — `PLN-01–PLN-02` завершены; отсутствие дедлайна/ёмкости принято как явное ограничение для относительного плана, без календарного обещания.
 
 ### Ворота `G3` — Implementation baseline готов
 
@@ -870,4 +877,4 @@
 
 ### Ближайшее действие workflow
 
-Текущая задача — `PLN-02` (`Ready`): зафиксировать внутренние контракты и модель данных в границах [`ADR-0001`](docs/decisions/0001-minimal-stack-and-architecture.md). Реализацию и `PLN-03` не начинать до завершения этой задачи отдельным циклом.
+Следующая задача — `PLN-03` (`Ready`): перебазировать зависимости, оценки, критический путь и резерв по принятым [`ADR-0001`](docs/decisions/0001-minimal-stack-and-architecture.md) и [`docs/design.md`](docs/design.md). Реализацию не начинать до завершения этой задачи отдельным циклом и прохождения `G3`.

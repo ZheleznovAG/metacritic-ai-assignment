@@ -112,11 +112,11 @@
 - **Проверяемый риск:** модель смешивает критиков и пользователей, выдумывает тезисы, преувеличивает единичное мнение, нарушает формат или следует инструкциям из отзывов.
 - **Оценка после `SPK-05`:** `P=2`, `I=5`, `U=2`; Exposure `10`, Discovery `10`; приоритет `P1`. Замороженный baseline прошёл `96/98` без blocker, но модель принята только в консервативном extractive режиме.
 - **Ранний сигнал:** ошибки на контрастных, sparse или инструктивных samples; нестабильный формат между повторами.
-- **Проверка:** `SPK-05` с замороженным eval-набором, рубрикой, блокирующими ошибками и baseline.
-- **Митигация:** разделённые исходно-языковые входы, один полностью подтверждающий support на тезис, structured output, локальная canonical validation, deterministic five-item cap, bounded context, prompt hardening и честное insufficient-data состояние.
+- **Проверка:** `SPK-05` с замороженным eval-набором, рубрикой, блокирующими ошибками и baseline; immutable corpus/attempt/claim contracts в `PLN-02`; executable regression — `IMP-04/HRD-04`.
+- **Митигация:** все скачанные отзывы хранятся отдельно от точного immutable model corpus; аудитории не смешиваются; один `review_corpus_item` полностью подтверждает каждый тезис; structured output проходит локальную canonical validation, deterministic five-item cap, bounded context, prompt hardening и честное insufficient-data состояние. Model, contour versions/hashes, UTC-время и outcome каждой попытки сохраняются.
 - **Владелец:** `SPK-05`, затем `IMP-04/HRD-04`.
 - **Остаточный риск:** модель не доказана для надёжного cross-review синтеза, иногда пропускает вторичные темы или добавляет подтверждённый шум; другие и смешанные языки требуют regression fixtures; provider fingerprints различаются.
-- **Текущая диспозиция:** `Open — mitigate`; `SPK-05: Verified — Proceed with limitation`, evidence: [`research/feasibility/ai-summary.md`](../research/feasibility/ai-summary.md).
+- **Текущая диспозиция:** `Open — mitigate`; `SPK-05: Verified — Proceed with limitation`, а data/provenance contract принят в [`docs/design.md`](design.md); качество и отказные ветви ещё требуют `IMP-04/HRD-04` evidence.
 
 ### `R-AI-02` AI-провайдер непригоден по доступу, цене или задержке
 
@@ -126,10 +126,10 @@
 - **Ранний сигнал:** отсутствующий доступ, высокая оценка токенов, частые 429, timeout на небольшом sample.
 - **Проверка:** измерения количества входа, latency, rate limits и стоимости в `SPK-05` без запуска полного production batch.
 - **Подтверждённый кандидат:** Groq Free Plan, `openai/gpt-oss-20b`, Chat Completions API. Финальный run: `9/9` responses, `11,687` total tokens, median `7.638s`, max `12.134s`; опубликованы `30 RPM`, `1,000 RPD`, `8,000 TPM`, `200,000 TPD`.
-- **Митигация:** `PLN-01` выбрала PostgreSQL-backed persistent AI queue без Redis/Celery; детерминированная выборка и input fingerprint/cache, bounded retry/backoff, ограничение concurrency, provider abstraction, диагностируемый delayed/capacity state и запрет paid fallback.
-- **Владелец:** `SPK-05/PLN-01`, затем `IMP-04/HRD-04`.
+- **Митигация:** `PLN-01/PLN-02` выбрали PostgreSQL-backed `SummaryJob` без Redis/Celery, unique cache по точному input/contour fingerprint, один worker, bounded backoff `1m/5m/15m/1h/6h`, максимум пять автоматических попыток, `delayed_capacity` по reset-time, provider abstraction и запрет paid fallback.
+- **Владелец:** `SPK-05/PLN-01–PLN-02`, затем `IMP-04/HRD-04`.
 - **Остаточный риск:** при наблюдаемом среднем размере Free TPD покрывает примерно 154 audience summaries/77 games в день против теоретических 960 summaries; тарифы, квоты, latency и доступность меняются внешне.
-- **Текущая диспозиция:** `Open — mitigate`; storage/worker contour принят в [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md), реализация кэша/очереди остаётся обязательной; устойчивый объём выше capacity требует `Replan` до заявления production throughput.
+- **Текущая диспозиция:** `Open — mitigate`; storage/worker contour принят в [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md), а job/cache/retry states — в [`docs/design.md`](design.md). Реализация остаётся обязательной; устойчивый объём выше capacity требует `Replan` до заявления production throughput.
 
 ### `R-DEP-01` Публичная среда не поддерживает обязательный runtime
 
@@ -138,7 +138,7 @@
 - **Оценка после `SPK-06`:** `P=2`, `I=5`, `U=2`; Exposure `10`, Discovery `10`; приоритет `P1`. Persistent `ext4`, user cron, public ingress, process restart и реальное фоновое событие подтверждены; production supervision и host reboot ещё не проверены.
 - **Ранний сигнал:** ephemeral filesystem, запрет cron/background worker, sleep меньше часа, недоступные logs/secrets.
 - **Проверка:** минимальный публичный probe `SPK-06` на выбранной Ubuntu 24.04 VDS с внешним HTTP check, перезапуском и реальным фоновым событием; preflight contract в [`deployment.md`](../research/feasibility/deployment.md).
-- **Митигация:** `PLN-01` выбрала Docker Compose: Caddy, Gunicorn/Django web, UTC scheduler, AI worker и PostgreSQL с named volumes; до `G4` проверить Engine/Compose и deploy permission, до `G6` — DNS/80/443, volume persistence, host reboot и два application schedule windows; при утрате capability выбрать иной hosting/managed scheduler/persistent store.
+- **Митигация:** `PLN-01` выбрала Docker Compose: Caddy, Gunicorn/Django web, UTC scheduler, один enrichment worker и PostgreSQL с named volumes; до `G4` проверить Engine/Compose и deploy permission, до `G6` — DNS/80/443, volume persistence, host reboot и два application schedule windows; при утрате capability выбрать иной hosting/managed scheduler/persistent store.
 - **Владелец:** `SPK-06/PLN-01`, затем `IMP-01/PUB-01–PUB-02`.
 - **Остаточный риск:** Docker/Compose и право deploy-user управлять daemon на VDS не подтверждены; non-interactive `sudo` недоступен, hostname и 80/443 ещё не проверены; host reboot, memory budget и volume lifecycle требуют evidence.
 - **Текущая диспозиция:** `Open — mitigate`; production contour принят в [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md), но public deployment нельзя считать доказанным до `PUB-01–PUB-02`.
@@ -190,11 +190,11 @@
 - **Оценка после `SPK-04`:** `P=3`, `I=5`, `U=2`; Exposure `15`, Discovery `10`; приоритет `P1` сохраняется до failure/concurrency evidence.
 - **Ранний сигнал:** состояния нельзя восстановить только из persistent data; нет различия attempt/success/failure; duplicate counters.
 - **Проверка:** сначала модель `SPK-04`, затем failure/concurrency tests `HRD-02–HRD-03`.
-- **Митигация:** `PLN-01` выбрала PostgreSQL transactions, constraints и row/advisory locking как основу; persistent lease/run record, atomic ownership, idempotency keys и retry states конкретизируются в `PLN-02`.
-- **Владелец:** `SPK-04/PLN-01`, затем `PLN-02/HRD-02–HRD-03`.
+- **Митигация:** PostgreSQL хранит unique UTC trigger key, daily candidate/checkpoint, attempts и singleton lease с 45-минутным TTL, heartbeat и monotonic fencing token; core success проверяет текущий token и коммитит upsert/attempt/candidate state одной транзакцией.
+- **Владелец:** `SPK-04/PLN-01–PLN-02`, затем `IMP-03/HRD-02–HRD-03`.
 - **Evidence:** [`research/feasibility/processing-state.md`](../research/feasibility/processing-state.md).
-- **Остаточный риск:** конкретная БД/hosting может не дать нужную atomic ownership/fencing семантику; инфраструктурные at-least-once события требуют постоянного invariant test.
-- **Текущая диспозиция:** `Open — mitigate`; PostgreSQL выбран в [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md), точные транзакционные примитивы и executable concurrency evidence остаются у `PLN-02/HRD-02–HRD-03`.
+- **Остаточный риск:** контракт ещё не подтверждён executable concurrency/crash tests; любое изменение ownership query или границы транзакции требует повторного invariant test.
+- **Текущая диспозиция:** `Open — mitigate`; точные состояния и транзакционные инварианты приняты в [`docs/design.md`](design.md), executable evidence остаётся у `IMP-03/HRD-02–HRD-03`.
 
 ### `R-DAT-01` Частичная обработка повреждает хорошее состояние
 
@@ -203,10 +203,10 @@
 - **Оценка:** `P=3`, `I=5`, `U=3`; Exposure `15`, Discovery `15`; приоритет `P1`.
 - **Ранний сигнал:** update принимает null без provenance, batch имеет одну общую транзакцию, status только boolean.
 - **Проверка:** full/incomplete fixtures `SPK-02`, identity/conflict transitions `SPK-03`; окончательно failure tests `HRD-01–HRD-02`.
-- **Митигация:** identity validation до commit, scoped atomic update, non-destructive merge policy, отсутствие platform не означает delete, отдельные состояния enrichment.
-- **Владелец:** `SPK-02–SPK-03`, затем `HRD-01–HRD-02`.
+- **Митигация:** identity validation до commit, scoped atomic update, non-destructive merge policy, отсутствие platform не означает delete; каждый fetch имеет outcome/hash/provenance, отзывы и их observations immutable, а review/summary jobs отделены от core success.
+- **Владелец:** `SPK-02–SPK-03/PLN-02`, затем `IMP-02–IMP-04/HRD-01–HRD-02`.
 - **Остаточный риск:** новое семантически неверное, но формально валидное значение может пройти schema validation.
-- **Текущая диспозиция:** `Open — mitigate`; входные и identity transitions определены, executable destructive-update tests остаются у `HRD-01–HRD-02`.
+- **Текущая диспозиция:** `Open — mitigate`; non-destructive transaction и review provenance contract принят в [`docs/design.md`](design.md), executable destructive-update tests остаются у `HRD-01–HRD-02`.
 
 ### `R-SIM-01` Похожие игры формально работают, но нерелевантны
 
@@ -214,11 +214,11 @@
 - **Проверяемый риск:** доступные поля недостаточны для осмысленной похожести или алгоритм возвращает self-match, внешние записи и случайные результаты.
 - **Оценка после `SPK-02`/`RSK-02`:** `P=3`, `I=4`, `U=2`; Exposure `12`, Discovery `8`; приоритет `P2`. Доступны title, description, developer, platform и genre; оставшийся выбор метода локализован в design/eval и не требует нового внешнего spike.
 - **Ранний сигнал:** у страниц нет жанров/признаков, очевидные пары не сближаются, результат меняется без изменения данных.
-- **Проверка:** доступные признаки в `SPK-02`; метод, golden set и threshold в `PLN-02/IMP-06` до финальной оценки.
-- **Митигация:** простой объяснимый baseline на реально доступных признаках, жёсткие инварианты, ручной golden set.
-- **Владелец:** `SPK-02`, затем `PLN-02/IMP-06`.
+- **Проверка:** доступные признаки в `SPK-02`; policy `1.0.0`, weights, eligibility, threshold и tie-break в `PLN-02`; golden set и executable invariants — `IMP-06`.
+- **Митигация:** локальный объяснимый score по genre/platform/developer, eligibility с общим genre или тем же developer, threshold `0.15`, deterministic tie-break, hard self/duplicate/external exclusions и замороженный golden set.
+- **Владелец:** `SPK-02/PLN-02`, затем `IMP-06`.
 - **Остаточный риск:** субъективность релевантности на малом наборе.
-- **Текущая диспозиция:** `Open — mitigate`; решение `Proceed to design with constraint`: простой объяснимый baseline только на сохранённых признаках и заранее замороженный relevance golden set в `PLN-02/IMP-06`.
+- **Текущая диспозиция:** `Open — mitigate`; policy `1.0.0` принята в [`docs/design.md`](design.md) без нового внешнего сервиса; субъективную релевантность ещё должен подтвердить frozen golden set в `IMP-06`.
 
 ## 6. Риски доказуемости, поставки и безопасности
 
@@ -229,10 +229,10 @@
 - **Оценка после `SPK-06`:** `P=2`, `I=5`, `U=2`; Exposure `10`, Discovery `10`; приоритет `P1`. Persistent state сохранил counters/timestamp/run ID реального cron-события; полный application outcome и retention ещё не реализованы.
 - **Ранний сигнал:** доступны только console logs без времени/run ID, hosting скрывает историю, UI показывает локально вычисленный статус.
 - **Проверка:** capability/probe в `SPK-06`; operational contract в `HRD-05/PUB-02`.
-- **Митигация:** persistent run records или доступные structured events с timestamps, counters и correlation IDs.
+- **Митигация:** `processing_run`, `core_attempt`, review/summary jobs и неизменяемые после terminal outcome AI attempts хранят timestamps, outcomes, counters/errors и корреляцию в PostgreSQL; bounded structured logs дополняют, но не заменяют состояние.
 - **Владелец:** `SPK-06`, затем `HRD-05/PUB-02`.
 - **Остаточный риск:** один capability event не доказывает два последовательных application windows по `AC-RUN-01`; raw HTTP дал несколько восстановившихся network resets; production retention/monitoring ещё не выбраны.
-- **Текущая диспозиция:** `Open — mitigate`; `SPK-06: Verified — Proceed with limitation`, следующие владельцы — `HRD-05/PUB-02`.
+- **Текущая диспозиция:** `Open — mitigate`; persistent operational contract принят в [`docs/design.md`](design.md), а два последовательных application windows, retention и публичная диагностика остаются у `HRD-05/PUB-02`.
 
 ### `R-TST-01` Проверки нестабильны из-за живых внешних сервисов
 

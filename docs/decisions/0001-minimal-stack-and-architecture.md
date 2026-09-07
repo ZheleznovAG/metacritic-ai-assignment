@@ -7,7 +7,7 @@
 
 ## Контекст
 
-Сервис должен раз в час получать до 20 игр, безопасно обновлять накопленное состояние, отдельно и асинхронно обогащать отзывы через бесплатный Groq API и показывать публичный read-only web UI. Подтверждённая среда — одна VDS Ubuntu 24.04 с 2 CPU, 4 GB RAM, 80 GB persistent storage, `systemd` и публичным ingress. Docker Engine на VDS пока не проверен. Денежный бюджет не задан; новые платные зависимости запрещены.
+Сервис должен раз в час получать до 20 игр, безопасно обновлять накопленное состояние, отдельно и асинхронно скачивать отзывы и создавать по ним резюме через бесплатный Groq API, а затем показывать публичный read-only web UI. Подтверждённая среда — одна VDS Ubuntu 24.04 с 2 CPU, 4 GB RAM, 80 GB persistent storage, `systemd` и публичным ingress. Docker Engine на VDS пока не проверен. Денежный бюджет не задан; новые платные зависимости запрещены.
 
 Критические ограничения `G2`: повтор и пересечение запусков не должны дублировать работу; AI-квота требует persistent queue/cache; внешний HTML и AI должны быть заменяемыми адаптерами; production нужны UTC, supervision, TLS, диагностируемые run records и воспроизводимые offline tests. Комплект сдачи также должен воспроизводиться без совпадения незафиксированных host packages.
 
@@ -18,10 +18,11 @@
 ```text
 Docker Compose on Ubuntu VDS
 
-Internet -> Caddy -> web (Gunicorn/Django) ----+
-Metacritic <- scheduler (same application image) +--> PostgreSQL -> named volume
-Groq <------ worker (same application image) ----+       |
-                                                        +--> run/job records
+Internet -> Caddy -> web (Gunicorn/Django) -> PostgreSQL
+scheduler (same application image) -> Metacritic -> PostgreSQL
+worker (same application image) -> Metacritic -> PostgreSQL (reviews)
+worker (same application image) -> Groq -> PostgreSQL (attempts/summaries)
+PostgreSQL -> named volume
 All containers -> bounded structured stdout/stderr logs
 ```
 
@@ -47,11 +48,11 @@ All containers -> bounded structured stdout/stderr logs
 ### Границы процессов
 
 - Web container выполняет только read-only presentation queries и health/readiness checks; он не запускает ingestion или AI по HTTP в Must-контуре.
-- Scheduler container ожидает границу UTC-часа, атомарно регистрирует slot/run, получает единственное владение дневной партией, сохраняет валидные игровые данные и ставит изменившиеся audience inputs в persistent AI queue. После restart он сверяется с DB, а не с памятью процесса.
-- AI worker независимо забирает ограниченное число jobs, применяет fingerprint/cache, bounded retry/backoff и сохраняет только канонически валидный результат либо диагностируемое состояние ошибки/задержки.
-- PostgreSQL — единственный источник истины для game identity, progress, leases, AI jobs и run records. Container logs — диагностический вывод, а не состояние процесса.
+- Scheduler container ожидает границу UTC-часа, атомарно регистрирует slot/run, получает единственное владение дневной партией, сохраняет валидные игровые данные и ставит enrichment jobs. После restart он сверяется с DB, а не с памятью процесса.
+- Enrichment worker независимо забирает сначала jobs получения отзывов, затем jobs суммаризации, применяет fingerprint/cache и bounded retry/backoff. Он сохраняет все фактически скачанные отзывы в исходном языке, точный ограниченный корпус модели, метаданные каждой AI-попытки и только канонически валидный результат либо диагностируемое состояние ошибки/задержки.
+- PostgreSQL — единственный источник истины для game identity, progress, leases, скачанных отзывов, точного AI input, summary jobs/attempts и run records. Container logs — диагностический вывод, а не состояние процесса.
 
-Точные таблицы, транзакционные границы, состояния и Python interfaces относятся к `PLN-02`; этот ADR фиксирует только компоненты и ответственность.
+Точные таблицы, транзакционные границы, состояния и Python interfaces зафиксированы в [`docs/design.md`](../design.md); этот ADR фиксирует только компоненты и ответственность.
 
 ## Рассмотренные альтернативы
 
@@ -75,7 +76,7 @@ All containers -> bounded structured stdout/stderr logs
 - Caddy с публично доверенным TLS требует hostname, DNS на VDS и внешние порты 80/443. Если они не предоставлены к `PUB-01`, задача помечается `Blocked / Ask`, `needed-by: G6`.
 - PostgreSQL и Caddy state размещаются в явно именованных volumes; release/recreate не удаляет их. Команды с удалением volumes не входят в обычный deploy, а backup/restore должен быть проверен до release.
 - До `G6` обязательны host-reboot check, две последовательные application schedule windows и внешний HTTPS smoke. До них выбранная схема является решением, а не доказанным production deployment.
-- Compose не гарантирует capacity: initial cardinality ограничена двумя sync Gunicorn workers, одним scheduler и AI concurrency `1`; memory/CPU/healthchecks измеряются на 4 GB VDS в `IMP-01/PUB-01`. При давлении сначала уменьшаются concurrency и batch; новый broker/service добавляется только после evidence.
+- Compose не гарантирует capacity: initial cardinality ограничена двумя sync Gunicorn workers, одним scheduler и одним последовательным enrichment worker; memory/CPU/healthchecks измеряются на 4 GB VDS в `IMP-01/PUB-01`. При давлении сначала уменьшаются concurrency и batch; новый broker/service добавляется только после evidence.
 
 ## Источники решения
 

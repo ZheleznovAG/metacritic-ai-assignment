@@ -10,6 +10,7 @@ This repository is currently defining its implementation baseline; it does not y
 - `intake.md` captures the assignment baseline.
 - `docs/requirements/` contains context, requirements, assumptions, acceptance criteria, and gate reviews.
 - `docs/decisions/` contains accepted architecture decision records.
+- `docs/design.md` defines accepted internal contracts, PostgreSQL data ownership, and processing invariants.
 - `docs/risks.md` is the prioritized risk register.
 - `research/methodology/` preserves prompts and exploration; it is evidence, not a requirements source.
 
