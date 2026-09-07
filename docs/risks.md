@@ -49,7 +49,7 @@
 | 2 | `SPK-04` | `R-TIM-01`, `R-TIM-02` | Высокое влияние, но проверяется без сети на уже зафиксированных допущениях | `RSK-01` | Verified — `Proceed with limitation` |
 | 2 | `SPK-06` | `R-DEP-01`, `R-DEP-02`, `R-OPS-01` | Публичная ссылка и реальный scheduler являются Must и опасны при поздней проверке | Выбрана существующая Ubuntu VDS | Verified — `Proceed with limitation` |
 | 3 | `SPK-03` | `R-ID-01`, часть `R-DAT-01` | Правило identity зависит от фактических URL и платформенного контракта | `SPK-02: Proceed*` | Verified — `Proceed with limitation` |
-| 3 | `SPK-05` | `R-AI-01`, `R-AI-02` | Eval требует репрезентативных отзывов или согласованного substitute | `SPK-02` либо допустимые samples | Ready — free Grok and separated samples available |
+| 3 | `SPK-05` | `R-AI-01`, `R-AI-02` | Eval требует репрезентативных отзывов или согласованного substitute | `SPK-02` либо допустимые samples | Verified — `Proceed with limitation`; `9/9` structural, `96/98` rubric |
 | После `G6` | `BON-11` | `R-BON-YT-01`, `R-BON-YT-02` | Bonus не должен отнимать время у обязательного контура | Bonus 1 выбран | Deferred bonus |
 
 `Proceed*` означает также `Proceed with limitation`, если ограничение не делает связанный Must недоказуемым.
@@ -110,26 +110,26 @@
 
 - **Связи:** `AI-01–AI-03`; `ASM-16–ASM-19`.
 - **Проверяемый риск:** модель смешивает критиков и пользователей, выдумывает тезисы, преувеличивает единичное мнение, нарушает формат или следует инструкциям из отзывов.
-- **Оценка:** `P=4`, `I=5`, `U=5`; Exposure `20`, Discovery `25`; приоритет `P0`.
+- **Оценка после `SPK-05`:** `P=2`, `I=5`, `U=2`; Exposure `10`, Discovery `10`; приоритет `P1`. Замороженный baseline прошёл `96/98` без blocker, но модель принята только в консервативном extractive режиме.
 - **Ранний сигнал:** ошибки на контрастных, sparse или инструктивных samples; нестабильный формат между повторами.
 - **Проверка:** `SPK-05` с замороженным eval-набором, рубрикой, блокирующими ошибками и baseline.
-- **Митигация:** разделённые входы, structured output, validation, bounded context, prompt hardening, честное insufficient-data состояние.
+- **Митигация:** разделённые исходно-языковые входы, один полностью подтверждающий support на тезис, structured output, локальная canonical validation, deterministic five-item cap, bounded context, prompt hardening и честное insufficient-data состояние.
 - **Владелец:** `SPK-05`, затем `IMP-04/HRD-04`.
-- **Остаточный риск:** вероятностные редкие ошибки сохраняются и требуют регрессии/наблюдения.
-- **Текущая диспозиция:** `Open — investigate`.
+- **Остаточный риск:** модель не доказана для надёжного cross-review синтеза, иногда пропускает вторичные темы или добавляет подтверждённый шум; другие и смешанные языки требуют regression fixtures; provider fingerprints различаются.
+- **Текущая диспозиция:** `Open — mitigate`; `SPK-05: Verified — Proceed with limitation`, evidence: [`research/feasibility/ai-summary.md`](../research/feasibility/ai-summary.md).
 
 ### `R-AI-02` AI-провайдер непригоден по доступу, цене или задержке
 
 - **Связи:** `AI-01–AI-03`, `RUN-01`; `CTX-03`, `CTX-06`, `ASM-19`.
 - **Проверяемый риск:** нет credentials, лимит/стоимость контекста неприемлемы для 20 игр в час, latency превышает окно, rate limit делает обработку нестабильной.
-- **Оценка:** `P=3`, `I=4`, `U=5`; Exposure `12`, Discovery `20`; приоритет `P0`.
+- **Оценка после `SPK-05`:** `P=5`, `I=4`, `U=1`; Exposure `20`, Discovery `4`; приоритет `P1` как известное ограничение. Доступ и latency подтверждены, но опубликованный Free TPD не покрывает теоретический cold-path максимум.
 - **Ранний сигнал:** отсутствующий доступ, высокая оценка токенов, частые 429, timeout на небольшом sample.
 - **Проверка:** измерения количества входа, latency, rate limits и стоимости в `SPK-05` без запуска полного production batch.
-- **Кандидат после ответа владельца:** бесплатная версия Grok; точный model/interface/version, возможность программного runtime-доступа и квоты пока не подтверждены.
-- **Митигация:** детерминированная выборка, кэш/fingerprint, ограничение concurrency, provider abstraction, отдельный retry enrichment.
-- **Владелец:** `SPK-05`.
-- **Остаточный риск:** тарифы, квоты и доступность меняются внешне.
-- **Текущая диспозиция:** `Open — investigate`.
+- **Подтверждённый кандидат:** Groq Free Plan, `openai/gpt-oss-20b`, Chat Completions API. Финальный run: `9/9` responses, `11,687` total tokens, median `7.638s`, max `12.134s`; опубликованы `30 RPM`, `1,000 RPD`, `8,000 TPM`, `200,000 TPD`.
+- **Митигация:** детерминированная выборка и input fingerprint/cache, persistent async queue, bounded retry/backoff, ограничение concurrency, provider abstraction, диагностируемый delayed/capacity state и запрет paid fallback.
+- **Владелец:** `SPK-05`, затем `PLN-01/IMP-04/HRD-04`.
+- **Остаточный риск:** при наблюдаемом среднем размере Free TPD покрывает примерно 154 audience summaries/77 games в день против теоретических 960 summaries; тарифы, квоты, latency и доступность меняются внешне.
+- **Текущая диспозиция:** `Open — mitigate`; решение `Proceed with limitation` допустимо только с кэшем/очередью, а устойчивый объём выше capacity требует `Replan` до заявления production throughput.
 
 ### `R-DEP-01` Публичная среда не поддерживает обязательный runtime
 
@@ -363,7 +363,7 @@
 | Зависимость | Риски | Владелец проверки | Покрытие |
 |---|---|---|---|
 | Metacritic | `R-EXT-01–R-EXT-04` | `SPK-01–SPK-02` | `SPK-02: Proceed with limitation`; финальный live contract остаётся |
-| Runtime LLM | `R-AI-01–R-AI-02` | `SPK-05` | Полное для discovery baseline |
+| Runtime LLM | `R-AI-01–R-AI-02` | `SPK-05`, затем `IMP-04/HRD-04` | `SPK-05: Proceed with limitation`; качество пройдено, Free TPD и extractive policy назначены на митигацию |
 | Публичный hosting/storage/scheduler | `R-DEP-01–R-DEP-02`, `R-OPS-01` | `SPK-06`, затем `HRD-05/PUB-02/REL-04` | `SPK-06: Proceed with limitation`; capability подтверждена, production checks назначены |
 | Git repository / AI archive | `R-DEP-02`, `R-DEL-01`, `R-REP-01` | непрерывно, `REL-01–REL-04` | Покрыто задачами поставки |
 | YouTube | `R-BON-YT-01–R-BON-YT-02` | `BON-11` | Изолировано до выбора Bonus 1 |
@@ -377,7 +377,7 @@
 | Рестарт и пересечение безопасны | `R-TIM-02` | `HRD-02–HRD-03`, deployment restart | Модель проверена; нужен failure/concurrency evidence |
 | Игра и платформы не дублируются | `R-ID-01` | `IMP-01–IMP-02`, `HRD-02–HRD-03` после `SPK-03` | ID-first contract и коллизии проверены; нужны executable unique/concurrency tests |
 | Частичный ответ не портит данные | `R-EXT-04`, `R-DAT-01` | `SPK-02`, позднее `HRD-01–HRD-02` | Есть ранняя и финальная проверка |
-| AI grounded и разделяет аудитории | `R-AI-01` | `SPK-05` | Есть eval gate |
+| AI grounded и разделяет аудитории | `R-AI-01` | `IMP-04/HRD-04` после baseline `SPK-05` | `9/9` structural, rubric `96/98`, `0` blockers; нужны executable provider-fake/regression tests |
 | Similarity не формальна | `R-SIM-01` | `SPK-02`, затем `PLN-02/IMP-06` | Есть data и quality gates |
 | UI работает единым сценарием | `R-UI-01` | `IMP-07/PUB-03` | Не требует отдельного spike |
 | Сдача воспроизводима и безопасна | `R-SEC-01`, `R-DEL-01`, `R-REP-01` | implementation/release tasks | Есть непрерывная митигация |
@@ -392,4 +392,4 @@
 - [x] Bonus-риски не блокируют Must.
 - [x] Ни один spike не был выполнен в рамках `RSK-01`.
 
-**Итог:** `RSK-01`, `SPK-01–SPK-04` и `SPK-06` завершены. `SPK-06` приняла существующую Ubuntu VDS с решением `Proceed with limitation`; public ingress, process persistence и реальный cron event подтверждены. Следующая задача — `SPK-05` (`Ready`), затем `RSK-02`.
+**Итог:** `RSK-01` и `SPK-01–SPK-06` завершены решениями `Proceed with limitation`. `SPK-05` подтвердил Groq Free Plan / `openai/gpt-oss-20b`: `9/9` structural cases, rubric `96/98`, `0` blockers; Free TPD, extractive policy и variable latency остаются митигациями. Следующая задача — `RSK-02`, итоговая фиксация рисков и review ворот `G2`.

@@ -46,14 +46,14 @@
 
 | Поле | Значение |
 |---|---|
-| Версия плана | Discovery baseline 0.9 |
+| Версия плана | Discovery baseline 0.12 |
 | Дата | 2026-09-07 |
 | Исходник | `assignment.md`, SHA-256 `C8987F684CFDF693AB188FA2AC5875044C93EBF486B708C36FDF7E7748C2125C` |
 | Методология | `methodology.md` |
 | Завершённая стадия | 1 — Формализация |
-| Активная стадия | 2 — снятие критических неизвестных; `SPK-06` проверила выбранную VDS с решением `Proceed with limitation`; следующая задача `SPK-05` имеет статус `Ready` |
+| Активная стадия | 2 — все Must-spikes завершены; следующая задача `RSK-02` готова к итоговой фиксации рисков и проверке `G2` |
 | Реализация | Не начата |
-| Текущие блокеры | Нет; `G2` ещё требует `SPK-05`, затем итоговую фиксацию `RSK-02` |
+| Текущие блокеры | Нет; известные ограничения Groq Free TPD, extractive summary и VDS оформлены с владельцами дальнейших проверок |
 
 ### Карта стадий
 
@@ -117,6 +117,27 @@
 - **Затронуты:** `CTX-03`, `CTX-05–CTX-06`; `RUN-01`, `DEL-02`, `NFR-01`, `NFR-05–NFR-06`; `R-DEP-01–R-DEP-02`, `R-OPS-01`; `SPK-06`.
 - **Порядок:** `SPK-06` завершена; следующая задача стадии — `SPK-05` (`Ready`), после неё выполняется итоговая фиксация рисков `RSK-02`.
 - **Повторные проверки:** на `PLN-01` выбрать production supervision/TLS и явно задать business timezone UTC; до `G6` проверить host reboot и два последовательных application schedule windows; transient network resets покрыть retry/monitoring и повторить внешний smoke в `REL-04`.
+
+### Изменение baseline 0.10
+
+- **Новый факт:** 2026-09-07 владелец уточнил, что допустим только бесплатный API tier. Бесплатный consumer Grok не даёт бесплатный xAI API, поэтому кандидат заменён на Groq Free Plan с multilingual-моделью `openai/gpt-oss-20b`, strict JSON Schema и опубликованными free limits.
+- **Затронуты:** `CTX-03`, `CTX-06`; `AI-01–AI-03`; `R-AI-01–R-AI-02`; `SPK-05`.
+- **Порядок:** frozen eval, runner и rubric готовятся независимо; live baseline имеет статус `Blocked / Ask` до размещения владельцем `GROQ_API_KEY` в локальном `.env`, `needed-by: G2`.
+- **Повторные проверки:** перед inference повторно проверить доступность модели и Free Plan limits; сохранить фактические model, usage, rate-limit headers и latency без ключа/provider request IDs.
+
+### Изменение baseline 0.11
+
+- **Новый факт:** владелец разместил `GROQ_API_KEY` в локальном `.env` и потребовал выполнять `SPK-05` локально. Secret-presence проверена без вывода значения; в workspace и стандартных Windows locations нет Python runtime/`.venv`, а команды `python/py` ведут только на неисполняемые WindowsApps aliases.
+- **Затронуты:** `CTX-06`; `R-AI-02`; `SPK-05`.
+- **Порядок:** credential Ask закрыт; `SPK-05` остаётся `Blocked / Ask` до разрешения установить локальный Python 3.12 и создать `.venv`, `needed-by: G2`. VDS для этой задачи не используется.
+- **Повторные проверки:** после установки выполнить локально syntax check, access check, dry-run, frozen live run и rubric scoring; секрет не печатать и не переносить из `.env`.
+
+### Изменение baseline 0.12
+
+- **Новый факт:** локально обнаружен и использован Python 3.14.7 в ignored `.venv`; владелец уточнил, что исходные поля/отзывы не переводятся и AI-резюме сохраняет язык входного корпуса. Финальный Groq Free Plan baseline `openai/gpt-oss-20b` прошёл `9/9` structural cases и frozen rubric `96/98` (`97.96%`) без блокирующих ошибок; решение — `Proceed with limitation`.
+- **Затронуты:** `CTX-03`, `CTX-06`, `CTX-10`; `AI-01–AI-03`; `ASM-14`, `ASM-16–ASM-19`; `R-AI-01–R-AI-02`; `SPK-05`.
+- **Порядок:** `SPK-05` завершена; все Must-spikes имеют решения, следующая задача — `RSK-02` (`Ready`) для итогового risk/gate review, без начала стадии 3.
+- **Повторные проверки:** в `IMP-04/HRD-04` реализовать audience isolation, source-language input, input fingerprint/cache, async retry queue, canonical validation и deterministic five-item cap; до production load повторно проверить Groq model/limits/data controls. При устойчивом объёме более примерно 77 изменившихся игр/день переоценить batching/model/provider, поскольку наблюдаемый размер не помещается в Free TPD.
 
 ---
 
@@ -313,7 +334,7 @@
 - **Зависимости:** `SPK-02`, доступ к выбранной модели либо обоснованный локальный substitute для spike.
 - **Оценка / timebox:** `M`, до 1 рабочего дня без учёта выдачи доступа.
 - **Критерий выхода:** принято решение о пригодности и известны ограничения AI-контура.
-- **Статус:** `Ready` — выбран бесплатный Grok, а `SPK-02` сохранил раздельные critic/user samples; точный model/interface contract определяется в этом spike.
+- **Статус:** `Verified` — решение `Proceed with limitation`; frozen run: `9/9` structural passes, rubric `96/98` (`97.96%`), `0` blockers, returned model `openai/gpt-oss-20b`; evidence: [`evals/reviews/`](evals/reviews/) и [`ai-summary.md`](research/feasibility/ai-summary.md).
 
 ### `SPK-06` Проверить публичную среду
 
@@ -347,7 +368,7 @@
 - [x] Есть подтверждённый путь получения обязательных данных Metacritic.
 - [x] Правило идентичности игры и платформенных версий проверено.
 - [x] Календарные переходы и восстановление однозначно описаны.
-- [ ] AI-суммаризация имеет baseline, рубрику и проходной порог.
+- [x] AI-суммаризация имеет baseline, рубрику и проходной порог.
 - [x] Публичная среда способна хранить состояние и выполнять фоновую работу.
 - [ ] У каждого критического риска есть решение и остаточный риск.
 - [ ] Bonus-риски не блокируют Must.
@@ -835,4 +856,4 @@
 
 ### Ближайшее действие workflow
 
-Следующая задача — `SPK-05` (`Ready`): проверить quality/cost/latency contract бесплатной версии Grok на сохранённых раздельных critic/user samples. После неё выполнить `RSK-02`; до этого `G2` остаётся `In progress`.
+Текущая задача — `RSK-02` (`Ready`): свести решения `SPK-01–SPK-06`, остаточные риски и ограничения в итоговый review ворот `G2`. Стадию 3 не начинать до отдельного цикла и прохождения `G2`.
