@@ -46,14 +46,14 @@
 
 | Поле | Значение |
 |---|---|
-| Версия плана | Discovery baseline 0.7 |
-| Дата | 2026-09-06 |
+| Версия плана | Discovery baseline 0.8 |
+| Дата | 2026-09-07 |
 | Исходник | `assignment.md`, SHA-256 `C8987F684CFDF693AB188FA2AC5875044C93EBF486B708C36FDF7E7748C2125C` |
 | Методология | `methodology.md` |
 | Завершённая стадия | 1 — Формализация |
-| Активная стадия | 2 — снятие критических неизвестных; identity игры и платформ подтверждена с ограничениями, следующая задача `SPK-05` |
+| Активная стадия | 2 — снятие критических неизвестных; для `SPK-06` выбрана VDS и подготовлен probe contract, выполнение ждёт SSH-конфигурацию; `SPK-05` остаётся независимой `Ready` |
 | Реализация | Не начата |
-| Текущие блокеры | Для `SPK-06` не заданы budget/accounts/hosting candidate (`Ask`, `needed-by: G2`). `SPK-05` не заблокирован: выбран бесплатный Grok и доступны samples, но model/interface contract и quality baseline ещё должны быть зафиксированы spike |
+| Текущие блокеры | `SPK-06: Blocked / Ask`, `needed-by: G2` — VDS-кандидат задан, но локальный `.env` ещё не содержит SSH host/user/key path. `SPK-05` не заблокирован: выбран бесплатный Grok и доступны samples |
 
 ### Карта стадий
 
@@ -103,6 +103,13 @@
 - **Затронуты:** `SEL-01–SEL-03`, `DATA-01`, `DATA-03`; `ASM-10–ASM-13`; `R-ID-01`, `R-TIM-01`, `R-DAT-01`; модель `SPK-04`.
 - **Порядок:** `SPK-03` завершена с `Proceed with limitation`; следующая независимая задача — `SPK-05`; `SPK-06` остаётся `Blocked / Ask`, `needed-by: G2`.
 - **Повторные проверки:** реализовать ID-first resolution, alias history, game/platform unique constraints и conflict branches до business-field update; disappearance/change недокументированных SSR IDs считать заметной ошибкой, а не поводом для merge по title/slug.
+
+### Изменение baseline 0.8
+
+- **Новый факт:** 2026-09-07 владелец выбрал уже доступную VDS: Ubuntu 24.04, 2 CPU cores, 4 GB RAM, 80 GB storage, 32 TB traffic; доступ будет передан через локальный `.env` и отдельный SSH key file.
+- **Затронуты:** `CTX-03`, `CTX-05–CTX-06`; `RUN-01`, `DEL-02`, `NFR-01`, `NFR-05–NFR-06`; `R-DEP-01–R-DEP-02`, `R-OPS-01`; `SPK-06`.
+- **Порядок:** выбор hosting candidate больше не блокирует `SPK-06`, но фактический probe остаётся `Blocked / Ask` до заполнения SSH-конфигурации, `needed-by: G2`; `SPK-05` остаётся независимой задачей `Ready`.
+- **Повторные проверки:** read-only SSH preflight, внешний HTTP check, process restart с сохранением state и реальное server-side hourly event; секреты, host и user не публиковать.
 
 ---
 
@@ -313,7 +320,7 @@
 - **Зависимости:** `FOR-01`, `RSK-01`.
 - **Оценка / timebox:** `M`, до 1 рабочего дня без ожидания расписания и provisioning.
 - **Критерий выхода:** площадка принята, отклонена или принята с документированным ограничением.
-- **Статус:** `Blocked` / `Ask` — не заданы budget/accounts или одобренная бесплатная hosting candidate. `needed-by: G2`.
+- **Статус:** `Blocked` / `Ask` — выбрана существующая VDS (Ubuntu 24.04, 2 cores, 4 GB RAM, 80 GB storage, 32 TB traffic) и подготовлен [`deployment.md`](research/feasibility/deployment.md); для фактического probe нужен заполненный локальный `.env` с SSH host/user/key path. `needed-by: G2`.
 
 ### `RSK-02` Зафиксировать выводы и остаточные риски
 
@@ -823,6 +830,6 @@
 
 Human input, `needed-by: G2`:
 
-Какие budget, существующие hosting accounts или заранее одобренная бесплатная площадка доступны для `SPK-06` с persistent state и почасовым scheduler?
+Заполните локальный `.env` значениями `SPK06_SSH_HOST`, `SPK06_SSH_PORT`, `SPK06_SSH_USER`, `SPK06_SSH_KEY_PATH` и сообщите, когда доступ готов; private key храните отдельным файлом, не в Git. Это необходимо для `SPK-06`, `needed-by: G2`.
 
-До ответа работа продолжается только по независимой ветке: ближайшая задача — `SPK-05` (`Ready`). После неё независимых задач стадии 2 не останется.
+До ответа работа продолжается только по независимой ветке `SPK-05` (`Ready`). Если она завершится раньше выдачи SSH-доступа, работа остановится у `G2`.

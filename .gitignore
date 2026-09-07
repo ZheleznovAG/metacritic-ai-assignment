@@ -1,0 +1,5 @@
+# Local credentials and operator-only configuration
+.env
+.env.*
+!.env.example
+/.secrets/
