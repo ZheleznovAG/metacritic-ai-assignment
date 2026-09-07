@@ -2,89 +2,81 @@
 
 ## Текущий статус
 
-**Статус:** `Blocked / Ask`, `needed-by: G2`.
+**Статус:** `Verified` — решение `Proceed with limitation`.
 
-**Полученный ответ владельца, 2026-09-07:** для проверки и последующего размещения доступна существующая VDS со следующими заявленными характеристиками.
+**Кандидат:** существующая VDS владельца. SSH-конфигурация была передана только через игнорируемый локальный `.env`; private key остался отдельным файлом. Host, username, key material и fingerprint не входят в evidence.
 
-| Параметр | Значение | Статус evidence |
-|---|---:|---|
-| ОС | Ubuntu 24.04 | Owner-provided; remote preflight pending |
-| CPU | 2 cores | Owner-provided; remote preflight pending |
-| RAM | 4 GB | Owner-provided; remote preflight pending |
-| Storage | 80 GB | Owner-provided; free space/filesystem pending |
-| Traffic | 32 TB | Owner-provided; network policy pending |
-| Доступность | VDS уже доступна владельцу | Owner-provided; SSH/public reachability pending |
+## Read-only preflight
 
-Hosting candidate и отсутствие необходимости выбирать новую бесплатную платформу подтверждены. Ресурсы не выглядят ограничением для минимального probe, однако площадка ещё не принята: без SSH preflight нельзя доказать persistent state, scheduler, public ingress, outbound access, secrets handling и диагностику.
+Проверка выполнена 2026-09-07 до изменений на VDS.
 
-## Текущий Ask
-
-Владелец предоставит SSH host/IP, username и private key через локальную конфигурацию. Для продолжения должны быть заполнены `SPK06_SSH_HOST`, `SPK06_SSH_PORT`, `SPK06_SSH_USER` и `SPK06_SSH_KEY_PATH` в корневом `.env`.
-
-Private key хранится отдельным файлом по `SPK06_SSH_KEY_PATH`, предпочтительно в игнорируемом каталоге `.secrets/`; в `.env` находится только путь. Содержимое ключа, `.env`, IP/username и несокращённые SSH-логи не коммитятся и не копируются в публичный evidence.
-
-Шаблон: [`.env.example`](../../.env.example). `.env` и `.secrets/` исключены из Git корневым [`.gitignore`](../../.gitignore).
-
-## Граница probe
-
-Spike должен проверить способность выбранной VDS, а не преждевременно выбрать production stack. Минимальный probe использует только возможности базовой ОС либо уже установленные инструменты и создаёт изолированные ресурсы с префиксом `metacritic-ai-probe`.
-
-Probe обязан доказать:
-
-1. SSH-доступ и фактические OS/CPU/RAM/storage characteristics.
-2. Наличие поддерживаемого server-side scheduler с реальным часовым событием.
-3. Persistent state, которое сохраняет counter/timestamps после рестарта процесса probe.
-4. Публичный read-only HTTP endpoint без credentials в URL и ответе.
-5. Датированные server-side events и минимальную диагностику результата.
-6. Возможность хранить runtime secrets вне Git и публичного web root.
-7. Исходящий HTTPS-доступ, необходимый Metacritic и AI provider, без выполнения production scrape/AI batch в этом spike.
-
-## Последовательность после предоставления доступа
-
-### 1. Read-only preflight
-
-Сначала без установок и изменений проверить:
-
-- SSH host key и фактического пользователя;
-- `/etc/os-release`, architecture и kernel;
-- CPU/RAM, filesystem/free space и mount persistence;
-- наличие `systemd`, timer support, journal retention и time synchronization;
-- доступные непривилегированные ports, firewall/reverse-proxy state и внешний IP;
-- наличие базового runtime (`python3`/shell), `curl` и `flock` либо эквивалентов;
-- наличие `sudo` только как capability; не менять систему до фиксации точных targets.
-
-Секреты и полный environment не печатать. Команды и evidence должны исключать IP, username, host key fingerprints и посторонние процессы/файлы, не относящиеся к probe.
-
-### 2. Минимальное изменение
-
-Если preflight подходит, создать отдельного least-privilege runtime user либо изолированный каталог, persistent state file и две минимальные OS units:
-
-- oneshot job атомарно увеличивает counter и записывает UTC timestamp/run ID;
-- hourly timer инициирует job server-side и имеет явный next/last trigger;
-- read-only HTTP process отдаёт только sanitised probe state на согласованном публичном порту или через существующий reverse proxy.
-
-Точные unit names, paths, port и команды фиксируются после read-only preflight. Не устанавливать application stack, database или production dependencies в рамках spike без отдельного обоснования.
-
-### 3. Проверка
-
-| Check | Объективный oracle |
+| Capability | Фактический результат |
 |---|---|
-| External reachability | Локальная машина получает `2xx` по public URL без SSH/VDS session |
-| Server-side schedule | После реального часового trigger появились новый run ID и UTC timestamp; это не manual invocation |
-| Persistence | Counter/state до и после restart HTTP/job process совпадает и продолжает расти |
-| Diagnostics | Видны last trigger, last success/failure и связь события с run ID |
-| Secret boundary | Public response, repository diff и sanitised logs не содержат `.env`, key, host/user или tokens |
-| Resource headroom | Во время probe нет memory/storage exhaustion; фактические значения записаны без лишней host inventory |
+| ОС / architecture | Ubuntu 24.04, `x86_64` |
+| CPU | 2 logical CPUs |
+| RAM | 4,009,860 KiB, что соответствует заявленным 4 GB |
+| Root filesystem | `ext4`; 82,446,168 KiB всего, 75,788,200 KiB доступно, 5% занято |
+| Init / clock | `systemd` как PID 1; system state `running`; timezone `Europe/Amsterdam`; NTP synchronized |
+| Базовые инструменты | `systemctl`, `systemd-run`, `journalctl`, Python 3.12, `curl`, `flock` доступны |
+| Непривилегированный scheduler | `cron` установлен и активен; пользовательский `crontab` доступен |
+| User services | user systemd manager запущен, но linger выключен |
+| Privilege | non-interactive `sudo` недоступен |
+| Persistent path | home directory доступен на запись на persistent `ext4` filesystem |
+| Public ingress | непривилегированный TCP port `18080` был свободен и доступен извне после запуска probe |
+| Outbound HTTPS | запрос с идентифицируемым допустимым User-Agent к странице Metacritic из VDS получил HTTP `200` |
+| Provider traffic | заявленные владельцем 32 TB нельзя независимо подтвердить из guest OS; это не требовалось для capability probe |
 
-Реальный scheduled event нельзя заменять ручным запуском. Ожидание часового окна считается календарным ожиданием, а не сфокусированной оценкой задачи.
+Preflight подтвердил достаточный запас ресурсов и не обнаружил конфликта по target path, cron marker или порту. Существующие firewall, SSH, reverse-proxy rules, system packages и чужие процессы не изменялись.
 
-### 4. Recovery и scope
+## Реализованный probe
 
-- Перед изменением перечислить точные новые paths/units и проверить, что они не пересекаются с существующими сервисами.
-- Не изменять существующие firewall, SSH и reverse-proxy rules без отдельного обоснования и согласования конкретного действия.
-- Probe должен иметь точный rollback; удаление выполняется только для созданных им ресурсов.
-- Если endpoint оставляется как ранняя основа deploy, это явно фиксируется вместо заявления о rollback.
+Исходники probe сохранены в [`probes/spk06/`](probes/spk06/):
 
-## Критерий снятия Blocked
+- `probe_tick.py` под file lock атомарно обновляет persistent JSON, counter, scheduled counter, UTC timestamp и случайный run ID;
+- `probe_http.py` публикует только `/health` и sanitised `/state`;
+- `start_probe.sh` и `stop_probe.sh` управляют только процессом с проверенным PID/command line;
+- `install_user_probe.sh` добавляет один маркированный блок в существующий пользовательский crontab и откатывает его, если HTTP probe не стартует.
 
-`SPK-06` становится исполнимой после появления заполненного локального `.env` и доступного key file. Она станет `Verified` только после внешнего HTTP check, process-restart check и фактического server-side scheduled event. До этого решение о пригодности VDS не выдано.
+Runtime создан только в `~/.local/share/metacritic-ai-probe`. Использованы уже доступные Python и cron; пакеты не устанавливались. Активная конфигурация probe:
+
+```cron
+0 * * * * /usr/bin/python3 <probe-root>/probe_tick.py hourly >> <probe-root>/timer.log 2>&1
+@reboot <probe-root>/start_probe.sh >> <probe-root>/server.log 2>&1
+```
+
+Пути в фактическом crontab абсолютные; здесь home component заменён на `<probe-root>`, чтобы не публиковать username. HTTP слушает `0.0.0.0:18080`; публичный evidence использует `http://<redacted-host>:18080`, без credentials.
+
+## Проверка
+
+| UTC / этап | Объективный результат |
+|---|---|
+| 2026-09-07, install | Все пять переданных файлов совпали с локальными SHA-256; shell syntax и Python AST валидны; cron marker/hourly/reboot entries существуют ровно по одному |
+| 2026-09-07, local VDS check | `GET /health` вернул `200`; initial state: `counter=1`, `scheduled_counter=0`, `last_event_origin=manual` |
+| 2026-09-07, external check | Запрос с локальной машины без SSH получил `200` для `/health` и `/state`; неизвестный path получил `404` |
+| 2026-09-07, response boundary | Payload имеет только allowlisted operational fields; `Cache-Control: no-store` и `X-Content-Type-Options: nosniff` присутствуют |
+| 2026-09-07, process restart | HTTP-процесс получил новый PID; SHA-256 state file и counters не изменились; внешний `/state` остался доступен |
+| 2026-09-07, isolated self-test | 16 конкурентных tick-процессов дали точные `counter=16` и `scheduled_counter=8`; временный HTTP endpoint прочитал state, live state не изменился, временный каталог удалён |
+| 2026-09-07, resource/log check | HTTP RSS 20,732 KiB; весь probe 36 KiB; root filesystem сохранил 75,788,092 KiB свободного места; `server.log` и `timer.log` не содержали ошибок |
+| 2026-09-07, long external polling | Четыре единичных connection reset восстановились на следующих polls; процесс оставался жив, state не менялся, `server.log` не содержал exception markers |
+| 2026-09-07T06:00:01Z, scheduled event | Реальный cron trigger изменил state на `counter=2`, `scheduled_counter=1`, `origin=hourly`, `outcome=succeeded`; новый run ID присутствует; public и server-side state идентичны; state и zero-byte `timer.log` имеют одинаковый event timestamp |
+
+Process-restart oracle выполнен: до и после рестарта состояние оставалось `counter=1`, `scheduled_counter=0`, `origin=manual`. Host reboot не выполнялся: текущий SSH-пользователь не имеет non-interactive `sudo`; установленный `@reboot` является recovery-механизмом probe, но его проверка остаётся для production deployment.
+
+## Secret boundary и recovery
+
+- `.env`, key path/value, host, username и fingerprint не записывались в репозиторий или публичный response.
+- [`.gitignore`](../../.gitignore) исключает `.env`, `.env.*` и `/.secrets/`; [`.env.example`](../../.env.example) содержит только имена переменных.
+- На VDS probe не потребовал и не сохранил credentials; state JSON содержит только имя/schema probe, counters, outcome, UTC timestamp и случайный run ID.
+- Probe оставлен работающим как раннее доказательство публичной среды. Его rollback ограничен одним cron block между markers `BEGIN/END metacritic-ai-probe SPK-06`, проверенным PID и точным каталогом `~/.local/share/metacritic-ai-probe`.
+
+## Решение и ограничения
+
+**Решение:** `Proceed with limitation`. VDS подходит как среда для implementation baseline: подтверждены public ingress, persistent filesystem, process restart, пользовательский scheduler, датированное фоновое событие, диагностика, secret boundary и достаточный ресурсный запас.
+
+Ожидаемые ограничения решения:
+
+1. Probe использует user cron и `nohup`, потому что non-interactive `sudo` отсутствует, а systemd linger выключен. На `PLN-01` нужно выбрать production supervision/restart contract, явно применить business timezone UTC из `ASM-01` вместо системной зоны VDS и повторить host-reboot check до `G6`.
+2. Порт probe работает по HTTP без TLS и предназначен только для не чувствительного read-only state. Production URL требует отдельного ingress/TLS решения.
+3. Один фактический часовой trigger доказывает capability, но не удовлетворяет двухоконному `AC-RUN-01`; два последовательных окна и реальный application outcome проверяются в `PUB-02`.
+4. Финальная доступность service URL повторно проверяется в `REL-04`; наблюдавшиеся восстановившиеся resets во время длительного polling не нарушают не заданный для probe SLO, но подтверждают необходимость retry/health monitoring и повторного внешнего smoke перед сдачей.
+5. Доступ и contract бесплатной версии Grok проверяются отдельно в `SPK-05`.

@@ -47,7 +47,7 @@
 | 1 | `SPK-01` | `R-EXT-01`, `R-EXT-02` | Без допустимого и воспроизводимого доступа основной источник может сделать весь Must нереализуемым | `RSK-01` | Verified — `Proceed with limitation` after resolved `Ask` |
 | 2 | `SPK-02` | `R-EXT-03`, `R-EXT-04`, часть `R-SIM-01`, `R-TST-01` | Нужно подтвердить все поля и варианты страниц до модели данных и парсера | `SPK-01: Proceed*` | Verified — `Proceed with limitation` |
 | 2 | `SPK-04` | `R-TIM-01`, `R-TIM-02` | Высокое влияние, но проверяется без сети на уже зафиксированных допущениях | `RSK-01` | Verified — `Proceed with limitation` |
-| 2 | `SPK-06` | `R-DEP-01`, `R-DEP-02`, `R-OPS-01` | Публичная ссылка и реальный scheduler являются Must и опасны при поздней проверке | Выбрана существующая Ubuntu VDS | Blocked — `Ask` for SSH configuration, needed by `G2` |
+| 2 | `SPK-06` | `R-DEP-01`, `R-DEP-02`, `R-OPS-01` | Публичная ссылка и реальный scheduler являются Must и опасны при поздней проверке | Выбрана существующая Ubuntu VDS | Verified — `Proceed with limitation` |
 | 3 | `SPK-03` | `R-ID-01`, часть `R-DAT-01` | Правило identity зависит от фактических URL и платформенного контракта | `SPK-02: Proceed*` | Verified — `Proceed with limitation` |
 | 3 | `SPK-05` | `R-AI-01`, `R-AI-02` | Eval требует репрезентативных отзывов или согласованного substitute | `SPK-02` либо допустимые samples | Ready — free Grok and separated samples available |
 | После `G6` | `BON-11` | `R-BON-YT-01`, `R-BON-YT-02` | Bonus не должен отнимать время у обязательного контура | Bonus 1 выбран | Deferred bonus |
@@ -60,14 +60,14 @@
 
 - **Связи:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01–DATA-03`, `AI-01–AI-03`; `ASM-06–ASM-07`.
 - **Проверяемый риск:** обе требуемые страницы или страницы игр блокируют автоматический доступ локально либо из публичной среды, требуют невоспроизводимой браузерной сессии или возвращают непригодный контент.
-- **Оценка после `SPK-01`:** `P=2`, `I=5`, `U=3`; Exposure `10`, Discovery `15`; приоритет `P1`. Локальная техническая доступность подтверждена, целевая среда неизвестна.
+- **Оценка после `SPK-01`/`SPK-06`:** `P=2`, `I=5`, `U=3`; Exposure `10`, Discovery `15`; приоритет `P1`. Локальная доступность и HTTP `200` для репрезентативной страницы из VDS подтверждены; полный live contract и частота ещё не проверены.
 - **Ранний сигнал:** 403/429/challenge, пустой HTML, контент появляется только после сложного client-side исполнения, локальный и cloud-ответы различаются.
 - **Проверка:** `SPK-01`, минимальные повторяемые запросы/браузерные сценарии локально и в кандидатной среде.
 - **Митигация:** допустимый способ получения, rate limit, timeout/backoff; при отсутствии пути — `Replan` или `Ask`, а не скрытая подмена источника.
 - **Владелец:** `SPK-01`.
 - **Evidence:** [`research/feasibility/metacritic-access.md`](../research/feasibility/metacritic-access.md).
-- **Остаточный риск:** доступ из будущей hosting-среды не проверен; Cloudflare, регион, частота или структура ответа могут изменить результат.
-- **Текущая диспозиция:** `Open — mitigate`; решение `Proceed with limitation` подтверждено технической пробой и снятием `R-EXT-02: Ask`, но целевая среда ещё не проверена.
+- **Остаточный риск:** второй обязательный route, рабочая частота, Cloudflare и структура ответа могут отличаться от одиночного VDS-запроса.
+- **Текущая диспозиция:** `Open — mitigate`; решение `Proceed with limitation` подтверждено локальной пробой, разрешением владельца и репрезентативным VDS-запросом; полный live contract остаётся у implementation/public checks.
 
 ### `R-EXT-02` Правила источника не допускают выбранный способ работы
 
@@ -135,25 +135,25 @@
 
 - **Связи:** `RUN-01`, `DEL-02`, `NFR-01`, `NFR-05`; `CTX-03`, `CTX-05–CTX-06`.
 - **Проверяемый риск:** кандидатная площадка усыпляет сервис, не поддерживает почасовой scheduler, постоянное состояние, секреты или диагностические события.
-- **Оценка после выбора кандидата:** `P=3`, `I=5`, `U=4`; Exposure `15`, Discovery `20`; приоритет `P0`. Выделенная VDS снимает риск sleep/ephemeral free-tier по модели размещения, но её фактические capabilities ещё не проверены.
+- **Оценка после `SPK-06`:** `P=2`, `I=5`, `U=2`; Exposure `10`, Discovery `10`; приоритет `P1`. Persistent `ext4`, user cron, public ingress, process restart и реальное фоновое событие подтверждены; production supervision и host reboot ещё не проверены.
 - **Ранний сигнал:** ephemeral filesystem, запрет cron/background worker, sleep меньше часа, недоступные logs/secrets.
 - **Проверка:** минимальный публичный probe `SPK-06` на выбранной Ubuntu 24.04 VDS с внешним HTTP check, перезапуском и реальным фоновым событием; preflight contract в [`deployment.md`](../research/feasibility/deployment.md).
-- **Митигация:** выбрать иной допустимый hosting/managed scheduler/persistent store; учитывать ограничения до выбора архитектуры.
+- **Митигация:** в `PLN-01` выбрать production supervision/TLS и явно задать business timezone UTC; до `G6` проверить host reboot и два application schedule windows; при утрате capability выбрать иной hosting/managed scheduler/persistent store.
 - **Владелец:** `SPK-06`.
-- **Остаточный риск:** доступность существующей VDS, network policy или выделенные ресурсы могут измениться после probe.
-- **Текущая диспозиция:** `Open — investigate`; hosting candidate выбран, probe `Blocked / Ask` до SSH-конфигурации, `needed-by: G2`.
+- **Остаточный риск:** non-interactive `sudo` недоступен, systemd linger выключен; `@reboot` не проверен host reboot; network policy и ресурсы могут измениться после probe.
+- **Текущая диспозиция:** `Open — mitigate`; `SPK-06: Verified — Proceed with limitation`, evidence в [`deployment.md`](../research/feasibility/deployment.md).
 
 ### `R-DEP-02` Ссылки доступны автору, но не проверяющему
 
 - **Связи:** `DEL-01–DEL-03`; `ASM-24`.
 - **Проверяемый риск:** repository/service/archive требуют локальную сессию, приглашение, истёкший URL или скрытый секрет.
-- **Оценка:** `P=3`, `I=5`, `U=3`; Exposure `15`, Discovery `15`; приоритет `P1`.
+- **Оценка после `SPK-06`:** `P=2`, `I=5`, `U=2`; Exposure `10`, Discovery `10`; приоритет `P1`. Read-only endpoint открылся с внешней машины без SSH/session/credentials; финальные service/repository/archive URLs ещё не существуют.
 - **Ранний сигнал:** доступ работает только в авторизованном браузере, URL содержит localhost/private network, archive не опубликован.
 - **Проверка:** первоначальная проверка модели доступа в `SPK-06`; финальная — `REL-04` из внешней сессии.
 - **Митигация:** явный read-only доступ, стабильные URL, повторный link-check непосредственно перед отправкой.
 - **Владелец:** `SPK-06`, затем `REL-04`.
-- **Остаточный риск:** ссылка или аккаунт могут стать недоступны после сдачи.
-- **Текущая диспозиция:** `Open — investigate`.
+- **Остаточный риск:** probe использует redacted raw HTTP endpoint, а финальная ссылка или аккаунт могут стать недоступны после сдачи.
+- **Текущая диспозиция:** `Open — mitigate`; базовая модель внешнего доступа подтверждена `SPK-06`, финальный внешний check остаётся у `REL-04`.
 
 ## 5. Критические риски состояния и бизнес-правил
 
@@ -226,13 +226,13 @@
 
 - **Связи:** `RUN-01`, `NFR-05`, `DEL-02`.
 - **Проверяемый риск:** scheduler настроен, но в публичной среде нет надёжного server-side свидетельства запуска, итогов и последнего успеха.
-- **Оценка:** `P=3`, `I=5`, `U=4`; Exposure `15`, Discovery `20`; приоритет `P0`.
+- **Оценка после `SPK-06`:** `P=2`, `I=5`, `U=2`; Exposure `10`, Discovery `10`; приоритет `P1`. Persistent state сохранил counters/timestamp/run ID реального cron-события; полный application outcome и retention ещё не реализованы.
 - **Ранний сигнал:** доступны только console logs без времени/run ID, hosting скрывает историю, UI показывает локально вычисленный статус.
 - **Проверка:** capability/probe в `SPK-06`; operational contract в `HRD-05/PUB-02`.
 - **Митигация:** persistent run records или доступные structured events с timestamps, counters и correlation IDs.
 - **Владелец:** `SPK-06`, затем `HRD-05/PUB-02`.
-- **Остаточный риск:** retention внешних логов может быть ограничен; критичное evidence сохраняется отдельно без секретов.
-- **Текущая диспозиция:** `Open — investigate`.
+- **Остаточный риск:** один capability event не доказывает два последовательных application windows по `AC-RUN-01`; raw HTTP дал несколько восстановившихся network resets; production retention/monitoring ещё не выбраны.
+- **Текущая диспозиция:** `Open — mitigate`; `SPK-06: Verified — Proceed with limitation`, следующие владельцы — `HRD-05/PUB-02`.
 
 ### `R-TST-01` Проверки нестабильны из-за живых внешних сервисов
 
@@ -364,7 +364,7 @@
 |---|---|---|---|
 | Metacritic | `R-EXT-01–R-EXT-04` | `SPK-01–SPK-02` | `SPK-02: Proceed with limitation`; финальный live contract остаётся |
 | Runtime LLM | `R-AI-01–R-AI-02` | `SPK-05` | Полное для discovery baseline |
-| Публичный hosting/storage/scheduler | `R-DEP-01–R-DEP-02`, `R-OPS-01` | `SPK-06` | Полное для discovery baseline |
+| Публичный hosting/storage/scheduler | `R-DEP-01–R-DEP-02`, `R-OPS-01` | `SPK-06`, затем `HRD-05/PUB-02/REL-04` | `SPK-06: Proceed with limitation`; capability подтверждена, production checks назначены |
 | Git repository / AI archive | `R-DEP-02`, `R-DEL-01`, `R-REP-01` | непрерывно, `REL-01–REL-04` | Покрыто задачами поставки |
 | YouTube | `R-BON-YT-01–R-BON-YT-02` | `BON-11` | Изолировано до выбора Bonus 1 |
 
@@ -372,7 +372,7 @@
 
 | Инвариант | Риски | Следующая проверка | Покрытие |
 |---|---|---|---|
-| Почасовая работа доказуема | `R-DEP-01`, `R-OPS-01` | `SPK-06` | Есть владелец и early signal |
+| Почасовая работа доказуема | `R-DEP-01`, `R-OPS-01` | `HRD-05/PUB-02` после capability probe `SPK-06` | Один реальный cron event проверен; нужны два application windows и outcome |
 | Дневная выборка однозначна | `R-TIM-01` | `HRD-02` после реализации модели `SPK-04` | Модель проверена на бумажных сценариях; нужен automated evidence |
 | Рестарт и пересечение безопасны | `R-TIM-02` | `HRD-02–HRD-03`, deployment restart | Модель проверена; нужен failure/concurrency evidence |
 | Игра и платформы не дублируются | `R-ID-01` | `IMP-01–IMP-02`, `HRD-02–HRD-03` после `SPK-03` | ID-first contract и коллизии проверены; нужны executable unique/concurrency tests |
@@ -392,4 +392,4 @@
 - [x] Bonus-риски не блокируют Must.
 - [x] Ни один spike не был выполнен в рамках `RSK-01`.
 
-**Итог:** `RSK-01`, `SPK-01–SPK-04` завершены. Для `SPK-06` выбрана существующая Ubuntu VDS и подготовлен probe contract, но выполнение остаётся `Blocked — Ask` до SSH-конфигурации, needed by `G2`. `SPK-05` остаётся независимой `Ready`.
+**Итог:** `RSK-01`, `SPK-01–SPK-04` и `SPK-06` завершены. `SPK-06` приняла существующую Ubuntu VDS с решением `Proceed with limitation`; public ingress, process persistence и реальный cron event подтверждены. Следующая задача — `SPK-05` (`Ready`), затем `RSK-02`.
