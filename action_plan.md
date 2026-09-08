@@ -54,12 +54,12 @@
 
 | Поле | Значение |
 |---|---|
-| Версия плана | Design baseline 0.17 |
-| Дата | 2026-09-08 |
+| Версия плана | Design baseline 0.18 |
+| Дата | 2026-09-09 (Asia/Novosibirsk) |
 | Исходник | `assignment.md`, SHA-256 `C8987F684CFDF693AB188FA2AC5875044C93EBF486B708C36FDF7E7748C2125C` |
 | Методология | `methodology.md` |
 | Завершённая стадия | 2 — Снятие критической неизвестности (`G2` пройдены с ограничениями) |
-| Активная стадия | 3 — `PLN-02` повторно проверена (`Verified`); `PLN-03` является единственной следующей задачей (`Ready`) |
+| Активная стадия | 3 — корректировка `PLN-02` проверена (`Verified`); следующая единственная задача — `PLN-03` (`Ready`) |
 | Реализация | Не начата |
 | Текущие блокеры | Нет; отсутствие календарного дедлайна/ёмкости учитывается как ограничение относительного плана в `PLN-03` |
 
@@ -183,6 +183,12 @@
 - **Повторные проверки:** реализовать page-level cursor/count/loop/failure fixtures в `HRD-01`, token preflight/cache/provider drift и frozen selection comparison в `REV-EVAL-01/IMP-04/HRD-04`; измерить storage/retention envelope на 80 GB VDS в `HRD-05/PUB-02`; перед production повторить live contracts и quotas. Новая очередь, broker, translation stage или vector infrastructure не добавлены.
 
 ---
+
+### Изменение baseline 0.18
+
+- **Новый факт:** повторный review исправил retry identity/atomicity и учёт observations; PostgreSQL 16 probe прошёл. Исходный AI baseline опубликован и проверяется offline из снимка Git без приватных файлов; parser fixtures перенесены к первым использующим их срезам.
+- **Затронуты:** `PLN-02–PLN-03`, `IMP-02/IMP-04`, `HRD-01/HRD-04–HRD-05`, `PUB-02`; `AI-01–AI-03`, `NFR-01–NFR-03/NFR-06`, `R-EXT-03–R-EXT-04`, `R-AI-02`. Evidence и границы проверки — в [`pln_02_review.md`](docs/requirements/pln_02_review.md).
+- **Порядок:** корректировка `PLN-02` получает `Verified`; `PLN-03` становится `Ready`. Application capacity/storage остаются непроверенными ограничениями с назначенными checks; реализация и `G3` не начаты/не закрыты этим циклом.
 
 ## 3. Стадия 0 — Intake
 
@@ -442,11 +448,11 @@
 - **Предусловия:** `PLN-01`.
 - **Результат:** определены границы внешнего адаптера, доменных правил, persistence, review/AI-enrichment, presentation и observability; сохранённые исходные отзывы имеют измеримую source coverage, точный model corpus соблюдает token budget, summary связан с моделью, конфигурацией и временем создания, а непроверенные quality policies явно остаются кандидатами.
 - **Проверка:** модель выражает несколько платформ, обновление, дневной прогресс, pagination/ordering/exhaustion и coverage отзывов, точный token-bounded AI input, summary provenance и состояния обработки; каждый критерий сопоставлен независимому evidence или явно принятому ограничению.
-- **Evidence:** `docs/design.md`, source-contract observations и [`reviews-pagination.json`](research/feasibility/fixtures/metacritic/reviews-pagination.json), [`token-budget-report.json`](evals/reviews/token-budget-report.json), повторный [`pln_02_review.md`](docs/requirements/pln_02_review.md).
+- **Evidence:** `docs/design.md`, source-contract observations, [`reviews-pagination.json`](research/feasibility/fixtures/metacritic/reviews-pagination.json), [`token-budget-report.json`](evals/reviews/token-budget-report.json), [`PostgreSQL probe`](research/feasibility/probes/pln02_review_attempts.sql), [`published AI baseline`](evals/reviews/baseline/README.md), повторный [`pln_02_review.md`](docs/requirements/pln_02_review.md).
 - **Зависимости:** `PLN-01`, результаты spikes.
 - **Оценка / timebox:** `M`, до 1 рабочего дня.
 - **Критерий выхода:** на контракты можно написать тесты без знания внутренних деталей реализации; полнота внешней коллекции и provider budgets имеют проверяемые границы; similarity method не принят до независимого oracle.
-- **Статус:** `Verified` — complete paginated collection и coverage получили независимое dated evidence; multilingual production maximum прошёл local/live token check; similarity и bounded review selection явно остаются candidates до будущих frozen eval/implementation checks.
+- **Статус:** `Verified` на уровне design — retry/atomicity проверены PostgreSQL probe, source/token evidence сохранено, AI baseline воспроизводимо проверяется без приватных артефактов. Runtime capacity/storage и quality candidates имеют явные ограничения и будущие checks.
 
 ### `PLN-03` Перебазировать задачи, зависимости и оценки
 
@@ -459,7 +465,7 @@
 - **Зависимости:** `PLN-01`, `PLN-02`.
 - **Оценка / timebox:** `S`, до 3 часов.
 - **Критерий выхода:** выполнены все проверки `G3`, а граница `action_plan.md` ↔ `implementation_plan.md` проверена на отсутствие дублирования.
-- **Статус:** `Ready` — зависимость `PLN-02` повторно проверена; отсутствие дедлайна/ёмкости остаётся явным ограничением для относительного плана, без календарного обещания.
+- **Статус:** `Ready` — корректировка `PLN-02` проверена; отсутствие дедлайна/ёмкости остаётся ограничением относительного плана.
 
 ### Ворота `G3` — Implementation baseline готов
 
@@ -494,8 +500,8 @@
 - **Тип:** Implementation / Verification.
 - **Связи:** `DATA-01–DATA-03`, `UI-02`, `NFR-04`.
 - **Результат:** одна игра с несколькими платформами проходит путь от подтверждённого входа через валидацию и сохранение до публичной карточки; повтор обновляет её без дубля.
-- **Проверка:** fixture/contract, integration и публичный smoke-сценарии.
-- **Evidence:** тесты, CI-run и URL карточки.
+- **Проверка:** до реализации parser сохранить минимальные sanitised HTML/SSR inputs и expected extraction; затем fixture/contract, integration и публичный smoke-сценарии. Curated JSON observations не заменяют вход парсера.
+- **Evidence:** parser input fixtures, тесты, CI-run и URL карточки.
 - **Зависимости:** `IMP-01`, `SPK-02–SPK-03`.
 - **Оценка:** `L`, уточнить в `PLN-03`.
 - **Критерий выхода:** все обязательные поля показаны, provenance виден для диагностики, повтор безопасен.
@@ -531,8 +537,8 @@
 - **Тип:** Implementation / AI eval.
 - **Связи:** `AI-01–AI-03`.
 - **Результат:** отзывы критиков и пользователей собираются полностью и обрабатываются раздельно; candidate bounded selection сравнивается с простым baseline на неизменном oracle, выбранный model input валидируется по tokens, версионируется, трассируется и обновляется по принятому правилу.
-- **Проверка:** pagination/schema/contract tests, frozen selection comparison, token-boundary/failure tests и summary eval против baseline.
-- **Evidence:** тесты, eval-report и примеры в публичных карточках.
+- **Проверка:** до реализации review parser сохранить backend page/cursor fixtures; выполнить pagination/retry/schema tests, frozen selection comparison, token-boundary/failure tests и summary eval. Fake-provider capacity scenarios и счётчики — по [`ai-summary.md`](research/feasibility/ai-summary.md#capacity-and-residual-limitations), до `G4`.
+- **Evidence:** тесты, eval/capacity reports и примеры в публичных карточках.
 - **Зависимости:** `IMP-02`, `SPK-05`, `REV-EVAL-01`.
 - **Оценка:** `L`, уточнить в `PLN-03`.
 - **Критерий выхода:** оба резюме проходят установленный порог без блокирующих ошибок.
@@ -617,7 +623,7 @@
 - **Тип:** Verification / Hardening.
 - **Связи:** `SEL-01–SEL-02`, `DATA-02–DATA-03`, `NFR-04`.
 - **Результат:** timeout, ограниченные retries, rate limiting, типизированные ошибки, валидация и обнаружение деградации покрыты проверками.
-- **Проверка:** fixtures и failure tests для отсутствующих полей, изменённой разметки, timeout, 403/429/5xx и частичного ответа.
+- **Проверка:** расширить parser fixtures из `IMP-02/IMP-04` отсутствующими полями, изменённой разметкой, timeout, 403/429/5xx и частичным ответом; это не первое появление executable parser evidence.
 - **Evidence:** contract/failure test reports.
 - **Зависимости:** `G4`.
 - **Оценка:** `M`, уточнить в `PLN-03`.
@@ -653,7 +659,7 @@
 - **Тип:** Verification / AI eval.
 - **Связи:** `AI-01–AI-03`.
 - **Результат:** недоступность, timeout, malformed output, недостаток данных и prompt injection не ломают batch и UI.
-- **Проверка:** failure tests плюс повторный eval финальной версии против baseline.
+- **Проверка:** failure tests, повторный eval финальной версии против опубликованного baseline и регрессия capacity scenarios из `IMP-04`; не считать queue/cache доказательством достаточной пропускной способности.
 - **Evidence:** test/eval reports с версиями prompt и модели.
 - **Зависимости:** `IMP-04`.
 - **Оценка:** `M`, уточнить в `PLN-03`.
@@ -665,7 +671,7 @@
 - **Тип:** Implementation / Verification.
 - **Связи:** `RUN-01`, `DEL-02`, `NFR-05`, `NFR-06`; подготовка к `OPS-01–OPS-02`.
 - **Результат:** запуск и ошибка трассируются по run/game ID; видны счётчики, последний успех и storage headroom; секреты и недоверенный контент обрабатываются безопасно.
-- **Проверка:** диагностировать намеренно вызванный сбой; выполнить secret/security checks; проверить безопасное отображение внешнего текста; измерить bytes/review и retention forecast на representative multi-page corpus без автоматического удаления originals.
+- **Проверка:** диагностировать намеренно вызванный сбой; выполнить secret/security checks и безопасное отображение внешнего текста; измерить text versions, observations за повторные generations, attempts, indexes/WAL/backup и storage forecast без автоматического удаления originals.
 - **Evidence:** логи тестового запуска, security report, storage-envelope report и инструкция диагностики.
 - **Зависимости:** `IMP-03–IMP-05`.
 - **Оценка:** `M`, уточнить в `PLN-03`.
@@ -714,8 +720,8 @@
 - **Тип:** Operational verification.
 - **Связи:** `RUN-01`, `SEL-01–SEL-03`, `DEL-02`.
 - **Результат:** в публичной среде есть датированные события планового запуска, результат обработки, последний успешный запуск и измеренный storage headroom; состояние переживает перезапуск/redeploy.
-- **Проверка:** дождаться применимого планового окна, сопоставить конфигурацию, события и изменения состояния; выполнить контролируемый restart check и сверить retention forecast с фактическим 80 GB volume.
-- **Evidence:** обезличенные логи/метрики с run ID, storage snapshot/forecast и снимок состояния до/после.
+- **Проверка:** дождаться применимого планового окна, сопоставить события и состояние; выполнить restart check; сверить storage forecast с фактическим volume и повторными observations. Измерить AI arrivals/cache hits/completions/backlog/oldest pending age и применить `R-AI-02` Replan при устойчивом недренируемом backlog.
+- **Evidence:** обезличенные run events, storage snapshot/forecast, AI capacity/latency report с наблюдаемыми ограничениями и состояние до/после.
 - **Зависимости:** `PUB-01`.
 - **Оценка:** `S` сфокусированной работы плюс календарное ожидание.
 - **Критерий выхода:** расписание доказано фактическим событием, а не только конфигурацией; storage headroom не нарушает принятый retention envelope.
@@ -937,4 +943,4 @@
 
 ### Ближайшее действие workflow
 
-Следующая задача — `PLN-03` (`Ready`): вынести подробный implementation backlog в отдельный `implementation_plan.md`, оставить `action_plan.md` тонким tracker ворот/статусов/evidence и перебазировать зависимости, оценки, критический путь и резерв. Реализацию не начинать до завершения этой задачи и прохождения `G3` отдельным циклом.
+Следующая задача — `PLN-03` (`Ready`): вынести подробный implementation backlog в `implementation_plan.md`, оставить `action_plan.md` tracker ворот/статусов/evidence и перебазировать зависимости, оценки, критический путь и резерв с учётом исправленных contracts. Корректировка `PLN-02` завершается отдельным commit и остановкой; реализацию не начинать до прохождения `G3` следующим циклом.

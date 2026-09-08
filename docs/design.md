@@ -1,7 +1,7 @@
 # Внутренние контракты и модель данных
 
-- **Статус:** Verified design — bounded review selection и similarity остаются quality candidates
-- **Дата:** 2026-09-08
+- **Статус:** Verified design — retry/storage/evidence correction проверена; application capacity и quality policies не считаются доказанными
+- **Дата:** 2026-09-09 (Asia/Novosibirsk; корректировка baseline 0.18)
 - **Задача:** `PLN-02`
 - **Архитектура:** [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md)
 - **Связи:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01–DATA-03`, `AI-01–AI-03`, `UI-01–UI-05`, `SIM-01–SIM-03`, `NFR-01–NFR-06`
@@ -55,9 +55,13 @@ Django ORM используется прямо внутри application services
 | `game` | `source`, `source_game_id`, current locator, title, cover URL, developer, description, video URL, ordered normalized genre names, `last_changed_fetch_id`, timestamps | `UNIQUE(source, source_game_id)`; обязательны identity/title/locator; source text хранится без перевода |
 | `game_alias` | `game_id`, source locator, first/last seen UTC | `UNIQUE(source, locator)`; alias другого game вызывает conflict, не merge |
 | `game_platform` | `game_id`, `source_platform_id`, `source_game_platform_id`, slug/name, Metascore, Userscore, critic/user route, `last_changed_fetch_id` | `UNIQUE(game_id, source_platform_id)` и `UNIQUE(source, source_game_platform_id)`; score ranges; `null` не равен нулю |
-| `source_fetch` | owning run или review job, kind, collection generation nullable, allowlisted URL, cursor/offset, page ordinal, reported total, item count, started/completed UTC, HTTP status, response SHA-256, parser contract version, outcome/error code | Ровно один owner; полный HTML, cookies и authorization headers не сохраняются; `succeeded/empty/failed/invalid` различаются явно; `UNIQUE(review_job_id, collection_generation, page_ordinal)` для review page |
+| `source_fetch` | owning run или review job, kind, collection generation nullable, allowlisted URL, cursor/offset, page ordinal, attempt number, fencing token, reported total, item count, started/completed UTC, HTTP status, response SHA-256, parser contract version, outcome/error code | Ровно один owner; review attempt требует non-null generation/page/attempt и `attempt_no > 0`; `UNIQUE(review_job_id, collection_generation, page_ordinal, attempt_no)`; отдельная partial unique constraint на `(review_job_id, collection_generation, page_ordinal)` только для `outcome IN ('succeeded', 'empty')`; полный HTML, cookies и authorization headers не сохраняются |
 
 `last_changed_fetch_id` указывает на fetch, из которого принято текущее значение. Failed/structurally invalid fetch создаёт evidence, но не меняет хорошее поле. Отсутствовавшая в partial response платформа не удаляется.
+
+`source_fetch` представляет одну фактическую попытку HTTP-запроса. Worker под row lock job выделяет следующий `attempt_no`, сохраняет `started` и текущий fencing token до внешнего вызова. Допустим один переход в terminal `succeeded/empty/failed/invalid/abandoned/superseded`; terminal запись не переписывается. Failed/invalid attempt не занимает ключ успешно принятой страницы: retry той же generation/page получает новый номер и сохраняет прежнюю ошибку. При reclaim незавершённая попытка становится `abandoned`; поздний ответ не переоткрывает её. Если владение потеряно до применения ответа, ещё открытая попытка завершается как `superseded` без observations и cursor update.
+
+Принятие страницы под row lock проверяет job generation, ожидаемый cursor/page и fencing token, затем одной транзакцией сохраняет reviews/observations, terminal success и следующий cursor. Partial unique constraint допускает только одну принятую страницу. Повторная доставка уже принятого page не делает HTTP-вызов и не продвигает cursor повторно. Изолированный PostgreSQL probe ограничений и rollback-сценария: [`pln02_review_attempts.sql`](../research/feasibility/probes/pln02_review_attempts.sql); реальные worker/concurrency tests остаются у `IMP-04/HRD-03`.
 
 ### Почасовая обработка
 
@@ -71,7 +75,7 @@ Django ORM используется прямо внутри application services
 
 Scheduler проверяет текущий UTC slot не реже раза в минуту. Restart в том же часу переиспользует trigger key; прошедший час без run фиксируется как наблюдаемый gap, но не создаёт burst из старых batch. Global lease TTL — 45 минут с heartbeat; core candidate имеет не более пяти автоматических attempts и остаётся видимым/reopenable после `failed`.
 
-Identity check, non-destructive Game/GamePlatform upsert, закрытие `core_attempt` и перевод candidate в `processed` выполняются одной транзакцией. Review/AI work создаётся после core success и не входит в лимит 20.
+Identity check, non-destructive Game/GamePlatform upsert, закрытие `core_attempt`, перевод candidate в `processed` и создание идемпотентных `review_collection_job` для известных routes выполняются одной транзакцией. Сетевое получение отзывов и AI-вызовы выполняются worker после commit и не входят в лимит 20. Crash до commit откатывает и core success, и задания; crash после commit оставляет задания доступными worker. При ошибке записи задания транзакция повторяется целиком: состояния «processed, но задание потеряно» нет.
 
 ### Скачанные отзывы и точный AI input
 
@@ -87,7 +91,9 @@ Identity check, non-destructive Game/GamePlatform upsert, закрытие `core
 
 Если Metacritic отдаёт стабильный review ID, `identity_key=id:<value>`. Иначе используется `fallback:<SHA-256>` от audience, platform ID, source review URL, author/source label, published label, score и полного нормализованного текста. Изменение текста со стабильным ID создаёт новую immutable version и `superseded` link; без стабильного ID система не заявляет, что две разные версии — один логический отзыв.
 
-Для каждого известного platform/audience route collection job создаёт новую generation и начинает с подтверждённой backend-ссылки из SSR state. Web query `?page=N` не используется: проверка показала, что он возвращает первый segment повторно. После allowlist-проверки route identity worker следует только `links.next.href`, сохраняет каждую страницу и все её records, затем атомарно с page commit продвигает cursor. Один worker claim обрабатывает одну страницу, поэтому route из 32 и более pages не держится целиком в памяти и не требует новой очереди или сервиса. Глобальный source maximum неизвестен: total искусственно не обрезается, RAM остаётся `O(page limit)`, а storage `O(unique reviews)`; фактический диск/retention envelope 80 GB VDS проверяется в `HRD-05/PUB-02` без автоматического удаления исходных отзывов.
+Для каждого известного platform/audience route collection job создаёт новую generation и начинает с подтверждённой backend-ссылки из SSR state. Web query `?page=N` не используется: проверка показала, что он возвращает первый segment повторно. После allowlist-проверки route identity worker следует только `links.next.href`, сохраняет каждую страницу и все её records, затем атомарно с page commit продвигает cursor. Один worker claim обрабатывает одну страницу, поэтому route из 32 и более pages не держится целиком в памяти и не требует новой очереди или сервиса. Глобальный source maximum неизвестен: total искусственно не обрезается; рабочая память обработки page ограничена её размером, а visited cursors и history хранятся в БД.
+
+Storage состоит из `V` уникальных content versions с суммарным размером текста `T`, `H` observations по всем generations, `A` fetch attempts и `C` corpus/summary records: ориентир `O(T + V + H + A + C)` плюс индексы, WAL и backup. При неизменных `N` отзывах и `D` полных обходах сохраняются `N` text versions, но `N × D` observations. Дедупликация текста не ограничивает рост истории. Фактические bytes/row, text sizes, indexes/WAL, свободное место и горизонт хранения измеряются в `HRD-05/PUB-02` на PostgreSQL; до этого 80 GB VDS не считается доказанной storage capacity. Автоматическое удаление исходных отзывов не принято; нехватка места требует остановки новой загрузки с диагностируемым состоянием и пересмотра retention/capacity, а не скрытого удаления history.
 
 Collection generation становится `complete`, только если `next` отсутствует, `totalResults` был стабилен на всех pages, каждый page завершён успешно, unresolved duplicates нет и unique fetched count равен reported total. Валидный нулевой total даёт `empty`. Cursor loop, повтор ordered page identities, изменение route parameters/total или расхождение counts дают `unstable`; транспортная ошибка — `retryable/failed`. Незавершённая generation не смешивается с предыдущей и не запускает summary. Прошлые observations и опубликованный summary сохраняются со stale-причиной до появления нового полного snapshot. Датированный внешний evidence и точные acceptance rules находятся в [`research/feasibility/metacritic-contract.md`](../research/feasibility/metacritic-contract.md) и [`reviews-pagination.json`](../research/feasibility/fixtures/metacritic/reviews-pagination.json).
 

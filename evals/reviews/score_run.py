@@ -170,6 +170,8 @@ def create_scorecard(run_path: Path, scorecard_path: Path) -> None:
         "schema_version": "1.0.0",
         "status": "awaiting_manual_review",
         "run_artifact": relative_to_root(run_path),
+        "run_sha256": runner.sha256_bytes(run_path.read_bytes()),
+        "rubric_sha256": runner.sha256_bytes(Path(__file__).with_name("rubric.md").read_bytes()),
         "rubric_version": "2.0.0",
         "created_at": utc_now(),
         "reviewed_at": None,
@@ -196,8 +198,7 @@ def create_scorecard(run_path: Path, scorecard_path: Path) -> None:
     print("Manual rubric review is required before --finalize.")
 
 
-def finalize_scorecard(scorecard_path: Path) -> None:
-    scorecard = load_json(scorecard_path)
+def aggregate_scorecard(scorecard: dict[str, Any]) -> dict[str, Any]:
     assessments = scorecard.get("assessments")
     if not isinstance(assessments, list) or not assessments:
         raise ValueError("scorecard does not contain assessments")
@@ -255,9 +256,7 @@ def finalize_scorecard(scorecard_path: Path) -> None:
         and not zero_scores
         and percent >= 85
     )
-    scorecard["status"] = "complete"
-    scorecard["reviewed_at"] = utc_now()
-    scorecard["aggregate"] = {
+    return {
         "score": total,
         "maximum": maximum,
         "percent": percent,
@@ -267,18 +266,113 @@ def finalize_scorecard(scorecard_path: Path) -> None:
         "other_zero_scores": zero_scores,
         "threshold_passed": passed,
     }
+
+
+def finalize_scorecard(scorecard_path: Path) -> None:
+    scorecard = load_json(scorecard_path)
+    aggregate = aggregate_scorecard(scorecard)
+    scorecard["status"] = "complete"
+    scorecard["reviewed_at"] = utc_now()
+    scorecard["aggregate"] = aggregate
     runner.atomic_write_json(scorecard_path, scorecard)
     print(f"Scorecard finalized: {relative_to_root(scorecard_path)}")
-    print(f"Threshold: {'PASS' if passed else 'FAIL'} ({percent:.2f}%, {blocker_count} blocker(s)).")
+    print(
+        f"Threshold: {'PASS' if aggregate['threshold_passed'] else 'FAIL'} "
+        f"({aggregate['percent']:.2f}%, {aggregate['blocker_count']} blocker(s))."
+    )
+
+
+def verify_scorecard(run_path: Path, scorecard_path: Path) -> dict[str, Any]:
+    """Recheck saved outputs and score arithmetic without API calls or file writes."""
+    run = load_json(run_path)
+    scorecard = load_json(scorecard_path)
+    cases_document = load_json(runner.CASES_PATH)
+    errors = validate_run(run, cases_document)
+    if errors:
+        raise ValueError("invalid run artifact:\n- " + "\n- ".join(errors))
+    cases = {case["id"]: case for case in cases_document["cases"]}
+    results = run["results"]
+    assessments = scorecard.get("assessments", [])
+    for name, rows in (("results", results), ("assessments", assessments)):
+        if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+            raise ValueError(f"{name} must be an array of objects")
+        ids = [row.get("case_id") for row in rows]
+        if any(not isinstance(value, str) for value in ids) or len(ids) != len(cases) or sorted(ids) != sorted(cases):
+            raise ValueError(f"{name} must contain every frozen case exactly once")
+    if sorted(run.get("selected_case_ids", [])) != sorted(cases):
+        raise ValueError("selected_case_ids does not cover the frozen set")
+    if scorecard.get("status") != "complete" or scorecard.get("rubric_version") != "2.0.0":
+        raise ValueError("a complete scorecard for rubric 2.0.0 is required")
+    if (runner.ROOT / scorecard.get("run_artifact", "")).resolve() != run_path.resolve():
+        raise ValueError("scorecard points to a different run artifact")
+    for field, path in (
+        ("run_sha256", run_path),
+        ("rubric_sha256", Path(__file__).with_name("rubric.md")),
+    ):
+        if scorecard.get(field) != runner.sha256_bytes(path.read_bytes()):
+            raise ValueError(f"scorecard {field} does not match the published artifact")
+    expected_threshold = {
+        "no_blockers": True,
+        "all_structural_checks_pass": True,
+        "critical_dimensions_must_equal": 2,
+        "no_other_dimension_may_equal": 0,
+        "minimum_percent": 85,
+    }
+    if scorecard.get("threshold") != expected_threshold:
+        raise ValueError("scorecard threshold differs from the frozen rubric")
+
+    scores_by_case = {row["case_id"]: row for row in assessments}
+    totals = dict.fromkeys(("prompt_tokens", "completion_tokens", "total_tokens"), 0)
+    for result in results:
+        case = cases[result["case_id"]]
+        case_id = case["id"]
+        assessment = scores_by_case[case_id]
+        structural_errors = runner.validate_output(result.get("output"), case)
+        if result.get("status") != "success" or structural_errors or result.get("structural_errors"):
+            raise ValueError(f"{case_id}: saved output failed current structural validation")
+        for field in ("audience", "kind"):
+            if result.get(field) != case[field] or assessment.get(field) != case[field]:
+                raise ValueError(f"{case_id}: {field} does not match the frozen case")
+        findings, blockers = automated_findings(case, result)
+        if blockers or assessment.get("automated_findings") != findings:
+            raise ValueError(f"{case_id}: automated findings are inconsistent")
+        expected_scores = initial_scores(case, [])
+        scores = assessment.get("scores", {})
+        for dimension, initial in expected_scores.items():
+            value = scores.get(dimension)
+            if (initial == "N/A") != (value == "N/A"):
+                raise ValueError(f"{case_id}.{dimension}: invalid N/A applicability")
+            if type(initial) is int and value != initial:
+                raise ValueError(f"{case_id}.{dimension}: automated score was changed")
+        for key in totals:
+            value = result.get("usage", {}).get(key)
+            if type(value) is not int or value < 0:
+                raise ValueError(f"{case_id}: invalid {key}")
+            totals[key] += value
+        usage = result["usage"]
+        if usage["prompt_tokens"] + usage["completion_tokens"] != usage["total_tokens"]:
+            raise ValueError(f"{case_id}: token usage does not add up")
+    for key, value in totals.items():
+        if run.get("totals", {}).get(key) != value:
+            raise ValueError(f"run total {key} does not match saved results")
+    aggregate = aggregate_scorecard(scorecard)
+    if scorecard.get("aggregate") != aggregate or not aggregate["threshold_passed"]:
+        raise ValueError("scorecard aggregate is inconsistent or does not pass the rubric")
+    return aggregate
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run_artifact", type=Path, help="path to the sanitized run.json")
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
         "--finalize",
         action="store_true",
         help="validate completed manual scores and calculate the frozen threshold",
+    )
+    mode.add_argument(
+        "--verify", action="store_true",
+        help="read-only verification of a published run and scorecard; no API calls",
     )
     return parser
 
@@ -288,7 +382,13 @@ def main() -> int:
     run_path = args.run_artifact.resolve()
     scorecard_path = run_path.with_name("scorecard.json")
     try:
-        if args.finalize:
+        if args.verify:
+            aggregate = verify_scorecard(run_path, scorecard_path)
+            print(
+                f"Saved baseline verified: {aggregate['score']}/{aggregate['maximum']} "
+                f"({aggregate['percent']:.2f}%), no blockers; no API calls or file writes."
+            )
+        elif args.finalize:
             if not scorecard_path.exists():
                 raise ValueError(f"scorecard does not exist: {scorecard_path}")
             finalize_scorecard(scorecard_path)

@@ -122,7 +122,7 @@ Elden Ring одновременно показал внутреннюю изме
 - Полная матрица и review corpus требуют bounded fan-out по платформам. Нужны cache, timeout/backoff, лимит запросов и отсутствие повторного GET при неизменном source fingerprint.
 - `null` разрешён только после успешной классификации валидной карточки; исчезновение ранее присутствовавшего selector или массовый рост `null` — структурная ошибка.
 - Все внешние тексты недоверенные: user reviews уже содержат нерелевантные утверждения, multilingual content и потенциально инструктивный текст. До `SPK-05` они считаются data, а не инструкциями.
-- Curated JSON fixtures фиксируют наблюдаемую структуру, короткие excerpts, hashes и expected values. После выбора parser stack в `HRD-01` нужно добавить минимальные sanitised SSR fragments для executable selector tests, не превращая обычный CI в live scrape.
+- Curated JSON fixtures фиксируют наблюдаемую структуру, короткие excerpts, hashes и expected values; они не являются исходным входом executable parser tests. Минимальные sanitised HTML/SSR fragments и expected extraction добавляются до реализации соответствующего parser в `IMP-02`; review backend page/cursor inputs — в `IMP-04`. `HRD-01` расширяет уже существующий набор повреждёнными и отказными вариантами. Обычный CI не выполняет live scrape.
 - `SPK-03` определил ID-first identity и upsert-границу; URL/slug из этого spike используется только как наблюдаемый locator, не как первичный ключ.
 
 ## Диспозиция

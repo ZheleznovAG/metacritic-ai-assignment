@@ -12,6 +12,7 @@
 - `score_run.py` — deterministic structural checks и шаблон ручной rubric-оценки.
 - `check_token_budget.py` — token-aware preflight для production-maximum multilingual input;
 - [`token-budget-report.json`](token-budget-report.json) — sanitised local/live evidence без model output.
+- [`baseline/`](baseline/README.md) — опубликованные canonical outputs и исходный scorecard финального run; доступны для повторного ревью без API.
 
 Синтетические отзывы используются намеренно: короткие source excerpts `SPK-02` подтверждают раздельность routes, но их недостаточно для ordinary/long/contradictory/injection cases и нельзя расширять выдуманными цитатами реальных авторов.
 
@@ -30,6 +31,14 @@ SPK05_MAX_RETRIES=3
 `GROQ_API_KEY` и `.env` не коммитятся. Ключ должен принадлежать организации на **Groq Free Plan**; не подключайте Developer Plan к проекту spike. Runner зафиксирован на модели `openai/gpt-oss-20b`, входящей в опубликованные Free Plan limits, и не настраивает платный fallback. В Groq Data Controls рекомендуется включить Zero Data Retention; eval-тексты в любом случае синтетические.
 
 ## Последовательность
+
+Проверка уже сохранённого baseline не требует `.env`, API или сторонних Python dependencies:
+
+```powershell
+python -B evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
+```
+
+Для нового отдельного live-run:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r evals/reviews/requirements-token-budget.txt

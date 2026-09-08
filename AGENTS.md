@@ -12,6 +12,7 @@ This repository is currently defining its implementation baseline; it does not y
 - `docs/decisions/` contains accepted architecture decision records.
 - `docs/design.md` defines accepted internal contracts, PostgreSQL data ownership, and processing invariants.
 - `docs/risks.md` is the prioritized risk register.
+- `evals/reviews/baseline/` contains the published sanitised AI run and original scorecard; its offline verifier and integrity tests are research tooling, not application tests.
 - `research/methodology/` preserves prompts and exploration; it is evidence, not a requirements source.
 
 Add source and test directories only after `PLN-01–PLN-03` establish the implementation baseline. Document their layout here when introduced.
@@ -25,6 +26,8 @@ git status --short          # inspect pending changes
 git diff --check            # detect whitespace errors
 rg --files                  # inventory tracked/worktree files
 rg -n "RUN-01|AC-RUN-01" . # trace requirement and acceptance IDs
+python -B evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
+python -B -m unittest discover -s evals/reviews -p "test_*.py"
 ```
 
 When tooling is added, expose reproducible commands in `README.md` and CI for setup, formatting, linting, tests, build, and local execution.

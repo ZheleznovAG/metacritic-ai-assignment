@@ -126,7 +126,7 @@
     "ssr_cards": 50,
     "minimum_backend_pages_at_observed_limit": 32,
     "documented_global_maximum": null,
-    "contract_complexity": "O(page_limit) memory, O(reported_results / page_limit) requests, O(unique_reviews) persistent storage",
+    "contract_complexity": "O(page_limit) page-processing memory with cursor history in the database; O(reported_results / page_limit) requests per crawl; persistent text versions plus observations for every generation and fetch attempts (N unchanged reviews across D crawls still create N*D observations)",
     "complete_crawl_performed": false,
     "purpose": "Verify that the contract is incremental and does not assume the smaller complete-crawl examples are a maximum."
   },

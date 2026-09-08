@@ -81,7 +81,7 @@ Artifact fingerprints for reproducing the frozen contract:
 - prompt SHA-256: `39ecea05844a743d2b4d9dda995401efa162650f9f295515a097c72c3ce1861f`;
 - output schema SHA-256: `29648d18fbdc06c1707050d5f3d173ae5a5d30f7af9ade1b693ff049404cfec0`.
 
-Raw model outputs and the manually completed scorecard remain in ignored `.eval-runs/reviews/`; only this sanitised aggregate is committed.
+The original local artifacts remain in ignored `.eval-runs/reviews/`. The `PLN-02` correction publishes the same sanitised canonical outputs and original manual scorecard in [`evals/reviews/baseline/`](../../evals/reviews/baseline/README.md). Their provenance, original hashes and publication changes are documented there; the saved result can be rechecked offline without another inference call. Raw provider responses and the sixth item discarded by the normalizer were not archived.
 
 ## Token-aware production boundary
 
@@ -95,7 +95,11 @@ This check proves the current maximum request fits the dated limit; it does not 
 
 ## Capacity and residual limitations
 
-The final quality run averaged about `1,299` tokens per audience summary. At that observed size, the published `200,000 TPD` allowance covers roughly `154` audience summaries or `77` games/day, while the theoretical maximum ingestion path asks for `960` audience summaries/day (`20 games × 2 audiences × 24 runs`). At the stricter `6,359` maximum reservation, only 31 audience summaries (15 complete two-audience games) fit per day before unused reservations are reconciled with actual usage. Request/day is not the binding limit; token/day is.
+The final quality run averaged about `1,299` tokens per audience summary. At that observed size, the published `200,000 TPD` allowance covers roughly `154` audience summaries or `77` games/day, while the theoretical maximum ingestion path asks for `960` audience summaries/day (`20 games × 2 audiences × 24 runs`). At the measured boundary-case reservation of `6,359`, only 31 audience summaries (15 complete two-audience games) fit per day before unused reservations are reconciled with actual usage. Request/day is not the binding limit; token/day is.
+
+Here `6,359` is the reservation of the measured multilingual case, not the policy ceiling. At the configured `6,800` ceiling, only 29 audience summaries (14 two-audience games) fit before reconciliation. These are arithmetic envelopes, not observed application throughput. A one-off cold set of 480 games creates up to 960 summary jobs: at 154 jobs/day it requires at least seven daily budgets if inputs then remain unchanged; at 29/day it needs 34 budgets. At a sustained 960 changed inputs/day the optimistic 154/day path grows by at least 806 jobs/day. Cache hits reduce arrivals; a queue does not increase service capacity. The nine-case average includes two insufficient-data responses and must not be treated as a guaranteed production average.
+
+Before `G4`, `IMP-04` must record an executable fake-provider workload for a cold set, unchanged repeat, changed-input stream and quota exhaustion, including arrivals, cache hits, completions, outstanding jobs and oldest pending age. A finite eligible burst must drain after arrivals stop and quota resets; sustained overload must remain visible without losing jobs or enabling payment. `HRD-04` repeats this as a regression before `G5`. Before `G6`, `PUB-02` measures those quantities in the real environment and records the observed delay/capacity limitation. If the chosen workload does not drain, apply the existing `R-AI-02` Replan condition before claiming production throughput. No summary-latency SLO or supported sustained volume has been accepted by this design correction.
 
 Consequences for implementation:
 
@@ -104,13 +108,14 @@ Consequences for implementation:
 3. Use a persistent bounded queue with retry/backoff and expose delayed/capacity status. Never silently enable a paid fallback.
 4. Bound and deterministically order review samples before hashing and inference.
 5. Keep canonical local validation and the five-item normalizer. Groq's provider-side schema subset rejected `uniqueItems` and returned HTTP `400` rather than a repairable output for some `minItems`/`maxItems` violations.
-6. Use actual usage for settled daily counters and conservative reservation for work admission. If the backlog does not drain within the measured quota—about 77 games/day at observed average, but only 15 complete games/day at the maximum reservation—revisit sampling/model/provider before claiming production throughput.
+6. Use actual usage for settled daily counters and conservative reservation for work admission. If the backlog does not drain within the available quota, revisit sampling/model/provider before claiming production throughput; the arithmetic envelopes above do not establish a production rate.
 7. Treat the extractive one-support policy, occasional secondary-theme omissions, variable latency, provider fingerprint changes, and externally mutable quotas as explicit regression/monitoring risks for `IMP-04` and `HRD-04`.
 
 ## Reproduction
 
 ```powershell
 .\.venv\Scripts\python.exe --version
+.\.venv\Scripts\python.exe -B evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
 .\.venv\Scripts\python.exe -m pip install -r evals/reviews/requirements-token-budget.txt
 .\.venv\Scripts\python.exe -m py_compile evals/reviews/run_groq_eval.py evals/reviews/score_run.py evals/reviews/check_token_budget.py
 .\.venv\Scripts\python.exe evals/reviews/check_token_budget.py

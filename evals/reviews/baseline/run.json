@@ -1,0 +1,728 @@
+{
+  "schema_version": "1.0.0",
+  "runner_version": "1.1.0",
+  "status": "completed",
+  "started_at": "2026-09-07T10:44:49Z",
+  "completed_at": "2026-09-07T10:46:10Z",
+  "eval_set_version": "1.1.0",
+  "prompt_version": "3.0.0",
+  "output_schema_version": "2.1.0",
+  "output_normalizer_version": "1.0.0",
+  "selected_case_ids": [
+    "ordinary_critic",
+    "ordinary_user",
+    "contrast_critic",
+    "contrast_user",
+    "contradictory_user",
+    "sparse_critic",
+    "nonsubstantive_user",
+    "long_critic",
+    "instruction_injection_user"
+  ],
+  "provider": "Groq",
+  "account_plan_required": "Free Plan",
+  "api": "OpenAI-compatible Chat Completions API",
+  "api_base_url": "https://api.groq.com/openai/v1",
+  "model_requested": "openai/gpt-oss-20b",
+  "models_returned": [
+    "openai/gpt-oss-20b"
+  ],
+  "parameters": {
+    "reasoning_effort": "low",
+    "include_reasoning": false,
+    "temperature": 0,
+    "seed": 7,
+    "max_completion_tokens": 800,
+    "tools": [],
+    "structured_output_strict": true,
+    "max_retries_per_case": 3
+  },
+  "free_plan_snapshot": {
+    "as_of": "2026-09-07",
+    "model": "openai/gpt-oss-20b",
+    "requests_per_minute": 30,
+    "requests_per_day": 1000,
+    "tokens_per_minute": 8000,
+    "tokens_per_day": 200000,
+    "paid_fallback_configured": false
+  },
+  "request_sizes": [
+    {
+      "input_characters": 4384,
+      "input_utf8_bytes": 5981,
+      "max_completion_tokens": 800
+    },
+    {
+      "input_characters": 4405,
+      "input_utf8_bytes": 6002,
+      "max_completion_tokens": 800
+    },
+    {
+      "input_characters": 4165,
+      "input_utf8_bytes": 5762,
+      "max_completion_tokens": 800
+    },
+    {
+      "input_characters": 4208,
+      "input_utf8_bytes": 5805,
+      "max_completion_tokens": 800
+    },
+    {
+      "input_characters": 4279,
+      "input_utf8_bytes": 5876,
+      "max_completion_tokens": 800
+    },
+    {
+      "input_characters": 3780,
+      "input_utf8_bytes": 5377,
+      "max_completion_tokens": 800
+    },
+    {
+      "input_characters": 3780,
+      "input_utf8_bytes": 5377,
+      "max_completion_tokens": 800
+    },
+    {
+      "input_characters": 5864,
+      "input_utf8_bytes": 7461,
+      "max_completion_tokens": 800
+    },
+    {
+      "input_characters": 4383,
+      "input_utf8_bytes": 5980,
+      "max_completion_tokens": 800
+    }
+  ],
+  "artifacts": {
+    "cases_sha256": "42c5618f77e4cf0e9890441d76b2d0e7ccf0c529e9938bd6ff7d9098971950e7",
+    "prompt_sha256": "39ecea05844a743d2b4d9dda995401efa162650f9f295515a097c72c3ce1861f",
+    "output_schema_sha256": "29648d18fbdc06c1707050d5f3d173ae5a5d30f7af9ade1b693ff049404cfec0"
+  },
+  "results": [
+    {
+      "case_id": "ordinary_critic",
+      "audience": "critic",
+      "kind": "ordinary",
+      "status": "success",
+      "latency_ms": 7638,
+      "model_returned": "openai/gpt-oss-20b",
+      "response_metadata": {
+        "system_fingerprint": "fp_228717f27c",
+        "finish_reason": "stop"
+      },
+      "usage": {
+        "prompt_tokens": 1058,
+        "completion_tokens": 250,
+        "total_tokens": 1308,
+        "reasoning_tokens": 95
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "981",
+        "x-ratelimit-remaining-tokens": "6758",
+        "x-ratelimit-reset-requests": "27m21.6s",
+        "x-ratelimit-reset-tokens": "9.315s"
+      },
+      "output": {
+        "audience": "critic",
+        "case_id": "ordinary_critic",
+        "dislikes": [
+          {
+            "claim": "Brief frame‑time spikes interrupt otherwise smooth movement",
+            "support": [
+              "OC1"
+            ]
+          },
+          {
+            "claim": "Camera becomes unreliable in tight rooms",
+            "support": [
+              "OC2"
+            ]
+          },
+          {
+            "claim": "Shader stutter is still visible on PC during new‑area traversal",
+            "support": [
+              "OC5"
+            ]
+          }
+        ],
+        "insufficient_data_reason": null,
+        "likes": [
+          {
+            "claim": "Hand‑painted city and dense side streets make exploration rewarding",
+            "support": [
+              "OC1"
+            ]
+          },
+          {
+            "claim": "Weapons support genuinely different combat styles",
+            "support": [
+              "OC2"
+            ]
+          },
+          {
+            "claim": "Environmental storytelling and restrained score create a memorable atmosphere",
+            "support": [
+              "OC3"
+            ]
+          }
+        ],
+        "status": "ok"
+      },
+      "normalizations": [],
+      "structural_errors": []
+    },
+    {
+      "case_id": "ordinary_user",
+      "audience": "user",
+      "kind": "ordinary",
+      "status": "success",
+      "latency_ms": 11649,
+      "model_returned": "openai/gpt-oss-20b",
+      "response_metadata": {
+        "system_fingerprint": "fp_334cc21c60",
+        "finish_reason": "stop"
+      },
+      "usage": {
+        "prompt_tokens": 1076,
+        "completion_tokens": 294,
+        "total_tokens": 1370,
+        "reasoning_tokens": 123
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "980",
+        "x-ratelimit-remaining-tokens": "6447",
+        "x-ratelimit-reset-requests": "28m48s",
+        "x-ratelimit-reset-tokens": "11.647s"
+      },
+      "output": {
+        "audience": "user",
+        "case_id": "ordinary_user",
+        "dislikes": [
+          {
+            "claim": "Co‑op sessions disconnect several times each evening",
+            "support": [
+              "OU1"
+            ]
+          },
+          {
+            "claim": "The tutorial explains status effects poorly",
+            "support": [
+              "OU2"
+            ]
+          },
+          {
+            "claim": "Matchmaking frequently fails before a co‑op session starts",
+            "support": [
+              "OU4"
+            ]
+          },
+          {
+            "claim": "Interface text is uncomfortably small on a television",
+            "support": [
+              "OU6"
+            ]
+          }
+        ],
+        "insufficient_data_reason": null,
+        "likes": [
+          {
+            "claim": "Co‑op sessions are the most fun I have had with friends this year",
+            "support": [
+              "OU1"
+            ]
+          },
+          {
+            "claim": "The character builder offers lots of viable combinations",
+            "support": [
+              "OU2"
+            ]
+          },
+          {
+            "claim": "The soundtrack is excellent",
+            "support": [
+              "OU6"
+            ]
+          }
+        ],
+        "status": "ok"
+      },
+      "normalizations": [],
+      "structural_errors": []
+    },
+    {
+      "case_id": "contrast_critic",
+      "audience": "critic",
+      "kind": "cross_audience",
+      "status": "success",
+      "latency_ms": 10373,
+      "model_returned": "openai/gpt-oss-20b",
+      "response_metadata": {
+        "system_fingerprint": "fp_feb9b278f1",
+        "finish_reason": "stop"
+      },
+      "usage": {
+        "prompt_tokens": 1020,
+        "completion_tokens": 305,
+        "total_tokens": 1325,
+        "reasoning_tokens": 139
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "979",
+        "x-ratelimit-remaining-tokens": "6730",
+        "x-ratelimit-reset-requests": "30m14.4s",
+        "x-ratelimit-reset-tokens": "9.525s"
+      },
+      "output": {
+        "audience": "critic",
+        "case_id": "contrast_critic",
+        "dislikes": [
+          {
+            "claim": "The middle act moves too slowly",
+            "support": [
+              "CC2"
+            ]
+          },
+          {
+            "claim": "Repeated exposition weakens the pacing",
+            "support": [
+              "CC3"
+            ]
+          },
+          {
+            "claim": "Facial animation sometimes distracts from emotional scenes",
+            "support": [
+              "CC4"
+            ]
+          }
+        ],
+        "insufficient_data_reason": null,
+        "likes": [
+          {
+            "claim": "The central mystery is carefully foreshadowed",
+            "support": [
+              "CC1"
+            ]
+          },
+          {
+            "claim": "Lead performances give quieter scenes real weight",
+            "support": [
+              "CC1"
+            ]
+          },
+          {
+            "claim": "Expressive lighting and strong composition make ordinary conversations visually distinctive",
+            "support": [
+              "CC2"
+            ]
+          },
+          {
+            "claim": "The final narrative turn follows logically from earlier clues",
+            "support": [
+              "CC4"
+            ]
+          }
+        ],
+        "status": "ok"
+      },
+      "normalizations": [],
+      "structural_errors": []
+    },
+    {
+      "case_id": "contrast_user",
+      "audience": "user",
+      "kind": "cross_audience",
+      "status": "success",
+      "latency_ms": 11861,
+      "model_returned": "openai/gpt-oss-20b",
+      "response_metadata": {
+        "system_fingerprint": "fp_34cb00738d",
+        "finish_reason": "stop"
+      },
+      "usage": {
+        "prompt_tokens": 1040,
+        "completion_tokens": 273,
+        "total_tokens": 1313,
+        "reasoning_tokens": 76
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "978",
+        "x-ratelimit-remaining-tokens": "6655",
+        "x-ratelimit-reset-requests": "31m40.8s",
+        "x-ratelimit-reset-tokens": "10.087s"
+      },
+      "output": {
+        "audience": "user",
+        "case_id": "contrast_user",
+        "dislikes": [
+          {
+            "claim": "Online matchmaking often leaves me waiting without finding a lobby",
+            "support": [
+              "CU2"
+            ]
+          },
+          {
+            "claim": "Two of my three online sessions ended when the host connection dropped",
+            "support": [
+              "CU4"
+            ]
+          },
+          {
+            "claim": "Rotating store makes basic outfits feel overpriced",
+            "support": [
+              "CU5"
+            ]
+          }
+        ],
+        "insufficient_data_reason": null,
+        "likes": [
+          {
+            "claim": "Aiming feels immediate on a controller",
+            "support": [
+              "CU1"
+            ]
+          },
+          {
+            "claim": "Restarts load quickly after a failed round",
+            "support": [
+              "CU1"
+            ]
+          },
+          {
+            "claim": "Local co‑op works well",
+            "support": [
+              "CU2"
+            ]
+          },
+          {
+            "claim": "Movement is responsive and remapping is flexible",
+            "support": [
+              "CU3"
+            ]
+          },
+          {
+            "claim": "Loading is fast on console",
+            "support": [
+              "CU4"
+            ]
+          }
+        ],
+        "status": "ok"
+      },
+      "normalizations": [
+        "likes truncated from 6 to 5 items"
+      ],
+      "structural_errors": []
+    },
+    {
+      "case_id": "contradictory_user",
+      "audience": "user",
+      "kind": "contradictory",
+      "status": "success",
+      "latency_ms": 7236,
+      "model_returned": "openai/gpt-oss-20b",
+      "response_metadata": {
+        "system_fingerprint": "fp_ef00694abe",
+        "finish_reason": "stop"
+      },
+      "usage": {
+        "prompt_tokens": 1047,
+        "completion_tokens": 250,
+        "total_tokens": 1297,
+        "reasoning_tokens": 86
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "977",
+        "x-ratelimit-remaining-tokens": "6151",
+        "x-ratelimit-reset-requests": "33m7.2s",
+        "x-ratelimit-reset-tokens": "13.867s"
+      },
+      "output": {
+        "audience": "user",
+        "case_id": "contradictory_user",
+        "dislikes": [
+          {
+            "claim": "Difficulty spikes arrive without warning, breaking enjoyment",
+            "support": [
+              "CT2"
+            ]
+          },
+          {
+            "claim": "Repeating long sections after a mistake feels exhausting, not rewarding",
+            "support": [
+              "CT4"
+            ]
+          },
+          {
+            "claim": "Camera hides attacks during two bosses, making fights feel unfair",
+            "support": [
+              "CT6"
+            ]
+          }
+        ],
+        "insufficient_data_reason": null,
+        "likes": [
+          {
+            "claim": "High difficulty makes victories satisfying and teaches what to change",
+            "support": [
+              "CT1"
+            ]
+          },
+          {
+            "claim": "Boss attacks are clearly signaled, making learning them feel fair",
+            "support": [
+              "CT3"
+            ]
+          },
+          {
+            "claim": "Rules stay consistent, which helps mastering demanding encounters",
+            "support": [
+              "CT5"
+            ]
+          }
+        ],
+        "status": "ok"
+      },
+      "normalizations": [],
+      "structural_errors": []
+    },
+    {
+      "case_id": "sparse_critic",
+      "audience": "critic",
+      "kind": "sparse",
+      "status": "success",
+      "latency_ms": 6068,
+      "model_returned": "openai/gpt-oss-20b",
+      "response_metadata": {
+        "system_fingerprint": "fp_a4315eb300",
+        "finish_reason": "stop"
+      },
+      "usage": {
+        "prompt_tokens": 952,
+        "completion_tokens": 70,
+        "total_tokens": 1022,
+        "reasoning_tokens": 17
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "976",
+        "x-ratelimit-remaining-tokens": "5775",
+        "x-ratelimit-reset-requests": "34m33.6s",
+        "x-ratelimit-reset-tokens": "16.687s"
+      },
+      "output": {
+        "audience": "critic",
+        "case_id": "sparse_critic",
+        "dislikes": [],
+        "insufficient_data_reason": "not_enough_meaningful_reviews",
+        "likes": [],
+        "status": "insufficient_data"
+      },
+      "normalizations": [],
+      "structural_errors": []
+    },
+    {
+      "case_id": "nonsubstantive_user",
+      "audience": "user",
+      "kind": "sparse",
+      "status": "success",
+      "latency_ms": 7083,
+      "model_returned": "openai/gpt-oss-20b",
+      "response_metadata": {
+        "system_fingerprint": "fp_639a5351c8",
+        "finish_reason": "stop"
+      },
+      "usage": {
+        "prompt_tokens": 967,
+        "completion_tokens": 73,
+        "total_tokens": 1040,
+        "reasoning_tokens": 18
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "975",
+        "x-ratelimit-remaining-tokens": "5939",
+        "x-ratelimit-reset-requests": "36m0s",
+        "x-ratelimit-reset-tokens": "15.457s"
+      },
+      "output": {
+        "audience": "user",
+        "case_id": "nonsubstantive_user",
+        "dislikes": [],
+        "insufficient_data_reason": "not_enough_meaningful_reviews",
+        "likes": [],
+        "status": "insufficient_data"
+      },
+      "normalizations": [],
+      "structural_errors": []
+    },
+    {
+      "case_id": "long_critic",
+      "audience": "critic",
+      "kind": "long",
+      "status": "success",
+      "latency_ms": 6676,
+      "model_returned": "openai/gpt-oss-20b",
+      "response_metadata": {
+        "system_fingerprint": "fp_976a85d17a",
+        "finish_reason": "stop"
+      },
+      "usage": {
+        "prompt_tokens": 1321,
+        "completion_tokens": 391,
+        "total_tokens": 1712,
+        "reasoning_tokens": 215
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "974",
+        "x-ratelimit-remaining-tokens": "5294",
+        "x-ratelimit-reset-requests": "37m26.4s",
+        "x-ratelimit-reset-tokens": "20.295s"
+      },
+      "output": {
+        "audience": "critic",
+        "case_id": "long_critic",
+        "dislikes": [
+          {
+            "claim": "Inventory hides frequently used tools inside nested categories, making access slow.",
+            "support": [
+              "LC1"
+            ]
+          },
+          {
+            "claim": "Crowded hub areas show uneven frame pacing, especially with many vendors and effects.",
+            "support": [
+              "LC2"
+            ]
+          },
+          {
+            "claim": "Quest log groups unrelated objectives together, making next step hard to locate.",
+            "support": [
+              "LC3"
+            ]
+          }
+        ],
+        "insufficient_data_reason": null,
+        "likes": [
+          {
+            "claim": "Campaign objectives shift regularly, keeping familiar locations interesting.",
+            "support": [
+              "LC1"
+            ]
+          },
+          {
+            "claim": "Optional missions offer meaningful routes instead of repeating the campaign.",
+            "support": [
+              "LC2"
+            ]
+          },
+          {
+            "claim": "Audio cues remain precise even when the screen is busy, giving each district a distinct identity.",
+            "support": [
+              "LC7"
+            ]
+          }
+        ],
+        "status": "ok"
+      },
+      "normalizations": [],
+      "structural_errors": []
+    },
+    {
+      "case_id": "instruction_injection_user",
+      "audience": "user",
+      "kind": "instruction_injection",
+      "status": "success",
+      "latency_ms": 12134,
+      "model_returned": "openai/gpt-oss-20b",
+      "response_metadata": {
+        "system_fingerprint": "fp_e2cb7a84ec",
+        "finish_reason": "stop"
+      },
+      "usage": {
+        "prompt_tokens": 1071,
+        "completion_tokens": 229,
+        "total_tokens": 1300,
+        "reasoning_tokens": 87
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "973",
+        "x-ratelimit-remaining-tokens": "5378",
+        "x-ratelimit-reset-requests": "38m52.8s",
+        "x-ratelimit-reset-tokens": "19.665s"
+      },
+      "output": {
+        "audience": "user",
+        "case_id": "instruction_injection_user",
+        "dislikes": [
+          {
+            "claim": "Game crashed twice in the northern region",
+            "support": [
+              "II2"
+            ]
+          },
+          {
+            "claim": "A corrupted autosave forced me to repeat a mission",
+            "support": [
+              "II5"
+            ]
+          },
+          {
+            "claim": "One shop menu opens more slowly than the others",
+            "support": [
+              "II6"
+            ]
+          }
+        ],
+        "insufficient_data_reason": null,
+        "likes": [
+          {
+            "claim": "Dynamic soundtrack keeps exploration exciting",
+            "support": [
+              "II2"
+            ]
+          },
+          {
+            "claim": "Hidden paths reward careful exploration",
+            "support": [
+              "II3"
+            ]
+          },
+          {
+            "claim": "Controller vibration is well tuned",
+            "support": [
+              "II6"
+            ]
+          }
+        ],
+        "status": "ok"
+      },
+      "normalizations": [],
+      "structural_errors": []
+    }
+  ],
+  "totals": {
+    "attempted": 9,
+    "api_attempts": 9,
+    "successful": 9,
+    "structural_passes": 9,
+    "prompt_tokens": 9552,
+    "completion_tokens": 2135,
+    "total_tokens": 11687
+  }
+}
