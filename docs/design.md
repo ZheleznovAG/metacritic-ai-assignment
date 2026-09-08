@@ -1,6 +1,6 @@
 # Внутренние контракты и модель данных
 
-- **Статус:** Candidate design — `PLN-02` changes requested
+- **Статус:** Verified design — bounded review selection и similarity остаются quality candidates
 - **Дата:** 2026-09-08
 - **Задача:** `PLN-02`
 - **Архитектура:** [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md)
@@ -18,7 +18,7 @@ Must-контур использует только уже выбранные Dj
 UTC hourly slot
   -> core selection and Game/GamePlatform commit
   -> ReviewCollectionJob
-  -> platform-specific review pages
+  -> platform-specific review pages until a complete collection snapshot
   -> immutable Review text versions + observations
   -> immutable bounded ReviewCorpus
   -> SummaryJob
@@ -55,7 +55,7 @@ Django ORM используется прямо внутри application services
 | `game` | `source`, `source_game_id`, current locator, title, cover URL, developer, description, video URL, ordered normalized genre names, `last_changed_fetch_id`, timestamps | `UNIQUE(source, source_game_id)`; обязательны identity/title/locator; source text хранится без перевода |
 | `game_alias` | `game_id`, source locator, first/last seen UTC | `UNIQUE(source, locator)`; alias другого game вызывает conflict, не merge |
 | `game_platform` | `game_id`, `source_platform_id`, `source_game_platform_id`, slug/name, Metascore, Userscore, critic/user route, `last_changed_fetch_id` | `UNIQUE(game_id, source_platform_id)` и `UNIQUE(source, source_game_platform_id)`; score ranges; `null` не равен нулю |
-| `source_fetch` | owning run или review job, kind, URL, started/completed UTC, HTTP status, response SHA-256, parser contract version, outcome/error code | Ровно один owner; полный HTML, cookies и authorization headers не сохраняются; `succeeded/empty/failed` различаются явно |
+| `source_fetch` | owning run или review job, kind, collection generation nullable, allowlisted URL, cursor/offset, page ordinal, reported total, item count, started/completed UTC, HTTP status, response SHA-256, parser contract version, outcome/error code | Ровно один owner; полный HTML, cookies и authorization headers не сохраняются; `succeeded/empty/failed/invalid` различаются явно; `UNIQUE(review_job_id, collection_generation, page_ordinal)` для review page |
 
 `last_changed_fetch_id` указывает на fetch, из которого принято текущее значение. Failed/structurally invalid fetch создаёт evidence, но не меняет хорошее поле. Отсутствовавшая в partial response платформа не удаляется.
 
@@ -77,25 +77,30 @@ Identity check, non-destructive Game/GamePlatform upsert, закрытие `core
 
 | Таблица | Ключевые данные | Обязательные ограничения |
 |---|---|---|
-| `review_collection_job` | game, audience, originating candidate, state, attempt count, available/lease timestamps, last error | `UNIQUE(daily_candidate_id, audience)`; audience только `critic/user`; работа retryable независимо от core |
+| `review_collection_job` | game/platform/audience, collection generation, source order/filter/limit, state, next allowlisted URL/cursor, reported/fetched/unique/duplicate/page counters, visited-cursor fingerprint set, started/completed UTC, attempt count, available/lease timestamps, last error | `UNIQUE(daily_candidate_id, game_platform_id, audience)`; audience только `critic/user`; state `pending/running/complete/empty/retryable/unstable/failed`; cursor продвигается только с durable page commit |
 | `review` | game/platform/audience, source review ID если есть, deterministic identity key, author/source label, score/date labels, `text_original`, content SHA-256, `first_seen_at`, optional `supersedes_review_id` | Вся content version после insert неизменяема; `UNIQUE(game_platform_id, audience, identity_key, content_sha256)`; last seen выводится из observations |
-| `review_observation` | successful `source_fetch_id`, `review_id`, source position | `UNIQUE(source_fetch_id, source_position)` и `UNIQUE(source_fetch_id, review_id)`; задаёт точный состав route response |
-| `review_corpus` | game/audience, policy version, source-set fingerprint, model-input fingerprint, created UTC, route/review/character coverage counters | `UNIQUE(game_id, audience, policy_version, source_set_fingerprint)`; corpus после создания неизменяем |
-| `review_corpus_item` | corpus, ordinal, prompt review ID, `review_id`, exact `input_text`, SHA-256, truncation flag | Отдельные `UNIQUE(corpus_id, ordinal)`, `UNIQUE(corpus_id, prompt_review_id)` и `UNIQUE(corpus_id, review_id)`; support может ссылаться только на item этого corpus |
+| `review_observation` | collection job/generation, successful `source_fetch_id`, `review_id`, page и route-global source positions | `UNIQUE(source_fetch_id, page_position)`, `UNIQUE(collection_job_id, collection_generation, review_id)` и `UNIQUE(collection_job_id, collection_generation, route_global_position)`; задаёт точный состав и порядок page/route snapshot, не запрещая наблюдать review в следующей generation |
+| `review_corpus` | game/audience, candidate policy version, source-set fingerprint, model-input fingerprint, created UTC, complete/empty route counts, reported/fetched/unique/deduplicated/selected review counts, tokenizer/version, raw/guarded prompt token counts, completion reservation | `UNIQUE(game_id, audience, policy_version, source_set_fingerprint)`; corpus после создания неизменяем; создаётся только из complete/empty snapshots всех известных routes аудитории |
+| `review_corpus_item` | corpus, ordinal, prompt review ID, `review_id`, exact `input_text`, input token count, SHA-256, truncation flag | Отдельные `UNIQUE(corpus_id, ordinal)`, `UNIQUE(corpus_id, prompt_review_id)` и `UNIQUE(corpus_id, review_id)`; support может ссылаться только на item этого corpus; text заканчивается на token boundary |
 
 `text_original` — весь plain text каждого реально полученного review card после единственной механической нормализации: HTML decode, trim и collapse whitespace. Язык, формулировка и смысл не меняются. Текст хранится даже если не попал в ограниченный model input. Полный HTML страницы не хранится; его SHA-256 и extraction metadata находятся в `source_fetch`.
 
-Если Metacritic отдаёт стабильный review ID, `identity_key=id:<value>`. Иначе используется `fallback:<SHA-256>` от audience, platform ID, author/source label, published label, score и полного нормализованного текста. Изменение текста со стабильным ID создаёт новую immutable version и `superseded` link; без стабильного ID система не заявляет, что две разные версии — один логический отзыв.
+Если Metacritic отдаёт стабильный review ID, `identity_key=id:<value>`. Иначе используется `fallback:<SHA-256>` от audience, platform ID, source review URL, author/source label, published label, score и полного нормализованного текста. Изменение текста со стабильным ID создаёт новую immutable version и `superseded` link; без стабильного ID система не заявляет, что две разные версии — один логический отзыв.
 
-Для каждого известного platform/audience route collection job получает одну подтверждённую review page и сохраняет все cards из ответа. Непроверенная pagination не обходится. Failed route не удаляет прошлые observations; corpus использует последние valid snapshots и фиксирует `fresh/stale/failed/expected` coverage. Восстановившийся route создаёт новый source-set fingerprint. Это безопасное временное ограничение, но не доказательство полноты: pagination, ordering, exhaustion и reported-versus-fetched counts должны быть подтверждены до повторного принятия `PLN-02`.
+Для каждого известного platform/audience route collection job создаёт новую generation и начинает с подтверждённой backend-ссылки из SSR state. Web query `?page=N` не используется: проверка показала, что он возвращает первый segment повторно. После allowlist-проверки route identity worker следует только `links.next.href`, сохраняет каждую страницу и все её records, затем атомарно с page commit продвигает cursor. Один worker claim обрабатывает одну страницу, поэтому route из 32 и более pages не держится целиком в памяти и не требует новой очереди или сервиса. Глобальный source maximum неизвестен: total искусственно не обрезается, RAM остаётся `O(page limit)`, а storage `O(unique reviews)`; фактический диск/retention envelope 80 GB VDS проверяется в `HRD-05/PUB-02` без автоматического удаления исходных отзывов.
+
+Collection generation становится `complete`, только если `next` отсутствует, `totalResults` был стабилен на всех pages, каждый page завершён успешно, unresolved duplicates нет и unique fetched count равен reported total. Валидный нулевой total даёт `empty`. Cursor loop, повтор ordered page identities, изменение route parameters/total или расхождение counts дают `unstable`; транспортная ошибка — `retryable/failed`. Незавершённая generation не смешивается с предыдущей и не запускает summary. Прошлые observations и опубликованный summary сохраняются со stale-причиной до появления нового полного snapshot. Датированный внешний evidence и точные acceptance rules находятся в [`research/feasibility/metacritic-contract.md`](../research/feasibility/metacritic-contract.md) и [`reviews-pagination.json`](../research/feasibility/fixtures/metacritic/reviews-pagination.json).
 
 Corpus для одной игры и ровно одной аудитории строится детерминированно:
 
-1. Берутся review records из последних valid snapshots всех известных platform routes этой аудитории.
+1. Берутся review records только из одной terminal collection generation (`complete` или `empty`) каждого известного platform route этой аудитории. При любом missing/retryable/unstable/failed route новый corpus не создаётся.
 2. Точные cross-platform повторы удаляются по canonical author/date/score/text fingerprint.
-3. Records round-robin чередуются по стабильному `source_platform_id`, внутри route сохраняется source position.
-4. В model input входит не более 10 reviews, не более 2,000 Unicode characters одного review и не более 12,000 characters суммарно. Полный сохранённый текст не обрезается; exact bounded slice записывается в `review_corpus_item.input_text` с `was_truncated`.
-5. Prompt IDs назначаются после сортировки как `R01…R10`. `input_fingerprint` — SHA-256 canonical JSON из game identity, audience, policy version и ordered `{id,text}`. Изменение данных вне выбранного input меняет source-set fingerprint, но не расходует AI quota.
+3. Candidate selection `1.0.0-candidate` не берёт только первую/последнюю source page: внутри каждой платформы records сортируются по SHA-256 от policy version и review identity, затем платформы чередуются round-robin по стабильному `source_platform_id`. Так любой объём хранится полностью, а bounded sample воспроизводимо распределён по полному snapshot; репрезентативность этого правила остаётся quality-кандидатом. `REV-EVAL-01` сначала замораживает corpus examples, metric, threshold и hard invariants, `IMP-04` затем сравнивает candidate с более простым baseline без изменения oracle, а `HRD-04` проверяет финальную регрессию.
+4. В model input входит не более 10 reviews. Полный сохранённый текст не обрезается; каждый exact input slice ограничивается первыми 450 токенами `o200k_harmony` и записывается с `input_token_count`/`was_truncated`. Character/byte counts разрешены только как диагностика, не как budget guard.
+5. Prompt IDs назначаются после selection как `R01…R10`. `input_fingerprint` — SHA-256 canonical JSON из game identity, audience, policy/tokenizer versions и ordered `{id,text}`. Изменение данных вне выбранного input меняет source-set fingerprint, но само по себе не расходует AI quota.
+6. Preflight токенизирует весь exact canonical `messages + response_format`, добавляет 64 токена guard для provider framing и допускает не более 6,000 estimated prompt tokens. Вместе с `max_completion_tokens=800` reservation не превышает 6,800 токенов — на 1,200 ниже Free Plan `8,000 TPM`. Tokenizer/версия, raw count, guard и reservation входят в corpus/attempt provenance.
+
+`o200k_harmony` выбран потому, что это tokenizer семейства `gpt-oss`; используемая библиотека фиксируется отдельно. Production-maximum multilingual case (10 × 450 input tokens) дал local estimate `5,559`, reservation `6,359` и live Groq usage `5,493` prompt / `240` completion / `5,733` total. Проверка воспроизводится [`check_token_budget.py`](../evals/reviews/check_token_budget.py), sanitised результат сохранён в [`token-budget-report.json`](../evals/reviews/token-budget-report.json). Если tokenizer недоступен, request превышает budget либо provider usage выходит за guarded estimate, вызов не отправляется/следующие вызовы приостанавливаются с явной configuration error; молчаливого character fallback нет.
 
 Если доступно меньше трёх записей, job завершается `insufficient_data` детерминированно без provider call. При трёх и более records окончательное решение о содержательности остаётся частью прошедшего prompt/schema contract: общие оценки без наблюдения могут дать `insufficient_data`.
 
@@ -104,7 +109,7 @@ Corpus для одной игры и ровно одной аудитории с
 | Таблица | Ключевые данные | Обязательные ограничения |
 |---|---|---|
 | `summary_job` | game/audience, source corpus, input fingerprint, contour fingerprint, state, attempts, available/lease UTC, last safe error | `UNIQUE(game_id, audience, input_fingerprint, contour_fingerprint)`; неизменный input/config является cache hit |
-| `summary_attempt` | job/attempt, provider/API, requested model, optional returned model/provider system fingerprint, prompt/schema/preparation/normalizer/adapter versions + hashes, allowlisted generation parameters, `started_at`/`completed_at` UTC, `latency_ms`, prompt/completion/total tokens, outcome/error | `UNIQUE(job_id, attempt_no)`; после terminal outcome неизменяема; secret, provider request ID, raw reasoning и raw response envelope не сохраняются |
+| `summary_attempt` | job/attempt, provider/API, requested model, optional returned model/provider system fingerprint, prompt/schema/preparation/normalizer/adapter/tokenizer versions + hashes, estimated/reserved/actual prompt/completion/total tokens, allowlisted generation parameters, `started_at`/`completed_at` UTC, `latency_ms`, outcome/error | `UNIQUE(job_id, attempt_no)`; после terminal outcome неизменяема; secret, provider request ID, raw reasoning и raw response envelope не сохраняются |
 | `review_summary` | job, successful attempt nullable, method `model/rule`, status, `generated_at` UTC, insufficient reason, canonical output fingerprint, normalization notes | `UNIQUE(job_id)`; `ok` требует model attempt, `insufficient_data` не содержит claims |
 | `summary_claim` | summary, polarity `like/dislike`, ordinal, claim до 160 chars, supporting corpus item | Не более пяти claims каждого polarity; ровно один support из input corpus; `UNIQUE(summary_id, polarity, ordinal)` |
 
@@ -123,9 +128,9 @@ Attempt с requested model, contour и `started_at` коммитится до в
 
 Provider может не раскрывать immutable revision весов. Поэтому доказуемое утверждение ограничено сохранёнными requested/returned model IDs, optional system fingerprint и полной версией локального контура; придумывать «точную версию модели» нельзя.
 
-Job states: `pending -> running -> succeeded | insufficient_data | retryable | delayed_capacity | failed`. Lease — 5 минут; один worker, `SELECT … FOR UPDATE SKIP LOCKED`, fencing token и heartbeat. Transport/timeout/5xx используют bounded backoff `1m, 5m, 15m, 1h, 6h`, максимум пять автоматических attempts. `429` использует provider reset time и `delayed_capacity`, не включает paid fallback. Malformed/unsupported output становится `retryable`, прошлый опубликованный summary не затирается.
+Job states: `pending -> running -> succeeded | insufficient_data | retryable | delayed_capacity | failed`. Lease — 5 минут; один worker, `SELECT … FOR UPDATE SKIP LOCKED`, fencing token и heartbeat. До claim модельный worker резервирует estimated prompt + completion в persistent minute/day counters; доступные provider rate headers уточняют reset/остаток. Без актуального header после первого вызова следующая работа ждёт minute reset. Transport/timeout/5xx используют bounded backoff `1m, 5m, 15m, 1h, 6h`, максимум пять автоматических attempts. `429` использует provider reset time и `delayed_capacity`, не включает paid fallback. Malformed/unsupported output становится `retryable`, прошлый опубликованный summary не затирается.
 
-Summary и claims сохраняются одной транзакцией только после normalizer и canonical validation. Card показывает последний валидный summary; если current input/config уже имеет pending/error job, старый результат помечается stale с причиной. Для прозрачности рядом доступны returned model ID, `generated_at` и число reviews exact corpus; исходные отзывы публично не выводятся как часть Must UI.
+Summary и claims сохраняются одной транзакцией только после normalizer и canonical validation. Card показывает последний валидный summary; если current input/config или review collection уже имеет pending/error job, старый результат помечается stale с причиной. Для прозрачности рядом доступны returned model ID, `generated_at`, `selected / unique fetched / reported` review counts и coverage state; исходные отзывы публично не выводятся как часть Must UI.
 
 ## Внутренние interfaces
 
@@ -135,7 +140,7 @@ Summary и claims сохраняются одной транзакцией то�
 | `MetacriticGateway.list_new_releases()` | source contract version | ordered identity DTO + `SourceFetch`; typed unavailable/invalid/identity errors |
 | `MetacriticGateway.iter_browse(cursor)` | page/offset cursor | ordered segment + next cursor/exhausted; cursor не меняется при failure |
 | `MetacriticGateway.fetch_game(identity)` | confirmed game identity | typed game/platform DTO + provenance; mismatch запрещает save |
-| `MetacriticGateway.fetch_reviews(platform, audience)` | confirmed platform и ровно одна audience | complete observed first-page records + fetch outcome; никакого перевода |
+| `MetacriticGateway.fetch_review_page(route, cursor)` | allowlisted confirmed game/platform, ровно одна audience и initial/returned cursor | ordered page records, stable reported total, validated next cursor или exhausted; никакого перевода; arbitrary next URL запрещён |
 | `ProcessingService.run(slot, clock)` | idempotent UTC trigger | persisted run result/counters; duplicate/overlap являются явным outcome |
 | `CorpusBuilder.build(game, audience)` | persisted valid observations + policy version | immutable corpus и exact fingerprint; без сети/model |
 | `SummaryProvider.generate(request)` | `{game_key,audience,reviews:[{id,text}]}` + versioned contour | provider response DTO/typed safe error; fake имеет тот же contract |
@@ -160,9 +165,9 @@ Baseline считается в Python по текущей базе, без со�
 2. Cursor двигается только вместе с checkpoint успешно разобранного segment.
 3. Core success атомарен и независим от review/AI; partial enrichment не меняет `processed` candidate.
 4. Failed/empty/valid source outcomes различаются; failed fetch не затирает прошлые данные.
-5. Review content versions, observations и corpus immutable; exact model input восстанавливается без provider logs.
+5. Review content versions, page observations и corpus immutable; complete coverage и exact model input восстанавливаются без provider logs.
 6. Одна audience на corpus/job/attempt/summary; critic и user не могут иметь общую попытку.
-7. Одинаковые input + contour дают cache hit; изменение reviews или версии контура создаёт новую работу.
+7. Одинаковые input + contour дают cache hit; изменение выбранного input или версии контура создаёт новую работу, изменение только несэмплированных reviews обновляет coverage/source fingerprint без траты AI quota.
 8. Stale lease/fencing token не может подтвердить core/job success; terminal attempt не переоткрывается и не переписывается.
 9. Summary claims коммитятся только после schema, support, audience и length validation.
 10. Публичные queries не изменяют processing state и не получают secrets.
@@ -173,7 +178,7 @@ Baseline считается в Python по текущей базе, без со�
 |---|---|---|
 | `DATA-01–DATA-03`, `R-ID-01`, `R-DAT-01` | Unique source IDs, aliases, platform rows, provenance, non-destructive transaction | `IMP-02`, `HRD-01–HRD-03` integration/failure tests |
 | `RUN-01`, `SEL-01–SEL-03`, `R-TIM-01–R-TIM-02` | Unique UTC slot, cycle/candidate state, lease/fencing, checkpoint | `IMP-03`, `HRD-02–HRD-03`, `PUB-02` |
-| `AI-01–AI-03`, `R-AI-01–R-AI-02` | Persisted reviews, immutable corpus, versioned attempts/model/time/usage, grounded claims, cache | `IMP-04`, `HRD-04`, frozen eval |
+| `AI-01–AI-03`, `R-AI-01–R-AI-02` | Complete paginated source snapshots, persisted original-language reviews, immutable token-bounded corpus, versioned attempts/model/time/usage, grounded claims, cache | Independent pagination fixture; multilingual token-boundary report; `REV-EVAL-01` frozen selection oracle; `IMP-04`, `HRD-04`, frozen summary eval |
 | `UI-01–UI-05`, `R-UI-01` | Read-only deterministic list/detail queries and visible summary provenance/staleness | `IMP-05`, `IMP-07`, `PUB-03` |
 | `SIM-01–SIM-03`, `R-SIM-01` | Candidate local scoring, hard exclusions, deterministic tie-break | `SIM-EVAL-01` frozen oracle; `IMP-06` comparison; `SIM-VER-01` integration evidence |
 | `NFR-01–NFR-05`, `R-OPS-01` | Persistent state, isolated failure, unique work, run/job timestamps and counters | `HRD-02–HRD-05`, `PUB-02` |

@@ -10,6 +10,8 @@
 - [`rubric.md`](rubric.md) — шкала, блокирующие ошибки и неизменяемый порог;
 - `run_groq_eval.py` — dependency-free Groq Chat Completions API runner;
 - `score_run.py` — deterministic structural checks и шаблон ручной rubric-оценки.
+- `check_token_budget.py` — token-aware preflight для production-maximum multilingual input;
+- [`token-budget-report.json`](token-budget-report.json) — sanitised local/live evidence без model output.
 
 Синтетические отзывы используются намеренно: короткие source excerpts `SPK-02` подтверждают раздельность routes, но их недостаточно для ordinary/long/contradictory/injection cases и нельзя расширять выдуманными цитатами реальных авторов.
 
@@ -30,6 +32,8 @@ SPK05_MAX_RETRIES=3
 ## Последовательность
 
 ```powershell
+.\.venv\Scripts\python.exe -m pip install -r evals/reviews/requirements-token-budget.txt
+.\.venv\Scripts\python.exe evals/reviews/check_token_budget.py
 .\.venv\Scripts\python.exe evals/reviews/run_groq_eval.py --check-access
 .\.venv\Scripts\python.exe evals/reviews/run_groq_eval.py --dry-run
 .\.venv\Scripts\python.exe evals/reviews/run_groq_eval.py --run
@@ -39,6 +43,8 @@ SPK05_MAX_RETRIES=3
 ```
 
 `SPK-05` проверен локально на Windows с Python 3.14.7 в ignored `.venv`; VDS для этого spike не используется. `--check-access` вызывает только model listing, но не inference. `--dry-run` проверяет inputs/schema и размеры запросов. Только `--run` отправляет девять отдельных inference requests.
+
+Для production input authoritative limit измеряется токенами, а не символами. `check_token_budget.py` использует официальный для `gpt-oss-20b` tokenizer `o200k_harmony`, обрезает каждый input только по token boundary и считает весь canonical `messages + response_format`. Обычный запуск делает только локальную проверку; `--live` после успешного preflight делает один вызов, сверяет provider usage с guarded estimate и не выводит/не сохраняет model text. Candidate policy: до 10 отзывов × 450 токенов, prompt estimate не более 6,000, completion cap 800 и общий reservation не более 6,800 токенов, оставляя запас относительно 8,000 TPM Free Plan. Character/UTF-8 sizes старого eval-run остаются только диагностикой.
 
 Каждый case выполняется отдельным stateless request. Парные critic/user cases никогда не попадают в один prompt. Tools не включаются; reasoning effort — `low`, reasoning text исключён; заданы `temperature=0`, `seed=7`; output ограничен strict JSON Schema и `max_completion_tokens=800`. Детерминизм API остаётся best effort, поэтому manifest хранит все fingerprints и фактически возвращённую модель.
 

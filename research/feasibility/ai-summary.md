@@ -38,7 +38,7 @@ The final AI contour is:
 | [`rubric.md`](../../evals/reviews/rubric.md) | `2.0.0` | Eight `0–2` dimensions, explicit blockers, critical dimensions fixed at `2`, and an aggregate threshold of `85%`. |
 | [`run_groq_eval.py`](../../evals/reviews/run_groq_eval.py) | `1.1.0` | Standard-library runner, locked Groq origin/model, strict output, bounded retry, sanitised evidence, and local canonical validation. |
 
-Source-language handling follows the owner's clarification and `ASM-14`: fetched fields and review text remain unchanged; no translation stage is part of Must. The final English corpus remained English. Other-language and mixed-language inputs remain implementation regression cases because this small discovery set does not prove every language pair.
+Source-language handling follows the owner's clarification and `ASM-14`: fetched fields and review text remain unchanged; no translation stage is part of Must. The final quality corpus remained English. A later multilingual boundary case verifies token safety for ten Unicode/language profiles, but it intentionally does not claim summary quality for every language pair; source-language quality remains an implementation regression concern.
 
 The single-support policy is deliberate. Canary runs showed that the 20B model could attach unrelated second support IDs when asked to synthesize across reviews. Keeping one fully supporting review per concise claim passed groundedness without pretending that cross-review abstraction is reliable. Repeated topics are still prioritised when selecting the bounded list, but claims never assert audience-wide consensus.
 
@@ -83,9 +83,19 @@ Artifact fingerprints for reproducing the frozen contract:
 
 Raw model outputs and the manually completed scorecard remain in ignored `.eval-runs/reviews/`; only this sanitised aggregate is committed.
 
+## Token-aware production boundary
+
+The original eval runner reported characters only, which was useful diagnostic data but not evidence for a token-limited provider. OpenAI identifies [`o200k_harmony` as the tokenizer used by the open-weight gpt-oss models](https://openai.com/index/introducing-gpt-oss/), and the official [`gpt-oss-20b` model page](https://developers.openai.com/api/docs/models/gpt-oss-20b) reports a 131,072-token context window. For this deployment, Groq Free Plan's 8,000 TPM is the binding per-request boundary, not the larger model context.
+
+[`check_token_budget.py`](../../evals/reviews/check_token_budget.py) uses pinned `tiktoken==0.14.0` with `o200k_harmony`, truncates text only at token boundaries, and counts the exact canonical `messages + response_format`. Candidate policy `1.0.0-candidate` permits 10 reviews of at most 450 input tokens each, a guarded prompt maximum of 6,000, `max_completion_tokens=800`, and a total reservation ceiling of 6,800 tokens.
+
+On 2026-09-08, the deterministic maximum case covered ten language/Unicode profiles and forced truncation of every review. Local raw/guarded prompt counts were `5,495 / 5,559`; total reservation was `6,359`, leaving `1,641` tokens below the published 8,000 TPM. One controlled Groq call returned the requested model and reported `5,493` prompt, `240` completion (`127` reasoning), and `5,733` total tokens. The guarded prompt estimate exceeded actual provider usage by 66. The committed [`token-budget-report.json`](../../evals/reviews/token-budget-report.json) contains only hashes, counts, model identity, and safe limit metadata—not input/output text or credentials.
+
+This check proves the current maximum request fits the dated limit; it does not make the external quota immutable. Production must fail closed if the tokenizer is unavailable, local reservation exceeds policy, or actual prompt usage exceeds the guard, and must reschedule on provider reset rather than fall back to character truncation or a paid tier.
+
 ## Capacity and residual limitations
 
-The final run averaged about `1,299` tokens per audience summary. At that observed size, the published `200,000 TPD` allowance covers roughly `154` audience summaries or `77` games/day, while the theoretical maximum ingestion path asks for `960` audience summaries/day (`20 games × 2 audiences × 24 runs`). Request/day is barely sufficient, but token/day is not.
+The final quality run averaged about `1,299` tokens per audience summary. At that observed size, the published `200,000 TPD` allowance covers roughly `154` audience summaries or `77` games/day, while the theoretical maximum ingestion path asks for `960` audience summaries/day (`20 games × 2 audiences × 24 runs`). At the stricter `6,359` maximum reservation, only 31 audience summaries (15 complete two-audience games) fit per day before unused reservations are reconciled with actual usage. Request/day is not the binding limit; token/day is.
 
 Consequences for implementation:
 
@@ -94,14 +104,18 @@ Consequences for implementation:
 3. Use a persistent bounded queue with retry/backoff and expose delayed/capacity status. Never silently enable a paid fallback.
 4. Bound and deterministically order review samples before hashing and inference.
 5. Keep canonical local validation and the five-item normalizer. Groq's provider-side schema subset rejected `uniqueItems` and returned HTTP `400` rather than a repairable output for some `minItems`/`maxItems` violations.
-6. If measured sustained change volume exceeds about `77` games/day at the observed token size, revisit batching/model/provider before claiming production throughput; the Free Plan cannot drain a continuously larger backlog.
+6. Use actual usage for settled daily counters and conservative reservation for work admission. If the backlog does not drain within the measured quota—about 77 games/day at observed average, but only 15 complete games/day at the maximum reservation—revisit sampling/model/provider before claiming production throughput.
 7. Treat the extractive one-support policy, occasional secondary-theme omissions, variable latency, provider fingerprint changes, and externally mutable quotas as explicit regression/monitoring risks for `IMP-04` and `HRD-04`.
 
 ## Reproduction
 
 ```powershell
 .\.venv\Scripts\python.exe --version
-.\.venv\Scripts\python.exe -m py_compile evals/reviews/run_groq_eval.py evals/reviews/score_run.py
+.\.venv\Scripts\python.exe -m pip install -r evals/reviews/requirements-token-budget.txt
+.\.venv\Scripts\python.exe -m py_compile evals/reviews/run_groq_eval.py evals/reviews/score_run.py evals/reviews/check_token_budget.py
+.\.venv\Scripts\python.exe evals/reviews/check_token_budget.py
+# Optional controlled inference after local preflight; model text is discarded:
+.\.venv\Scripts\python.exe evals/reviews/check_token_budget.py --live
 .\.venv\Scripts\python.exe evals/reviews/run_groq_eval.py --check-access
 .\.venv\Scripts\python.exe evals/reviews/run_groq_eval.py --dry-run
 .\.venv\Scripts\python.exe evals/reviews/run_groq_eval.py --run

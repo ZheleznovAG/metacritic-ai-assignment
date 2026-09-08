@@ -86,13 +86,13 @@
 
 - **Связи:** `DATA-02–DATA-03`, `AI-01–AI-03`, `UI-02`; `ASM-12`, `ASM-16–ASM-17`.
 - **Проверяемый риск:** название, media, developer, description, video, платформенные оценки или один из видов отзывов отсутствуют, находятся в другом источнике/запросе, семантически подозрительны либо не могут быть однозначно сопоставлены игре.
-- **Оценка после review `PLN-02`:** `P=4`, `I=5`, `U=3`; Exposure `20`, Discovery `15`; приоритет `P1`. Источники и null-contract подтверждены, но полнота review collection не доказана: принятый draft сохранял только одну подтверждённую страницу.
+- **Оценка после исправления `PLN-02`:** `P=4`, `I=5`, `U=1`; Exposure `20`, Discovery `5`; приоритет `P1`. Источники/null-contract и pagination проверены отдельно для critic/user; остаточная неопределённость — внешняя изменчивость недокументированного backend contract.
 - **Ранний сигнал:** поле отсутствует в HTML, разные platform URLs несогласованы, вкладки отзывов загружаются отдельно, reported count превышает fetched count, next page меняет/повторяет набор либо title/description явно не соответствуют друг другу.
-- **Проверка:** `SPK-02` на вариантах игр; переоткрытая `PLN-02` подтверждает pagination/cursor, ordering, exhaustion, duplicates и reported-versus-fetched counts для critic/user routes.
+- **Проверка:** `SPK-02` на вариантах игр; `PLN-02` подтвердила pagination/cursor, ordering, exhaustion, duplicates и reported-versus-fetched counts для critic/user routes в [`reviews-pagination.json`](../research/feasibility/fixtures/metacritic/reviews-pagination.json); executable fixtures/live check — `HRD-01`.
 - **Митигация:** составной JSON-LD + DOM contract; bounded platform-specific pagination; явные coverage counters и exhaustion reason; классифицировать естественное отсутствие отдельно от parser failure; хранить provenance; семантическую аномалию не «исправлять» выдуманным значением.
 - **Владелец:** `SPK-02/PLN-02`, затем `HRD-01`.
-- **Остаточный риск:** critic/user routes могут иметь разные или меняющиеся pagination semantics; отдельные будущие игры могут иметь новый вариант представления или ошибочные данные источника.
-- **Текущая диспозиция:** `Open — investigate`; `PLN-02: Changes requested`, существующее evidence: [`research/feasibility/metacritic-contract.md`](../research/feasibility/metacritic-contract.md).
+- **Остаточный риск:** critic/user routes могут иметь разные или меняющиеся pagination semantics; глобальный review maximum не документирован, а storage/retention envelope 80 GB VDS требует измерения в `HRD-05/PUB-02`; отдельные будущие игры могут иметь новый вариант представления или ошибочные данные источника.
+- **Текущая диспозиция:** `Open — mitigate`; датированное evidence и complete-count acceptance contract находятся в [`research/feasibility/metacritic-contract.md`](../research/feasibility/metacritic-contract.md), executable parser/failure evidence остаётся у `HRD-01`.
 
 ### `R-EXT-04` Изменчивость разметки молча портит данные
 
@@ -112,11 +112,11 @@
 - **Проверяемый риск:** модель смешивает критиков и пользователей, выдумывает тезисы, преувеличивает единичное мнение, нарушает формат или следует инструкциям из отзывов.
 - **Оценка после `SPK-05`:** `P=2`, `I=5`, `U=2`; Exposure `10`, Discovery `10`; приоритет `P1`. Замороженный baseline прошёл `96/98` без blocker, но модель принята только в консервативном extractive режиме.
 - **Ранний сигнал:** ошибки на контрастных, sparse или инструктивных samples; нестабильный формат между повторами.
-- **Проверка:** `SPK-05` с замороженным eval-набором, рубрикой, блокирующими ошибками и baseline; immutable corpus/attempt/claim contracts в `PLN-02`; executable regression — `IMP-04/HRD-04`.
+- **Проверка:** `SPK-05` с замороженным summary eval-набором, рубрикой, блокирующими ошибками и baseline; immutable corpus/attempt/claim contracts в `PLN-02`; bounded-selection oracle — `REV-EVAL-01`, comparison/regression — `IMP-04/HRD-04`.
 - **Митигация:** все скачанные отзывы хранятся отдельно от точного immutable model corpus; аудитории не смешиваются; один `review_corpus_item` полностью подтверждает каждый тезис; structured output проходит локальную canonical validation, deterministic five-item cap, token-aware preflight, prompt hardening и честное insufficient-data состояние. Model, contour versions/hashes, UTC-время и outcome каждой попытки сохраняются.
-- **Владелец:** `SPK-05`, затем `IMP-04/HRD-04`.
-- **Остаточный риск:** модель не доказана на production-maximum input; другие и смешанные языки требуют boundary fixtures; иногда пропускаются вторичные темы или добавляется подтверждённый шум; provider fingerprints различаются.
-- **Текущая диспозиция:** `Open — mitigate`; `SPK-05: Verified — Proceed with limitation`, а review/corpus policy возвращена в `Candidate` до token-boundary evidence в `PLN-02` и executable `IMP-04/HRD-04` checks.
+- **Владелец:** `SPK-05/PLN-02`, затем `REV-EVAL-01/IMP-04/HRD-04`.
+- **Остаточный риск:** token safety доказана на production-maximum multilingual input, но качество summary на каждом языке не доказано; иногда пропускаются вторичные темы или добавляется подтверждённый шум; provider fingerprints различаются; bounded selection policy требует executable regression.
+- **Текущая диспозиция:** `Open — mitigate`; `SPK-05` summary-quality baseline и `PLN-02` token boundary пройдены, а corpus selection остаётся `Candidate` до замороженного `REV-EVAL-01` и executable `IMP-04/HRD-04` checks.
 
 ### `R-AI-02` AI-провайдер непригоден по доступу, цене или задержке
 
@@ -124,12 +124,12 @@
 - **Проверяемый риск:** нет credentials, лимит/стоимость контекста неприемлемы для 20 игр в час, latency превышает окно, rate limit делает обработку нестабильной.
 - **Оценка после `SPK-05`:** `P=5`, `I=4`, `U=1`; Exposure `20`, Discovery `4`; приоритет `P1` как известное ограничение. Доступ и latency подтверждены, но опубликованный Free TPD не покрывает теоретический cold-path максимум.
 - **Ранний сигнал:** отсутствующий доступ, высокая оценка токенов, частые 429, timeout на небольшом sample.
-- **Проверка:** измерения количества входа, latency, rate limits и стоимости в `SPK-05` без запуска полного production batch.
+- **Проверка:** измерения количества входа, latency, rate limits и стоимости в `SPK-05`; production-maximum multilingual request локально и одним controlled live call в [`token-budget-report.json`](../evals/reviews/token-budget-report.json).
 - **Подтверждённый кандидат:** Groq Free Plan, `openai/gpt-oss-20b`, Chat Completions API. Финальный run: `9/9` responses, `11,687` total tokens, median `7.638s`, max `12.134s`; опубликованы `30 RPM`, `1,000 RPD`, `8,000 TPM`, `200,000 TPD`.
-- **Митигация:** `PLN-01` выбрала PostgreSQL-backed `SummaryJob` без Redis/Celery; candidate `PLN-02` contract использует unique cache, один worker, bounded retry/delayed capacity и запрет paid fallback. До принятия corpus policy обязателен token-aware preflight по TPM/context/output budgets и worst-case multilingual fixture.
+- **Митигация:** `PLN-01` выбрала PostgreSQL-backed `SummaryJob` без Redis/Celery; `PLN-02` contract использует unique cache, один worker, bounded retry/delayed capacity, persistent quota reservation, token-aware preflight и запрет paid fallback. Maximum request резервирует `6,359` токенов при лимите `8,000 TPM`.
 - **Владелец:** `SPK-05/PLN-01–PLN-02`, затем `IMP-04/HRD-04`.
-- **Остаточный риск:** при наблюдаемом среднем размере Free TPD покрывает примерно 154 audience summaries/77 games в день против теоретических 960 summaries; тарифы, квоты, latency и доступность меняются внешне.
-- **Текущая диспозиция:** `Open — mitigate`; storage/worker contour принят в [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md), job/cache/retry states остаются candidate design в [`docs/design.md`](design.md). Реализация и token-boundary evidence обязательны; устойчивый объём выше capacity требует `Replan` до заявления production throughput.
+- **Остаточный риск:** при наблюдаемом среднем размере Free TPD покрывает примерно 154 audience summaries/77 games в день, но при maximum reservation — только 31 summary/15 полных двухаудиторных игр, против теоретических 960 summaries; тарифы, квоты, latency и доступность меняются внешне.
+- **Текущая диспозиция:** `Open — mitigate`; storage/worker и job/cache/token-budget contracts зафиксированы без новой инфраструктуры. Реализация остаётся у `IMP-04/HRD-04`; устойчивый объём выше измеренной capacity требует `Replan` до заявления production throughput.
 
 ### `R-DEP-01` Публичная среда не поддерживает обязательный runtime
 

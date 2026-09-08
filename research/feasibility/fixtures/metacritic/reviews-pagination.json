@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0.0",
+  "observed_on_utc": "2026-09-08",
+  "probe_user_agent_version": "0.3",
+  "scope": "read-only public review routes; no authentication, cookies, browser session, or protection bypass",
+  "web_route_probe": {
+    "url": "https://www.metacritic.com/game/grand-theft-auto-v/user-reviews/?platform=playstation-5",
+    "query_pages_checked": [
+      0,
+      1,
+      2,
+      3,
+      7
+    ],
+    "reported_reviews": 393,
+    "ssr_cards_per_response": 50,
+    "ordered_card_sequences_identical": true,
+    "ordered_sequence_sha256": "fa59fce1071a929ff2c0bec209b36a64d1d042cc062df707fd934a29cae8d066",
+    "conclusion": "The web route ignored page=N; it is not the review pagination contract."
+  },
+  "backend_contract": {
+    "origin": "https://backend.metacritic.com",
+    "path_shape": "/reviews/metacritic/{audience}/games/{game_slug}/platform/{platform_slug}/web",
+    "query": {
+      "offset": "integer supplied by response links",
+      "limit": "observed 50 for user and 10 for critic",
+      "filterBySentiment": "all",
+      "sort": "date for user example; score for critic example",
+      "componentName": "audience-specific constant",
+      "componentDisplayName": "audience-specific constant",
+      "componentType": "ReviewList"
+    },
+    "response_shape": {
+      "root": [
+        "data",
+        "links",
+        "meta"
+      ],
+      "data": [
+        "id",
+        "totalResults",
+        "items"
+      ],
+      "links": [
+        "self",
+        "prev",
+        "next",
+        "first",
+        "last"
+      ]
+    }
+  },
+  "complete_crawls": [
+    {
+      "audience": "user",
+      "game_slug": "grand-theft-auto-v",
+      "platform_slug": "playstation-5",
+      "limit": 50,
+      "offsets": [
+        0,
+        50,
+        100,
+        150,
+        200,
+        250,
+        300,
+        350
+      ],
+      "page_item_counts": [
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        43
+      ],
+      "reported_results_each_page": 393,
+      "fetched_items": 393,
+      "unique_identity_keys": 393,
+      "duplicate_identity_keys": 0,
+      "terminal_next_present": false,
+      "identity": "source review id was present"
+    },
+    {
+      "audience": "critic",
+      "game_slug": "bayonetta",
+      "platform_slug": "xbox-360",
+      "limit": 10,
+      "offsets": [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80
+      ],
+      "page_item_counts": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        6
+      ],
+      "reported_results_each_page": 86,
+      "fetched_items": 86,
+      "unique_identity_keys": 86,
+      "duplicate_identity_keys": 0,
+      "terminal_next_present": false,
+      "identity": "source review id was empty; fallback SHA-256 used publication slug, review URL, score, and full normalized quote"
+    }
+  ],
+  "volume_probe": {
+    "audience": "user",
+    "game_slug": "grand-theft-auto-v",
+    "platform_slug": "playstation-4",
+    "reported_reviews": 1557,
+    "ssr_cards": 50,
+    "minimum_backend_pages_at_observed_limit": 32,
+    "documented_global_maximum": null,
+    "contract_complexity": "O(page_limit) memory, O(reported_results / page_limit) requests, O(unique_reviews) persistent storage",
+    "complete_crawl_performed": false,
+    "purpose": "Verify that the contract is incremental and does not assume the smaller complete-crawl examples are a maximum."
+  },
+  "acceptance_rules": [
+    "Follow only the validated links.next.href returned by the current response; do not synthesize page=N.",
+    "Advance the cursor atomically with persistence of every item and page observation.",
+    "Reject route identity, audience, platform, filter, sort, or origin changes in a returned link.",
+    "Stop only when next is absent; reject cursor loops, repeated ordered page identities, changing totalResults, and unresolved duplicates.",
+    "A route is complete only when every page succeeded and unique fetched identities equal the stable reported total.",
+    "Do not assume a global review-count maximum or silently truncate a route; keep memory page-bounded and verify persistent-storage capacity separately."
+  ]
+}

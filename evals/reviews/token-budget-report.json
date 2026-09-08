@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "checked_at_utc": "2026-09-08T02:11:27Z",
+  "result": "pass",
+  "token_policy_version": "1.0.0-candidate",
+  "model_requested": "openai/gpt-oss-20b",
+  "model_returned": "openai/gpt-oss-20b",
+  "tokenizer": {
+    "id": "o200k_harmony",
+    "library": "tiktoken",
+    "library_version": "0.14.0"
+  },
+  "boundary_case": {
+    "id": "production_max_multilingual",
+    "review_count": 10,
+    "languages_or_unicode_profiles": 10,
+    "per_review_token_limit": 450,
+    "all_reviews_truncated_at_token_boundary": true,
+    "request_input_sha256": "80d1ad9df0b3630c9ee415308ab807bf2d51ff4a887f410888bfed009fa942d2"
+  },
+  "local_budget": {
+    "raw_serialized_prompt_tokens": 5495,
+    "provider_overhead_guard_tokens": 64,
+    "estimated_prompt_tokens": 5559,
+    "prompt_token_limit": 6000,
+    "max_completion_tokens": 800,
+    "reserved_request_tokens": 6359,
+    "request_reservation_limit": 6800,
+    "documented_free_tpm": 8000,
+    "headroom_to_free_tpm": 1641
+  },
+  "live_usage": {
+    "prompt_tokens": 5493,
+    "completion_tokens": 240,
+    "reasoning_tokens": 127,
+    "total_tokens": 5733,
+    "guarded_estimate_minus_actual_prompt": 66,
+    "observed_rate_limit_tokens": 8000
+  },
+  "privacy": "Synthetic text only; model output, API key, authorization data, provider request id, and raw response envelope are not stored."
+}

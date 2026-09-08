@@ -57,6 +57,33 @@ SSR-секция с `aria-label="New Releases content"` содержит ров�
 
 Датированный порядок и наблюдаемый overlap сохранены в [`fixtures/metacritic/lists.json`](fixtures/metacritic/lists.json).
 
+## Дополнительная проверка review pagination для `PLN-02`
+
+**Проверено:** 2026-09-08 UTC, тем же способом без аутентификации и обхода защит; user-agent контракта обновлён до `0.3`.
+
+SSR review page содержит только начальный segment. Для GTA V / PlayStation 5 user route страница сообщила `393` отзывов и отдала `50` cards. Запросы web route с `?page=0,1,2,3,7` вернули одну и ту же ordered sequence из 50 cards с одинаковым SHA-256. Следовательно, `?page=N` для отзывов использовать нельзя.
+
+В сериализованном SSR state найдена фактическая ссылка `backend.metacritic.com/reviews/.../web` с `offset`, `limit`, `filterBySentiment`, `sort` и объектом `links`. Контролируемый последовательный обход выполнялся только по возвращённому `links.next.href`:
+
+| Audience / route | Source order | Limit | Pages / final page | Reported | Fetched / unique / duplicates | Exhaustion |
+|---|---|---:|---|---:|---:|---|
+| user, GTA V / PlayStation 5 | `sort=date` | 50 | 8 / 43 | 393 | `393 / 393 / 0` | у offset `350` отсутствует `next` |
+| critic, Bayonetta / Xbox 360 | `sort=score` | 10 | 9 / 6 | 86 | `86 / 86 / 0` | у offset `80` отсутствует `next` |
+
+У user records был стабильный source review ID. У critic records поле ID оказалось пустым, поэтому проверка уникальности использовала fallback SHA-256 от publication slug, review URL, score и полного нормализованного quote. Это не объявляет изменившийся critic text той же логической записью, но даёт воспроизводимую identity для конкретного content version.
+
+Отдельный volume probe GTA V / PlayStation 4 сообщил `1,557` user reviews при тех же 50 SSR cards — минимум 32 backend pages. Полный обход этого route намеренно не выполнялся: меньшие complete examples доказывают cursor/exhaustion contract, а большой reported count доказывает, что реализация не может держать весь route в памяти, ограничиваться первой страницей или считать 393 максимумом. Документированный глобальный максимум не найден, поэтому контракт не вводит искусственный total cap: память `O(page limit)`, запросы `O(reported / limit)`, persistent storage `O(unique reviews)`. Реальная ёмкость 80 GB VDS измеряется отдельно в `HRD-05/PUB-02`; до такого evidence бессрочная retention capacity не заявляется и reviews молча не отбрасываются.
+
+Полное обезличенное evidence без текстов отзывов находится в [`reviews-pagination.json`](fixtures/metacritic/reviews-pagination.json). Из него следует контракт реализации:
+
+1. Backend link принимается только после allowlist-проверки HTTPS origin, path identity, game/platform/audience, `filterBySentiment`, `sort`, `limit` и component fields. Произвольный URL из внешнего ответа не запрашивается.
+2. Каждая страница, все её reviews и следующий cursor сохраняются одной транзакцией. Повтор после сбоя идемпотентен; worker обрабатывает одну страницу за claim, поэтому количество страниц не ограничено RAM или lease одного вызова.
+3. Source order задаётся подтверждённым `sort` и ordinal внутри последовательности pages; его нельзя заменять порядком БД. Любые изменение route parameters, cursor loop, повтор ordered page identities или изменение `totalResults` переводят generation в `unstable`, а не в `complete`.
+4. Exhaustion наступает только при отсутствии `next`. `complete` требует успеха всех pages, стабильного reported total, отсутствия нерешённых дублей и равенства unique fetched count `totalResults`; отдельно различаются `empty`, `retryable`, `unstable` и `failed`.
+5. Каждый полученный review сохраняется в исходном языке независимо от попадания в AI corpus. Summary создаётся после полного terminal snapshot всех известных platform routes аудитории, а не после каждой страницы; при незавершённой новой generation остаётся видим предыдущий summary со stale state.
+
+Это датированное наблюдение внешнего недокументированного контракта, а не гарантия Metacritic. Sanitised fixture и controlled live contract check остаются обязательными перед выпуском и при изменении parser contract.
+
 ## Карта происхождения полей
 
 | Поле | Первичный источник | Резервная/проверочная структура | Контракт отсутствия |

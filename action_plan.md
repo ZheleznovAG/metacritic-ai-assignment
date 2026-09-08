@@ -54,14 +54,14 @@
 
 | Поле | Значение |
 |---|---|
-| Версия плана | Design correction baseline 0.16 |
+| Версия плана | Design baseline 0.17 |
 | Дата | 2026-09-08 |
 | Исходник | `assignment.md`, SHA-256 `C8987F684CFDF693AB188FA2AC5875044C93EBF486B708C36FDF7E7748C2125C` |
 | Методология | `methodology.md` |
 | Завершённая стадия | 2 — Снятие критической неизвестности (`G2` пройдены с ограничениями) |
-| Активная стадия | 3 — `PLN-02` переоткрыта (`Changes requested`); `PLN-03` возвращена в `Planned` до повторной проверки зависимости |
+| Активная стадия | 3 — `PLN-02` повторно проверена (`Verified`); `PLN-03` является единственной следующей задачей (`Ready`) |
 | Реализация | Не начата |
-| Текущие блокеры | Внешних блокеров нет; у `PLN-02` есть материальные review findings по полноте отзывов, token budget и порядку выбора similarity policy |
+| Текущие блокеры | Нет; отсутствие календарного дедлайна/ёмкости учитывается как ограничение относительного плана в `PLN-03` |
 
 ### Карта стадий
 
@@ -174,6 +174,13 @@
 - **Затронуты:** `DATA-02–DATA-03`, `AI-01–AI-03`, `SIM-01–SIM-03`; `ASM-16`, `ASM-21`; `R-EXT-03–R-EXT-04`, `R-AI-01–R-AI-02`, `R-SIM-01`; `PLN-02–PLN-03`, `IMP-04`, `SIM-EVAL-01`, `IMP-06`, `SIM-VER-01`, `G3–G5`.
 - **Порядок:** `PLN-02` переоткрыта как `Changes requested`, `PLN-03` возвращена в `Planned`. Similarity сначала получает замороженный независимый oracle в `SIM-EVAL-01`, затем кандидаты сравниваются и выбираются в `IMP-06`, после чего интеграция отдельно доказывается в `SIM-VER-01`.
 - **Повторные проверки:** подтвердить review pagination/ordering/exhaustion и coverage counts; заменить character-only guard token-aware budget и проверить production maximum на multilingual corpus; понизить review/AI и similarity policies до `Candidate` до независимого evidence. Новая инфраструктура для исправления не требуется.
+
+### Изменение baseline 0.17
+
+- **Новый факт:** исправление `PLN-02` подтвердило настоящий review cursor: web `?page=N` повторяет первый segment, backend `links.next` дал полные user `393/393` и critic `86/86` collections без дублей, а route с `1,557` user reviews требует минимум 32 incremental pages. Candidate token policy с `o200k_harmony` прошла multilingual maximum локально и одним Groq-вызовом: reservation `6,359 < 8,000 TPM`, actual total `5,733`.
+- **Затронуты:** `AI-01–AI-03`, `DATA-02–DATA-03`, `ASM-16`, `R-EXT-03–R-EXT-04`, `R-AI-01–R-AI-02`, `R-DEP-01`; `PLN-02–PLN-03`, `REV-EVAL-01`, `IMP-04`, `HRD-01`, `HRD-04–HRD-05`, `PUB-02`, `G3`.
+- **Порядок:** повторный adversarial review не нашёл нерешённых материальных замечаний уровня design; `PLN-02` получает `Verified`, `PLN-03` становится единственной следующей задачей. `REV-EVAL-01` замораживает oracle bounded review selection до comparison в `IMP-04`; similarity следует отдельной последовательности `SIM-EVAL-01 -> IMP-06 -> SIM-VER-01`. Реализация не начата.
+- **Повторные проверки:** реализовать page-level cursor/count/loop/failure fixtures в `HRD-01`, token preflight/cache/provider drift и frozen selection comparison в `REV-EVAL-01/IMP-04/HRD-04`; измерить storage/retention envelope на 80 GB VDS в `HRD-05/PUB-02`; перед production повторить live contracts и quotas. Новая очередь, broker, translation stage или vector infrastructure не добавлены.
 
 ---
 
@@ -435,24 +442,24 @@
 - **Предусловия:** `PLN-01`.
 - **Результат:** определены границы внешнего адаптера, доменных правил, persistence, review/AI-enrichment, presentation и observability; сохранённые исходные отзывы имеют измеримую source coverage, точный model corpus соблюдает token budget, summary связан с моделью, конфигурацией и временем создания, а непроверенные quality policies явно остаются кандидатами.
 - **Проверка:** модель выражает несколько платформ, обновление, дневной прогресс, pagination/ordering/exhaustion и coverage отзывов, точный token-bounded AI input, summary provenance и состояния обработки; каждый критерий сопоставлен независимому evidence или явно принятому ограничению.
-- **Evidence:** `docs/design.md`, source-contract observations в [`research/feasibility/metacritic-contract.md`](research/feasibility/metacritic-contract.md) и [`docs/requirements/pln_02_review.md`](docs/requirements/pln_02_review.md).
+- **Evidence:** `docs/design.md`, source-contract observations и [`reviews-pagination.json`](research/feasibility/fixtures/metacritic/reviews-pagination.json), [`token-budget-report.json`](evals/reviews/token-budget-report.json), повторный [`pln_02_review.md`](docs/requirements/pln_02_review.md).
 - **Зависимости:** `PLN-01`, результаты spikes.
 - **Оценка / timebox:** `M`, до 1 рабочего дня.
 - **Критерий выхода:** на контракты можно написать тесты без знания внутренних деталей реализации; полнота внешней коллекции и provider budgets имеют проверяемые границы; similarity method не принят до независимого oracle.
-- **Статус:** `Changes requested` — module/persistence/provenance foundation сохранён, но review pagination/coverage, token-aware production maximum и порядок evidence для similarity требуют исправления и повторного adversarial review.
+- **Статус:** `Verified` — complete paginated collection и coverage получили независимое dated evidence; multilingual production maximum прошёл local/live token check; similarity и bounded review selection явно остаются candidates до будущих frozen eval/implementation checks.
 
 ### `PLN-03` Перебазировать задачи, зависимости и оценки
 
 - **Тип:** Planning.
 - **Связи:** весь scope.
 - **Предусловия:** `PLN-01–PLN-02`; известны дедлайн и доступная ёмкость либо их отсутствие принято как ограничение.
-- **Результат:** этот `action_plan.md` обновлён до Implementation baseline; крупные `TBE`-задачи декомпозированы, назначены реальные timebox и календарный резерв.
-- **Проверка:** трассировка Must полна, критический путь виден, план не использует больше доступного бюджета.
-- **Evidence:** новая версия этого файла и запись изменения baseline.
+- **Результат:** подробный implementation backlog вынесен в отдельный `implementation_plan.md`; этот файл остаётся master tracker стадий, ворот, статусов и ссылок. Крупные `TBE`-задачи декомпозированы, назначены реальные timebox и резерв без копирования design/eval деталей.
+- **Проверка:** трассировка Must полна, критический путь виден, план не использует больше доступного бюджета; один факт имеет один source of truth, а между планами нет конкурирующих статусов или дублированных task descriptions.
+- **Evidence:** `implementation_plan.md`, обновлённые ссылки/статусы этого файла и запись изменения baseline.
 - **Зависимости:** `PLN-01`, `PLN-02`.
 - **Оценка / timebox:** `S`, до 3 часов.
-- **Критерий выхода:** выполнены все проверки `G3`.
-- **Статус:** `Planned` — зависимость `PLN-02` переоткрыта; отсутствие дедлайна/ёмкости остаётся явным ограничением для относительного плана, без календарного обещания.
+- **Критерий выхода:** выполнены все проверки `G3`, а граница `action_plan.md` ↔ `implementation_plan.md` проверена на отсутствие дублирования.
+- **Статус:** `Ready` — зависимость `PLN-02` повторно проверена; отсутствие дедлайна/ёмкости остаётся явным ограничением для относительного плана, без календарного обещания.
 
 ### Ворота `G3` — Implementation baseline готов
 
@@ -506,14 +513,27 @@
 - **Критерий выхода:** `RUN-01` и `SEL-01–SEL-03` проходят все критерии приёмки.
 - **Статус:** `Planned`.
 
+### `REV-EVAL-01` Заморозить oracle bounded-выборки отзывов
+
+- **Тип:** Evaluation design.
+- **Связи:** `AI-01–AI-03`; `ASM-16`; `R-AI-01`.
+- **Результат:** до реализации и настройки selection method зафиксированы full-corpus cases с несколькими pages/platforms, перекошенным распределением оценок, дублями, длинными и multilingual отзывами; заданы metric, threshold и hard invariants для bounded model corpus.
+- **Проверка:** adversarial review first/last-page bias, редкой отрицательной/положительной темы, platform imbalance, deterministic repeat и изменения review вне sample; oracle не зависит от candidate hash-round-robin policy.
+- **Evidence:** versioned dataset, rubric/metric specification и acceptance record в `evals/review_selection/`.
+- **Зависимости:** `G3`, `SPK-05`; synthetic corpus не требует live Metacritic или model call.
+- **Human input:** после подготовки labels/metric/threshold задача явно переходит в `Blocked / Ask`; задать владельцу один конкретный вопрос о принятии oracle; `needed-by: G4`, до начала `IMP-04`. До ответа допустимы только независимые задачи.
+- **Оценка:** `S`, уточнить в `PLN-03`.
+- **Критерий выхода:** oracle принят и заморожен до сравнения selection candidates; его version/hash можно сослать в comparison report.
+- **Статус:** `Planned` — dependency `G3` ещё не пройдена; текущего `Ask` нет.
+
 ### `IMP-04` Реализовать раздельный AI-контур отзывов
 
 - **Тип:** Implementation / AI eval.
 - **Связи:** `AI-01–AI-03`.
-- **Результат:** отзывы критиков и пользователей обрабатываются раздельно; результат валидируется, версионируется, трассируется и обновляется по принятому правилу.
-- **Проверка:** schema/contract tests, failure tests и eval против baseline.
+- **Результат:** отзывы критиков и пользователей собираются полностью и обрабатываются раздельно; candidate bounded selection сравнивается с простым baseline на неизменном oracle, выбранный model input валидируется по tokens, версионируется, трассируется и обновляется по принятому правилу.
+- **Проверка:** pagination/schema/contract tests, frozen selection comparison, token-boundary/failure tests и summary eval против baseline.
 - **Evidence:** тесты, eval-report и примеры в публичных карточках.
-- **Зависимости:** `IMP-02`, `SPK-05`.
+- **Зависимости:** `IMP-02`, `SPK-05`, `REV-EVAL-01`.
 - **Оценка:** `L`, уточнить в `PLN-03`.
 - **Критерий выхода:** оба резюме проходят установленный порог без блокирующих ошибок.
 - **Статус:** `Planned`.
@@ -644,12 +664,12 @@
 
 - **Тип:** Implementation / Verification.
 - **Связи:** `RUN-01`, `DEL-02`, `NFR-05`, `NFR-06`; подготовка к `OPS-01–OPS-02`.
-- **Результат:** запуск и ошибка трассируются по run/game ID; видны счётчики и последний успех; секреты и недоверенный контент обрабатываются безопасно.
-- **Проверка:** диагностировать намеренно вызванный сбой; выполнить secret/security checks; проверить безопасное отображение внешнего текста.
-- **Evidence:** логи тестового запуска, security report и инструкция диагностики.
+- **Результат:** запуск и ошибка трассируются по run/game ID; видны счётчики, последний успех и storage headroom; секреты и недоверенный контент обрабатываются безопасно.
+- **Проверка:** диагностировать намеренно вызванный сбой; выполнить secret/security checks; проверить безопасное отображение внешнего текста; измерить bytes/review и retention forecast на representative multi-page corpus без автоматического удаления originals.
+- **Evidence:** логи тестового запуска, security report, storage-envelope report и инструкция диагностики.
 - **Зависимости:** `IMP-03–IMP-05`.
 - **Оценка:** `M`, уточнить в `PLN-03`.
-- **Критерий выхода:** обязательную фоновую работу можно доказать и диагностировать без Bonus-панели.
+- **Критерий выхода:** обязательную фоновую работу и риск заполнения storage можно доказать и диагностировать без Bonus-панели.
 - **Статус:** `Planned`.
 
 ### `HRD-06` Выполнить полный обязательный verification suite
@@ -693,12 +713,12 @@
 
 - **Тип:** Operational verification.
 - **Связи:** `RUN-01`, `SEL-01–SEL-03`, `DEL-02`.
-- **Результат:** в публичной среде есть датированные события планового запуска, результат обработки и последний успешный запуск; состояние переживает перезапуск/redeploy.
-- **Проверка:** дождаться применимого планового окна, сопоставить конфигурацию, события и изменения состояния; выполнить контролируемый restart check.
-- **Evidence:** обезличенные логи/метрики с run ID и снимок состояния до/после.
+- **Результат:** в публичной среде есть датированные события планового запуска, результат обработки, последний успешный запуск и измеренный storage headroom; состояние переживает перезапуск/redeploy.
+- **Проверка:** дождаться применимого планового окна, сопоставить конфигурацию, события и изменения состояния; выполнить контролируемый restart check и сверить retention forecast с фактическим 80 GB volume.
+- **Evidence:** обезличенные логи/метрики с run ID, storage snapshot/forecast и снимок состояния до/после.
 - **Зависимости:** `PUB-01`.
 - **Оценка:** `S` сфокусированной работы плюс календарное ожидание.
-- **Критерий выхода:** расписание доказано фактическим событием, а не только конфигурацией.
+- **Критерий выхода:** расписание доказано фактическим событием, а не только конфигурацией; storage headroom не нарушает принятый retention envelope.
 - **Статус:** `Planned`.
 
 ### `PUB-03` Выполнить внешний пользовательский smoke-test
@@ -885,7 +905,7 @@
 | `SEL-01–SEL-03` | `IMP-03` | `HRD-02`, `PUB-02`, `REL-01` |
 | `DATA-01` | `IMP-02–IMP-03` | `HRD-02`, `REL-01` |
 | `DATA-02–DATA-03` | `SPK-02`, `IMP-02` | `HRD-01`, `PUB-03` |
-| `AI-01–AI-03` | `SPK-05`, `IMP-04` | `HRD-04`, `PUB-03`, `REL-01` |
+| `AI-01–AI-03` | `SPK-05`, `REV-EVAL-01`, `IMP-04` | `HRD-04`, `PUB-03`, `REL-01` |
 | `UI-01`, `UI-02`, `UI-03`, `UI-04`, `UI-05` | `IMP-02`, `IMP-05` | `IMP-07`, `PUB-03` |
 | `SIM-01–SIM-03` | `SIM-EVAL-01`, `IMP-06` | `SIM-VER-01`, `IMP-07`, `PUB-03`, `REL-01` |
 | `YT-01` | `BON-11–BON-12` | `GB`, если выбран |
@@ -917,4 +937,4 @@
 
 ### Ближайшее действие workflow
 
-Следующая задача — исправление переоткрытой `PLN-02` (`Changes requested`): подтвердить контракт полноты review collection, определить token-aware corpus budget, вернуть similarity policy в candidate state и выполнить независимый criterion-to-evidence review. `PLN-03` и реализацию не начинать до завершения этой задачи отдельным циклом.
+Следующая задача — `PLN-03` (`Ready`): вынести подробный implementation backlog в отдельный `implementation_plan.md`, оставить `action_plan.md` тонким tracker ворот/статусов/evidence и перебазировать зависимости, оценки, критический путь и резерв. Реализацию не начинать до завершения этой задачи и прохождения `G3` отдельным циклом.
