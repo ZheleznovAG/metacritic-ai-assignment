@@ -1,946 +1,140 @@
-# Общий план действий по выполнению тестового задания
+# План действий: master tracker
 
-## 1. Назначение и правила использования
+- Baseline: **1.0**, задача `PLN-03`, 2026-09-09 (Asia/Novosibirsk).
+- Реализация не начата; завершённый цикл — перебазирование плана и review `G3`.
+- Блокеров для планирования нет; отсутствие дедлайна/ёмкости принято как ограничение относительной оценки.
 
-Этот документ — единый workflow выполнения [`assignment.md`](assignment.md) по правилам [`methodology.md`](methodology.md). Он охватывает путь от фиксации исходника до отправки результата и обновляется по мере появления подтверждённых фактов.
+## Источники истины и правила
 
-Это tracker задач, зависимостей, статусов, ворот и evidence, а не подробная спецификация реализации. В карточке задачи остаются только ожидаемый результат, зависимости, способ проверки, evidence и критерий выхода. Архитектурные решения находятся в ADR, контракты — в design-документах, наблюдения — в `research/`, а примеры, datasets, метрики и пороги — в `evals/` или тестовых артефактах; здесь на них даются ссылки без копирования деталей.
+[assignment.md](assignment.md) задаёт scope; [methodology.md](methodology.md) — процесс; [implementation_plan.md](implementation_plan.md) — результаты, декомпозицию, оценки и Requirement/Risk mappings. [ADR](docs/decisions/0001-minimal-stack-and-architecture.md), [design](docs/design.md), [acceptance](docs/requirements/acceptance.md), [assumptions](docs/requirements/assumptions.md) и [risks](docs/risks.md) сохраняют свои роли.
 
-Создание плана не означает выполнение перечисленных работ. Первоначальный baseline начинался после Intake; актуальное выполнение отражают версия, карта стадий и статусы задач ниже.
+Этот файл — единственное место текущих task/gate статусов, зависимостей и ссылок на фактическое evidence. Описания задач и численные оценки не копируются сюда. Исторические review фиксируют состояние на дату проверки, а не конкурирующие текущие статусы.
 
-Правила ведения:
+1. Один цикл: одна задача → author → adversarial review → verify → один focused commit → стоп. Новая задача начинается следующим циклом.
+2. Все зависимости и предыдущие ворота должны быть выполнены. Проверенный code/документ без evidence не получает Verified; material finding даёт Changes requested.
+3. При human input: Blocked / Ask, один конкретный вопрос и needed-by gate; до ответа доступны только независимые задачи. Уже полученные решения действуют.
+4. Пригодность метода не принимается до замороженного oracle; live source/provider checks отделены от deterministic CI.
+5. Таблица задаёт **конъюнкцию** зависимостей. Колонка «Ветка»: base — всегда, bonus1/bonus2 — только после выбора в BON-00. Суффикс `?` означает зависимость GB только при активной ветке; после отказа невыбранные task rows получают Dropped с основанием.
+6. При Verified ожидаемое evidence заменяется ссылкой на существующий артефакт/check. Плановые ссылки/имена не являются доказательством.
 
-1. Работа идёт сверху вниз через контрольные ворота `G0–G7`.
-2. Следующая стадия не начинается, пока не выполнены ворота предыдущей.
-3. Исключение — только явно обозначенный timeboxed spike, необходимый для прохождения текущих ворот.
-4. Статус `Verified` означает наличие независимого evidence по каждому критерию выхода, а не только написанный код или сам проверяемый документ.
-5. Новый факт обновляет связанные требования, риски, решения, задачи и проверки.
-6. Must-контур имеет приоритет над Bonus и собственными улучшениями.
-7. Bonus не начинается до прохождения `G6`.
-8. Публичное окружение проверяется рано и повторно перед сдачей.
-9. Если обязательное evidence отложено в будущую задачу, текущее решение остаётся `Proposed`/`Candidate`, а задача не получает `Verified`.
-10. Для ranking/AI/heuristic решений golden set или примеры, метрика, порог и жёсткие инварианты фиксируются до выбора или настройки метода.
-11. Контракт внешней коллекции до принятия покрывает pagination/cursor, порядок, exhaustion, дубли, reported-versus-fetched counts и worst-case volume; лимиты провайдера проверяются в его единицах, включая tokens, requests и time.
-12. Перед `Verified` выполняется отдельный adversarial review требований, рисков, контрпримеров, границ и отсутствующего evidence; материальное замечание возвращает задачу в `Changes requested`.
-13. Журнал baseline хранит только материальную причину и влияние на порядок; подробности остаются в связанном evidence и истории Git.
+Статусы: Planned — описано; Ready — можно брать; In progress — выполняется; Changes requested — требуется исправление; Verified — критерий доказан; Blocked — внешний вход отсутствует; Dropped — исключён только необязательный scope с основанием.
 
-### Статусы
+## Приоритет следующего цикла
 
-| Статус | Значение |
+Следующая единственная приоритетная задача — IMP-01. REV-EVAL-01 и SIM-EVAL-01 также доступны по зависимостям, но не выбирают методы; их подготовка и owner acceptance выполняются отдельными циклами. Предпочтительный дальнейший порядок и ожидания описаны в [implementation plan](implementation_plan.md#порядок-и-внешнее-ожидание).
+
+## Подготовка: G0–G2
+
+| ID | Зависимости | Ветка | Статус | Evidence |
+|---|---|---|---|---|
+| [IN-01](intake.md) | — | base | Verified | [Intake](intake.md) |
+| [G0](intake.md) | IN-01 | base | Verified | [Intake gate](intake.md) |
+| [FOR-01](docs/requirements/context.md) | G0 | base | Verified | [Контекст](docs/requirements/context.md) |
+| [FOR-02](docs/requirements/requirements.md) | FOR-01 | base | Verified | [Реестр](docs/requirements/requirements.md) |
+| [FOR-03](docs/requirements/assumptions.md) | FOR-02 | base | Verified | [Допущения](docs/requirements/assumptions.md) |
+| [FOR-04](docs/requirements/acceptance.md) | FOR-02, FOR-03 | base | Verified | [Приёмка](docs/requirements/acceptance.md) |
+| [FOR-05](docs/requirements/g1_review.md) | FOR-04 | base | Verified | [Trace review](docs/requirements/g1_review.md) |
+| [G1](docs/requirements/g1_review.md) | FOR-05 | base | Verified | [G1 review](docs/requirements/g1_review.md) |
+| [RSK-01](docs/risks.md) | G1 | base | Verified | [Риски](docs/risks.md) |
+| [SPK-01](research/feasibility/metacritic-access.md) | RSK-01 | base | Verified | [Доступ](research/feasibility/metacritic-access.md) |
+| [SPK-02](research/feasibility/metacritic-contract.md) | SPK-01 | base | Verified | [Контракт источника](research/feasibility/metacritic-contract.md) |
+| [SPK-03](research/feasibility/game-identity.md) | SPK-02 | base | Verified | [Identity](research/feasibility/game-identity.md) |
+| [SPK-04](research/feasibility/processing-state.md) | RSK-01, FOR-03 | base | Verified | [Календарная модель](research/feasibility/processing-state.md) |
+| [SPK-05](research/feasibility/ai-summary.md) | SPK-02 | base | Verified | [AI baseline](research/feasibility/ai-summary.md) |
+| [SPK-06](research/feasibility/deployment.md) | RSK-01, FOR-01 | base | Verified | [VDS probe](research/feasibility/deployment.md) |
+| [RSK-02](docs/requirements/g2_review.md) | SPK-03, SPK-04, SPK-05, SPK-06 | base | Verified | [Risk review](docs/requirements/g2_review.md) |
+| [G2](docs/requirements/g2_review.md) | RSK-02 | base | Verified | [G2 review](docs/requirements/g2_review.md) |
+
+## Implementation baseline: G3
+
+| ID | Зависимости | Ветка | Статус | Evidence |
+|---|---|---|---|---|
+| [PLN-01](docs/decisions/0001-minimal-stack-and-architecture.md) | G2 | base | Verified | [ADR-0001](docs/decisions/0001-minimal-stack-and-architecture.md) |
+| [PLN-02](docs/requirements/pln_02_review.md) | PLN-01 | base | Verified | [Исправленные контракты](docs/requirements/pln_02_review.md) |
+| [PLN-03](docs/requirements/g3_review.md) | PLN-01, PLN-02 | base | Verified | [Baseline review](docs/requirements/g3_review.md) |
+| `G3` | PLN-03 | base | Verified | [G3 review и offline checks](docs/requirements/g3_review.md) |
+
+## Сквозная реализация: G4
+
+| ID | Зависимости | Ветка | Статус | Evidence |
+|---|---|---|---|---|
+| [IMP-01](implementation_plan.md#imp-01) | G3 | base | Ready | Ожидается: CI, README, image SHA, deploy smoke |
+| [IMP-02](implementation_plan.md#imp-02) | IMP-01 | base | Planned | Ожидается: Parser inputs/tests, migrations, карточка |
+| [IMP-03](implementation_plan.md#imp-03) | IMP-02 | base | Planned | Ожидается: Selector/clock/restart tests, run events |
+| [REV-EVAL-01](implementation_plan.md#rev-eval-01) | G3, SPK-05 | base | Ready | Ожидается: evals/review_selection: dataset/rubric/acceptance |
+| [IMP-04](implementation_plan.md#imp-04) | IMP-03, REV-EVAL-01 | base | Planned | Ожидается: Review fixtures, tests, selection/summary/capacity reports |
+| [IMP-05](implementation_plan.md#imp-05) | IMP-04 | base | Planned | Ожидается: UI checks/screenshots и public smoke |
+| [SIM-EVAL-01](implementation_plan.md#sim-eval-01) | G3 | base | Ready | Ожидается: evals/similarity: dataset/metric/acceptance |
+| [IMP-06](implementation_plan.md#imp-06) | SIM-EVAL-01, IMP-02 | base | Planned | Ожидается: Frozen comparison report и policy version |
+| [SIM-VER-01](implementation_plan.md#sim-ver-01) | IMP-05, IMP-06 | base | Planned | Ожидается: Integration/E2E и relevance regression |
+| [IMP-07](implementation_plan.md#imp-07) | IMP-03, SIM-VER-01 | base | Planned | Ожидается: Полный E2E и public smoke |
+| `G4` | IMP-07 | base | Planned | Ожидается: IMP-07 report + все functional AC |
+
+## Упрочнение: G5
+
+| ID | Зависимости | Ветка | Статус | Evidence |
+|---|---|---|---|---|
+| [HRD-01](implementation_plan.md#hrd-01) | G4 | base | Planned | Ожидается: Parser/HTTP failure report |
+| [HRD-02](implementation_plan.md#hrd-02) | G4 | base | Planned | Ожидается: Crash/restart/state report |
+| [HRD-03](implementation_plan.md#hrd-03) | G4 | base | Planned | Ожидается: PostgreSQL concurrency report |
+| [HRD-04](implementation_plan.md#hrd-04) | G4 | base | Planned | Ожидается: Final AI/failure/capacity eval |
+| [HRD-05](implementation_plan.md#hrd-05) | G4 | base | Planned | Ожидается: Diagnostics/security/storage reports |
+| [HRD-06](implementation_plan.md#hrd-06) | HRD-01, HRD-02, HRD-03, HRD-04, HRD-05 | base | Planned | Ожидается: Общий CI-run и G5 review |
+| `G5` | HRD-06 | base | Planned | Ожидается: HRD-06 report + risk/quality review |
+
+## Публичная валидация: G6
+
+| ID | Зависимости | Ветка | Статус | Evidence |
+|---|---|---|---|---|
+| [PUB-01](implementation_plan.md#pub-01) | G5 | base | Planned | Ожидается: HTTPS URL, image/commit SHA и deploy log |
+| [PUB-02](implementation_plan.md#pub-02) | PUB-01 | base | Planned | Ожидается: Два окна, reboot/restore, storage/AI measurements |
+| [PUB-03](implementation_plan.md#pub-03) | PUB-02 | base | Planned | Ожидается: Внешний smoke и G6 review |
+| `G6` | PUB-03 | base | Planned | Ожидается: PUB-02/PUB-03 evidence + public gate review |
+
+## Условный Bonus: GB
+
+| ID | Зависимости | Ветка | Статус | Evidence |
+|---|---|---|---|---|
+| [BON-00](implementation_plan.md#bon-00) | G6 | base | Planned | Ожидается: Scope ADR: none/bonus1/bonus2/both |
+| [BON-11](implementation_plan.md#bon-11) | BON-00 | bonus1 | Planned | Ожидается: YouTube feasibility/disposition |
+| [BON-12](implementation_plan.md#bon-12) | BON-11 | bonus1 | Planned | Ожидается: Video/eval/failure/public evidence |
+| [BON-21](implementation_plan.md#bon-21) | BON-00 | bonus2 | Planned | Ожидается: Realtime UI/server consistency |
+| [BON-22](implementation_plan.md#bon-22) | BON-21 | bonus2 | Planned | Ожидается: Auth/concurrency/shared-trigger evidence |
+| `GB` | BON-00, BON-12?, BON-22? | base | Planned | Ожидается: Scope decision + evidence выбранных ветвей |
+
+## Комплект и сдача: G7
+
+| ID | Зависимости | Ветка | Статус | Evidence |
+|---|---|---|---|---|
+| [REL-02](implementation_plan.md#rel-02) | GB | base | Planned | Ожидается: README и docs/evidence.md |
+| [REL-03](implementation_plan.md#rel-03) | GB | base | Planned | Ожидается: Archive manifest/privacy report |
+| [REL-01](implementation_plan.md#rel-01) | REL-02, REL-03 | base | Planned | Ожидается: Release checklist, candidate SHA/digest |
+| [REL-04](implementation_plan.md#rel-04) | REL-01 | base | Planned | Ожидается: Final links/version/archive check |
+| [REL-05](implementation_plan.md#rel-05) | REL-04 | base | Planned | Ожидается: Отправленное сообщение и timestamp |
+| `G7` | REL-05 | base | Planned | Ожидается: Release checklist + DEL-04 receipt |
+
+## Условия ворот
+
+Статус ворот находится только в таблицах выше. Выполнение зависимостей необходимо, но не заменяет содержательный gate review:
+
+| Gate | Условие принятия |
 |---|---|
-| `Planned` | Задача описана, но не начата |
-| `Ready` | Предусловия выполнены, задача может быть взята в работу |
-| `In progress` | Работа выполняется |
-| `Changes requested` | Review обнаружил материальные замечания; задача переоткрыта до их устранения и повторной проверки |
-| `Verified` | Критерий выхода пройден, evidence сохранено |
-| `Blocked` | Есть явно указанный внешний блокер |
-| `Dropped` | Работа исключена с зафиксированной причиной; для Must недопустимо без согласованного ограничения |
+| G0 | Исходник/обязательный и Bonus scope/комплект сдачи сохранены без подмены неизвестного |
+| G1 | Все требования имеют ID, трактовку, критерий и ожидаемый evidence; неоднозначности видимы |
+| G2 | Must-spikes имеют проверенный результат, решение и остаточный риск; Bonus изолирован |
+| G3 | Полное Requirement/Risk покрытие; обоснованный стек; ацикличные зависимости; ранний public slice; fixtures/evals/failures/delivery и резерв учтены; статусы/описания не дублируются |
+| G4 | Продуктовые функциональные Must RUN/SEL/DATA/AI/UI/SIM имеют первичное evidence, рабочий source→DB→UI путь, безопасное обновление, оба резюме/похожие игры, полный deterministic E2E и публичный срез |
+| G5 | Отказные, календарные, recovery/concurrency, source validation и AI/similarity quality проверки проходят; diagnostics/security и полный suite подтверждены |
+| G6 | Продуктовые и эксплуатационные Must подтверждены публично: реальные данные, HTTPS/external E2E, два последовательных application schedule windows, restart/redeploy/host-reboot persistence и isolated restore; capacity/storage ограничения измерены и не скрывают блокирующий Must-дефект |
+| GB | BON-00 зафиксировал scope; выбранные ветки приняты с failure/eval/public evidence без Must-regression либо исключены; none закрывает gate записью решения |
+| G7 | Все 28 Must, включая DEL-01–DEL-04, имеют evidence; candidate соответствует публичной версии; README/архив/ссылки проверены, секретов нет, ограничения открыты и отправка подтверждена |
 
-### Оценки
+`G6` не требует заранее выполнить отправку, архив и финальный repository/комплект check из `DEL-*`: эти delivery AC окончательно закрываются в `G7`. Это исправление зависимости ворот, не исключение требований. `G3` принимает план; оно не подтверждает production capacity, application tests или качество ещё не выбранных policies.
 
-До получения общего срока и бюджета используются относительные размеры:
+## Изменение baseline и сохранённая история
 
-- `XS` — до 2 часов сфокусированной работы;
-- `S` — до половины рабочего дня;
-- `M` — до одного рабочего дня;
-- `L` — до двух рабочих дней;
-- `TBE` — оценить после discovery, когда известны внешний контракт и выбранные технические решения.
+Baseline 1.0 (`PLN-03`) заменяет громоздкие task cards на master tracker и связанный implementation backlog, сохраняя все 46 Task IDs. Проверочные artifacts и git-история не удаляются. Предыдущий полный план и журнал 0.3–0.18 доступны через `git show 0c353ec:action_plan.md`; исходное задание имеет неизменный SHA-256 из intake.
 
-Ожидание ответа, выдачи доступа или срабатывания реального расписания учитывается отдельно от сфокусированной работы. Календарный график составляется после получения дедлайна и доступной ёмкости; до этого оценки не являются обещанием срока.
+Материальные изменения: IMP-04 зависит от готового календарного/ownership контура IMP-03; HRD-задачи явно стоят после G4; условные Bonus-ветки не блокируют none; REL-02/REL-03 готовят комплект до REL-01; G6/G7 разделяют public readiness и завершённую сдачу. Обоснование, проверка графа и явные ограничения бюджета — [g3_review.md](docs/requirements/g3_review.md).
 
----
-
-## 2. Baseline и текущее состояние
-
-| Поле | Значение |
-|---|---|
-| Версия плана | Design baseline 0.18 |
-| Дата | 2026-09-09 (Asia/Novosibirsk) |
-| Исходник | `assignment.md`, SHA-256 `C8987F684CFDF693AB188FA2AC5875044C93EBF486B708C36FDF7E7748C2125C` |
-| Методология | `methodology.md` |
-| Завершённая стадия | 2 — Снятие критической неизвестности (`G2` пройдены с ограничениями) |
-| Активная стадия | 3 — корректировка `PLN-02` проверена (`Verified`); следующая единственная задача — `PLN-03` (`Ready`) |
-| Реализация | Не начата |
-| Текущие блокеры | Нет; отсутствие календарного дедлайна/ёмкости учитывается как ограничение относительного плана в `PLN-03` |
-
-### Карта стадий
-
-| Стадия | Результат | Ворота | Статус |
-|---|---|---|---|
-| 0. Intake | Зафиксированный вход и комплект сдачи | `G0` | `Verified` |
-| 1. Формализация | Реестр требований, допущений и критериев приёмки | `G1` | `Verified` |
-| 2. Снятие неизвестности | Реестр рисков и результаты Must-spikes | `G2` | `Verified` |
-| 3. Детализация плана | Implementation baseline, решения и оценки | `G3` | `In progress` |
-| 4. Сквозная реализация | Работающий обязательный продукт вертикальными срезами | `G4` | `Planned` |
-| 5. Упрочнение | Доказанные отказные, граничные и качественные свойства | `G5` | `Planned` |
-| 6. Публичная валидация | Реальный сервис, состояние и расписание | `G6` | `Planned` |
-| Bonus | Полностью принятые дополнительные функции | `GB` | `Planned` |
-| 7. Сдача | Проверенный release candidate и комплект отправки | `G7` | `Planned` |
-
-### Изменение baseline 0.3
-
-- **Новый факт:** `SPK-01` подтвердил локальную техническую доступность страниц, но официальный Terms требует предварительного письменного разрешения на автоматизированный доступ.
-- **Затронуты:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01–DATA-03`, `AI-01–AI-03`, `NFR-06`; `R-EXT-01–R-EXT-02`; `SPK-01–SPK-02`.
-- **Порядок:** `SPK-02` заблокирована решением `Ask`; независимая `SPK-04` стала следующей доступной задачей стадии 2.
-- **Повторные проверки:** при получении разрешения проверить те же URL из выбранной hosting-среды и повторно сверить Terms/`robots.txt` до live implementation.
-
-### Изменение baseline 0.4
-
-- **Новый факт:** `SPK-04` зафиксировал непротиворечивую модель business day, batch, retry, restart и concurrency с решением `Proceed with limitation`.
-- **Затронуты:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01`, `NFR-01–NFR-03`, Bonus `OPS-02`; `ASM-01–ASM-09`, `ASM-22`; `R-TIM-01–R-TIM-02`.
-- **Порядок:** календарная часть `G2` закрыта; других независимых задач `Ready` нет, поэтому workflow ждёт human input по `SPK-01: Ask`.
-- **Повторные проверки:** инварианты `SPK-04` реализовать test-first; проверить реальный cursor, identity и lease capabilities после `SPK-02`, `SPK-03` и `SPK-06`.
-
-### Изменение baseline 0.5
-
-- **Новый факт:** 2026-09-05 владелец подтвердил наличие разрешения на ранее сформулированный scope автоматического доступа к Metacritic и выбрал бесплатную версию Grok для AI-spike.
-- **Затронуты:** `CTX-03`, `CTX-06`, `CTX-15`; `R-EXT-02`, `R-AI-02`; `SPK-01–SPK-03`, `SPK-05`.
-- **Порядок:** `SPK-01: Ask` снят решением `Proceed with limitation`; `SPK-02` стала `Ready`, `SPK-05` ждёт её samples, но больше не ждёт выбора модели.
-- **Повторные проверки:** сохранить разрешение в финальном evidence/AI-архиве; в `SPK-05` зафиксировать фактически доступные Grok model/interface/version, квоты, стоимость и воспроизводимость.
-
-### Изменение baseline 0.6
-
-- **Новый факт:** `SPK-02` подтвердил составной контракт обязательных данных на обычной, мультиплатформенной и неполной карточках; SEE ALL page 1/page 2 за 11 минут дали 6 повторяющихся URL.
-- **Затронуты:** `SEL-01–SEL-02`, `DATA-02–DATA-03`, `AI-01–AI-03`; `ASM-06–ASM-08`, `ASM-11–ASM-13`, `ASM-16`, `ASM-20–ASM-21`; `R-EXT-03–R-EXT-04`, `R-SIM-01`, `R-TST-01`; `SPK-02–SPK-03`, `SPK-05`.
-- **Порядок:** `SPK-02` завершена с `Proceed with limitation`; `SPK-03` и `SPK-05` стали `Ready`, следующая задача по порядку зависимостей — `SPK-03`.
-- **Повторные проверки:** реализовать JSON-LD + DOM contract на sanitised fixtures; Userscore/reviews получать platform-specific routes; `tbd` хранить как `null`; source overlap фильтровать по дневной identity; semantic anomalies не исправлять выдуманными данными.
-
-### Изменение baseline 0.7
-
-- **Новый факт:** `SPK-03` обнаружил `game-title.id` в SSR payload list/detail/review и отдельные `source_platform_id`/`relatedGameId`; ID совпали между list/detail и detail/review, а близкие страницы Sonic имели разные game IDs.
-- **Затронуты:** `SEL-01–SEL-03`, `DATA-01`, `DATA-03`; `ASM-10–ASM-13`; `R-ID-01`, `R-TIM-01`, `R-DAT-01`; модель `SPK-04`.
-- **Порядок:** `SPK-03` завершена с `Proceed with limitation`; следующая независимая задача — `SPK-05`; `SPK-06` остаётся `Blocked / Ask`, `needed-by: G2`.
-- **Повторные проверки:** реализовать ID-first resolution, alias history, game/platform unique constraints и conflict branches до business-field update; disappearance/change недокументированных SSR IDs считать заметной ошибкой, а не поводом для merge по title/slug.
-
-### Изменение baseline 0.8
-
-- **Новый факт:** 2026-09-07 владелец выбрал уже доступную VDS: Ubuntu 24.04, 2 CPU cores, 4 GB RAM, 80 GB storage, 32 TB traffic; доступ будет передан через локальный `.env` и отдельный SSH key file.
-- **Затронуты:** `CTX-03`, `CTX-05–CTX-06`; `RUN-01`, `DEL-02`, `NFR-01`, `NFR-05–NFR-06`; `R-DEP-01–R-DEP-02`, `R-OPS-01`; `SPK-06`.
-- **Порядок:** выбор hosting candidate больше не блокирует `SPK-06`, но фактический probe остаётся `Blocked / Ask` до заполнения SSH-конфигурации, `needed-by: G2`; `SPK-05` остаётся независимой задачей `Ready`.
-- **Повторные проверки:** read-only SSH preflight, внешний HTTP check, process restart с сохранением state и реальное server-side hourly event; секреты, host и user не публиковать.
-
-### Изменение baseline 0.9
-
-- **Новый факт:** `SPK-06` подтвердила на выбранной VDS Ubuntu 24.04 публичный read-only HTTP endpoint, persistent state через process restart и реальное cron-событие `2026-09-07T06:00:01Z`; решение — `Proceed with limitation`.
-- **Затронуты:** `CTX-03`, `CTX-05–CTX-06`; `RUN-01`, `DEL-02`, `NFR-01`, `NFR-05–NFR-06`; `R-DEP-01–R-DEP-02`, `R-OPS-01`; `SPK-06`.
-- **Порядок:** `SPK-06` завершена; следующая задача стадии — `SPK-05` (`Ready`), после неё выполняется итоговая фиксация рисков `RSK-02`.
-- **Повторные проверки:** на `PLN-01` выбрать production supervision/TLS и явно задать business timezone UTC; до `G6` проверить host reboot и два последовательных application schedule windows; transient network resets покрыть retry/monitoring и повторить внешний smoke в `REL-04`.
-
-### Изменение baseline 0.10
-
-- **Новый факт:** 2026-09-07 владелец уточнил, что допустим только бесплатный API tier. Бесплатный consumer Grok не даёт бесплатный xAI API, поэтому кандидат заменён на Groq Free Plan с multilingual-моделью `openai/gpt-oss-20b`, strict JSON Schema и опубликованными free limits.
-- **Затронуты:** `CTX-03`, `CTX-06`; `AI-01–AI-03`; `R-AI-01–R-AI-02`; `SPK-05`.
-- **Порядок:** frozen eval, runner и rubric готовятся независимо; live baseline имеет статус `Blocked / Ask` до размещения владельцем `GROQ_API_KEY` в локальном `.env`, `needed-by: G2`.
-- **Повторные проверки:** перед inference повторно проверить доступность модели и Free Plan limits; сохранить фактические model, usage, rate-limit headers и latency без ключа/provider request IDs.
-
-### Изменение baseline 0.11
-
-- **Новый факт:** владелец разместил `GROQ_API_KEY` в локальном `.env` и потребовал выполнять `SPK-05` локально. Secret-presence проверена без вывода значения; в workspace и стандартных Windows locations нет Python runtime/`.venv`, а команды `python/py` ведут только на неисполняемые WindowsApps aliases.
-- **Затронуты:** `CTX-06`; `R-AI-02`; `SPK-05`.
-- **Порядок:** credential Ask закрыт; `SPK-05` остаётся `Blocked / Ask` до разрешения установить локальный Python 3.12 и создать `.venv`, `needed-by: G2`. VDS для этой задачи не используется.
-- **Повторные проверки:** после установки выполнить локально syntax check, access check, dry-run, frozen live run и rubric scoring; секрет не печатать и не переносить из `.env`.
-
-### Изменение baseline 0.12
-
-- **Новый факт:** локально обнаружен и использован Python 3.14.7 в ignored `.venv`; владелец уточнил, что исходные поля/отзывы не переводятся и AI-резюме сохраняет язык входного корпуса. Финальный Groq Free Plan baseline `openai/gpt-oss-20b` прошёл `9/9` structural cases и frozen rubric `96/98` (`97.96%`) без блокирующих ошибок; решение — `Proceed with limitation`.
-- **Затронуты:** `CTX-03`, `CTX-06`, `CTX-10`; `AI-01–AI-03`; `ASM-14`, `ASM-16–ASM-19`; `R-AI-01–R-AI-02`; `SPK-05`.
-- **Порядок:** `SPK-05` завершена; все Must-spikes имеют решения, следующая задача — `RSK-02` (`Ready`) для итогового risk/gate review, без начала стадии 3.
-- **Повторные проверки:** в `IMP-04/HRD-04` реализовать audience isolation, source-language input, input fingerprint/cache, async retry queue, canonical validation и deterministic five-item cap; до production load повторно проверить Groq model/limits/data controls. При устойчивом объёме более примерно 77 изменившихся игр/день переоценить batching/model/provider, поскольку наблюдаемый размер не помещается в Free TPD.
-
-### Изменение baseline 0.13
-
-- **Новый факт:** `RSK-02` проверил 24 risk blocks: все 20 Must-рисков имеют решение/ограничение, evidence, митигацию, остаточный риск и владельца следующего действия; текущих `P0`, `Blocked / Ask` и `Replan` нет. Четыре Bonus-риска изолированы после `G6`. Ворота `G2` пройдены с ограничениями.
-- **Затронуты:** все Must; `R-EXT-01–R-UI-01`; `ASM-21`; `RSK-02`, `G2`, `PLN-01`.
-- **Порядок:** стадия 2 завершена; `PLN-01` становится единственной следующей задачей `Ready`. Реализация и `PLN-02` не начинаются до отдельного цикла и выполнения зависимости.
-- **Повторные проверки:** ограничения привязаны к `PLN-01–PLN-03`, `IMP-*`, `HRD-*`, `PUB-*` и `REL-*` в [`g2_review.md`](docs/requirements/g2_review.md); stop conditions требуют `Ask/Replan`, если утрачивается разрешённый Metacritic path, Free AI capacity, atomic state contract или public runtime capability.
-
-### Изменение baseline 0.14
-
-- **Новый факт:** `PLN-01` выбрала контейнеризованный модульный монолит на Python 3.12 / Django 5.2 LTS: один application image для web/scheduler/enrichment worker, PostgreSQL 16 и Caddy TLS под Docker Compose на single VDS. Redis/Celery, SPA, Kubernetes и vector DB не входят в baseline. Локально подтверждены Docker Engine 29.7.2 и Compose 5.4.0; Python development/tests остаются в `.venv`.
-- **Затронуты:** все Must; `R-AI-02`, `R-DEP-01`, `R-TIM-02`, `R-OPS-01`, `R-REP-01`; `PLN-01–PLN-02`, `G3`.
-- **Порядок:** `PLN-01` завершена; следующая задача — `PLN-02` (`Ready`) для внутренних контрактов и модели данных. Source scaffold и реализация не начинаются до отдельного цикла и `G3`.
-- **Повторные проверки:** exact dependency/image lock, Compose config, VDS Docker capability и чистый setup — `IMP-01`, `needed-by: G4`; PostgreSQL ownership/queue semantics — `PLN-02/HRD-02–HRD-03`; hostname/DNS, TLS, named-volume persistence, host reboot и два application schedule windows — `PUB-01–PUB-02`, `needed-by: G6`.
-
-### Изменение baseline 0.15
-
-- **Новый факт:** `PLN-02` зафиксировала тестируемые module/persistence contracts. Каждый фактически скачанный отзыв сохраняется в PostgreSQL в исходном языке; отдельный immutable corpus хранит точный ограниченный input модели. Каждая AI-попытка и summary связываются с corpus/input fingerprint и фиксируют requested/returned model, доступный provider fingerprint, версии/hashes контура, UTC-время, latency, usage и outcome.
-- **Затронуты:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01–DATA-03`, `AI-01–AI-03`, `UI-01–UI-05`, `SIM-01–SIM-03`, `NFR-01–NFR-06`; `ASM-16`, `ASM-19`, `ASM-21`; `R-AI-01–R-AI-02`, `R-TIM-02`, `R-DAT-01`, `R-SIM-01`, `R-OPS-01`; `PLN-02–PLN-03`.
-- **Порядок:** `PLN-02` завершена; следующая задача — `PLN-03` (`Ready`) для зависимостей, оценок, критического пути и резерва. Отсутствие календарного дедлайна остаётся явным ограничением, а не препятствует относительному implementation baseline. Реализация не начинается до отдельного цикла и прохождения `G3`.
-- **Повторные проверки:** schema/transaction/concurrency contracts реализовать test-first в `IMP-02–IMP-04/HRD-01–HRD-04`; similarity policy `1.0.0` проверить frozen golden set в `IMP-06`; не добавлять broker, vector store, отдельный API/SPA или monitoring service без измеренной необходимости и нового решения.
-
-### Изменение baseline 0.16
-
-- **Новый факт:** adversarial review `PLN-02` обнаружил, что design-документ служил evidence самому себе, review pagination/exhaustion не были подтверждены, character caps не доказывали соблюдение token limits, а similarity policy была принята до golden set, метрики и порога вопреки `AC-SIM-03`.
-- **Затронуты:** `DATA-02–DATA-03`, `AI-01–AI-03`, `SIM-01–SIM-03`; `ASM-16`, `ASM-21`; `R-EXT-03–R-EXT-04`, `R-AI-01–R-AI-02`, `R-SIM-01`; `PLN-02–PLN-03`, `IMP-04`, `SIM-EVAL-01`, `IMP-06`, `SIM-VER-01`, `G3–G5`.
-- **Порядок:** `PLN-02` переоткрыта как `Changes requested`, `PLN-03` возвращена в `Planned`. Similarity сначала получает замороженный независимый oracle в `SIM-EVAL-01`, затем кандидаты сравниваются и выбираются в `IMP-06`, после чего интеграция отдельно доказывается в `SIM-VER-01`.
-- **Повторные проверки:** подтвердить review pagination/ordering/exhaustion и coverage counts; заменить character-only guard token-aware budget и проверить production maximum на multilingual corpus; понизить review/AI и similarity policies до `Candidate` до независимого evidence. Новая инфраструктура для исправления не требуется.
-
-### Изменение baseline 0.17
-
-- **Новый факт:** исправление `PLN-02` подтвердило настоящий review cursor: web `?page=N` повторяет первый segment, backend `links.next` дал полные user `393/393` и critic `86/86` collections без дублей, а route с `1,557` user reviews требует минимум 32 incremental pages. Candidate token policy с `o200k_harmony` прошла multilingual maximum локально и одним Groq-вызовом: reservation `6,359 < 8,000 TPM`, actual total `5,733`.
-- **Затронуты:** `AI-01–AI-03`, `DATA-02–DATA-03`, `ASM-16`, `R-EXT-03–R-EXT-04`, `R-AI-01–R-AI-02`, `R-DEP-01`; `PLN-02–PLN-03`, `REV-EVAL-01`, `IMP-04`, `HRD-01`, `HRD-04–HRD-05`, `PUB-02`, `G3`.
-- **Порядок:** повторный adversarial review не нашёл нерешённых материальных замечаний уровня design; `PLN-02` получает `Verified`, `PLN-03` становится единственной следующей задачей. `REV-EVAL-01` замораживает oracle bounded review selection до comparison в `IMP-04`; similarity следует отдельной последовательности `SIM-EVAL-01 -> IMP-06 -> SIM-VER-01`. Реализация не начата.
-- **Повторные проверки:** реализовать page-level cursor/count/loop/failure fixtures в `HRD-01`, token preflight/cache/provider drift и frozen selection comparison в `REV-EVAL-01/IMP-04/HRD-04`; измерить storage/retention envelope на 80 GB VDS в `HRD-05/PUB-02`; перед production повторить live contracts и quotas. Новая очередь, broker, translation stage или vector infrastructure не добавлены.
-
----
-
-### Изменение baseline 0.18
-
-- **Новый факт:** повторный review исправил retry identity/atomicity и учёт observations; PostgreSQL 16 probe прошёл. Исходный AI baseline опубликован и проверяется offline из снимка Git без приватных файлов; parser fixtures перенесены к первым использующим их срезам.
-- **Затронуты:** `PLN-02–PLN-03`, `IMP-02/IMP-04`, `HRD-01/HRD-04–HRD-05`, `PUB-02`; `AI-01–AI-03`, `NFR-01–NFR-03/NFR-06`, `R-EXT-03–R-EXT-04`, `R-AI-02`. Evidence и границы проверки — в [`pln_02_review.md`](docs/requirements/pln_02_review.md).
-- **Порядок:** корректировка `PLN-02` получает `Verified`; `PLN-03` становится `Ready`. Application capacity/storage остаются непроверенными ограничениями с назначенными checks; реализация и `G3` не начаты/не закрыты этим циклом.
-
-## 3. Стадия 0 — Intake
-
-### `IN-01` Зафиксировать сырой вход и контекст поставки
-
-- **Тип:** Discovery.
-- **Связи:** весь scope; `DEL-01–DEL-04`.
-- **Предусловия:** доступны исходный текст и рабочий репозиторий.
-- **Результат:** неизменяемая точка отсчёта, явный объём, внешние ссылки, известные и отсутствующие ограничения, комплект сдачи.
-- **Проверка:** сверить intake с исходным документом; проверить SHA-256 и наличие всех разделов задания.
-- **Evidence:** [`intake.md`](intake.md).
-- **Зависимости:** нет.
-- **Оценка:** `S`.
-- **Критерий выхода:** выполнены все строки ворот стадии 0 в `intake.md`.
-- **Статус:** `Verified`.
-
-### Ворота `G0` — Intake завершён
-
-- [x] Исходник определён путём, commit и SHA-256.
-- [x] Must, Bonus, свободные улучшения и комплект сдачи разделены.
-- [x] Внешние ссылки и адресат сохранены.
-- [x] Отсутствующие ограничения отмечены без молчаливых допущений.
-- [x] Требование сохранять AI-историю учтено.
-
----
-
-## 4. Стадия 1 — Формализация
-
-Цель стадии — получить однозначную и проверяемую спецификацию, не выбирая архитектуру.
-
-### `FOR-01` Зафиксировать недостающие рамки проекта
-
-- **Тип:** Discovery.
-- **Связи:** весь scope.
-- **Предусловия:** `G0` пройдены.
-- **Результат:** получены либо явно оставлены неизвестными срок, ёмкость, денежный бюджет, доступные аккаунты/API-ключи, ограничения стека и канал уточнений.
-- **Шаги:** составить один компактный список вопросов; отделить ответы автора задания от решений исполнителя; неизвестные без ответа не превращать в факты.
-- **Проверка:** каждый пробел из раздела 5.2 `intake.md` имеет ответ, статус `Unknown` либо ссылку на последующее допущение.
-- **Evidence:** журнал контекста проекта в `docs/requirements/context.md` или эквивалентном согласованном месте.
-- **Зависимости:** `IN-01`.
-- **Оценка / timebox:** `XS`, до 1 часа без учёта ожидания ответа.
-- **Критерий выхода:** нет скрытого ограничения, способного незаметно изменить scope или порядок работы.
-- **Статус:** `Verified`.
-
-### `FOR-02` Построить атомарный реестр требований
-
-- **Тип:** Discovery.
-- **Связи:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01–DATA-03`, `AI-01–AI-03`, `UI-01–UI-05`, `SIM-01–SIM-03`, `YT-01`, `OPS-01–OPS-02`, `DEL-01–DEL-04`, `NFR-01–NFR-06`.
-- **Предусловия:** `FOR-01` завершена либо её неизвестные явно зарегистрированы.
-- **Результат:** для каждого пункта есть источник, приоритет, одно наблюдаемое поведение, зависимости и статус.
-- **Шаги:** сверить карту из `methodology.md` с каждой фразой `assignment.md`; разделить составные обязательства; не добавлять проектные механизмы как требования.
-- **Проверка:** двусторонняя сверка «каждый пункт задания покрыт» и «каждая строка реестра имеет источник».
-- **Evidence:** `docs/requirements/requirements.md`.
-- **Зависимости:** `FOR-01`.
-- **Оценка / timebox:** `S`, до 3 часов.
-- **Критерий выхода:** ни один Must, Bonus или результат сдачи не потерян и не дублируется под разными смыслами.
-- **Статус:** `Verified`.
-
-### `FOR-03` Разрешить или зарегистрировать неоднозначности
-
-- **Тип:** Decision.
-- **Связи:** прежде всего `RUN-01`, `SEL-01–SEL-03`, `DATA-01`, `DATA-03`, `AI-01–AI-03`, `UI-05`, `SIM-01`, `YT-01`, `OPS-01–OPS-02`, `DEL-03`.
-- **Предусловия:** `FOR-02`.
-- **Результат:** каждая существенная неоднозначность имеет вопрос, варианты, влияние, ответ автора либо самое простое обратимое допущение, основание и условие пересмотра.
-- **Шаги:** пройти список из раздела 5.4 методологии; сначала задать доступные существенные вопросы; без ответа принять и пометить допущение, не маскируя его под требование.
-- **Проверка:** ни один критерий приёмки не зависит от незафиксированной трактовки.
-- **Evidence:** `docs/requirements/assumptions.md` и ссылки на письменные уточнения.
-- **Зависимости:** `FOR-02`.
-- **Оценка / timebox:** `S`, до 3 часов без учёта ожидания ответа.
-- **Критерий выхода:** все известные неоднозначности имеют статус `Answered`, `Assumed` или `Deferred with owner`.
-- **Статус:** `Verified`.
-
-### `FOR-04` Определить критерии приёмки, оракулы и evidence
-
-- **Тип:** Verification design.
-- **Связи:** все требования.
-- **Предусловия:** `FOR-03`.
-- **Результат:** для каждого Must и выбранного Bonus заданы Given/When/Then, релевантные границы, оракул, метод проверки и ожидаемый evidence.
-- **Шаги:** покрыть минимум 19 сценариев раздела 7.2 методологии; разделить детерминированные тесты, AI/similarity eval, E2E, эксплуатационные доказательства и inspection.
-- **Проверка:** у каждого Must есть хотя бы один позитивный критерий; у рисковых требований есть негативный или граничный сценарий.
-- **Evidence:** `docs/requirements/acceptance.md` и ссылки из реестра требований.
-- **Зависимости:** `FOR-02`, `FOR-03`.
-- **Оценка / timebox:** `M`, до 1 рабочего дня.
-- **Критерий выхода:** любой пункт можно признать выполненным или невыполненным по наблюдаемому результату.
-- **Статус:** `Verified`.
-
-### `FOR-05` Провести аудит трассировки
-
-- **Тип:** Verification.
-- **Связи:** все требования.
-- **Предусловия:** `FOR-04`.
-- **Результат:** готова начальная цепочка `источник → требование → трактовка/допущение → критерий → будущий evidence`.
-- **Проверка:** нет Must без критерия и нет критерия без исходного требования или обоснованного неявного свойства.
-- **Evidence:** `docs/requirements/g1_review.md`.
-- **Зависимости:** `FOR-02–FOR-04`.
-- **Оценка / timebox:** `XS`, до 1 часа.
-- **Критерий выхода:** все проверки `G1` выполнены.
-- **Статус:** `Verified`.
-
-### Ворота `G1` — Поведение формализовано
-
-- [x] Каждый явный пункт `assignment.md` имеет стабильный ID и источник.
-- [x] Must, Bonus, неявно необходимое свойство и Improvement не смешаны.
-- [x] Существенные неоднозначности отвечены или явно приняты как допущения.
-- [x] У каждого Must есть критерий, оракул, способ проверки и ожидаемый evidence.
-- [x] Формулировки не навязывают стек или архитектуру без основания.
-
----
-
-## 5. Стадия 2 — Снятие критических неизвестных
-
-Цель стадии — проверить факты, способные сделать реализацию или публичную сдачу нереалистичной.
-
-### `RSK-01` Создать и приоритизировать реестр рисков
-
-- **Тип:** Discovery.
-- **Связи:** все Must и Bonus.
-- **Предусловия:** `G1` пройдены.
-- **Результат:** риски имеют вероятность, влияние, ранний сигнал, проверку, митигацию, владельца и решение.
-- **Проверка:** каждый внешний источник и каждый критический инвариант представлен хотя бы одним конкретным риском либо обоснованно исключён.
-- **Evidence:** `docs/risks.md`.
-- **Зависимости:** `FOR-05`.
-- **Оценка / timebox:** `XS`, до 2 часов.
-- **Критерий выхода:** spikes отсортированы по неопределённости и влиянию.
-- **Статус:** `Verified`.
-
-### `SPK-01` Проверить доступ к Metacritic и ограничения источника
-
-- **Тип:** Discovery spike.
-- **Связи:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01–DATA-03`, `AI-01–AI-03`.
-- **Риск:** требуемые страницы или данные недоступны автоматическому клиенту локально либо в целевой среде.
-- **Предусловия:** `RSK-01`.
-- **Результат:** воспроизводимый способ доступа либо доказанное ограничение; зафиксированы динамическая загрузка, anti-bot/rate-limit, `robots.txt` и применимые правила использования.
-- **Проверка:** минимальный запрос или браузерный сценарий повторяется; ответ и дата проверки сохранены без чувствительных данных.
-- **Evidence:** `research/feasibility/metacritic-access.md`.
-- **Зависимости:** `RSK-01`.
-- **Оценка / timebox:** `S`, до 3 часов.
-- **Критерий выхода:** решение `Proceed`, `Proceed with limitation`, `Replan` или `Ask` записано в реестре рисков.
-- **Статус:** `Verified` — исходный `Ask` разрешён владельцем 2026-09-05; текущее решение `Proceed with limitation`; evidence: [`research/feasibility/metacritic-access.md`](research/feasibility/metacritic-access.md).
-
-### `SPK-02` Проверить контракт обязательных данных
-
-- **Тип:** Discovery spike.
-- **Связи:** `SEL-01–SEL-02`, `DATA-02–DATA-03`, `AI-01–AI-03`.
-- **Риск:** не все обязательные поля, платформенные оценки или оба вида отзывов доступны и однозначно сопоставимы.
-- **Предусловия:** `SPK-01` допускает продолжение.
-- **Результат:** карта фактических источников каждого поля и репрезентативные примеры обычной, мультиплатформенной и неполной страницы.
-- **Проверка:** вручную сверить извлечённый минимум с отображаемым источником; сохранить структурно значимые fixtures.
-- **Evidence:** [`research/feasibility/metacritic-contract.md`](research/feasibility/metacritic-contract.md) и [`research/feasibility/fixtures/metacritic/`](research/feasibility/fixtures/metacritic/).
-- **Зависимости:** `SPK-01`.
-- **Оценка / timebox:** `M`, до 1 рабочего дня.
-- **Критерий выхода:** для каждого обязательного поля известен источник либо явно зафиксировано ограничение, влияющее на Must.
-- **Статус:** `Verified` — решение `Proceed with limitation`; evidence: [`research/feasibility/metacritic-contract.md`](research/feasibility/metacritic-contract.md) и [`research/feasibility/fixtures/metacritic/`](research/feasibility/fixtures/metacritic/).
-
-### `SPK-03` Проверить идентичность игры и обновление
-
-- **Тип:** Discovery spike.
-- **Связи:** `DATA-01`, `DATA-03`, `SEL-01–SEL-03`.
-- **Риск:** одна игра на нескольких платформах или при разных URL создаёт дубли либо неверно объединяется.
-- **Предусловия:** `SPK-02`.
-- **Результат:** проверяемое правило идентичности, примеры совпадений и коллизий, граница сущности «игра / платформенная версия».
-- **Проверка:** правило применено к репрезентативным примерам и даёт объяснимый результат.
-- **Evidence:** `research/feasibility/game-identity.md`.
-- **Зависимости:** `SPK-02`.
-- **Оценка / timebox:** `S`, до 3 часов.
-- **Критерий выхода:** правило достаточно для будущих уникальных ограничений и upsert-сценариев.
-- **Статус:** `Verified` — решение `Proceed with limitation`; ID-first identity, platform boundary, aliases и conflict rules подтверждены; evidence: [`research/feasibility/game-identity.md`](research/feasibility/game-identity.md) и [`identity-cases.json`](research/feasibility/fixtures/metacritic/identity-cases.json).
-
-### `SPK-04` Смоделировать время, партии и прогресс
-
-- **Тип:** Discovery spike.
-- **Связи:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01`, `OPS-02`.
-- **Риск:** неоднозначная календарная логика приведёт к пропускам, дублям или невозможности безопасного повтора.
-- **Предусловия:** `FOR-03`.
-- **Результат:** таблица переходов для первого, последующего и нового дневного запуска, ошибок, рестарта и пересечения запусков.
-- **Проверка:** все календарные сценарии методологии проиграны на бумаге с управляемым временем и не противоречат допущениям.
-- **Evidence:** `research/feasibility/processing-state.md`.
-- **Зависимости:** `FOR-03`, `RSK-01`.
-- **Оценка / timebox:** `S`, до 3 часов.
-- **Критерий выхода:** состояния и переходы однозначны настолько, чтобы написать тесты до реализации.
-- **Статус:** `Verified` — решение `Proceed with limitation`; evidence: [`research/feasibility/processing-state.md`](research/feasibility/processing-state.md).
-
-### `SPK-05` Создать baseline AI-суммаризации
-
-- **Тип:** Discovery spike / AI eval.
-- **Связи:** `AI-01–AI-03`.
-- **Риск:** модель смешивает аудитории, выдумывает тезисы, не укладывается в формат, стоимость или задержку.
-- **Предусловия:** доступен репрезентативный материал из `SPK-02` или допустимые фиксированные образцы.
-- **Результат:** начальный eval-набор, рубрика, шкала, блокирующие ошибки, проходной порог и baseline выбранного подхода.
-- **Проверка:** обычные, противоречивые, малочисленные, длинные и инструктивные входы оценены одной рубрикой.
-- **Evidence:** `evals/reviews/` и `research/feasibility/ai-summary.md`.
-- **Зависимости:** `SPK-02`, доступ к выбранной модели либо обоснованный локальный substitute для spike.
-- **Оценка / timebox:** `M`, до 1 рабочего дня без учёта выдачи доступа.
-- **Критерий выхода:** принято решение о пригодности и известны ограничения AI-контура.
-- **Статус:** `Verified` — решение `Proceed with limitation`; frozen run: `9/9` structural passes, rubric `96/98` (`97.96%`), `0` blockers, returned model `openai/gpt-oss-20b`; evidence: [`evals/reviews/`](evals/reviews/) и [`ai-summary.md`](research/feasibility/ai-summary.md).
-
-### `SPK-06` Проверить публичную среду
-
-- **Тип:** Discovery spike / Delivery.
-- **Связи:** `RUN-01`, `DEL-02`.
-- **Риск:** выбранная площадка не поддерживает постоянное состояние, почасовую работу, секреты или базовую диагностику.
-- **Предусловия:** известны бюджет и доступные аккаунты либо выбрана проверяемая бесплатная кандидатура.
-- **Результат:** минимальный публичный probe с постоянным состоянием и фактическим фоновым событием.
-- **Проверка:** URL доступен извне; состояние переживает перезапуск; датированное событие создаётся в среде по расписанию.
-- **Evidence:** `research/feasibility/deployment.md` и ссылки на безопасные логи/снимки состояния.
-- **Зависимости:** `FOR-01`, `RSK-01`.
-- **Оценка / timebox:** `M`, до 1 рабочего дня без ожидания расписания и provisioning.
-- **Критерий выхода:** площадка принята, отклонена или принята с документированным ограничением.
-- **Статус:** `Verified` — решение `Proceed with limitation`; публичный endpoint, process restart и фактическое cron-событие `2026-09-07T06:00:01Z` проверены; evidence: [`deployment.md`](research/feasibility/deployment.md) и [`probes/spk06/`](research/feasibility/probes/spk06/).
-
-### `RSK-02` Зафиксировать выводы и остаточные риски
-
-- **Тип:** Verification.
-- **Связи:** все Must.
-- **Предусловия:** `SPK-01–SPK-06` завершены применимым решением.
-- **Результат:** каждый критический риск имеет evidence, решение, митигацию и остаточный риск.
-- **Проверка:** нет критического риска со статусом «известен», но без следующего действия.
-- **Evidence:** обновлённый `docs/risks.md`, отчёт ворот `G2`.
-- **Зависимости:** `SPK-01–SPK-06`.
-- **Оценка / timebox:** `XS`, до 1 часа.
-- **Критерий выхода:** выполнены все проверки `G2`.
-- **Статус:** `Verified` — все проверки `G2` выполнены; evidence: обновлённый [`docs/risks.md`](docs/risks.md) и [`g2_review.md`](docs/requirements/g2_review.md).
-
-### Ворота `G2` — Критическая неизвестность снята
-
-- [x] Есть подтверждённый путь получения обязательных данных Metacritic.
-- [x] Правило идентичности игры и платформенных версий проверено.
-- [x] Календарные переходы и восстановление однозначно описаны.
-- [x] AI-суммаризация имеет baseline, рубрику и проходной порог.
-- [x] Публичная среда способна хранить состояние и выполнять фоновую работу.
-- [x] У каждого критического риска есть решение и остаточный риск.
-- [x] Bonus-риски не блокируют Must.
-
----
-
-## 6. Стадия 3 — Детализация implementation baseline
-
-Цель стадии — превратить подтверждённые факты в минимальные технические решения и уточнить оставшуюся часть этого плана.
-
-### `PLN-01` Выбрать минимальный стек и архитектурный контур
-
-- **Тип:** Decision.
-- **Связи:** все Must; риски `SPK-01–SPK-06`.
-- **Предусловия:** `G2` пройдены.
-- **Результат:** выбран самый простой контур, удовлетворяющий внешнему контракту, публичному расписанию, сохранению состояния, тестируемости и бюджету.
-- **Проверка:** для каждого компонента указана связанная потребность; отсутствует сложность без требования или риска.
-- **Evidence:** короткий ADR в `docs/decisions/`.
-- **Зависимости:** `RSK-02`.
-- **Оценка / timebox:** `S`, до 3 часов.
-- **Критерий выхода:** решение сравнивает разумные альтернативы и фиксирует последствия.
-- **Статус:** `Verified` — решение, альтернативы и последствия зафиксированы в [`ADR-0001`](docs/decisions/0001-minimal-stack-and-architecture.md); каждый компонент связан с обязательной потребностью или риском.
-
-### `PLN-02` Зафиксировать внутренние контракты и модель данных
-
-- **Тип:** Decision / Verification design.
-- **Связи:** `DATA-01–DATA-03`, `AI-01–AI-03`, `SIM-01–SIM-03`, `RUN-01`, `SEL-01–SEL-03`.
-- **Предусловия:** `PLN-01`.
-- **Результат:** определены границы внешнего адаптера, доменных правил, persistence, review/AI-enrichment, presentation и observability; сохранённые исходные отзывы имеют измеримую source coverage, точный model corpus соблюдает token budget, summary связан с моделью, конфигурацией и временем создания, а непроверенные quality policies явно остаются кандидатами.
-- **Проверка:** модель выражает несколько платформ, обновление, дневной прогресс, pagination/ordering/exhaustion и coverage отзывов, точный token-bounded AI input, summary provenance и состояния обработки; каждый критерий сопоставлен независимому evidence или явно принятому ограничению.
-- **Evidence:** `docs/design.md`, source-contract observations, [`reviews-pagination.json`](research/feasibility/fixtures/metacritic/reviews-pagination.json), [`token-budget-report.json`](evals/reviews/token-budget-report.json), [`PostgreSQL probe`](research/feasibility/probes/pln02_review_attempts.sql), [`published AI baseline`](evals/reviews/baseline/README.md), повторный [`pln_02_review.md`](docs/requirements/pln_02_review.md).
-- **Зависимости:** `PLN-01`, результаты spikes.
-- **Оценка / timebox:** `M`, до 1 рабочего дня.
-- **Критерий выхода:** на контракты можно написать тесты без знания внутренних деталей реализации; полнота внешней коллекции и provider budgets имеют проверяемые границы; similarity method не принят до независимого oracle.
-- **Статус:** `Verified` на уровне design — retry/atomicity проверены PostgreSQL probe, source/token evidence сохранено, AI baseline воспроизводимо проверяется без приватных артефактов. Runtime capacity/storage и quality candidates имеют явные ограничения и будущие checks.
-
-### `PLN-03` Перебазировать задачи, зависимости и оценки
-
-- **Тип:** Planning.
-- **Связи:** весь scope.
-- **Предусловия:** `PLN-01–PLN-02`; известны дедлайн и доступная ёмкость либо их отсутствие принято как ограничение.
-- **Результат:** подробный implementation backlog вынесен в отдельный `implementation_plan.md`; этот файл остаётся master tracker стадий, ворот, статусов и ссылок. Крупные `TBE`-задачи декомпозированы, назначены реальные timebox и резерв без копирования design/eval деталей.
-- **Проверка:** трассировка Must полна, критический путь виден, план не использует больше доступного бюджета; один факт имеет один source of truth, а между планами нет конкурирующих статусов или дублированных task descriptions.
-- **Evidence:** `implementation_plan.md`, обновлённые ссылки/статусы этого файла и запись изменения baseline.
-- **Зависимости:** `PLN-01`, `PLN-02`.
-- **Оценка / timebox:** `S`, до 3 часов.
-- **Критерий выхода:** выполнены все проверки `G3`, а граница `action_plan.md` ↔ `implementation_plan.md` проверена на отсутствие дублирования.
-- **Статус:** `Ready` — корректировка `PLN-02` проверена; отсутствие дедлайна/ёмкости остаётся ограничением относительного плана.
-
-### Ворота `G3` — Implementation baseline готов
-
-- [ ] Каждый Must имеет задачи реализации и проверки.
-- [ ] Каждый критический риск имеет митигацию в реализации или принятое ограничение.
-- [x] Архитектура и стек обоснованы требованиями, средой и бюджетом.
-- [ ] Первый публичный вертикальный срез запланирован рано.
-- [ ] Fixtures, eval, failure tests, документация и поставка имеют собственные задачи.
-- [ ] Bonus расположен после ворот обязательной готовности.
-- [ ] Есть резерв на публичную проверку и исправления.
-
----
-
-## 7. Стадия 4 — Сквозная реализация обязательной части
-
-Задачи этой стадии уточняются в `PLN-03`, но их результаты и порядок уже зафиксированы. Каждый срез заканчивается работающей версией, тестами, документацией, deploy при готовности и evidence.
-
-### `IMP-01` Подготовить воспроизводимый каркас и ранний deploy
-
-- **Тип:** Implementation / Delivery.
-- **Связи:** `DEL-01`, `DEL-02`, `NFR-06`.
-- **Результат:** проект запускается из чистого checkout, имеет конфигурационный шаблон, базовые static checks/CI и минимальный публичный endpoint.
-- **Проверка:** инструкции выполнены в чистой среде; CI зелёный; URL доступен извне.
-- **Evidence:** CI-run, smoke-check и README.
-- **Зависимости:** `G3`.
-- **Оценка:** `M`, уточнить в `PLN-03`.
-- **Критерий выхода:** воспроизводимость и ранняя публичная доставка доказаны.
-- **Статус:** `Planned`.
-
-### `IMP-02` Провести одну репрезентативную игру end-to-end
-
-- **Тип:** Implementation / Verification.
-- **Связи:** `DATA-01–DATA-03`, `UI-02`, `NFR-04`.
-- **Результат:** одна игра с несколькими платформами проходит путь от подтверждённого входа через валидацию и сохранение до публичной карточки; повтор обновляет её без дубля.
-- **Проверка:** до реализации parser сохранить минимальные sanitised HTML/SSR inputs и expected extraction; затем fixture/contract, integration и публичный smoke-сценарии. Curated JSON observations не заменяют вход парсера.
-- **Evidence:** parser input fixtures, тесты, CI-run и URL карточки.
-- **Зависимости:** `IMP-01`, `SPK-02–SPK-03`.
-- **Оценка:** `L`, уточнить в `PLN-03`.
-- **Критерий выхода:** все обязательные поля показаны, provenance виден для диагностики, повтор безопасен.
-- **Статус:** `Planned`.
-
-### `IMP-03` Реализовать batch и календарный цикл
-
-- **Тип:** Implementation / Verification.
-- **Связи:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01`, `NFR-01`.
-- **Результат:** первый, последующий и новый дневной запуск выбирают согласованные партии, сохраняют прогресс и допускают безопасный повтор.
-- **Проверка:** unit/integration-сценарии с управляемым временем, рестартом и ошибкой внутри партии.
-- **Evidence:** тесты календарного цикла и журнал тестового запуска.
-- **Зависимости:** `IMP-02`, `SPK-04`.
-- **Оценка:** `L`, уточнить в `PLN-03`.
-- **Критерий выхода:** `RUN-01` и `SEL-01–SEL-03` проходят все критерии приёмки.
-- **Статус:** `Planned`.
-
-### `REV-EVAL-01` Заморозить oracle bounded-выборки отзывов
-
-- **Тип:** Evaluation design.
-- **Связи:** `AI-01–AI-03`; `ASM-16`; `R-AI-01`.
-- **Результат:** до реализации и настройки selection method зафиксированы full-corpus cases с несколькими pages/platforms, перекошенным распределением оценок, дублями, длинными и multilingual отзывами; заданы metric, threshold и hard invariants для bounded model corpus.
-- **Проверка:** adversarial review first/last-page bias, редкой отрицательной/положительной темы, platform imbalance, deterministic repeat и изменения review вне sample; oracle не зависит от candidate hash-round-robin policy.
-- **Evidence:** versioned dataset, rubric/metric specification и acceptance record в `evals/review_selection/`.
-- **Зависимости:** `G3`, `SPK-05`; synthetic corpus не требует live Metacritic или model call.
-- **Human input:** после подготовки labels/metric/threshold задача явно переходит в `Blocked / Ask`; задать владельцу один конкретный вопрос о принятии oracle; `needed-by: G4`, до начала `IMP-04`. До ответа допустимы только независимые задачи.
-- **Оценка:** `S`, уточнить в `PLN-03`.
-- **Критерий выхода:** oracle принят и заморожен до сравнения selection candidates; его version/hash можно сослать в comparison report.
-- **Статус:** `Planned` — dependency `G3` ещё не пройдена; текущего `Ask` нет.
-
-### `IMP-04` Реализовать раздельный AI-контур отзывов
-
-- **Тип:** Implementation / AI eval.
-- **Связи:** `AI-01–AI-03`.
-- **Результат:** отзывы критиков и пользователей собираются полностью и обрабатываются раздельно; candidate bounded selection сравнивается с простым baseline на неизменном oracle, выбранный model input валидируется по tokens, версионируется, трассируется и обновляется по принятому правилу.
-- **Проверка:** до реализации review parser сохранить backend page/cursor fixtures; выполнить pagination/retry/schema tests, frozen selection comparison, token-boundary/failure tests и summary eval. Fake-provider capacity scenarios и счётчики — по [`ai-summary.md`](research/feasibility/ai-summary.md#capacity-and-residual-limitations), до `G4`.
-- **Evidence:** тесты, eval/capacity reports и примеры в публичных карточках.
-- **Зависимости:** `IMP-02`, `SPK-05`, `REV-EVAL-01`.
-- **Оценка:** `L`, уточнить в `PLN-03`.
-- **Критерий выхода:** оба резюме проходят установленный порог без блокирующих ошибок.
-- **Статус:** `Planned`.
-
-### `IMP-05` Завершить обязательный пользовательский контур
-
-- **Тип:** Implementation / Verification.
-- **Связи:** `UI-01`, `UI-02`, `UI-03`, `UI-04`, `UI-05`.
-- **Результат:** список, карточка, поиск по названию, фильтр платформы и согласованная сортировка работают совместно, включая пустые и неполные состояния.
-- **Проверка:** основной E2E и сценарии пустой базы, отсутствия результатов, оценок, отзывов, изображения или видео.
-- **Evidence:** E2E-run и публичный smoke-check.
-- **Зависимости:** `IMP-02–IMP-04`.
-- **Оценка:** `L`, уточнить в `PLN-03`.
-- **Критерий выхода:** `UI-01–UI-05` имеют evidence на публичной версии.
-- **Статус:** `Planned`.
-
-### `SIM-EVAL-01` Заморозить oracle качества похожих игр
-
-- **Тип:** Evaluation design.
-- **Связи:** `SIM-01`; `AC-SIM-01`, `AC-SIM-03`; `R-SIM-01`.
-- **Результат:** до реализации и настройки метода зафиксированы репрезентативные запросы/кандидаты, экспертные оценки, метрика, проходной порог и жёсткие инварианты.
-- **Проверка:** adversarial review контрпримеров, малой/пустой базы и независимости oracle от текущей candidate policy.
-- **Evidence:** versioned dataset, rubric/metric specification и acceptance record в `evals/similarity/`.
-- **Зависимости:** `G3`; fixture catalog может быть синтетическим и не требует live Metacritic.
-- **Human input:** владелец принимает labels, metric и threshold после подготовки oracle; `needed-by: G4`, до начала `IMP-06`.
-- **Оценка:** `S`, уточнить в `PLN-03`.
-- **Критерий выхода:** oracle принят и заморожен до сравнения реализаций; его version/hash можно сослать в eval-report.
-- **Статус:** `Planned`.
-
-### `IMP-06` Реализовать, сравнить и выбрать similarity policy
-
-- **Тип:** Implementation / Evaluation.
-- **Связи:** `SIM-01`; `AC-SIM-01`, `AC-SIM-03`; `R-SIM-01`.
-- **Результат:** текущая candidate policy и минимум один более простой baseline реализованы без изменения frozen oracle; выбран и версионирован самый простой вариант, прошедший его.
-- **Проверка:** воспроизводимый offline comparison на неизменном dataset/metric/threshold плюс hard-invariant tests; непройденный вариант не объявляется принятым.
-- **Evidence:** реализации, test report и versioned comparison report в `evals/similarity/`.
-- **Зависимости:** `SIM-EVAL-01`, `IMP-02`.
-- **Оценка:** `M`, уточнить в `PLN-03`.
-- **Критерий выхода:** решение содержит frozen oracle version/hash, результаты всех кандидатов и основание выбора; выбранная policy проходит порог и hard invariants.
-- **Статус:** `Planned`.
-
-### `SIM-VER-01` Интегрировать и проверить похожие игры
-
-- **Тип:** Integration verification.
-- **Связи:** `SIM-01–SIM-03`; `AC-SIM-01–AC-SIM-03`.
-- **Результат:** карточка показывает до пяти кликабельных результатов выбранной policy только из собственной базы.
-- **Проверка:** DB/integration invariants, детерминированность, малая/пустая база и E2E-переход к правильному game ID.
-- **Evidence:** integration tests, повторный frozen eval и E2E-report.
-- **Зависимости:** `IMP-05`, `IMP-06`.
-- **Оценка:** `S`, уточнить в `PLN-03`.
-- **Критерий выхода:** нет self-match, дублей и внешних записей; offline quality не регрессировало, навигация открывает правильную карточку.
-- **Статус:** `Planned`.
-
-### `IMP-07` Интегрировать обязательный end-to-end сценарий
-
-- **Тип:** Verification.
-- **Связи:** все продуктовые Must.
-- **Результат:** один сценарий проходит от запуска обработки до списка, фильтра, поиска, сортировки, полной карточки, двух резюме и перехода к похожей игре.
-- **Проверка:** воспроизводимый E2E на фиксированных данных и smoke-вариант на публичной среде.
-- **Evidence:** E2E-report и ссылка на публичную демонстрацию.
-- **Зависимости:** `IMP-03–IMP-05`, `SIM-VER-01`.
-- **Оценка:** `M`, уточнить в `PLN-03`.
-- **Критерий выхода:** весь обязательный пользовательский путь проходит без ручной подмены состояния.
-- **Статус:** `Planned`.
-
-### Ворота `G4` — Обязательный продукт работает сквозным образом
-
-- [ ] Все функциональные Must реализованы и имеют первичное evidence.
-- [ ] Данные проходят реальный путь от источника до UI.
-- [ ] Повторное обнаружение обновляет, а не дублирует игру.
-- [ ] Оба AI-резюме и похожие игры доступны в карточке.
-- [ ] Основной E2E проходит.
-- [ ] Публичный срез обновлён.
-
----
-
-## 8. Стадия 5 — Упрочнение обязательного контура
-
-### `HRD-01` Упрочнить внешний контракт и качество данных
-
-- **Тип:** Verification / Hardening.
-- **Связи:** `SEL-01–SEL-02`, `DATA-02–DATA-03`, `NFR-04`.
-- **Результат:** timeout, ограниченные retries, rate limiting, типизированные ошибки, валидация и обнаружение деградации покрыты проверками.
-- **Проверка:** расширить parser fixtures из `IMP-02/IMP-04` отсутствующими полями, изменённой разметкой, timeout, 403/429/5xx и частичным ответом; это не первое появление executable parser evidence.
-- **Evidence:** contract/failure test reports.
-- **Зависимости:** `G4`.
-- **Оценка:** `M`, уточнить в `PLN-03`.
-- **Критерий выхода:** источник либо корректно обработан, либо даёт заметную диагностируемую ошибку без порчи данных.
-- **Статус:** `Planned`.
-
-### `HRD-02` Доказать идемпотентность и восстановление
-
-- **Тип:** Verification / Hardening.
-- **Связи:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01`, `AI-03`, `NFR-01`, `NFR-02`.
-- **Результат:** повтор партии, сбой на N-м элементе, повтор failed item и рестарт безопасны.
-- **Проверка:** интеграционные тесты состояния до/после каждого сценария.
-- **Evidence:** test report с именованными инвариантами.
-- **Зависимости:** `G4`.
-- **Оценка:** `M`, уточнить в `PLN-03`.
-- **Критерий выхода:** нет дублей, потери прогресса и молчаливой порчи ранее корректных данных.
-- **Статус:** `Planned`.
-
-### `HRD-03` Доказать безопасность пересекающихся запусков
-
-- **Тип:** Verification / Hardening.
-- **Связи:** `RUN-01`, `NFR-03`; позднее `OPS-02`, если Bonus выбран.
-- **Результат:** два плановых запуска либо повторная доставка одной работы не выполняют одну партию дважды.
-- **Проверка:** concurrency test с синхронизированным стартом и проверкой итогового состояния.
-- **Evidence:** concurrency test report и коррелированные события.
-- **Зависимости:** `IMP-03`.
-- **Оценка:** `S`, уточнить в `PLN-03`.
-- **Критерий выхода:** инвариант однократного владения работой подтверждён.
-- **Статус:** `Planned`.
-
-### `HRD-04` Закрыть отказные сценарии AI и регрессию качества
-
-- **Тип:** Verification / AI eval.
-- **Связи:** `AI-01–AI-03`.
-- **Результат:** недоступность, timeout, malformed output, недостаток данных и prompt injection не ломают batch и UI.
-- **Проверка:** failure tests, повторный eval финальной версии против опубликованного baseline и регрессия capacity scenarios из `IMP-04`; не считать queue/cache доказательством достаточной пропускной способности.
-- **Evidence:** test/eval reports с версиями prompt и модели.
-- **Зависимости:** `IMP-04`.
-- **Оценка:** `M`, уточнить в `PLN-03`.
-- **Критерий выхода:** блокирующих AI-ошибок нет, деградация соответствует контракту.
-- **Статус:** `Planned`.
-
-### `HRD-05` Завершить обязательную наблюдаемость и безопасность
-
-- **Тип:** Implementation / Verification.
-- **Связи:** `RUN-01`, `DEL-02`, `NFR-05`, `NFR-06`; подготовка к `OPS-01–OPS-02`.
-- **Результат:** запуск и ошибка трассируются по run/game ID; видны счётчики, последний успех и storage headroom; секреты и недоверенный контент обрабатываются безопасно.
-- **Проверка:** диагностировать намеренно вызванный сбой; выполнить secret/security checks и безопасное отображение внешнего текста; измерить text versions, observations за повторные generations, attempts, indexes/WAL/backup и storage forecast без автоматического удаления originals.
-- **Evidence:** логи тестового запуска, security report, storage-envelope report и инструкция диагностики.
-- **Зависимости:** `IMP-03–IMP-05`.
-- **Оценка:** `M`, уточнить в `PLN-03`.
-- **Критерий выхода:** обязательную фоновую работу и риск заполнения storage можно доказать и диагностировать без Bonus-панели.
-- **Статус:** `Planned`.
-
-### `HRD-06` Выполнить полный обязательный verification suite
-
-- **Тип:** Verification.
-- **Связи:** все Must.
-- **Результат:** static, unit, fixture/contract, integration, failure, concurrency, AI, similarity и E2E проверки проходят совместно.
-- **Проверка:** единый воспроизводимый запуск CI без живого Metacritic и платных AI-вызовов; live checks запускаются отдельно.
-- **Evidence:** зелёный CI-run и отчёты eval.
-- **Зависимости:** `HRD-01–HRD-05`.
-- **Оценка:** `S`, уточнить в `PLN-03`.
-- **Критерий выхода:** выполнены все проверки `G5`.
-- **Статус:** `Planned`.
-
-### Ворота `G5` — Критические свойства доказаны
-
-- [ ] Повторы, рестарты, частичные ошибки и пересечения безопасны.
-- [ ] Изменение или недоступность внешнего источника заметны.
-- [ ] AI-качество проходит baseline и отказные сценарии.
-- [ ] Похожесть проходит инварианты и relevance threshold.
-- [ ] Обязательная фоновая работа диагностируема.
-- [ ] Полный воспроизводимый verification suite зелёный.
-
----
-
-## 9. Стадия 6 — Публичная валидация
-
-### `PUB-01` Развернуть обязательный release candidate
-
-- **Тип:** Delivery.
-- **Связи:** `DEL-02`, все продуктовые Must.
-- **Результат:** публичная версия использует постоянное состояние, реальные данные, управляемые секреты и фактическое расписание.
-- **Проверка:** deploy smoke из внешней сессии и сверка версии с проверенным commit.
-- **Evidence:** URL, commit SHA и безопасный deploy log.
-- **Зависимости:** `G5`.
-- **Оценка:** `M`, уточнить в `PLN-03`.
-- **Критерий выхода:** проверяется именно тот кандидат, который будет сдан.
-- **Статус:** `Planned`.
-
-### `PUB-02` Подтвердить реальную почасовую работу и состояние
-
-- **Тип:** Operational verification.
-- **Связи:** `RUN-01`, `SEL-01–SEL-03`, `DEL-02`.
-- **Результат:** в публичной среде есть датированные события планового запуска, результат обработки, последний успешный запуск и измеренный storage headroom; состояние переживает перезапуск/redeploy.
-- **Проверка:** дождаться применимого планового окна, сопоставить события и состояние; выполнить restart check; сверить storage forecast с фактическим volume и повторными observations. Измерить AI arrivals/cache hits/completions/backlog/oldest pending age и применить `R-AI-02` Replan при устойчивом недренируемом backlog.
-- **Evidence:** обезличенные run events, storage snapshot/forecast, AI capacity/latency report с наблюдаемыми ограничениями и состояние до/после.
-- **Зависимости:** `PUB-01`.
-- **Оценка:** `S` сфокусированной работы плюс календарное ожидание.
-- **Критерий выхода:** расписание доказано фактическим событием, а не только конфигурацией; storage headroom не нарушает принятый retention envelope.
-- **Статус:** `Planned`.
-
-### `PUB-03` Выполнить внешний пользовательский smoke-test
-
-- **Тип:** Verification.
-- **Связи:** `UI-01–UI-05`, `SIM-01–SIM-02`, `AI-01–AI-02`, `DEL-02`.
-- **Результат:** основной пользовательский путь проходит в неавторизованной внешней сессии на реальных данных.
-- **Проверка:** список → поиск → фильтр → сортировка → карточка → поля и два резюме → похожая игра.
-- **Evidence:** датированный smoke-report; скриншоты только как дополнение.
-- **Зависимости:** `PUB-01`, данные после `PUB-02`.
-- **Оценка:** `XS`, до 2 часов.
-- **Критерий выхода:** все проверки `G6` выполнены.
-- **Статус:** `Planned`.
-
-### Ворота `G6` — Обязательная часть готова публично
-
-- [ ] Все Must имеют evidence и статус `Verified`.
-- [ ] Публичный URL доступен извне и показывает реальные данные.
-- [ ] Реальный плановый запуск подтверждён.
-- [ ] Состояние сохраняется после перезапуска.
-- [ ] Основной E2E проходит в публичной среде.
-- [ ] Нет открытого блокирующего дефекта или критического риска.
-
----
-
-## 10. Bonus — только после `G6`
-
-Перед началом выбирается только тот Bonus, который можно полностью принять в оставшийся бюджет. По умолчанию Bonus 2 имеет синергию с уже обязательной наблюдаемостью; это порядок-кандидат, а не заранее принятое продуктовое решение.
-
-### `BON-00` Принять решение о Bonus scope
-
-- **Тип:** Decision.
-- **Связи:** `YT-01`, `OPS-01–OPS-02`.
-- **Результат:** выбран Bonus 1, Bonus 2, оба или ни один; записаны ценность, остаточный бюджет, риски и критерии удаления незавершённой функции.
-- **Проверка:** Bonus не уменьшает резерв стадии сдачи и не открывает Must-дефект.
-- **Evidence:** запись решения в `action_plan.md` и `docs/decisions/`.
-- **Зависимости:** `G6`.
-- **Оценка:** `XS`, до 1 часа.
-- **Критерий выхода:** scope явно зафиксирован.
-- **Статус:** `Planned`.
-
-### `BON-21` Реализовать реальный мониторинг процесса
-
-- **Тип:** Implementation / Verification.
-- **Связи:** `OPS-01`.
-- **Результат:** UI показывает фактические статусы и счётчики с согласованной свежестью.
-- **Проверка:** сопоставить UI с серверными событиями для успешного, активного и ошибочного запуска.
-- **Evidence:** E2E/operational report и публичный сценарий.
-- **Зависимости:** `BON-00` выбирает Bonus 2, `HRD-05`.
-- **Оценка:** `L`, уточнить после выбора механизма.
-- **Критерий выхода:** UI не имитирует прогресс и корректно переживает обновление страницы.
-- **Статус:** `Planned`.
-
-### `BON-22` Реализовать защищённый принудительный запуск
-
-- **Тип:** Implementation / Verification.
-- **Связи:** `OPS-02`.
-- **Результат:** разрешённый пользователь может запустить общий pipeline без конфликта с идущей работой и злоупотребления.
-- **Проверка:** success, repeated click, concurrent scheduled run, unauthorized/abusive request.
-- **Evidence:** integration/E2E/concurrency reports.
-- **Зависимости:** `BON-21`, `HRD-03`.
-- **Оценка:** `M`, уточнить после выбора модели доступа.
-- **Критерий выхода:** ручной и плановый запуск используют одинаковые правила обработки.
-- **Статус:** `Planned`.
-
-### `BON-11` Проверить реализуемость YouTube-контура
-
-- **Тип:** Discovery spike.
-- **Связи:** `YT-01`.
-- **Риск:** нельзя надёжно определить летсплей, получить показатель популярности или допустимо извлечь текст произвольного видео.
-- **Результат:** подтверждены поиск, метрика популярности, получение текста, ограничения стоимости/длины и поведение без транскрипта.
-- **Проверка:** минимальный воспроизводимый эксперимент на нескольких играх.
-- **Evidence:** `research/feasibility/youtube.md`.
-- **Зависимости:** `BON-00` выбирает Bonus 1.
-- **Оценка / timebox:** `S`, до 4 часов.
-- **Критерий выхода:** `Proceed`, `Proceed with limitation` или `Drop bonus`; нестабильный обход не принимается.
-- **Статус:** `Planned`.
-
-### `BON-12` Реализовать и оценить YouTube-заключение
-
-- **Тип:** Implementation / AI eval.
-- **Связи:** `YT-01`.
-- **Результат:** для игры выбирается видео по принятому правилу, получается текст, формируется трассируемое заключение и показывается ссылка; отсутствие данных деградирует корректно.
-- **Проверка:** contract/failure tests, AI-eval и публичный E2E.
-- **Evidence:** тесты, eval-report и публичная карточка.
-- **Зависимости:** `BON-11` завершён решением `Proceed`.
-- **Оценка:** `L`, уточнить по результату spike.
-- **Критерий выхода:** критерии Bonus 1 пройдены без ухудшения Must.
-- **Статус:** `Planned`.
-
-### Ворота `GB` — Выбранный Bonus завершён
-
-- [ ] У Bonus есть критерии приёмки и failure-сценарии.
-- [ ] Функция продемонстрирована в публичной версии.
-- [ ] Есть воспроизводимое evidence.
-- [ ] Обязательный verification suite остаётся зелёным.
-- [ ] Незавершённый Bonus удалён или явно отключён.
-
-Если `BON-00` выбирает «без Bonus», ворота закрываются записью об осознанном отказе и работа переходит к стадии 7.
-
----
-
-## 11. Стадия 7 — Release candidate и сдача
-
-### `REL-01` Заморозить и полностью проверить release candidate
-
-- **Тип:** Verification.
-- **Связи:** все реализованные требования.
-- **Результат:** один commit прошёл clean-checkout, build, миграции, полный CI, AI/similarity eval, E2E, public smoke и restart check.
-- **Проверка:** финальный acceptance run по разделу 12.1 методологии.
-- **Evidence:** release checklist с commit SHA и ссылками на отчёты.
-- **Зависимости:** `G6`; `GB`, если Bonus выбран.
-- **Оценка:** `M`, уточнить в `PLN-03`.
-- **Критерий выхода:** кандидат не менялся после полного прогона либо затронутые проверки повторены.
-- **Статус:** `Planned`.
-
-### `REL-02` Завершить README и evidence index
-
-- **Тип:** Delivery.
-- **Связи:** `DEL-01–DEL-02`, все реализованные требования.
-- **Результат:** проверяющий быстро видит scope, запуск, проверки, расписание, AI-контур, допущения, ограничения и evidence по ID.
-- **Проверка:** пройти README в чистой среде; убедиться, что каждая Must-строка ссылается на воспроизводимое подтверждение.
-- **Evidence:** README и `docs/evidence.md` либо эквивалентный раздел.
-- **Зависимости:** `REL-01`.
-- **Оценка:** `S`.
-- **Критерий выхода:** новый читатель способен запустить и оценить проект без скрытого знания автора.
-- **Статус:** `Planned`.
-
-### `REL-03` Подготовить и проверить AI-архив
-
-- **Тип:** Delivery / Security verification.
-- **Связи:** `DEL-03`.
-- **Результат:** максимально полная AI-assisted история сохранена в исходном порядке и проверена на секреты и персональные данные; вынужденные изъятия обозначены.
-- **Проверка:** автоматический и ручной secret/privacy review, проверка читаемости формата.
-- **Evidence:** manifest AI-архива и отчёт проверки.
-- **Зависимости:** история сохраняется непрерывно; финальная упаковка после `REL-01`.
-- **Оценка:** `S`.
-- **Критерий выхода:** архив доступен проверяющему и не содержит чувствительных данных.
-- **Статус:** `Planned`.
-
-### `REL-04` Проверить публичные ссылки извне
-
-- **Тип:** Delivery verification.
-- **Связи:** `DEL-01–DEL-03`.
-- **Результат:** репозиторий, сервис и AI-архив открываются с правами проверяющего.
-- **Проверка:** внешняя неавторизованная сессия; повтор основного smoke-пути.
-- **Evidence:** датированный финальный link-check.
-- **Зависимости:** `REL-01–REL-03`.
-- **Оценка:** `XS`, до 1 часа.
-- **Критерий выхода:** нет приватной, истёкшей или локальной ссылки.
-- **Статус:** `Planned`.
-
-### `REL-05` Подготовить и отправить итоговое сообщение
-
-- **Тип:** Delivery.
-- **Связи:** `DEL-04`.
-- **Результат:** краткое письмо на адрес из задания содержит проверенные ссылки, scope, Bonus-статус, важные ограничения и AI-архив/ссылку на него.
-- **Проверка:** адрес, ссылки и вложения повторно сверены; состав письма совпадает с release checklist.
-- **Evidence:** сохранённая копия финального сообщения и отметка времени отправки.
-- **Зависимости:** `REL-04`.
-- **Оценка:** `XS`, до 1 часа.
-- **Критерий выхода:** отправка подтверждена.
-- **Статус:** `Planned`.
-
-### Ворота `G7` — Задание сдано
-
-- [ ] Все Must имеют статус `Verified` и evidence.
-- [ ] Реализованные Bonus полностью приняты либо исключены.
-- [ ] Release candidate воспроизводим и совпадает с публичной версией.
-- [ ] Репозиторий, сервис и AI-архив доступны проверяющему.
-- [ ] Секреты отсутствуют в публикуемых артефактах.
-- [ ] Известные ограничения перечислены явно.
-- [ ] Итоговое сообщение отправлено по указанному адресу.
-
----
-
-## 12. Матрица покрытия исходного scope
-
-Эта матрица показывает, где требование будет реализовано и где доказано. Она уточняется после `FOR-02–FOR-04`.
-
-| Requirement IDs | Основная работа | Финальная проверка |
-|---|---|---|
-| `RUN-01` | `IMP-03`, `HRD-03`, `PUB-01` | `PUB-02`, `REL-01` |
-| `SEL-01–SEL-03` | `IMP-03` | `HRD-02`, `PUB-02`, `REL-01` |
-| `DATA-01` | `IMP-02–IMP-03` | `HRD-02`, `REL-01` |
-| `DATA-02–DATA-03` | `SPK-02`, `IMP-02` | `HRD-01`, `PUB-03` |
-| `AI-01–AI-03` | `SPK-05`, `REV-EVAL-01`, `IMP-04` | `HRD-04`, `PUB-03`, `REL-01` |
-| `UI-01`, `UI-02`, `UI-03`, `UI-04`, `UI-05` | `IMP-02`, `IMP-05` | `IMP-07`, `PUB-03` |
-| `SIM-01–SIM-03` | `SIM-EVAL-01`, `IMP-06` | `SIM-VER-01`, `IMP-07`, `PUB-03`, `REL-01` |
-| `YT-01` | `BON-11–BON-12` | `GB`, если выбран |
-| `OPS-01–OPS-02` | `BON-21–BON-22` | `GB`, если выбран |
-| `NFR-01` | `IMP-03`, `HRD-02` | `PUB-02`, `REL-01` |
-| `NFR-02` | `HRD-02` | `HRD-06`, `REL-01` |
-| `NFR-03` | `HRD-03` | `HRD-06`, `REL-01` |
-| `NFR-04` | `IMP-02`, `HRD-01` | `HRD-06`, `REL-01` |
-| `NFR-05` | `HRD-05` | `PUB-02`, `REL-01` |
-| `NFR-06` | `IMP-01`, `HRD-05` | `REL-01–REL-04` |
-| `DEL-01` | `IMP-01` | `REL-02`, `REL-04` |
-| `DEL-02` | `SPK-06`, `IMP-01`, `PUB-01` | `PUB-02–PUB-03`, `REL-04` |
-| `DEL-03` | непрерывное сохранение истории, `REL-03` | `REL-04` |
-| `DEL-04` | `REL-05` | `G7` |
-
----
-
-## 13. Контроль изменений плана
-
-После каждого воротного review в начале документа обновляются версия baseline, активная стадия и статус карты стадий. Для материального изменения фиксируются:
-
-- новый факт или причина;
-- затронутые Requirement/Risk/Task IDs;
-- изменение scope, решения, оценки или порядка;
-- проверки, которые нужно добавить или повторить;
-- новая версия baseline.
-
-Нельзя задним числом ослаблять критерий, чтобы закрыть готовую реализацию. Нереализуемый буквальный Must оформляется как блокирующее ограничение и требует отдельного решения, а не статуса `Verified`.
-
-### Ближайшее действие workflow
-
-Следующая задача — `PLN-03` (`Ready`): вынести подробный implementation backlog в `implementation_plan.md`, оставить `action_plan.md` tracker ворот/статусов/evidence и перебазировать зависимости, оценки, критический путь и резерв с учётом исправленных contracts. Корректировка `PLN-02` завершается отдельным commit и остановкой; реализацию не начинать до прохождения `G3` следующим циклом.
+Новый факт обновляет источник соответствующего решения/контракта, связанные задачи/риски и необходимые проверки. Нельзя задним числом ослаблять AC под реализацию или считать лимит timebox основанием для Verified.

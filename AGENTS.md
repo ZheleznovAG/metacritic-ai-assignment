@@ -2,11 +2,12 @@
 
 ## Project Structure & Sources of Truth
 
-This repository is currently defining its implementation baseline; it does not yet contain application source, tests, or runtime assets.
+This repository has established its implementation baseline through `PLN-03` / `G3`; it does not yet contain application source, application tests, or runtime assets.
 
 - `assignment.md` is the primary specification.
 - `methodology.md` defines the evidence-driven delivery process.
 - `action_plan.md` is the workflow and task/gate tracker.
+- `implementation_plan.md` contains task scope, expected verification outcomes, decomposed estimates and Requirement/Risk mappings; it does not duplicate current statuses or dependencies.
 - `intake.md` captures the assignment baseline.
 - `docs/requirements/` contains context, requirements, assumptions, acceptance criteria, and gate reviews.
 - `docs/decisions/` contains accepted architecture decision records.
@@ -14,6 +15,7 @@ This repository is currently defining its implementation baseline; it does not y
 - `docs/risks.md` is the prioritized risk register.
 - `evals/reviews/baseline/` contains the published sanitised AI run and original scorecard; its offline verifier and integrity tests are research tooling, not application tests.
 - `research/methodology/` preserves prompts and exploration; it is evidence, not a requirements source.
+- `research/planning/` contains the offline baseline audit and its negative-control tests; these are planning evidence, not application tests.
 
 Add source and test directories only after `PLN-01–PLN-03` establish the implementation baseline. Document their layout here when introduced.
 
@@ -28,6 +30,8 @@ rg --files                  # inventory tracked/worktree files
 rg -n "RUN-01|AC-RUN-01" . # trace requirement and acceptance IDs
 python -B evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
 python -B -m unittest discover -s evals/reviews -p "test_*.py"
+python -B research/planning/check_plan.py
+python -B -m unittest discover -s research/planning -p "test_*.py"
 ```
 
 When tooling is added, expose reproducible commands in `README.md` and CI for setup, formatting, linting, tests, build, and local execution.

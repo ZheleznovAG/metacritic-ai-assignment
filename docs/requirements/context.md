@@ -12,9 +12,9 @@
 |---:|---|---|
 | 1 | [`assignment.md`](../../assignment.md), SHA-256 `C8987F684CFDF693AB188FA2AC5875044C93EBF486B708C36FDF7E7748C2125C` | Зафиксирован |
 | 2 | Письменные уточнения владельца | 2026-09-05 подтверждено разрешение для сформулированного Metacritic scope и выбрана бесплатная версия Grok; 2026-09-07 выбрана существующая Ubuntu VDS |
-| 3 | Проверенные факты о внешних системах | Частично получены; см. результат [`SPK-01`](../../research/feasibility/metacritic-access.md) |
+| 3 | Проверенные факты о внешних системах | Must-spikes сведены в [`G2 review`](g2_review.md); ограничения сохраняются |
 | 4 | [`assumptions.md`](assumptions.md) | Допущения исполнителя, не исходные требования |
-| 5 | Будущие проектные решения | Ещё не принимались |
+| 5 | Принятые проектные решения | [`ADR-0001`](../decisions/0001-minimal-stack-and-architecture.md) и [`design`](../design.md); не заменяют исходные требования |
 
 ## Известные рамки
 
@@ -34,8 +34,8 @@
 
 | ID | Сведение | Что известно | Статус / дальнейшее действие |
 |---|---|---|---|
-| `CTX-01` | Дедлайн | В задании отсутствует | `Unknown`; запросить у владельца проекта перед календарным планированием |
-| `CTX-02` | Доступная ёмкость исполнителя | Не задана | `Unknown`; получить вместе с дедлайном |
+| `CTX-01` | Дедлайн | В задании отсутствует | `Unknown`; отсутствие принято как ограничение относительного baseline, не текущий blocker. Запросить до календарного обещания; см. [план](../../implementation_plan.md#оценки-и-резерв) |
+| `CTX-02` | Доступная ёмкость исполнителя | Не задана | `Unknown`; общий бюджет не вычисляется. Получить вместе с дедлайном до проверки календарной выполнимости |
 | `CTX-03` | Денежный бюджет | Общий budget не задан; владелец разрешил только бесплатный AI API tier; `SPK-05` принял Groq Free Plan с `openai/gpt-oss-20b` и без paid fallback; существующая VDS проверена без новых платных обязательств | Не принимать новые платные обязательства; учитывать известный Free TPD bottleneck и очередь AI enrichment |
 | `CTX-04` | Разрешённый/запрещённый стек | Внешних ограничений нет в тексте; обратимый project choice принят в `PLN-01` | Python 3.12 / Django 5.2 LTS / PostgreSQL 16 и Docker Compose production зафиксированы в [`ADR-0001`](../decisions/0001-minimal-stack-and-architecture.md); пересмотреть при конфликтующем уточнении |
 | `CTX-05` | Hosting и инфраструктура | Существующая VDS фактически проверена: Ubuntu 24.04, 2 CPUs, 4,009,860 KiB RAM, persistent `ext4`, около 80 GB root storage, public ingress и user cron; owner-reported traffic — 32 TB; Docker на VDS ещё не проверен | `SPK-06: Proceed with limitation`; `PLN-01` выбрала Docker Compose, Caddy TLS и UTC scheduler container; Docker/Compose capability нужна раннему deploy к `G4`, host reboot, named-volume persistence, DNS/TLS и schedule checks остаются до `G6`; см. [`deployment.md`](../../research/feasibility/deployment.md) |
