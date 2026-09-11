@@ -91,7 +91,13 @@ class GamePlatform(models.Model):
     userscore = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
     critic_reviews_path = models.CharField(max_length=512, null=True, blank=True)
     user_reviews_path = models.CharField(max_length=512, null=True, blank=True)
-    last_changed_fetch = models.ForeignKey(
+    # Metascore always comes from the game_detail fetch; Userscore comes from that same fetch
+    # only for the lead platform and from a separate platform_userscore fetch for every other
+    # platform (see metacritic/gateway.py) — one shared FK could not represent both truthfully.
+    metascore_last_changed_fetch = models.ForeignKey(
+        SourceFetch, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    userscore_last_changed_fetch = models.ForeignKey(
         SourceFetch, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )
     created_at = models.DateTimeField(auto_now_add=True)

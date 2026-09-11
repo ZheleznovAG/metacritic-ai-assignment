@@ -236,9 +236,11 @@ def ingest_game(gateway: GatewayProtocol, clock: Clock, detail_url: str) -> Inge
         )
 
     resolved_platforms: list[GamePlatformDTO] = []
-    # Per-platform provenance: a fanned-out Userscore fetch gets its own SourceFetch, not the
-    # game_detail one, so it can be traced back to the request that actually produced it.
-    platform_fetch: dict[str, SourceFetch] = {}
+    # Per-platform Userscore provenance: only recorded when the platform's own fetch actually
+    # succeeded. A failed/invalid fetch leaves the field's value AND its provenance pointer
+    # untouched (the non-destructive merge already protects the value; the pointer must not
+    # claim a failed request produced the value that was, in fact, merely preserved).
+    platform_userscore_fetch: dict[str, SourceFetch] = {}
     for platform_dto in game_dto.platforms:
         if platform_dto.is_lead_platform or platform_dto.user_reviews_path is None:
             resolved_platforms.append(platform_dto)
@@ -246,7 +248,9 @@ def ingest_game(gateway: GatewayProtocol, clock: Clock, detail_url: str) -> Inge
         userscore, platform_evidence = gateway.fetch_platform_userscore(
             _absolute_url(detail_url, platform_dto.user_reviews_path)
         )
-        platform_fetch[platform_dto.source_platform_id] = _save_fetch_evidence(platform_evidence)
+        saved_fetch = _save_fetch_evidence(platform_evidence)
+        if platform_evidence.outcome == "succeeded":
+            platform_userscore_fetch[platform_dto.source_platform_id] = saved_fetch
         resolved_platforms.append(replace(platform_dto, userscore=userscore))
     game_dto = replace(game_dto, platforms=tuple(resolved_platforms))
 
@@ -262,10 +266,18 @@ def ingest_game(gateway: GatewayProtocol, clock: Clock, detail_url: str) -> Inge
             platforms_updated = 0
             for platform_dto in game_dto.platforms:
                 platform, created = _upsert_platform(game, platform_dto)
-                platform.last_changed_fetch = platform_fetch.get(
-                    platform_dto.source_platform_id, fetch
+                # `fetch` (game_detail) is only reached here once it has already succeeded, so
+                # Metascore's provenance is always this fetch, whatever it read (including null).
+                platform.metascore_last_changed_fetch = fetch
+                if platform_dto.is_lead_platform:
+                    platform.userscore_last_changed_fetch = fetch
+                elif platform_dto.source_platform_id in platform_userscore_fetch:
+                    platform.userscore_last_changed_fetch = platform_userscore_fetch[
+                        platform_dto.source_platform_id
+                    ]
+                platform.save(
+                    update_fields=["metascore_last_changed_fetch", "userscore_last_changed_fetch"]
                 )
-                platform.save(update_fields=["last_changed_fetch"])
                 platforms.append(platform)
                 platforms_created += int(created)
                 platforms_updated += int(not created)

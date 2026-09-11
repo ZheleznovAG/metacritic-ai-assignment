@@ -33,7 +33,7 @@ Captured with a versioned, identifying user-agent (`metacritic-ai-assignment-imp
 | Criterion | Independent evidence obtained | Remaining boundary |
 |---|---|---|
 | Real HTML/SSR fixtures precede the parser (`AC-DATA-03`, `R-EXT-03/04`) | Table above; fixtures and expected values committed under `app/tests/fixtures/metacritic/` (rebuilt once, see the second adversarial round below, to add the `canonical`/`og:url` tags real pages carry) | Only one representative multiplatform game; broader markup-variation fixtures are `HRD-01` |
-| Identity-first non-destructive upsert (`AC-DATA-01`, `AC-DATA-02`, `R-ID-01`) | 52 Django tests in `app/tests/test_catalog_ingest.py`/`test_catalog_constraints.py`/`test_metacritic_parser.py` cover create, repeat-ingest-updates-not-duplicates, title change, new-locator-becomes-alias-old-retained, identity conflict writes nothing, missing-platform-retained, later-null/blank-does-not-clobber, the correct `game-title` record is picked when more than one exists in the payload, a misrouted platform page is rejected, and DB-level unique/check constraints | Concurrent/racing ingests beyond the single `DailyCycle` row lock added below — full lease/fencing is `IMP-03`/`HRD-02/03` |
+| Identity-first non-destructive upsert (`AC-DATA-01`, `AC-DATA-02`, `R-ID-01`) | 53 Django tests in `app/tests/test_catalog_ingest.py`/`test_catalog_constraints.py`/`test_metacritic_parser.py` cover create, repeat-ingest-updates-not-duplicates, title change, new-locator-becomes-alias-old-retained, identity conflict writes nothing, missing-platform-retained, later-null/blank-does-not-clobber, the correct `game-title` record is picked when more than one exists in the payload, a misrouted platform page is rejected, a failed fetch does not claim provenance over a value it merely preserved, and DB-level unique/check constraints | Concurrent/racing ingests beyond the single `DailyCycle` row lock added below — full lease/fencing is `IMP-03`/`HRD-02/03` |
 | Natural `null` vs. zero, per-platform Metascore/Userscore (`AC-DATA-04`, `AC-DATA-05`) | Live ingest reproduced the exact `null` Metascore on Xbox One/PlayStation 4 while all 5 platforms carry independent Userscores (bounded fan-out to each non-lead platform's `/user-reviews/` page); `test_metacritic_parser.py` asserts this against the independent expected values | Broader "genuinely missing Userscore" (TBD on a platform sub-page) has no live-observed fixture yet — `parser.parse_platform_userscore`'s TBD branch is design-only, flagged in its docstring |
 | Structurally invalid response does not overwrite good data (`AC-DATA-06`) | `test_failed_fetch_creates_no_domain_rows` and the corrupted-fixture parser test; `SourceFetch` records the failure, no `Game`/`GamePlatform` row is touched | Live-observed corrupted responses (as opposed to a hand-corrupted fixture) are `HRD-01` |
 | Atomic core/job commit intent (`docs/design.md` transactional invariants) | `test_a_failure_creating_jobs_rolls_back_the_whole_transaction`: a forced failure inside the same `transaction.atomic()` block rolls back the already-written `Game`/`GamePlatform`/`DailyCandidate`, proving "processed but job lost" is unreachable; `test_repeat_ingest_does_not_duplicate_jobs` proves idempotent job creation | Full `core_attempt`/lease fencing under concurrent schedulers is `IMP-03` |
@@ -41,7 +41,7 @@ Captured with a versioned, identifying user-agent (`metacritic-ai-assignment-imp
 
 ## Live run against the real site (not just fixtures)
 
-Three sequential runs of `python scripts/ingest_game.py https://www.metacritic.com/game/elden-ring/` (each performing one `game_detail` fetch plus four `platform_userscore` fetches — PlayStation 5 is the lead platform and needs no separate fetch) against the local dev PostgreSQL (`metacritic-imp01-db-1`, migrated with `scripts/migrate.py`):
+Five sequential runs of `python scripts/ingest_game.py https://www.metacritic.com/game/elden-ring/` (each performing one `game_detail` fetch plus four `platform_userscore` fetches — PlayStation 5 is the lead platform and needs no separate fetch) against the local dev PostgreSQL (`metacritic-imp01-db-1`, migrated with `scripts/migrate.py`):
 
 | Run | `game_id` | `created` | `platforms_created` | `platforms_updated` | `jobs_created` | `candidate_state` |
 |---|---:|---|---:|---:|---:|---|
@@ -49,6 +49,7 @@ Three sequential runs of `python scripts/ingest_game.py https://www.metacritic.c
 | 2 | 1 | `False` | 0 | 5 | 0 | `processed` |
 | 3 (after the `source_game_platform_id` fix, first adversarial round) | 1 | `False` | 0 | 5 | 0 | `processed` |
 | 4 (after the canonical-URL/slug-matching/provenance fixes, second adversarial round) | 1 | `False` | 0 | 5 | 0 | `processed` |
+| 5 (after the split-provenance-FK fix, third adversarial round) | 1 | `False` | 0 | 5 | 0 | `processed` |
 
 Resulting row: `Game(id=1, source_game_id="1300501979", title="Elden Ring", developer="From Software", canonical_locator="/game/elden-ring/")`; one `GameAlias`; description 1059 chars (the real, untruncated live value — the fixture's truncation is a test-input sanitisation choice, not a parser behaviour); video URLs match the JSON-LD trailer. Five `GamePlatform` rows, one `DailyCycle`/`DailyCandidate` for `2026-09-11`, ten `SourceFetch` rows per run (all `succeeded`), ten `ReviewCollectionJob` rows total after all three runs (not thirty — idempotent):
 
@@ -62,9 +63,9 @@ Resulting row: `Game(id=1, source_game_id="1300501979", title="Elden Ring", deve
 
 `GET /games/1/` (local `manage.py runserver`) returned `200` with `<h1>Elden Ring</h1>`, all five platform names, and exactly two `No data` occurrences (the two null Metascores) — no other field was missing on this fully-populated real game.
 
-After the second adversarial round, `GamePlatform.last_changed_fetch.kind` was checked live: the lead platform (PlayStation 5) points at the `game_detail` fetch, and all four fanned-out platforms (PC, PlayStation 4, Xbox One, Xbox Series X) correctly point at their own `platform_userscore` fetch — the provenance-attribution fix (see below) is not just unit-tested but confirmed against the real site.
+After the second adversarial round, `GamePlatform.last_changed_fetch.kind` was checked live: the lead platform (PlayStation 5) points at the `game_detail` fetch, and all four fanned-out platforms (PC, PlayStation 4, Xbox One, Xbox Series X) correctly point at their own `platform_userscore` fetch. After the third round split that single field into `metascore_last_changed_fetch`/`userscore_last_changed_fetch`, the same live check was repeated per-field (see below) — both attributions are correct on the real site, not just unit-tested.
 
-Total live requests made this session: 5 for fixture-building (`metacritic-ai-assignment-imp02/0.1` user agent) + 4 × 5 for the ingest proof runs (`metacritic-ai-assignment-ingest/1.0` user agent, `metacritic/gateway.py`) = 25 low-frequency sequential `GET`s to `www.metacritic.com`, all within the owner-authorised scope. All 20 `SourceFetch` rows from the last two runs report `outcome=succeeded`.
+Total live requests made this session: 5 for fixture-building (`metacritic-ai-assignment-imp02/0.1` user agent) + 5 × 5 for the ingest proof runs (`metacritic-ai-assignment-ingest/1.0` user agent, `metacritic/gateway.py`) = 30 low-frequency sequential `GET`s to `www.metacritic.com`, all within the owner-authorised scope. Every `SourceFetch` row from the live runs reports `outcome=succeeded`.
 
 ## First adversarial round: self-review (`/code-review high`)
 
@@ -93,14 +94,28 @@ A bug in the *test* helper surfaced while verifying the provenance fix: the shar
 
 A DB-level race was also closed proactively while addressing the above (not itself a reported finding): `_ensure_candidate` now takes `select_for_update()` on the `DailyCycle` row before computing the next `source_order`, so two ingests racing on the same business date inside their own `transaction.atomic()` block cannot both compute the same `source_order` and hit `IntegrityError`. Full scheduler-grade lease/fencing across cycles remains `IMP-03`.
 
-This is no longer solely a self-review: an independent session verified the code, and every finding it confirmed as still-reproducing was fixed and covered by a new test, with the highest-risk one (canonical-URL/misroute) additionally confirmed against the live site. The `IMP-01`-style caveat ("this is an adversarial self-review, not an independent person's review") no longer applies unmodified to `IMP-02`.
+The peer session independently re-verified this round from a freshly rebuilt checks image (not reusing this session's run): ruff, mypy `--strict` (38 files), Django checks, migration drift, all 52 app tests, and the rest of the repo suite, all green.
+
+## Third adversarial round: the same peer session, re-reading a later snapshot
+
+The peer session re-checked the disk after the second round and reported that findings #1–#3 above were confirmed fixed, but that its provenance fix (#7) was only *partial*: `platform.last_changed_fetch` was being reassigned unconditionally, including to a **failed** platform-Userscore fetch. It reproduced this directly: after a simulated `HTTP 503`, the stored Userscore correctly stays at its previous value (the non-destructive merge protects the *data*), but the provenance pointer was reassigned to the failed fetch anyway — falsely claiming that fetch produced the value it, in fact, merely failed to change. The peer also flagged that Metascore and Userscore provenance need to be tracked separately, since for every non-lead platform they come from two different fetches (`game_detail` vs. that platform's own `platform_userscore` fetch), and one shared FK cannot represent both truthfully — a `GamePlatform.last_changed_fetch` correct for one field was necessarily wrong for the other.
+
+Verified and fixed:
+
+- `GamePlatform.last_changed_fetch` is replaced by two FKs, `metascore_last_changed_fetch` and `userscore_last_changed_fetch` (migration `catalog/0002_remove_gameplatform_last_changed_fetch_and_more.py`).
+- `metascore_last_changed_fetch` is set to the `game_detail` fetch unconditionally on every upsert — safe because `ingest_game` only reaches the upsert loop once that fetch has already succeeded (an early return handles the failure/invalid case), so Metascore's provenance is always truthful, including a genuine `null` reading.
+- `userscore_last_changed_fetch` is set to the `game_detail` fetch for the lead platform (embedded hero widget), and to the platform's own `platform_userscore` fetch for every other platform **only when that fetch's own `outcome == "succeeded"`**; on a failed/invalid platform fetch the field is left untouched, preserving whichever earlier fetch actually produced the still-current value.
+- Added `test_a_failed_userscore_fetch_does_not_claim_provenance_over_a_preserved_value`, which reproduces the peer's exact counterexample (a good fetch followed by a simulated failed one) and asserts both the preserved value and the untouched provenance pointer.
+- Confirmed live: `GamePlatform.metascore_last_changed_fetch.kind` reads `game_detail` for all five platforms; `userscore_last_changed_fetch.kind` reads `game_detail` only for the lead platform (PlayStation 5) and `platform_userscore` for the other four, on the real site (5th live run).
+
+This is no longer solely a self-review: an independent session verified the code across three rounds, and every finding it confirmed as still-reproducing — including a follow-up it found on a fix from the prior round — was fixed and covered by a new test, with the highest-risk ones additionally confirmed against the live site. The `IMP-01`-style caveat ("this is an adversarial self-review, not an independent person's review") does not apply to `IMP-02`.
 
 ## Verification commands
 
 ```powershell
 uv lock
 python scripts/check.py                      # ruff, mypy --strict, Django checks, makemigrations --check,
-                                               # collectstatic, 52 Django tests + the rest of the repo suite
+                                               # collectstatic, 53 Django tests + the rest of the repo suite
 python scripts/migrate.py
 python scripts/ingest_game.py https://www.metacritic.com/game/elden-ring/
 python scripts/ingest_game.py https://www.metacritic.com/game/elden-ring/   # idempotency proof

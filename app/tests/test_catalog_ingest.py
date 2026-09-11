@@ -82,14 +82,20 @@ class FakeGateway:
         game_dto: GameDTO | None,
         evidence: FetchEvidence | None = None,
         platform_userscores: dict[str, Decimal | None] | None = None,
+        platform_userscore_failures: set[str] | None = None,
     ) -> None:
         self._game_result = (game_dto, evidence or _evidence())
         self._platform_userscores = platform_userscores or {}
+        self._platform_userscore_failures = platform_userscore_failures or set()
 
     def fetch_game(self, url: str) -> tuple[GameDTO | None, FetchEvidence]:
         return self._game_result
 
     def fetch_platform_userscore(self, url: str) -> tuple[Decimal | None, FetchEvidence]:
+        if url in self._platform_userscore_failures:
+            return None, _evidence(
+                outcome="failed", error_code="http_503", kind="platform_userscore"
+            )
         return self._platform_userscores[url], _evidence(kind="platform_userscore")
 
 
@@ -295,6 +301,44 @@ class IngestPlatformUserscoreFanOutTests(TestCase):
         platform_fetch = SourceFetch.objects.get(kind="platform_userscore")
         ps5 = GamePlatform.objects.get(slug="ps5")
         pc = GamePlatform.objects.get(slug="pc")
-        self.assertEqual(ps5.last_changed_fetch_id, game_detail_fetch.id)
-        self.assertEqual(pc.last_changed_fetch_id, platform_fetch.id)
-        self.assertNotEqual(pc.last_changed_fetch_id, game_detail_fetch.id)
+        # Metascore always comes from the game_detail fetch, for every platform.
+        self.assertEqual(ps5.metascore_last_changed_fetch_id, game_detail_fetch.id)
+        self.assertEqual(pc.metascore_last_changed_fetch_id, game_detail_fetch.id)
+        # Userscore comes from the game_detail fetch only for the lead platform; every other
+        # platform's Userscore provenance points at its own platform_userscore fetch.
+        self.assertEqual(ps5.userscore_last_changed_fetch_id, game_detail_fetch.id)
+        self.assertEqual(pc.userscore_last_changed_fetch_id, platform_fetch.id)
+        self.assertNotEqual(pc.userscore_last_changed_fetch_id, game_detail_fetch.id)
+
+    def test_a_failed_userscore_fetch_does_not_claim_provenance_over_a_preserved_value(
+        self,
+    ) -> None:
+        pc_url = "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=pc"
+        non_lead = GamePlatformDTO(
+            source_platform_id="p2",
+            source_game_platform_id="r2",
+            slug="pc",
+            name="PC",
+            is_lead_platform=False,
+            metascore=94,
+            userscore=None,
+            critic_reviews_path="/game/elden-ring/critic-reviews/?platform=pc",
+            user_reviews_path="/game/elden-ring/user-reviews/?platform=pc",
+        )
+        gateway_a = FakeGateway(
+            _game(platforms=(non_lead,)), platform_userscores={pc_url: Decimal("7.6")}
+        )
+        ingest_game(gateway_a, FakeClock(), DETAIL_URL)
+        good_fetch = SourceFetch.objects.get(kind="platform_userscore")
+
+        gateway_b = FakeGateway(_game(platforms=(non_lead,)), platform_userscore_failures={pc_url})
+        ingest_game(gateway_b, FakeClock(), DETAIL_URL)
+
+        pc = GamePlatform.objects.get(slug="pc")
+        # The value is preserved by the non-destructive merge...
+        self.assertEqual(pc.userscore, Decimal("7.6"))
+        # ...and its provenance must still point at the fetch that actually produced it, not the
+        # failed one that merely left it alone.
+        self.assertEqual(pc.userscore_last_changed_fetch_id, good_fetch.id)
+        failed_fetch = SourceFetch.objects.get(kind="platform_userscore", outcome="failed")
+        self.assertNotEqual(pc.userscore_last_changed_fetch_id, failed_fetch.id)
