@@ -14,6 +14,8 @@ class SourceFetch(models.Model):
     KIND_CHOICES = [
         ("game_detail", "game_detail"),
         ("platform_userscore", "platform_userscore"),
+        ("new_releases", "new_releases"),
+        ("browse_page", "browse_page"),
     ]
     OUTCOME_CHOICES = [
         ("succeeded", "succeeded"),

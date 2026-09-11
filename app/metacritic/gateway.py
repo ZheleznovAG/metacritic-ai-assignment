@@ -8,19 +8,32 @@ from typing import Protocol
 
 import httpx
 
-from metacritic.dto import FetchEvidence, GameDTO
+from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO
 from metacritic.errors import MetacriticFetchError, MetacriticParseError
-from metacritic.parser import PARSER_CONTRACT_VERSION, parse_game_detail, parse_platform_userscore
+from metacritic.parser import (
+    PARSER_CONTRACT_VERSION,
+    parse_browse_page,
+    parse_game_detail,
+    parse_new_releases,
+    parse_platform_userscore,
+)
 
 ALLOWED_HOST = "www.metacritic.com"
+NEW_RELEASES_URL = "https://www.metacritic.com/game/"
+BROWSE_LISTING_URL = "https://www.metacritic.com/browse/game/all/all/all-time/new/"
 
 
 class GatewayProtocol(Protocol):
-    """What `catalog.ingest` needs; lets tests pass a fake instead of a real `MetacriticGateway`."""
+    """What `catalog.ingest`/`processing` need; lets tests pass a fake instead of a real
+    `MetacriticGateway`."""
 
     def fetch_game(self, url: str) -> tuple[GameDTO | None, FetchEvidence]: ...
 
     def fetch_platform_userscore(self, url: str) -> tuple[Decimal | None, FetchEvidence]: ...
+
+    def list_new_releases(self) -> tuple[list[GameIdentityDTO] | None, FetchEvidence]: ...
+
+    def iter_browse(self, page: int) -> tuple[BrowsePage | None, FetchEvidence]: ...
 
 
 USER_AGENT = (
@@ -33,8 +46,8 @@ def _validate_url(url: str) -> None:
     parsed = httpx.URL(url)
     if parsed.scheme != "https" or parsed.host != ALLOWED_HOST:
         raise MetacriticFetchError(f"URL is not on the allowlisted host: {url}")
-    if not parsed.path.startswith("/game/"):
-        raise MetacriticFetchError(f"URL is not a recognised game route: {url}")
+    if not (parsed.path.startswith("/game/") or parsed.path.startswith("/browse/game/")):
+        raise MetacriticFetchError(f"URL is not a recognised game/listing route: {url}")
 
 
 class MetacriticGateway:
@@ -108,5 +121,24 @@ class MetacriticGateway:
             return None, evidence
         try:
             return parse_platform_userscore(body, url), evidence
+        except MetacriticParseError as error:
+            return None, replace(evidence, outcome="invalid", error_code=type(error).__name__)
+
+    def list_new_releases(self) -> tuple[list[GameIdentityDTO] | None, FetchEvidence]:
+        body, evidence = self._get(NEW_RELEASES_URL, kind="new_releases")
+        if body is None:
+            return None, evidence
+        try:
+            return parse_new_releases(body, NEW_RELEASES_URL), evidence
+        except MetacriticParseError as error:
+            return None, replace(evidence, outcome="invalid", error_code=type(error).__name__)
+
+    def iter_browse(self, page: int) -> tuple[BrowsePage | None, FetchEvidence]:
+        url = f"{BROWSE_LISTING_URL}?page={page}"
+        body, evidence = self._get(url, kind="browse_page")
+        if body is None:
+            return None, evidence
+        try:
+            return parse_browse_page(body, url), evidence
         except MetacriticParseError as error:
             return None, replace(evidence, outcome="invalid", error_code=type(error).__name__)

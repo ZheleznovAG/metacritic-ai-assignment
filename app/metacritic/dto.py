@@ -40,3 +40,18 @@ class GameDTO:
     video_embed_url: str | None
     video_content_url: str | None
     platforms: tuple[GamePlatformDTO, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class GameIdentityDTO:
+    """Identity-only DTO from a list page (New Releases / SEE ALL); no core fields."""
+
+    source_game_id: str
+    canonical_locator: str
+    title: str
+
+
+@dataclass(frozen=True, slots=True)
+class BrowsePage:
+    games: tuple[GameIdentityDTO, ...]
+    has_next_page: bool

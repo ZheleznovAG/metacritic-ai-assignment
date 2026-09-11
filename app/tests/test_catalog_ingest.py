@@ -5,7 +5,7 @@ from unittest import mock
 from catalog.ingest import ingest_game
 from catalog.models import Game, GameAlias, GamePlatform, SourceFetch
 from django.test import TestCase
-from metacritic.dto import FetchEvidence, GameDTO, GamePlatformDTO
+from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO, GamePlatformDTO
 from processing.models import DailyCandidate
 from reviews.models import ReviewCollectionJob
 
@@ -97,6 +97,12 @@ class FakeGateway:
                 outcome="failed", error_code="http_503", kind="platform_userscore"
             )
         return self._platform_userscores[url], _evidence(kind="platform_userscore")
+
+    def list_new_releases(self) -> tuple[list[GameIdentityDTO] | None, FetchEvidence]:
+        raise NotImplementedError("not used by catalog.ingest tests")
+
+    def iter_browse(self, page: int) -> tuple[BrowsePage | None, FetchEvidence]:
+        raise NotImplementedError("not used by catalog.ingest tests")
 
 
 class IngestCreateTests(TestCase):
@@ -228,7 +234,7 @@ class IngestUpdateTests(TestCase):
 class IngestAtomicityTests(TestCase):
     def test_a_failure_creating_jobs_rolls_back_the_whole_transaction(self) -> None:
         gateway = FakeGateway(_game())
-        with mock.patch("catalog.ingest._ensure_jobs", side_effect=RuntimeError("boom")):
+        with mock.patch("catalog.ingest.ensure_jobs", side_effect=RuntimeError("boom")):
             with self.assertRaises(RuntimeError):
                 ingest_game(gateway, FakeClock(), DETAIL_URL)
 

@@ -29,6 +29,7 @@ def provision() -> None:
     admin = identifier("POSTGRES_USER")
     web = identifier("WEB_DB_USER")
     migrate = identifier("MIGRATE_DB_USER")
+    scheduler = identifier("SCHEDULER_DB_USER")
     mode = required("APP_ENV")
     if mode not in {"local", "test", "production"}:
         raise ValueError("Unknown APP_ENV")
@@ -36,6 +37,7 @@ def provision() -> None:
     roles = [
         (web, required("WEB_DB_PASSWORD"), False),
         (migrate, required("MIGRATE_DB_PASSWORD"), False),
+        (scheduler, required("SCHEDULER_DB_PASSWORD"), False),
     ]
     if with_checks:
         roles.append((identifier("CHECKS_DB_USER"), required("CHECKS_DB_PASSWORD"), True))
@@ -132,6 +134,38 @@ def provision() -> None:
             sql.SQL(
                 "ALTER DEFAULT PRIVILEGES FOR ROLE {} IN SCHEMA public GRANT SELECT ON TABLES TO {}"
             ).format(sql.Identifier(migrate), sql.Identifier(web))
+        )
+        # scheduler (IMP-03) writes application rows but never DDL: SELECT/INSERT/UPDATE only,
+        # no DELETE (nothing in this codebase deletes rows) and no schema ownership.
+        connection.execute(
+            sql.SQL("GRANT CONNECT ON DATABASE {} TO {}").format(
+                sql.Identifier(database), sql.Identifier(scheduler)
+            )
+        )
+        connection.execute(
+            sql.SQL("GRANT USAGE ON SCHEMA public TO {}").format(sql.Identifier(scheduler))
+        )
+        connection.execute(
+            sql.SQL("GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO {}").format(
+                sql.Identifier(scheduler)
+            )
+        )
+        connection.execute(
+            sql.SQL("GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO {}").format(
+                sql.Identifier(scheduler)
+            )
+        )
+        connection.execute(
+            sql.SQL(
+                "ALTER DEFAULT PRIVILEGES FOR ROLE {} IN SCHEMA public "
+                "GRANT SELECT, INSERT, UPDATE ON TABLES TO {}"
+            ).format(sql.Identifier(migrate), sql.Identifier(scheduler))
+        )
+        connection.execute(
+            sql.SQL(
+                "ALTER DEFAULT PRIVILEGES FOR ROLE {} IN SCHEMA public "
+                "GRANT USAGE, SELECT ON SEQUENCES TO {}"
+            ).format(sql.Identifier(migrate), sql.Identifier(scheduler))
         )
     if with_checks:
         checks = roles[-1][0]

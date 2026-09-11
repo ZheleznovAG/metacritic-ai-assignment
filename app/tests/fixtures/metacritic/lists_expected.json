@@ -1,0 +1,517 @@
+{
+  "fixture_version": 1,
+  "purpose": "IMP-03 independent expected extraction for list pages (New Releases + SEE ALL/browse pagination); authored by reading the raw live response before the list parser existed, per SPK-02's 'curated observations are not parser input' rule",
+  "capture": {
+    "user_agent": "metacritic-ai-assignment-imp03/0.1 (+https://github.com/ZheleznovAG/metacritic-ai-assignment)",
+    "new_releases": {
+      "source_url": "https://www.metacritic.com/game/",
+      "captured_at": "2026-09-11T12:31:20Z",
+      "raw_response_sha256": "41667CB57CCCA22CD19B40DDC51C3E4E75438C20094550FD0551D3BFA223FEF9",
+      "raw_response_bytes": 963836
+    },
+    "browse_page_1": {
+      "source_url": "https://www.metacritic.com/browse/game/all/all/all-time/new/?page=1",
+      "captured_at": "2026-09-11T12:31:29Z",
+      "raw_response_sha256": "A1FC2632590653DDD924429D69154D40DB24CD8B68B3045CA90BEF5C0F287305",
+      "raw_response_bytes": 334773
+    },
+    "browse_page_2": {
+      "source_url": "https://www.metacritic.com/browse/game/all/all/all-time/new/?page=2",
+      "captured_at": "2026-09-11T12:31:29Z",
+      "raw_response_sha256": "926352ABEA62A41314E8D17592C33176A8BF402466409369195419905C4F5C17",
+      "raw_response_bytes": 351465
+    },
+    "browse_page_last": {
+      "source_url": "https://www.metacritic.com/browse/game/all/all/all-time/new/?page=7429",
+      "captured_at": "2026-09-11T12:34:25Z",
+      "raw_response_sha256": "733EB7353F26301033CF6C9D6C38B2E28E678F41739B5CAB4D126DA42D4E7BE8",
+      "raw_response_bytes": 325864,
+      "note": "7429 was the last page number shown in the page-1 pagination widget at capture time; requested directly to observe the real exhausted-page markup (disabled pagination-arrow-next) rather than assuming it"
+    }
+  },
+  "sanitisation": {
+    "method": "kept product-card/product-title anchors and hrefs as real, verbatim slugs (in real page order) but replaced surrounding chrome/images with a minimal wrapper; the __NUXT_DATA__ payload is a single positionally-indexed JSON array (Nuxt's flattened/dedup format, same as IMP-02) re-serialised with every array slot not reachable from the game-title records this parser reads replaced by null, preserving the original indices and values of everything that IS read"
+  },
+  "new_releases": {
+    "section_marker": "aria-label=\"New Releases content\" (SPK-02-confirmed SSR section, exactly 20 cards at capture time)",
+    "games": [
+      {
+        "slug": "nhl-27",
+        "source_game_id": "1300749162",
+        "title": "NHL 27"
+      },
+      {
+        "slug": "welcome-to-elderfield",
+        "source_game_id": "1300652230",
+        "title": "Welcome to Elderfield"
+      },
+      {
+        "slug": "hot-wheels-infinite-rush",
+        "source_game_id": "1300741493",
+        "title": "Hot Wheels Infinite Rush"
+      },
+      {
+        "slug": "valheim",
+        "source_game_id": "1300491663",
+        "title": "Valheim"
+      },
+      {
+        "slug": "halloween-the-game",
+        "source_game_id": "1300699336",
+        "title": "Halloween: The Game"
+      },
+      {
+        "slug": "bus-simulator-27",
+        "source_game_id": "1300694412",
+        "title": "Bus Simulator 27"
+      },
+      {
+        "slug": "sprawl-zero",
+        "source_game_id": "1300724573",
+        "title": "SPRAWL zero"
+      },
+      {
+        "slug": "nba-2k27",
+        "source_game_id": "1300750077",
+        "title": "NBA 2K27"
+      },
+      {
+        "slug": "onimusha-way-of-the-sword",
+        "source_game_id": "1300662655",
+        "title": "Onimusha: Way of the Sword"
+      },
+      {
+        "slug": "marsupilami-2-salsa-palombia",
+        "source_game_id": "1300737109",
+        "title": "Marsupilami 2 - Salsa Palombia"
+      },
+      {
+        "slug": "wo-long-fallen-dynasty-complete-edition",
+        "source_game_id": "1300742117",
+        "title": "Wo Long: Fallen Dynasty - Complete Edition"
+      },
+      {
+        "slug": "bioeden",
+        "source_game_id": "1300741685",
+        "title": "BioEden"
+      },
+      {
+        "slug": "orbitals",
+        "source_game_id": "1300714329",
+        "title": "Orbitals"
+      },
+      {
+        "slug": "the-blood-of-dawnwalker",
+        "source_game_id": "1300655618",
+        "title": "The Blood of Dawnwalker"
+      },
+      {
+        "slug": "moonlighter-2-the-endless-vault",
+        "source_game_id": "1300661505",
+        "title": "Moonlighter 2: The Endless Vault"
+      },
+      {
+        "slug": "crimson-moon",
+        "source_game_id": "1300722594",
+        "title": "Crimson Moon"
+      },
+      {
+        "slug": "elden-ring-tarnished-edition",
+        "source_game_id": "1300679031",
+        "title": "Elden Ring: Tarnished Edition"
+      },
+      {
+        "slug": "captain-tsubasa-2-world-fighters",
+        "source_game_id": "1300721432",
+        "title": "Captain Tsubasa 2: World Fighters"
+      },
+      {
+        "slug": "aggelos-2",
+        "source_game_id": "1300696628",
+        "title": "Aggelos 2"
+      },
+      {
+        "slug": "brigandine-abyss",
+        "source_game_id": "1300722469",
+        "title": "Brigandine Abyss"
+      }
+    ]
+  },
+  "browse_page_1": {
+    "url": "https://www.metacritic.com/browse/game/all/all/all-time/new/?page=1",
+    "has_next_page": true,
+    "games": [
+      {
+        "slug": "anime-shop-simulator",
+        "source_game_id": "1300662852",
+        "title": "Anime Shop Simulator"
+      },
+      {
+        "slug": "your-story-games-with-death",
+        "source_game_id": "1300655384",
+        "title": "Your Story: Games with Death"
+      },
+      {
+        "slug": "gun-shop-3",
+        "source_game_id": "1300634330",
+        "title": "Gun Shop 3"
+      },
+      {
+        "slug": "orebits",
+        "source_game_id": "1300692490",
+        "title": "Orebits"
+      },
+      {
+        "slug": "the-loopler",
+        "source_game_id": "1300710021",
+        "title": "The Loopler"
+      },
+      {
+        "slug": "boundless-ai-fantasy",
+        "source_game_id": "1300687901",
+        "title": "Boundless AI Fantasy"
+      },
+      {
+        "slug": "antscape-room",
+        "source_game_id": "1300711453",
+        "title": "Antscape Room"
+      },
+      {
+        "slug": "moon-garden",
+        "source_game_id": "1300720780",
+        "title": "Moon Garden"
+      },
+      {
+        "slug": "deep-sheol",
+        "source_game_id": "1300701977",
+        "title": "Deep Sheol"
+      },
+      {
+        "slug": "drift-club-street-legends",
+        "source_game_id": "1300761315",
+        "title": "Drift Club: Street Legends"
+      },
+      {
+        "slug": "la-gran-aventura-de-david-santiso",
+        "source_game_id": "1300749935",
+        "title": "La gran aventura de David Santiso"
+      },
+      {
+        "slug": "horizon-ring",
+        "source_game_id": "1300753031",
+        "title": "Horizon Ring"
+      },
+      {
+        "slug": "basketball-legacy-manager-27",
+        "source_game_id": "1300756573",
+        "title": "Basketball Legacy Manager 27"
+      },
+      {
+        "slug": "kilnborn",
+        "source_game_id": "1300756822",
+        "title": "Kilnborn"
+      },
+      {
+        "slug": "clearit-m4",
+        "source_game_id": "1300757283",
+        "title": "ClearIt M4"
+      },
+      {
+        "slug": "dino-odyssey",
+        "source_game_id": "1300761312",
+        "title": "Dino Odyssey"
+      },
+      {
+        "slug": "liquid-cats",
+        "source_game_id": "1300761357",
+        "title": "Liquid Cats"
+      },
+      {
+        "slug": "hentai-tales-the-plumber",
+        "source_game_id": "1300751554",
+        "title": "Hentai Tales: The Plumber"
+      },
+      {
+        "slug": "murmuring-of-moth-mouth",
+        "source_game_id": "1300760145",
+        "title": "Murmuring of Moth Mouth"
+      },
+      {
+        "slug": "post-office-tidy-up",
+        "source_game_id": "1300760149",
+        "title": "Post Office: Tidy Up!"
+      },
+      {
+        "slug": "the-village-above-the-well",
+        "source_game_id": "1300759547",
+        "title": "The Village Above the Well"
+      },
+      {
+        "slug": "mad-mads-madsen",
+        "source_game_id": "1300756578",
+        "title": "Mad Mads Madsen"
+      },
+      {
+        "slug": "vretro",
+        "source_game_id": "1300760153",
+        "title": "VRetro"
+      },
+      {
+        "slug": "the-ascendant-sect",
+        "source_game_id": "1300758790",
+        "title": "The Ascendant Sect"
+      }
+    ]
+  },
+  "browse_page_2": {
+    "url": "https://www.metacritic.com/browse/game/all/all/all-time/new/?page=2",
+    "has_next_page": true,
+    "overlap_with_page_1": [],
+    "note": "no slug overlap observed between these two specific snapshots (captured 9 seconds apart); the parser/selector must still deduplicate by identity in general, proven separately by synthetic overlap tests, not assumed absent from this one live pair",
+    "games": [
+      {
+        "slug": "lamp-clicker",
+        "source_game_id": "1300741196",
+        "title": "Lamp Clicker"
+      },
+      {
+        "slug": "sad-virus-ruined-land",
+        "source_game_id": "1300760148",
+        "title": "Sad Virus Ruined Land"
+      },
+      {
+        "slug": "escape-from-lab",
+        "source_game_id": "1300751066",
+        "title": "Escape From Lab"
+      },
+      {
+        "slug": "dig-raiders-anomaly-extraction",
+        "source_game_id": "1300732201",
+        "title": "DIG Raiders: Anomaly Extraction"
+      },
+      {
+        "slug": "itcb-interstellar-trade-compliance-bureau",
+        "source_game_id": "1300743960",
+        "title": "I.T.C.B - Interstellar Trade Compliance Bureau"
+      },
+      {
+        "slug": "proper-tosser",
+        "source_game_id": "1300755327",
+        "title": "Proper Tosser"
+      },
+      {
+        "slug": "cursed-district-horror",
+        "source_game_id": "1300756908",
+        "title": "Cursed District: Horror"
+      },
+      {
+        "slug": "starl-9-ashes-of-the-past",
+        "source_game_id": "1300757282",
+        "title": "StarL 9 Ashes Of The Past"
+      },
+      {
+        "slug": "loop-miner",
+        "source_game_id": "1300737086",
+        "title": "Loop Miner"
+      },
+      {
+        "slug": "100-romantic-hidden-cat",
+        "source_game_id": "1300762131",
+        "title": "100 Romantic Hidden Cat"
+      },
+      {
+        "slug": "ginger-puzzle",
+        "source_game_id": "1300762206",
+        "title": "Ginger Puzzle"
+      },
+      {
+        "slug": "arcanefall-darklands",
+        "source_game_id": "1300760157",
+        "title": "Arcanefall : Darklands"
+      },
+      {
+        "slug": "survivors-notes",
+        "source_game_id": "1300720991",
+        "title": "Survivor's Notes"
+      },
+      {
+        "slug": "starweaver-express-per-aspera-ad-astra",
+        "source_game_id": "1300689128",
+        "title": "Starweaver Express ~Per aspera ad astra~"
+      },
+      {
+        "slug": "clipped-reality",
+        "source_game_id": "1300759678",
+        "title": "Clipped Reality"
+      },
+      {
+        "slug": "astrodig",
+        "source_game_id": "1300732234",
+        "title": "AstroDig"
+      },
+      {
+        "slug": "loop-9",
+        "source_game_id": "1300759474",
+        "title": "Loop 9"
+      },
+      {
+        "slug": "crying-booth",
+        "source_game_id": "1300593065",
+        "title": "CRYING BOOTH"
+      },
+      {
+        "slug": "shadowlight",
+        "source_game_id": "1300761264",
+        "title": "Shadowlight"
+      },
+      {
+        "slug": "serene-chess",
+        "source_game_id": "1300762130",
+        "title": "Serene Chess"
+      },
+      {
+        "slug": "femboy-loop",
+        "source_game_id": "1300756148",
+        "title": "Femboy Loop"
+      },
+      {
+        "slug": "nhl-27",
+        "source_game_id": "1300749162",
+        "title": "NHL 27"
+      },
+      {
+        "slug": "exitrance",
+        "source_game_id": "1300733965",
+        "title": "EXITRANCE"
+      },
+      {
+        "slug": "black-gold-oil-drilling-simulator",
+        "source_game_id": "1300529507",
+        "title": "Black Gold: Oil Drilling Simulator"
+      }
+    ]
+  },
+  "browse_page_last": {
+    "url": "https://www.metacritic.com/browse/game/all/all/all-time/new/?page=7429",
+    "has_next_page": false,
+    "pagination_marker": "data-testid=\"pagination-arrow-next\" carries an added \"--disabled\" BEM modifier class only on this page, absent on page 1/2",
+    "games": [
+      {
+        "slug": "the-battle-of-the-bulge-tigers-in-the-snow",
+        "source_game_id": "1300035827",
+        "title": "The Battle of the Bulge: Tigers in the Snow"
+      },
+      {
+        "slug": "wizards-castle-1981",
+        "source_game_id": "1300059196",
+        "title": "Wizard's Castle (1981)"
+      },
+      {
+        "slug": "donkey",
+        "source_game_id": "1300484434",
+        "title": "Donkey"
+      },
+      {
+        "slug": "arithmetic-games-set-2",
+        "source_game_id": "1300471982",
+        "title": "Arithmetic Games Set 2"
+      },
+      {
+        "slug": "the-battle-of-shiloh",
+        "source_game_id": "1300471607",
+        "title": "The Battle of Shiloh"
+      },
+      {
+        "slug": "everest-explorer",
+        "source_game_id": "1300559350",
+        "title": "Everest Explorer"
+      },
+      {
+        "slug": "raceman",
+        "source_game_id": "1300687678",
+        "title": "RaceMan"
+      },
+      {
+        "slug": "rocket-1981",
+        "source_game_id": "1300698958",
+        "title": "Rocket (1981)"
+      },
+      {
+        "slug": "intercept",
+        "source_game_id": "1300687692",
+        "title": "Intercept"
+      },
+      {
+        "slug": "magic-spells",
+        "source_game_id": "1300511597",
+        "title": "Magic Spells"
+      },
+      {
+        "slug": "microsoft-adventure",
+        "source_game_id": "1300005908",
+        "title": "Microsoft Adventure"
+      },
+      {
+        "slug": "zork-i",
+        "source_game_id": "1300006164",
+        "title": "Zork I"
+      },
+      {
+        "slug": "chess-1981",
+        "source_game_id": "1300470734",
+        "title": "Chess (1981)"
+      },
+      {
+        "slug": "arithmetic-games-set-1",
+        "source_game_id": "1300471981",
+        "title": "Arithmetic Games Set 1"
+      },
+      {
+        "slug": "set-the-hostages-free",
+        "source_game_id": "1300472087",
+        "title": "Set the Hostages Free"
+      },
+      {
+        "slug": "softporn-adventure",
+        "source_game_id": "1300005916",
+        "title": "Softporn Adventure"
+      },
+      {
+        "slug": "dodge-ball",
+        "source_game_id": "1300706713",
+        "title": "Dodge-Ball"
+      },
+      {
+        "slug": "meteor-1981",
+        "source_game_id": "1300595520",
+        "title": "Meteor (1981)"
+      },
+      {
+        "slug": "b-1-nuclear-bomber",
+        "source_game_id": "1300027379",
+        "title": "B-1 Nuclear Bomber"
+      },
+      {
+        "slug": "intruder-1980",
+        "source_game_id": "1300202063",
+        "title": "Intruder (1980)"
+      },
+      {
+        "slug": "strip-concentration-and-dice",
+        "source_game_id": "1300571206",
+        "title": "Strip Concentration & Dice"
+      },
+      {
+        "slug": "gin-rummy-20",
+        "source_game_id": "1300556798",
+        "title": "Gin Rummy 2.0"
+      },
+      {
+        "slug": "diamond-easy",
+        "source_game_id": "1300757309",
+        "title": "Diamond Easy"
+      }
+    ]
+  },
+  "cross_reference_note": "source_game_id 1300749162 (nhl-27) appears identically in both the New Releases fixture and browse_page_2, confirming the same identity resolution applies to both list types (SPK-03 ID-first contract)"
+}

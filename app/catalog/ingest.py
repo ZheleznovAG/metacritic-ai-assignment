@@ -1,9 +1,10 @@
 """Non-destructive identity-first upsert per `research/feasibility/game-identity.md` (`SPK-03`).
 
-One `transaction.atomic()` block covers identity resolution, the Game/GamePlatform merge, the
-minimal `DailyCandidate`, and the `ReviewCollectionJob` placeholders — proving the "processed but
-job lost" state described in `docs/design.md` is unreachable. Fetch evidence (`SourceFetch`) is
-always saved, even on failure, independent of that transaction.
+`fetch_and_prepare`/`apply_game_dto` are the reusable core: `ingest_game` below is the `IMP-02`
+one-off manual-proof entry point (still used by `scripts/ingest_game.py`), while `processing`
+(`IMP-03`) calls the same two functions directly so it can own the `DailyCandidate`/`CoreAttempt`
+lifecycle itself instead of `ingest_game`'s own simplified `_ensure_candidate`. Fetch evidence
+(`SourceFetch`) is always saved, even on failure, independent of the upsert transaction.
 """
 
 from dataclasses import dataclass, replace
@@ -11,7 +12,7 @@ from datetime import datetime
 from urllib.parse import urlsplit, urlunsplit
 
 from django.db import transaction
-from metacritic.dto import FetchEvidence, GameDTO, GamePlatformDTO
+from metacritic.dto import FetchEvidence, GameDTO, GameIdentityDTO, GamePlatformDTO
 from metacritic.gateway import GatewayProtocol
 from processing.clock import Clock
 from processing.models import DailyCandidate, DailyCycle
@@ -41,6 +42,15 @@ class IngestResult:
     error: str | None
 
 
+@dataclass(frozen=True, slots=True)
+class AppliedGame:
+    game: Game
+    game_created: bool
+    platforms: list[GamePlatform]
+    platforms_created: int
+    platforms_updated: int
+
+
 def _merge_field[T](current: T | None, new: T | None) -> T | None:
     """Non-destructive merge: a genuine new value replaces the old one; a null (or a blank
     string, which carries no information either) keeps it."""
@@ -51,7 +61,7 @@ def _merge_field[T](current: T | None, new: T | None) -> T | None:
     return new
 
 
-def _save_fetch_evidence(evidence: FetchEvidence) -> SourceFetch:
+def save_fetch_evidence(evidence: FetchEvidence) -> SourceFetch:
     return SourceFetch.objects.create(
         kind=evidence.kind,
         url=evidence.url,
@@ -123,6 +133,28 @@ def _resolve_game(dto: GameDTO, now: datetime) -> tuple[Game, bool]:
     return game, False
 
 
+def resolve_game_identity(identity: GameIdentityDTO, now: datetime) -> tuple[Game, bool]:
+    """Creates or finds a `Game` from list-page identity alone (id/locator/title only).
+
+    Used by `processing.selector` at discovery time, before a full `apply_game_dto` detail fetch
+    exists. The non-destructive merge in `_resolve_game` means this can never clobber a fuller
+    Game row created by an earlier detail fetch — every other field stays `None` here, and `None`
+    never overwrites a genuine prior value.
+    """
+    thin_dto = GameDTO(
+        source_game_id=identity.source_game_id,
+        canonical_locator=identity.canonical_locator,
+        title=identity.title,
+        cover_url=None,
+        developer=None,
+        description=None,
+        video_embed_url=None,
+        video_content_url=None,
+        platforms=(),
+    )
+    return _resolve_game(thin_dto, now)
+
+
 def _upsert_platform(game: Game, dto: GamePlatformDTO) -> tuple[GamePlatform, bool]:
     try:
         platform = GamePlatform.objects.get(game=game, source_platform_id=dto.source_platform_id)
@@ -182,8 +214,9 @@ def _ensure_candidate(game: Game, clock: Clock) -> DailyCandidate:
     business_date = clock.now_utc().date()
     cycle, _ = DailyCycle.objects.get_or_create(business_date=business_date, timezone="UTC")
     # Locked for the rest of this transaction: serialises concurrent candidates within one cycle
-    # so two ingests racing on next `source_order` cannot both insert the same value. Full
-    # scheduler-grade lease/fencing across cycles/runs remains IMP-03.
+    # so two ingests racing on next `source_order` cannot both insert the same value. This manual
+    # one-off path never goes through the real Selector/lease (`processing.selector`) — it is not
+    # the periodic production path.
     cycle = DailyCycle.objects.select_for_update().get(pk=cycle.pk)
     candidate = DailyCandidate.objects.filter(cycle=cycle, game=game).first()
     if candidate is None:
@@ -203,7 +236,7 @@ def _ensure_candidate(game: Game, clock: Clock) -> DailyCandidate:
     return candidate
 
 
-def _ensure_jobs(candidate: DailyCandidate, platforms: list[GamePlatform]) -> int:
+def ensure_jobs(candidate: DailyCandidate, platforms: list[GamePlatform]) -> int:
     created_count = 0
     for platform in platforms:
         for audience, path in (
@@ -219,9 +252,90 @@ def _ensure_jobs(candidate: DailyCandidate, platforms: list[GamePlatform]) -> in
     return created_count
 
 
-def ingest_game(gateway: GatewayProtocol, clock: Clock, detail_url: str) -> IngestResult:
+def _absolute_url(detail_url: str, path: str) -> str:
+    parts = urlsplit(detail_url)
+    return urlunsplit((parts.scheme, parts.netloc, path, "", ""))
+
+
+def fetch_and_prepare(
+    gateway: GatewayProtocol, detail_url: str
+) -> tuple[GameDTO | None, SourceFetch, dict[str, SourceFetch]]:
+    """Fetches the game detail page, then fans out to each non-lead platform's Userscore page.
+    `SourceFetch` evidence is saved for every request made, including failed ones.
+
+    Returns the fully-resolved `GameDTO` (`None` if the detail fetch itself failed/was invalid),
+    the `game_detail` `SourceFetch`, and a `source_platform_id -> SourceFetch` map covering only
+    the platforms whose own Userscore fetch *succeeded* (used for per-field provenance).
+    """
     game_dto, evidence = gateway.fetch_game(detail_url)
-    fetch = _save_fetch_evidence(evidence)
+    fetch = save_fetch_evidence(evidence)
+    if game_dto is None:
+        return None, fetch, {}
+
+    resolved_platforms: list[GamePlatformDTO] = []
+    platform_userscore_fetch: dict[str, SourceFetch] = {}
+    for platform_dto in game_dto.platforms:
+        if platform_dto.is_lead_platform or platform_dto.user_reviews_path is None:
+            resolved_platforms.append(platform_dto)
+            continue
+        userscore, platform_evidence = gateway.fetch_platform_userscore(
+            _absolute_url(detail_url, platform_dto.user_reviews_path)
+        )
+        saved_fetch = save_fetch_evidence(platform_evidence)
+        if platform_evidence.outcome == "succeeded":
+            platform_userscore_fetch[platform_dto.source_platform_id] = saved_fetch
+        resolved_platforms.append(replace(platform_dto, userscore=userscore))
+    game_dto = replace(game_dto, platforms=tuple(resolved_platforms))
+    return game_dto, fetch, platform_userscore_fetch
+
+
+def apply_game_dto(
+    game_dto: GameDTO,
+    fetch: SourceFetch,
+    platform_userscore_fetch: dict[str, SourceFetch],
+    now: datetime,
+) -> AppliedGame:
+    """Identity resolution and non-destructive Game/GamePlatform merge.
+
+    Must run inside the caller's own `transaction.atomic()` block. Raises `IdentityConflict`/
+    `PlatformIdentityConflict` on a genuine identity collision (nothing is written in that case).
+    """
+    game, game_created = _resolve_game(game_dto, now)
+    game.last_changed_fetch = fetch
+    game.save(update_fields=["last_changed_fetch"])
+
+    platforms: list[GamePlatform] = []
+    platforms_created = 0
+    platforms_updated = 0
+    for platform_dto in game_dto.platforms:
+        platform, created = _upsert_platform(game, platform_dto)
+        # `fetch` (game_detail) is only reached here once it has already succeeded, so
+        # Metascore's provenance is always this fetch, whatever it read (including null).
+        platform.metascore_last_changed_fetch = fetch
+        if platform_dto.is_lead_platform:
+            platform.userscore_last_changed_fetch = fetch
+        elif platform_dto.source_platform_id in platform_userscore_fetch:
+            platform.userscore_last_changed_fetch = platform_userscore_fetch[
+                platform_dto.source_platform_id
+            ]
+        platform.save(
+            update_fields=["metascore_last_changed_fetch", "userscore_last_changed_fetch"]
+        )
+        platforms.append(platform)
+        platforms_created += int(created)
+        platforms_updated += int(not created)
+
+    return AppliedGame(
+        game=game,
+        game_created=game_created,
+        platforms=platforms,
+        platforms_created=platforms_created,
+        platforms_updated=platforms_updated,
+    )
+
+
+def ingest_game(gateway: GatewayProtocol, clock: Clock, detail_url: str) -> IngestResult:
+    game_dto, fetch, platform_userscore_fetch = fetch_and_prepare(gateway, detail_url)
     if game_dto is None:
         return IngestResult(
             ok=False,
@@ -231,59 +345,16 @@ def ingest_game(gateway: GatewayProtocol, clock: Clock, detail_url: str) -> Inge
             platforms_updated=0,
             jobs_created=0,
             candidate_state=None,
-            fetch_outcome=evidence.outcome,
-            error=evidence.error_code,
+            fetch_outcome=fetch.outcome,
+            error=fetch.error_code,
         )
-
-    resolved_platforms: list[GamePlatformDTO] = []
-    # Per-platform Userscore provenance: only recorded when the platform's own fetch actually
-    # succeeded. A failed/invalid fetch leaves the field's value AND its provenance pointer
-    # untouched (the non-destructive merge already protects the value; the pointer must not
-    # claim a failed request produced the value that was, in fact, merely preserved).
-    platform_userscore_fetch: dict[str, SourceFetch] = {}
-    for platform_dto in game_dto.platforms:
-        if platform_dto.is_lead_platform or platform_dto.user_reviews_path is None:
-            resolved_platforms.append(platform_dto)
-            continue
-        userscore, platform_evidence = gateway.fetch_platform_userscore(
-            _absolute_url(detail_url, platform_dto.user_reviews_path)
-        )
-        saved_fetch = _save_fetch_evidence(platform_evidence)
-        if platform_evidence.outcome == "succeeded":
-            platform_userscore_fetch[platform_dto.source_platform_id] = saved_fetch
-        resolved_platforms.append(replace(platform_dto, userscore=userscore))
-    game_dto = replace(game_dto, platforms=tuple(resolved_platforms))
 
     now = clock.now_utc()
     try:
         with transaction.atomic():
-            game, game_created = _resolve_game(game_dto, now)
-            game.last_changed_fetch = fetch
-            game.save(update_fields=["last_changed_fetch"])
-
-            platforms: list[GamePlatform] = []
-            platforms_created = 0
-            platforms_updated = 0
-            for platform_dto in game_dto.platforms:
-                platform, created = _upsert_platform(game, platform_dto)
-                # `fetch` (game_detail) is only reached here once it has already succeeded, so
-                # Metascore's provenance is always this fetch, whatever it read (including null).
-                platform.metascore_last_changed_fetch = fetch
-                if platform_dto.is_lead_platform:
-                    platform.userscore_last_changed_fetch = fetch
-                elif platform_dto.source_platform_id in platform_userscore_fetch:
-                    platform.userscore_last_changed_fetch = platform_userscore_fetch[
-                        platform_dto.source_platform_id
-                    ]
-                platform.save(
-                    update_fields=["metascore_last_changed_fetch", "userscore_last_changed_fetch"]
-                )
-                platforms.append(platform)
-                platforms_created += int(created)
-                platforms_updated += int(not created)
-
-            candidate = _ensure_candidate(game, clock)
-            jobs_created = _ensure_jobs(candidate, platforms)
+            applied = apply_game_dto(game_dto, fetch, platform_userscore_fetch, now)
+            candidate = _ensure_candidate(applied.game, clock)
+            jobs_created = ensure_jobs(candidate, applied.platforms)
     except (IdentityConflict, PlatformIdentityConflict) as error:
         return IngestResult(
             ok=False,
@@ -293,23 +364,18 @@ def ingest_game(gateway: GatewayProtocol, clock: Clock, detail_url: str) -> Inge
             platforms_updated=0,
             jobs_created=0,
             candidate_state=None,
-            fetch_outcome=evidence.outcome,
+            fetch_outcome=fetch.outcome,
             error=str(error),
         )
 
     return IngestResult(
         ok=True,
-        game_id=game.id,
-        game_created=game_created,
-        platforms_created=platforms_created,
-        platforms_updated=platforms_updated,
+        game_id=applied.game.id,
+        game_created=applied.game_created,
+        platforms_created=applied.platforms_created,
+        platforms_updated=applied.platforms_updated,
         jobs_created=jobs_created,
         candidate_state=candidate.state,
-        fetch_outcome=evidence.outcome,
+        fetch_outcome=fetch.outcome,
         error=None,
     )
-
-
-def _absolute_url(detail_url: str, path: str) -> str:
-    parts = urlsplit(detail_url)
-    return urlunsplit((parts.scheme, parts.netloc, path, "", ""))

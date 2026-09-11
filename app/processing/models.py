@@ -1,6 +1,54 @@
-"""Minimal daily-cycle/candidate rows for IMP-02; full SEL-01-03 selection is IMP-03."""
+"""State model per `research/feasibility/processing-state.md` (`SPK-04`): one singleton
+`ProcessingLease` guards one `ProcessingRun` at a time; `DailyCycle`/`DailyCandidate` track
+per-business-day discovery progress; `CoreAttempt` is the per-candidate claim/outcome record.
+"""
 
 from django.db import models
+
+
+class ProcessingRun(models.Model):
+    STATUS_CHOICES = [
+        ("queued", "queued"),
+        ("running", "running"),
+        ("succeeded", "succeeded"),
+        ("partial", "partial"),
+        ("failed", "failed"),
+        ("skipped_duplicate", "skipped_duplicate"),
+        ("skipped_overlap", "skipped_overlap"),
+    ]
+
+    trigger_key = models.CharField(max_length=64, unique=True)
+    scheduled_slot = models.DateTimeField()
+    business_day = models.DateField(null=True, blank=True)
+    # Copied from ProcessingLease.fencing_token at acquisition; a later commit re-checks the
+    # lease still carries this same token before writing (PS-INV-02 — a stale owner must not
+    # commit after the token has moved on).
+    fencing_token = models.PositiveBigIntegerField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="queued")
+    started_at = models.DateTimeField(null=True, blank=True)
+    ended_at = models.DateTimeField(null=True, blank=True)
+    selected_count = models.PositiveIntegerField(default=0)
+    processed_count = models.PositiveIntegerField(default=0)
+    failed_count = models.PositiveIntegerField(default=0)
+    error_code = models.CharField(max_length=64, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"{self.trigger_key}:{self.status}"
+
+
+class ProcessingLease(models.Model):
+    """Singleton row: `resource="ingestion"` is the only one ever created."""
+
+    resource = models.CharField(max_length=32, unique=True, default="ingestion")
+    fencing_token = models.PositiveBigIntegerField(default=0)
+    owner_run = models.ForeignKey(
+        ProcessingRun, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    expires_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.resource} token={self.fencing_token}"
 
 
 class DailyCycle(models.Model):
@@ -15,7 +63,9 @@ class DailyCycle(models.Model):
         ],
         default="new_releases_pending",
     )
-    exhausted = models.BooleanField(default=False)
+    # Next SEE ALL page to fetch; only advances past a page once it has been fully read and its
+    # identities saved (PS-INV-07). `page=1`-indexed, matching the confirmed `?page=N` contract.
+    browse_next_page = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -42,6 +92,7 @@ class DailyCandidate(models.Model):
     game = models.ForeignKey("catalog.Game", on_delete=models.PROTECT, related_name="candidates")
     source_order = models.PositiveIntegerField()
     state = models.CharField(max_length=16, choices=STATE_CHOICES, default="pending")
+    attempt_count = models.PositiveIntegerField(default=0)
     next_retry_at = models.DateTimeField(null=True, blank=True)
     last_error = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -57,3 +108,26 @@ class DailyCandidate(models.Model):
 
     def __str__(self) -> str:
         return f"candidate({self.game_id}) in {self.cycle_id}"
+
+
+class CoreAttempt(models.Model):
+    OUTCOME_CHOICES = [("succeeded", "succeeded"), ("failed", "failed")]
+
+    candidate = models.ForeignKey(DailyCandidate, on_delete=models.PROTECT, related_name="attempts")
+    run = models.ForeignKey(ProcessingRun, on_delete=models.PROTECT, related_name="core_attempts")
+    attempt_no = models.PositiveIntegerField()
+    fencing_token = models.PositiveBigIntegerField()
+    started_at = models.DateTimeField()
+    ended_at = models.DateTimeField(null=True, blank=True)
+    outcome = models.CharField(max_length=16, choices=OUTCOME_CHOICES, null=True, blank=True)
+    error_code = models.CharField(max_length=64, null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["candidate", "attempt_no"], name="uq_core_attempt_candidate_no"
+            )
+        ]
+
+    def __str__(self) -> str:
+        return f"attempt {self.attempt_no} of candidate {self.candidate_id}"
