@@ -2,7 +2,7 @@
 
 Take-home assignment for the AI Automation Engineer position.
 
-The IMP-01 scaffold provides a read-only preview, liveness and PostgreSQL readiness endpoints. Game ingestion, scheduling, reviews, AI and recommendations are **not implemented**. Task status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). IMP-01 is `Verified`; see the [independent review](docs/requirements/imp_01_independent_review.md).
+IMP-01 provides a read-only preview, liveness and PostgreSQL readiness endpoints. IMP-02 adds a one-off manual ingest of a single real Metacritic game (identity, non-destructive upsert, provenance) and a public read-only card at `/games/<id>/`. Scheduled/periodic ingestion, review collection, AI summaries and recommendations are **not implemented yet**. Task status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). IMP-01 and IMP-02 are `Verified`; see the [IMP-01 independent review](docs/requirements/imp_01_independent_review.md) and the [IMP-02 evidence](docs/requirements/imp_02_review.md).
 
 ## Local development
 

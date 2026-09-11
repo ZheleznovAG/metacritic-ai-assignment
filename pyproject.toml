@@ -4,8 +4,10 @@ version = "0.1.0"
 description = "Metacritic assignment: IMP-01 application scaffold"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+    "beautifulsoup4>=4.12,<5",
     "django>=5.2,<5.3",
     "gunicorn>=23,<26; sys_platform != 'win32'",
+    "httpx>=0.27,<1",
     "psycopg[binary]>=3.2,<4",
     "python-dotenv>=1,<2",
     "whitenoise>=6,<7",
@@ -28,9 +30,11 @@ select = ["E", "F", "I", "UP", "B", "S"]
 
 [tool.ruff.lint.per-file-ignores]
 "app/tests/*" = ["S105", "S106", "S101"]
+"app/*/migrations/*" = ["E501"]
 "scripts/check.py" = ["S603"]
 "scripts/verify_image.py" = ["S603"]
 "scripts/migrate.py" = ["S603"]
+"scripts/ingest_game.py" = ["S603"]
 "scripts/tests/*" = ["S105", "S106", "S101", "S603"]
 
 [tool.mypy]
@@ -45,4 +49,8 @@ django_settings_module = "config.settings"
 
 [[tool.mypy.overrides]]
 module = ["whitenoise.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["bs4.*"]
 ignore_missing_imports = true

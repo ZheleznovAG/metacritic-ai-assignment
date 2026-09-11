@@ -2,8 +2,8 @@
 
 - Baseline: **1.0**, задача `PLN-03`, 2026-09-09 (Asia/Novosibirsk).
 - Bonus scope: `pending`.
-- IMP-01 verified; продуктовые функции ещё не начаты. Последний завершённый цикл — IMP-01.
-- Текущий blocker: нет. Независимые циклы REV-EVAL-01/SIM-EVAL-01 и IMP-02 доступны.
+- IMP-01, IMP-02 verified. Последний завершённый цикл — IMP-02 (первая реальная карточка игры).
+- Текущий blocker: нет. IMP-03 теперь Ready; независимые циклы REV-EVAL-01/SIM-EVAL-01 остаются доступны.
 
 ## Источники истины и правила
 
@@ -24,7 +24,9 @@
 
 ## Приоритет следующего цикла
 
-`IMP-01` закрыт независимым adversarial review в отдельной сессии ([imp_01_independent_review.md](docs/requirements/imp_01_independent_review.md)): все заявленные exit criteria (build/tests/security posture, hosted CI run [34574112620](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34574112620), VDS redeploy) воспроизведены заново в этой сессии с идентичным результатом; найдена и исправлена одна тривиальная документационная неточность (устаревшая строка в README.md). `IMP-02` теперь `Ready`; независимые циклы `REV-EVAL-01`/`SIM-EVAL-01` остаются доступны параллельно.
+`IMP-01` закрыт независимым adversarial review в отдельной сессии ([imp_01_independent_review.md](docs/requirements/imp_01_independent_review.md)): все заявленные exit criteria (build/tests/security posture, hosted CI run [34574112620](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34574112620), VDS redeploy) воспроизведены заново в этой сессии с идентичным результатом; найдена и исправлена одна тривиальная документационная неточность (устаревшая строка в README.md).
+
+`IMP-02` закрыт ([imp_02_review.md](docs/requirements/imp_02_review.md)): реальный multiplatform game (Elden Ring) прошёл end-to-end от живого источника через непрозрачный `(source, source_game_id)` upsert до публичной read-only карточки; sanitised HTML/SSR fixtures и независимые expected values построены до parser; non-destructive merge, естественный `null` (Xbox One/PlayStation 4 Metascore) и атомарность core/job intent (forced rollback test) проверены; четыре последовательных живых запуска против реального сайта подтвердили idempotency без дублей. Два раунда adversarial review — собственный `/code-review high` и независимая проверка кода отдельной параллельной сессией (`metacritic-ai-assignment-dc`), не запрошенная этой сессией, — нашли и закрыли шесть реальных дефектов (несинхронизированный `source_game_platform_id`, `javascript:`-URL без проверки схемы, отсутствие проверки canonical/og:url против misrouted fetch, выбор первой попавшейся `game-title` записи вместо совпадающей по slug, потерянная provenance для fanned-out platform fetches, blank-string не защищённый non-destructive merge) до коммита; один known limitation (деградация extraction неотличима от естественного отсутствия) задокументирован для `HRD-01`. `IMP-03` теперь `Ready`; независимые циклы `REV-EVAL-01`/`SIM-EVAL-01` остаются доступны параллельно.
 
 ## Подготовка: G0–G2
 
@@ -62,8 +64,8 @@
 | ID | Зависимости | Ветка | Статус | Evidence |
 |---|---|---|---|---|
 | [IMP-01](implementation_plan.md#imp-01) | G3 | base | Verified | [Scaffold/local tests/public preview](docs/requirements/imp_01_review.md), [tooling correction and VDS redeploy](docs/requirements/imp_01_correction.md), [independent adversarial review](docs/requirements/imp_01_independent_review.md); hosted CI passed [run 34574112620](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34574112620) at `6d29461`; corrected candidate redeployed and externally smoked on VDS |
-| [IMP-02](implementation_plan.md#imp-02) | IMP-01 | base | Ready | Ожидается: Parser inputs/tests, migrations, карточка |
-| [IMP-03](implementation_plan.md#imp-03) | IMP-02 | base | Planned | Ожидается: Selector/clock/restart tests, run events |
+| [IMP-02](implementation_plan.md#imp-02) | IMP-01 | base | Verified | [Fixtures/parser/upsert/card evidence](docs/requirements/imp_02_review.md); четыре живых запуска против реального сайта, idempotent; два раунда adversarial review (self + независимая параллельная сессия) |
+| [IMP-03](implementation_plan.md#imp-03) | IMP-02 | base | Ready | Ожидается: Selector/clock/restart tests, run events |
 | [REV-EVAL-01](implementation_plan.md#rev-eval-01) | G3, SPK-05 | base | Ready | Ожидается: evals/review_selection: dataset/rubric/acceptance |
 | [IMP-04](implementation_plan.md#imp-04) | IMP-03, REV-EVAL-01 | base | Planned | Ожидается: Review fixtures, tests, selection/summary/capacity reports |
 | [IMP-05](implementation_plan.md#imp-05) | IMP-04 | base | Planned | Ожидается: UI checks/screenshots и public smoke |

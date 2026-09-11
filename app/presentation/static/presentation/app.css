@@ -7,3 +7,12 @@ h1 { line-height: 1.15; font-size: clamp(2rem, 6vw, 3.5rem); }
 nav { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 2rem; }
 a { color: inherit; text-underline-offset: .2em; }
 a:focus-visible { outline: 2px solid currentColor; outline-offset: .3rem; }
+
+.game-card { max-width: 46rem; margin: 8vh auto; }
+.game-card__cover { max-width: 100%; border-radius: .5rem; margin: 1rem 0; }
+.game-card__facts { display: grid; grid-template-columns: max-content 1fr; gap: .35rem 1rem; }
+.game-card__facts dt { font-weight: 600; }
+.game-card__facts dd { margin: 0; }
+.game-card__platforms { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+.game-card__platforms th, .game-card__platforms td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid currentColor; }
+.no-data { opacity: .6; font-style: italic; }

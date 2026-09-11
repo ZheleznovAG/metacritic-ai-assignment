@@ -1,0 +1,96 @@
+{
+  "fixture_version": 1,
+  "purpose": "IMP-02 independent expected extraction for elden_ring_detail.min.html + elden_ring_user_*.min.html; authored by reading the raw live response before the parser existed, per SPK-02/SPK-03 and the non-negotiable 'curated observations are not parser input' rule",
+  "capture": {
+    "source_url": "https://www.metacritic.com/game/elden-ring/",
+    "captured_at": "2026-09-11T08:41:34Z",
+    "user_agent": "metacritic-ai-assignment-imp02/0.1 (+https://github.com/ZheleznovAG/metacritic-ai-assignment)",
+    "raw_response_sha256": "96BDEC5ACE438B16BD0F30053958FEF890CE36121A2A41F72114A36D4D09622B",
+    "raw_response_bytes": 707767
+  },
+  "sanitisation": {
+    "method": "kept the JSON-LD <script> and the hero developer/user-score DOM fragments byte-verbatim; the __NUXT_DATA__ payload is a single positionally-indexed JSON array (Nuxt's flattened/dedup format) so it was re-serialised with every array slot not reachable from the game/platform fields this parser reads replaced by null, preserving the original indices and values of everything that IS read; the JSON-LD description was truncated to a 24-word excerpt (same excerpt_policy as the SPK-02 curated fixtures)",
+    "full_description_sha256": "9827979E11749766A52D79E20E6935816EBF6D8E700D3437C58B75CA428832B6",
+    "full_description_chars": 1059
+  },
+  "game": {
+    "source": "metacritic",
+    "source_game_id": "1300501979",
+    "canonical_locator": "/game/elden-ring/",
+    "title": "Elden Ring",
+    "cover_url": "https://www.metacritic.com/a/img/resize/86c7a59722e76cf9cb2c83bfac863f18f815bc2a/catalog/provider/6/12/6-1-824956-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+    "developer": "From Software",
+    "description_excerpt": "A New World Created By Hidetaka Miyazaki And George R. R. Martin ELDEN RING, developed by FromSoftware, Inc. and BANDAI NAMCO Entertainment Inc., is [...]",
+    "video_embed_url": "https://cdn.jwplayer.com/players/OXExoEAD.html",
+    "video_content_url": "https://cdn.jwplayer.com/manifests/OXExoEAD.m3u8"
+  },
+  "platforms": [
+    {
+      "source_platform_id": "1500000121",
+      "source_game_platform_id": "1400570837",
+      "slug": "xbox-one",
+      "name": "Xbox One",
+      "is_lead_platform": false,
+      "metascore": null,
+      "userscore": "7.0",
+      "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=xbox-one",
+      "user_reviews_path": "/game/elden-ring/user-reviews/?platform=xbox-one",
+      "userscore_fixture": "elden_ring_user_xbox_one.min.html"
+    },
+    {
+      "source_platform_id": "1500000019",
+      "source_game_platform_id": "1400570838",
+      "slug": "pc",
+      "name": "PC",
+      "is_lead_platform": false,
+      "metascore": 94,
+      "userscore": "7.6",
+      "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=pc",
+      "user_reviews_path": "/game/elden-ring/user-reviews/?platform=pc",
+      "userscore_fixture": "elden_ring_user_pc.min.html"
+    },
+    {
+      "source_platform_id": "1500000120",
+      "source_game_platform_id": "1400570841",
+      "slug": "playstation-4",
+      "name": "PlayStation 4",
+      "is_lead_platform": false,
+      "metascore": null,
+      "userscore": "7.5",
+      "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=playstation-4",
+      "user_reviews_path": "/game/elden-ring/user-reviews/?platform=playstation-4",
+      "userscore_fixture": "elden_ring_user_playstation_4.min.html"
+    },
+    {
+      "source_platform_id": "1500000129",
+      "source_game_platform_id": "1400627894",
+      "slug": "xbox-series-x",
+      "name": "Xbox Series X",
+      "is_lead_platform": false,
+      "metascore": 96,
+      "userscore": "8.0",
+      "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=xbox-series-x",
+      "user_reviews_path": "/game/elden-ring/user-reviews/?platform=xbox-series-x",
+      "userscore_fixture": "elden_ring_user_xbox_series_x.min.html"
+    },
+    {
+      "source_platform_id": "1500000128",
+      "source_game_platform_id": "1400627895",
+      "slug": "playstation-5",
+      "name": "PlayStation 5",
+      "is_lead_platform": true,
+      "metascore": 96,
+      "userscore": "8.4",
+      "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=playstation-5",
+      "user_reviews_path": "/game/elden-ring/user-reviews/?platform=playstation-5",
+      "userscore_source": "hero widget embedded in elden_ring_detail.min.html itself (lead platform, no separate fetch needed)"
+    }
+  ],
+  "natural_nulls": [
+    "platforms[xbox-one].metascore",
+    "platforms[playstation-4].metascore"
+  ],
+  "observed_anomaly": "The live detail page's own hero Metascore widget (a client-hydrated DOM element, not the __NUXT_DATA__ payload) rendered 'Metascore TBD' for the PlayStation 5 lead platform at capture time, even though the same response's JSON-LD aggregateRating (ratingValue 96, reviewCount 93) and the __NUXT_DATA__ platforms array (score 96, reviewCount 93) agree the value is 96. This is a real, independently-confirmed source inconsistency (SPK-02 already flagged similar hero/JSON-LD count drift for this game) and is why the parser reads the structured __NUXT_DATA__ platform record rather than the display widget for Metascore.",
+  "user_reviews_path_rule": "not a literal payload field; constructed by substituting the platform slug into the same '/game/<game-slug>/user-reviews/?platform=<platform-slug>' template already confirmed as a stable route contract by SPK-02, mirroring how critic_reviews_path is read",
+  "verification_note": "cross-checked against the independently-captured SPK-02/SPK-03 spike fixtures (multiplatform-game.json, identity-cases.json): source_game_id 1300501979, all 5 source_platform_id/source_game_platform_id pairs, cover_url, trailer URLs and the full description SHA-256 are byte-identical to the 2026-09-06 spike capture; only review/user counts (not recorded here) would be expected to drift over time"
+}

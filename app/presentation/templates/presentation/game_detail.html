@@ -1,0 +1,48 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ game.title }} — Metacritic AI Assignment</title>
+    <link rel="stylesheet" href="{% static 'presentation/app.css' %}">
+  </head>
+  <body>
+    <main class="game-card">
+      <p class="eyebrow">IMP-02 · game card</p>
+      <h1>{{ game.title }}</h1>
+      {% if game.cover_url %}
+        <img class="game-card__cover" src="{{ game.cover_url }}" alt="{{ game.title }} cover art">
+      {% endif %}
+      <dl class="game-card__facts">
+        <dt>Developer</dt>
+        <dd>{% if game.developer %}{{ game.developer }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
+        <dt>Description</dt>
+        <dd>{% if game.description %}{{ game.description }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
+        <dt>Trailer</dt>
+        <dd>
+          {% if game.video_embed_url %}
+            <a href="{{ game.video_embed_url }}">Watch trailer</a>
+          {% else %}
+            <span class="no-data">No data</span>
+          {% endif %}
+        </dd>
+      </dl>
+      <h2>Platforms</h2>
+      <table class="game-card__platforms">
+        <thead>
+          <tr><th scope="col">Platform</th><th scope="col">Metascore</th><th scope="col">Userscore</th></tr>
+        </thead>
+        <tbody>
+          {% for platform in game.platforms %}
+            <tr>
+              <th scope="row">{{ platform.name }}</th>
+              <td>{% if platform.metascore is not None %}{{ platform.metascore }}{% else %}<span class="no-data">No data</span>{% endif %}</td>
+              <td>{% if platform.userscore is not None %}{{ platform.userscore }}{% else %}<span class="no-data">No data</span>{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>

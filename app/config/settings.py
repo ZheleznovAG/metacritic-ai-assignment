@@ -43,7 +43,13 @@ APP_VERSION = (
 if not re.fullmatch(r"[a-zA-Z0-9._-]{1,80}", APP_VERSION):
     raise ImproperlyConfigured("Invalid APP_VERSION")
 
-INSTALLED_APPS = ["django.contrib.staticfiles", "presentation"]
+INSTALLED_APPS = [
+    "django.contrib.staticfiles",
+    "catalog",
+    "processing",
+    "reviews",
+    "presentation",
+]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
