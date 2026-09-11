@@ -3,7 +3,7 @@
 - Baseline: **1.0**, задача `PLN-03`, 2026-09-09 (Asia/Novosibirsk).
 - Bonus scope: `pending`.
 - Реализуется каркас IMP-01; продуктовые функции ещё не начаты. Последний завершённый цикл — PLN-03 / G3.
-- Текущий blocker: IMP-01 — Ask об удалённом репозитории и разрешении push/CI, needed-by G4. SSH/Docker preflight, локальные проверки и public preview подтверждены; внешний CI не выполнен.
+- Текущий blocker: IMP-01 — push/CI разрешены и hosted CI прошёл на корректированном каркасе ([run](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34573629767), SHA `e17c5f8`); VDS ещё не обновлена скорректированным образом, needed-by G4.
 
 ## Источники истины и правила
 
@@ -24,7 +24,7 @@
 
 ## Приоритет следующего цикла
 
-Текущий цикл — исправления review оснастки IMP-01/PLN-03. Исторические SSH/Docker [preflight](docs/requirements/imp_01_preflight.md) и [preview](docs/requirements/imp_01_review.md) не подтверждают изменённый каркас. Внешний CI ждёт адреса репозитория и разрешения push, needed-by G4. После correction доступны отдельные независимые циклы REV-EVAL-01/SIM-EVAL-01; IMP-02 ждёт завершения IMP-01.
+Текущий цикл — редеплой скорректированного каркаса IMP-01 на VDS и внешняя проверка. Push разрешён; hosted CI прошёл на коммите `e17c5f8` ([run 34573629767](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34573629767)): build, offline-проверки на реальном PostgreSQL 16 (включая проверку ролей БД) и внешний HTTP/CSS smoke через Caddy — все зелёные. Историческая VDS ещё работает на старом, некорректированном образе; редеплой и внешний smoke корректированного кандидата остаются открытым шагом до закрытия IMP-01. Независимые циклы REV-EVAL-01/SIM-EVAL-01 доступны параллельно; IMP-02 по-прежнему ждёт завершения IMP-01.
 
 ## Подготовка: G0–G2
 
@@ -61,7 +61,7 @@
 
 | ID | Зависимости | Ветка | Статус | Evidence |
 |---|---|---|---|---|
-| [IMP-01](implementation_plan.md#imp-01) | G3 | base | Blocked | [Scaffold/local tests/public preview](docs/requirements/imp_01_review.md); Ask о remote/CI к G4, hosted CI ещё не выполнен |
+| [IMP-01](implementation_plan.md#imp-01) | G3 | base | In progress | [Scaffold/local tests/public preview](docs/requirements/imp_01_review.md), [tooling correction](docs/requirements/imp_01_correction.md); hosted CI passed [run 34573629767](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34573629767) at `e17c5f8`; corrected candidate not yet redeployed/smoked on VDS |
 | [IMP-02](implementation_plan.md#imp-02) | IMP-01 | base | Planned | Ожидается: Parser inputs/tests, migrations, карточка |
 | [IMP-03](implementation_plan.md#imp-03) | IMP-02 | base | Planned | Ожидается: Selector/clock/restart tests, run events |
 | [REV-EVAL-01](implementation_plan.md#rev-eval-01) | G3, SPK-05 | base | Ready | Ожидается: evals/review_selection: dataset/rubric/acceptance |

@@ -34,4 +34,12 @@ The verification must cover failed writes by web, application/checks DB isolatio
 
 Evidence-file existence is a structural check, not an assessment of its substantive truth. External evidence URL availability remains an explicit human/live review boundary. Fixture tests use in-memory hypothetical statuses and never mark real tasks Verified.
 
-The original [public preview evidence](imp_01_review.md) describes an earlier image. The VDS has not been updated by this correction. IMP-01 still needs the permitted remote, authorized push/hosted CI, final source/image identity and public verification of the corrected candidate. A locally verified correction commit does not close IMP-01 or start IMP-02.
+The original [public preview evidence](imp_01_review.md) describes an earlier image. The VDS has not been updated by this correction.
+
+## Hosted CI
+
+Push access to `github.com/ZheleznovAG/metacritic-ai-assignment` was granted after this correction was authored. Commit `7a04706` (this correction) triggered the first-ever hosted run, [run 34573424815](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34573424815), which failed the whitespace step: `git diff --check` now examines the actual event range for the first time against the full previously-unpushed history, and flagged the two-trailing-space CommonMark hard breaks used throughout `assignment.md` and `research/methodology/**/*.md`, plus a genuine stray trailing space on `.gitattributes:1` and a blank line at EOF in `docs/requirements/g1_review.md:83`. Commit `e17c5f8` fixed the two real defects and scoped the whitespace attribute to stop flagging intentional markdown hard breaks (`*.md whitespace=-blank-at-eol`), while keeping `blank-at-eof`/`space-before-tab` checks active.
+
+[Run 34573629767](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34573629767) at `e17c5f8` passed in full: whitespace/Compose validation, locked runtime/checks build, image-identity recording, offline verification on PostgreSQL 16 (including the live database-role permission boundaries), the actual Caddy-fronted runtime start and the external HTTP/CSS smoke.
+
+IMP-01 still needs the corrected candidate redeployed to the VDS and re-verified externally (public image/source identity, HTTP/CSS smoke and resource baseline on the actual host); the current VDS preview still serves the pre-correction image. A locally verified correction commit and a green hosted CI run do not by themselves close IMP-01 or start IMP-02.
