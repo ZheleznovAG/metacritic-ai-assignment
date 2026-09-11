@@ -2,7 +2,7 @@
 
 Take-home assignment for the AI Automation Engineer position.
 
-The IMP-01 scaffold provides a read-only preview, liveness and PostgreSQL readiness endpoints. Game ingestion, scheduling, reviews, AI and recommendations are **not implemented**. Task status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). IMP-01 is not complete until the external CI and deployment evidence are recorded.
+The IMP-01 scaffold provides a read-only preview, liveness and PostgreSQL readiness endpoints. Game ingestion, scheduling, reviews, AI and recommendations are **not implemented**. Task status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). IMP-01 is `Verified`; see the [independent review](docs/requirements/imp_01_independent_review.md).
 
 ## Local development
 
