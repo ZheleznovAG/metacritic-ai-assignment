@@ -3,7 +3,7 @@
 - Baseline: **1.0**, задача `PLN-03`, 2026-09-09 (Asia/Novosibirsk).
 - Bonus scope: `pending`.
 - Реализуется каркас IMP-01; продуктовые функции ещё не начаты. Последний завершённый цикл — PLN-03 / G3.
-- Текущий blocker: IMP-01 — push/CI разрешены и hosted CI прошёл на корректированном каркасе ([run](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34573629767), SHA `e17c5f8`); VDS ещё не обновлена скорректированным образом, needed-by G4.
+- Текущий blocker: IMP-01 — все ранее открытые критерии закрыты (remote/push/hosted CI, редеплой и внешняя проверка скорректированного кандидата на VDS); недостаёт независимого adversarial review (тот же автор в той же сессии), needed-by Verified.
 
 ## Источники истины и правила
 
@@ -24,7 +24,7 @@
 
 ## Приоритет следующего цикла
 
-Текущий цикл — редеплой скорректированного каркаса IMP-01 на VDS и внешняя проверка. Push разрешён; hosted CI прошёл на коммите `e17c5f8` ([run 34573629767](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34573629767)): build, offline-проверки на реальном PostgreSQL 16 (включая проверку ролей БД) и внешний HTTP/CSS smoke через Caddy — все зелёные. Историческая VDS ещё работает на старом, некорректированном образе; редеплой и внешний smoke корректированного кандидата остаются открытым шагом до закрытия IMP-01. Независимые циклы REV-EVAL-01/SIM-EVAL-01 доступны параллельно; IMP-02 по-прежнему ждёт завершения IMP-01.
+Каркас IMP-01 редеплоен на VDS: образ `metacritic-imp01:6d29461` (коммит `6d29461`, тот же SHA, что прошёл hosted CI [run 34574112620](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34574112620)) заменил докоррекционный `9f65d829f248`; internal и external HTTP/CSS smoke прошли (см. [correction evidence](docs/requirements/imp_01_correction.md#corrected-candidate-redeployed-to-vds)). Попутно найден и исправлен реальный баг процедуры деплоя (`deploy/README.md`: `migrate` требует `--profile app`, иначе зависимость `db_setup` не резолвится). Все технические критерии IMP-01 закрыты; недостаёт только независимого review (весь цикл выполнен одним автором/сессией) перед `Verified`. Независимые циклы REV-EVAL-01/SIM-EVAL-01 доступны параллельно; IMP-02 ждёт `Verified` IMP-01.
 
 ## Подготовка: G0–G2
 
@@ -61,7 +61,7 @@
 
 | ID | Зависимости | Ветка | Статус | Evidence |
 |---|---|---|---|---|
-| [IMP-01](implementation_plan.md#imp-01) | G3 | base | In progress | [Scaffold/local tests/public preview](docs/requirements/imp_01_review.md), [tooling correction](docs/requirements/imp_01_correction.md); hosted CI passed [run 34573629767](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34573629767) at `e17c5f8`; corrected candidate not yet redeployed/smoked on VDS |
+| [IMP-01](implementation_plan.md#imp-01) | G3 | base | In progress | [Scaffold/local tests/public preview](docs/requirements/imp_01_review.md), [tooling correction and VDS redeploy](docs/requirements/imp_01_correction.md); hosted CI passed [run 34574112620](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34574112620) at `6d29461`; corrected candidate redeployed and externally smoked on VDS; only independent adversarial review remains before Verified |
 | [IMP-02](implementation_plan.md#imp-02) | IMP-01 | base | Planned | Ожидается: Parser inputs/tests, migrations, карточка |
 | [IMP-03](implementation_plan.md#imp-03) | IMP-02 | base | Planned | Ожидается: Selector/clock/restart tests, run events |
 | [REV-EVAL-01](implementation_plan.md#rev-eval-01) | G3, SPK-05 | base | Ready | Ожидается: evals/review_selection: dataset/rubric/acceptance |

@@ -22,13 +22,13 @@ Record the full `sha256:...` image ID, build version and source identity. The bu
 python3 scripts/init_env.py --production --host <public-host> --version <build-version>
 python3 scripts/verify_image.py --image metacritic-imp01:<build-version> --image-id sha256:<recorded-full-image-id> --version <build-version>
 docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml config --quiet
-docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml run --rm migrate
+docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml --profile app run --rm migrate
 docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml --profile app up -d --wait --wait-timeout 120
 python3 scripts/verify_image.py --image metacritic-imp01:<build-version> --image-id sha256:<recorded-full-image-id> --version <build-version> --container metacritic-imp01-prod-web-1
 python3 scripts/smoke.py http://127.0.0.1:18081 --version <build-version>
 ```
 
-`db_setup` runs before migrations/web, creates restricted roles and grants current/future table SELECT to web. The production setup creates no checks database or checks role. Administrative credentials stay in that one-shot service; web receives only its own login. The migration service receives the schema owner's login. Existing table data is preserved.
+`db_setup` runs before migrations/web, creates restricted roles and grants current/future table SELECT to web. The production setup creates no checks database or checks role. Administrative credentials stay in that one-shot service; web receives only its own login. The migration service receives the schema owner's login. Existing table data is preserved. `migrate` (`profiles: [ops]`) depends on `db_setup` (`profiles: [app, checks]`); Compose does not activate a dependency's own profile when it only activates the named service's profile, so `--profile app` (not just `run --rm migrate` alone) is required or the dependency fails with `no such service: db_setup`.
 
 6. Repeat the HTTP/CSS smoke from a separate machine against the public host without an SSH tunnel. Record the source identity, full image ID, build version, checksums, status and resources. Never publish full Compose/inspect output containing environment values.
 
