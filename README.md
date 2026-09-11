@@ -2,13 +2,66 @@
 
 Take-home assignment for the AI Automation Engineer position.
 
-The implementation baseline is established. Application source, CI and a public application are not implemented yet; stage/task status is tracked in [action_plan.md](action_plan.md), with task scope and estimates in [implementation_plan.md](implementation_plan.md).
+The IMP-01 scaffold provides a read-only preview, liveness and PostgreSQL readiness endpoints. Game ingestion, scheduling, reviews, AI and recommendations are **not implemented**. Task status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). IMP-01 is not complete until the external CI and deployment evidence are recorded.
+
+## Local development
+
+Prerequisites: Docker Engine with Compose 2.24.4+ and uv **0.12.11** (`python -m pip install uv==0.12.11` if needed). The exact application interpreter is Python **3.12**; uv can download it. Keep the existing research `.venv` untouched: application commands use `.venv-app`.
+
+From a fresh checkout in PowerShell:
+
+```powershell
+$env:UV_PROJECT_ENVIRONMENT = '.venv-app'
+python -m uv sync --locked --python 3.12
+.\.venv-app\Scripts\python.exe scripts/init_env.py
+docker compose --env-file .env.app up -d --wait db
+.\.venv-app\Scripts\python.exe scripts/provision_db.py
+.\.venv-app\Scripts\python.exe scripts/migrate.py
+.\.venv-app\Scripts\python.exe app/manage.py collectstatic --noinput
+.\.venv-app\Scripts\python.exe app/manage.py runserver 127.0.0.1:8000
+```
+
+`init_env.py` refuses to overwrite an existing `.env.app`. It generates distinct random credentials for provisioning, web, migrations and checks without printing them. Keep operator SSH/Groq settings in `.env`; neither `.env` nor `.env.app` enters the Docker build context. Compose passes only each service's required credentials. On Windows, protect both files with the account's filesystem ACLs; POSIX creation uses mode 0600.
+
+For a pre-review IMP-01 environment, run `.\.venv-app\Scripts\python.exe scripts/init_env.py --upgrade-scaffold` once, then `scripts/provision_db.py`. The explicit upgrade adds missing role settings and preserves the existing admin password, database name, ports and data volume. Provisioning can be repeated; unknown legacy product tables require a separate ownership migration. It does not reset the database. See [the upgrade procedure](deploy/README.md#upgrade-of-the-original-imp-01-preview).
+
+Web has CONNECT/USAGE/SELECT only. The migration role owns the application schema; the checks role has CREATEDB and owns `<POSTGRES_DB>_checks`, with no connection permission to the application database. Administrative credentials are used only by the one-shot `db_setup` process. `scripts/check.py` selects the checks role/database locally and refuses production mode.
+
+PostgreSQL is published only on loopback port **15432** locally. Override `POSTGRES_PORT` in `.env.app` if occupied/reserved; do not change Windows port reservations or another project's database. Production/CI overrides remove both this port and the local DB network.
+
+## Verification and container preview
+
+```powershell
+.\.venv-app\Scripts\python.exe -B scripts/check.py
+docker compose --env-file .env.app build web checks
+docker compose --env-file .env.app run --rm checks
+docker compose --env-file .env.app --profile app up -d --wait
+.\.venv-app\Scripts\python.exe scripts/smoke.py http://127.0.0.1:18081 --version local
+```
+
+The first command runs format/lint/types, Django checks, migration drift, static build, PostgreSQL permission/integration tests, deployment-tool tests and offline research evidence checks. Run local/container suites sequentially: they create/drop `test_metacritic_checks`. The permission test creates and removes its own probe table in the development application's database. Never run tests against production. Formatting changes: `.\.venv-app\Scripts\python.exe -m ruff format app scripts`; lint-only: `.\.venv-app\Scripts\python.exe -m ruff check app scripts`; type-only: set `PYTHONPATH=app`, then `python -m mypy` in the application environment.
+
+The container suite uses canonical Linux/Python 3.12 and PostgreSQL 16. Tests run on an internal network without SSH/Groq credentials; dependency downloads happen at build time. [CI workflow](.github/workflows/ci.yml) repeats build, checks and an actual Caddy HTTP/CSS smoke on a dedicated project; it validates both CI and production Compose overrides. Whitespace is checked between the event's base/head commits, or in the selected commit for manual/initial runs. CI never deploys or calls live Metacritic/AI. A workflow file alone is not a successful CI run.
+
+Preview: [http://127.0.0.1:18081](http://127.0.0.1:18081). `/health/live/` checks the process; `/health/ready/` executes a bounded PostgreSQL query and returns generic 503 on failure. Neither endpoint reports hostnames, credentials or exception text. Web runs non-root with a read-only filesystem, bounded temporary storage and two Gunicorn workers. Caddy terminates the current **HTTP-only preview**; trusted TLS/hostname remain mandatory before G6. No login, admin or mutating endpoint exists.
+
+Stop only this project, preserving its data: `docker compose --env-file .env.app --profile app down`. Do not use `down -v` in deployment or remove named volumes. Existing unrelated project containers are not part of this setup.
+
+## Deployment boundary
+
+[compose.production.yaml](compose.production.yaml) accepts a prebuilt versioned `APP_IMAGE`, publishes only Caddy on port 18081 and keeps PostgreSQL internal. A new preview environment can use `python3 scripts/init_env.py --production --host <public-host> --version <build-version>`; this is not a TLS production setup. Never overwrite an existing environment or reset a database password during a redeploy. Use the same project name and volumes for persistence.
+
+Set `APP_VERSION` before building: Docker writes it into `app/build-version.txt` and the image label. Runtime environment values cannot override the HTTP build identity; a source checkout reports `local`. Choose a source commit or frozen source-snapshot identifier, not the resulting image ID. Record the full image ID separately and use `scripts/verify_image.py` before startup and against the running container, followed by the HTTP/CSS smoke. Changing a deployment's environment cannot turn an old image into a new release.
+
+[IMP-01 preflight](docs/requirements/imp_01_preflight.md), [current verification](docs/requirements/imp_01_review.md) and [deployment procedure](deploy/README.md) record the evidence and outstanding inputs. Parser data models, scheduler and worker processes are deliberately absent from this scaffold, not simulated by idle containers.
+
+## Baseline and research evidence
 
 - [Assignment](assignment.md), [requirements and acceptance](docs/requirements/acceptance.md).
 - [Architecture](docs/decisions/0001-minimal-stack-and-architecture.md), [data and processing contracts](docs/design.md).
 - [Published AI baseline](evals/reviews/baseline/README.md): saved synthetic inputs/outputs and original scoring, independently inspectable without another API call.
 - [PLN-02 review and verification](docs/requirements/pln_02_review.md): contract corrections, PostgreSQL probe and remaining implementation limitations.
-- [G3 planning review](docs/requirements/g3_review.md): coverage, dependency audit, workload/reserve and explicit limitations. Next priority: the IMP-01 reproducible scaffold and early deploy.
+- [G3 planning review](docs/requirements/g3_review.md): coverage, dependency audit, workload/reserve and explicit limitations.
 
 Offline evidence checks from the repository root with Python 3.12 or later (standard library only; no API key or `.env` needed):
 

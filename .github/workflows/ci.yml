@@ -1,0 +1,54 @@
+name: deterministic-checks
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      COMPOSE_PROJECT_NAME: metacritic-ci-${{ github.run_id }}
+      APP_ENV: test
+      APP_VERSION: ${{ github.sha }}
+      DJANGO_SECRET_KEY: ci-only-public-placeholder-never-use-in-production-000000000000000000
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+      POSTGRES_PASSWORD: ci-only-ephemeral-password
+      WEB_DB_PASSWORD: ci-only-web-password
+      MIGRATE_DB_PASSWORD: ci-only-migration-password
+      CHECKS_DB_PASSWORD: ci-only-checks-password
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Whitespace and Compose validation
+        env:
+          DIFF_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [[ -n "$DIFF_BASE" && "$DIFF_BASE" != "0000000000000000000000000000000000000000" ]]; then
+            git diff --check "$DIFF_BASE" "$GITHUB_SHA"
+          else
+            git show --format= --check "$GITHUB_SHA"
+          fi
+          docker compose -f compose.yaml -f compose.ci.yaml config --quiet
+          APP_IMAGE=metacritic-imp01:ci docker compose -f compose.yaml -f compose.production.yaml config --quiet
+      - name: Build locked runtime and checks
+        run: docker compose -f compose.yaml -f compose.ci.yaml build web checks
+      - name: Record built image identity
+        run: |
+          IMAGE_ID=$(docker image inspect metacritic-imp01:local --format '{{.Id}}')
+          echo "VERIFIED_IMAGE_ID=$IMAGE_ID" >> "$GITHUB_ENV"
+      - name: Offline verification on PostgreSQL 16
+        run: docker compose -f compose.yaml -f compose.ci.yaml run --rm checks
+      - name: Start the actual runtime through Caddy
+        run: docker compose -f compose.yaml -f compose.ci.yaml --profile app up -d --wait --wait-timeout 120
+      - name: External HTTP smoke
+        run: |
+          python3 scripts/verify_image.py --image metacritic-imp01:local --image-id "$VERIFIED_IMAGE_ID" --version "$APP_VERSION" --container "${COMPOSE_PROJECT_NAME}-web-1"
+          python3 scripts/smoke.py http://127.0.0.1:18081 --version "$APP_VERSION"
+      - name: Stop only this ephemeral CI project
+        if: always()
+        run: docker compose -f compose.yaml -f compose.ci.yaml --profile app down

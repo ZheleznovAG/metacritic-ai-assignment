@@ -1,0 +1,17 @@
+# IMP-01 early public HTTP only. TLS/hostname are required before G6.
+services:
+  db:
+    ports: !reset []
+    networks: !override [backend]
+  web:
+    build: !reset null
+    image: ${APP_IMAGE:?Set an already built versioned image}
+    environment:
+      APP_ENV: production
+  db_setup:
+    environment:
+      APP_ENV: production
+      CHECKS_DB_PASSWORD: ""
+  caddy:
+    ports: !override
+      - "0.0.0.0:${APP_HTTP_PORT:-18081}:8080"

@@ -4,6 +4,7 @@ import json
 import math
 from pathlib import Path
 import re
+from urllib.parse import unquote, urlsplit
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -57,11 +58,21 @@ def read_sources(root=ROOT):
             for name, path in SOURCES.items()}
 
 
-def check(documents):
+def check(documents, root=ROOT):
     nodes = unique(((key(row[0]), row[1:])
                     for row in tables(documents["action"])
                     if len(row) == 5 and key(row[0])), "node")
     require(set(nodes) == TASK_IDS | GATES, "Task/gate ID set changed")
+    scope_rows = re.findall(r"^- Bonus scope: `([a-z0-9]+)`\.$",
+                            documents["action"], re.MULTILINE)
+    require(len(scope_rows) == 1, "One explicit Bonus scope is required")
+    selected = scope_rows[0]
+    scopes = {"pending": (), "none": (), "bonus1": ("bonus1",),
+              "bonus2": ("bonus2",), "both": ("bonus1", "bonus2")}
+    require(selected in scopes, "Unknown Bonus scope")
+    require((selected != "pending") == (nodes["BON-00"][2] == "Verified"),
+            "Bonus scope requires a verified BON-00 decision")
+    current_scope = scopes[selected]
     hours_rows = unique(((key(row[0]), row[1:])
                          for row in tables(documents["implementation"])
                          if len(row) == 3 and row[0].startswith("[")), "estimate")
@@ -120,9 +131,27 @@ def check(documents):
         require(status in {"Planned", "Ready", "In progress", "Changes requested",
                            "Verified", "Blocked", "Dropped"}, f"Unknown status: {node}")
         require(evidence, f"Missing evidence location: {node}")
+        if status == "Dropped":
+            require(branch != "base", f"Mandatory task cannot be Dropped: {node}")
+            require(selected != "pending" and branch not in current_scope,
+                    f"Dropped task is not excluded by accepted scope: {node}")
+        if branch != "base":
+            if selected == "pending":
+                require(status == "Planned", f"Bonus started before scope decision: {node}")
+            elif branch not in current_scope:
+                require(status == "Dropped", f"Unselected Bonus must be Dropped: {node}")
         if status == "Verified":
-            require("Ожидается:" not in evidence and "](" in evidence,
+            links = re.findall(r"\[[^\]\n]+\]\(([^)\s]+)\)", evidence)
+            require("Ожидается:" not in evidence and links,
                     f"Verified has no actual artifact link: {node}")
+            for link in links:
+                target = urlsplit(link)
+                if target.scheme in {"http", "https"}:
+                    require(target.netloc, f"Invalid evidence URL: {node}")
+                    continue  # External availability requires separate review.
+                path = (root / unquote(target.path)).resolve()
+                require(not target.scheme and path.is_relative_to(root.resolve())
+                        and path.is_file(), f"Missing local evidence artifact: {node}: {link}")
         deps = [] if deps == "—" else [part.strip() for part in deps.split(",")]
         require(len(deps) == len(set(deps)), f"Duplicate dependency: {node}")
         for dep in deps:
@@ -179,10 +208,11 @@ def check(documents):
             require(prerequisites <= ancestors[node], f"Required ordering missing: {node}")
         require(not any(node.startswith("REL-") for node in ancestors["G6"]),
                 "G6 improperly requires completed delivery")
-        for node in active:
-            if nodes[node][2] in {"Ready", "In progress", "Verified"}:
-                require(all(nodes[dep][2] == "Verified" for dep in graph[node]),
-                        f"Unsatisfied prerequisite of {node}")
+        if scope == current_scope:
+            for node in active:
+                if nodes[node][2] in {"Ready", "In progress", "Verified"}:
+                    require(all(nodes[dep][2] == "Verified" for dep in graph[node]),
+                            f"Unsatisfied prerequisite of {node}")
         scenarios["+".join(scope) or "none"] = {
             "work_hours": sum(hours.get(node, 0) for node in active),
             "dependency_hours": lengths["G7"],
@@ -197,6 +227,7 @@ def check(documents):
         "reserve_25_percent_hours": math.ceil(base * 0.25),
         "base_with_reserve_hours": base + math.ceil(base * 0.25),
         "early_public_slice_hours": hours["IMP-01"] + hours["IMP-02"],
+        "selected_bonus_scope": selected,
         "scenarios": scenarios,
     }
 

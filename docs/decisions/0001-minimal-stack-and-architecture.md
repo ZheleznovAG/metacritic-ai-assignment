@@ -36,14 +36,16 @@ All containers -> bounded structured stdout/stderr logs
 | External HTTP | HTTPX; Beautiful Soup 4 поверх стандартного `html.parser`; стандартный `json` для SSR payload | Один timeout/retry-aware client и простой HTML/JSON adapter для подтверждённого server-rendered Metacritic contract; JavaScript browser не нужен. |
 | AI | Тонкий Groq Chat Completions adapter через HTTPX; модель и prompt version задаются конфигурацией | Сохраняет прошедший `SPK-05` контракт `openai/gpt-oss-20b`, strict JSON Schema, source language и no-paid-fallback; provider не проникает в domain/UI. |
 | UI | Django templates, обычные CSS и минимальный progressive JavaScript | `UI-01–UI-05` не требуют SPA. Поиск, фильтр, сортировка и навигация остаются server-side и доступны по обычным URL. |
-| Configuration | Стандартные environment variables; `python-dotenv` локально и ignored permission-restricted `.env`/`env_file` в Compose | Выполняет выбранный владельцем workflow; Groq key не попадает в web/Caddy, Git, image или logs. Публиковать вывод `docker compose config` запрещено. |
+| Configuration | Стандартные environment variables; `python-dotenv` локально для `.env.app`; Compose получает `.env.app` через `--env-file` и явные service environment mappings | Операторский `.env` содержит SSH/Groq и не передаётся приложению. Web получает только свою DB-role; bootstrap/migration/checks credentials разделены. Публиковать полный `docker compose config` запрещено. |
 | Web runtime | Gunicorn WSGI + WhiteNoise за Caddy container | Низкая сложность для read-mostly UI; Caddy завершает TLS и проксирует только в internal Compose network, WhiteNoise отдаёт versioned static assets без общего writable mount. |
 | Scheduling / supervision | Отдельный UTC scheduler container из application image; Compose restart policies и healthchecks | Scheduler регистрирует unique hourly slot в PostgreSQL и безопасно восстанавливается после restart; DB остаётся источником истины. Cron и process manager внутри контейнера не нужны. |
 | Observability | Persistent run/job records в PostgreSQL + структурированные container logs с rotation limits | Даёт время, outcome, counters и correlation IDs для `NFR-05`; отдельный monitoring stack для Must не нужен, а logs не заполняют диск без границы. |
 | Verification | Django/unittest test stack, fakes/fixtures; Python Playwright только для обязательного Chromium E2E | Обычный CI не обращается к live Metacritic/Groq; browser dependency добавляется только для `AC-UI-*`/`IMP-07`, live checks остаются отдельными. |
-| Packaging / deployment | `pyproject.toml`, exact resolved dependency lock, multi-stage Dockerfile и `compose.yaml` + production override | Локально Python/test commands выполняются прямо в `.venv`, а Compose даёт PostgreSQL; production запускает versioned application image без bind mount исходников. Точный lock и manifests создаются в `IMP-01`. |
+| Packaging / deployment | `pyproject.toml`, exact resolved dependency lock, multi-stage Dockerfile и `compose.yaml` + production override | Локальные application/test commands используют `.venv-app` Python 3.12; исследовательский `.venv` сохраняется отдельно. Production запускает versioned image без bind mount исходников; build identity встроена в image и сверяется с полным image ID при deployment. |
 
-В production все timestamps и календарные решения используют UTC независимо от системной зоны VDS. Секреты передаются через ignored `.env` с правами только владельцу deploy и scoped service environment; они не входят в Git, image, frontend или logs.
+В production все timestamps и календарные решения используют UTC независимо от системной зоны VDS. Прикладные/DB secrets хранятся в ignored `.env.app` с правами владельца deploy и передаются через scoped service environment. Операторский `.env` остаётся отдельным; секреты не входят в Git, image, frontend или logs.
+
+Web DB-role имеет CONNECT/USAGE/SELECT, migration role владеет application schema, checks role имеет CREATEDB только для отдельного checks-контура и не подключается к application database. Административная роль используется отдельным одноразовым provisioning-процессом. PostgreSQL permissions проверяются реальными разрешёнными и запрещёнными запросами. Обновление существующего scaffold сохраняет admin password/volume; неизвестные legacy product tables требуют отдельной migration.
 
 ### Границы процессов
 
@@ -68,11 +70,11 @@ All containers -> bounded structured stdout/stderr logs
 
 ## Последствия и ограничения
 
-- На VDS будут пять Compose services: `caddy`, `web`, `scheduler`, `worker`, `db`; последние три используют один application image. Redis, Node runtime, vector DB, Kubernetes и отдельные микросервисы не нужны.
+- Полный постоянный контур на VDS: `caddy`, `web`, `scheduler`, `worker`, `db`; `web`, `scheduler` и `worker` используют один application image. Одноразовые `db_setup`/`migrate` выполняют provisioning и migrations; `checks` существует только для verification. IMP-01 пока не создаёт scheduler/worker. Redis, Node runtime, vector DB, Kubernetes и отдельные микросервисы не нужны.
 - PostgreSQL требует integration/concurrency tests на том же backend; SQLite не используется как скрытая замена в CI.
-- Локальный preflight подтвердил Docker Engine 29.7.2 (`linux/amd64`) и Compose 5.4.0; `psql`/`pg_config` на Windows отсутствуют. Python application и test commands остаются в локальном `.venv`; Compose запускает локальную БД и весь production contour.
+- Локальный preflight подтвердил Docker Engine 29.7.2 (`linux/amd64`) и Compose 5.4.0; `psql`/`pg_config` на Windows отсутствуют. Python application и test commands используют `.venv-app`; Compose запускает локальную БД и весь production contour.
 - AI backlog может расти при исчерпании Groq Free TPD, но не блокирует сохранение основных данных и не включает платный fallback.
-- Production preflight ещё должен подтвердить Docker Engine + Compose plugin и право deploy-user управлять daemon. Если этого нет при старте раннего deploy `IMP-01`, задача помечается `Blocked / Ask`, `needed-by: G4`; обход через rootless ad-hoc processes не принимается.
+- Production preflight должен подтвердить Docker Engine + Compose plugin и право deploy-user управлять daemon. Обновление 2026-09-09: после настройки владельцем [IMP-01 preflight](../requirements/imp_01_preflight.md) подтвердил Engine 29.1.3, Compose 2.40.3 и daemon access; [HTTP preview](../requirements/imp_01_review.md) развёрнут. Это не закрывает последующие production gates. При утрате capability — Blocked / Ask к G4; обход через rootless ad-hoc processes не принимается.
 - Caddy с публично доверенным TLS требует hostname, DNS на VDS и внешние порты 80/443. Если они не предоставлены к `PUB-01`, задача помечается `Blocked / Ask`, `needed-by: G6`.
 - PostgreSQL и Caddy state размещаются в явно именованных volumes; release/recreate не удаляет их. Команды с удалением volumes не входят в обычный deploy, а backup/restore должен быть проверен до release.
 - До `G6` обязательны host-reboot check, две последовательные application schedule windows и внешний HTTPS smoke. До них выбранная схема является решением, а не доказанным production deployment.
@@ -88,4 +90,4 @@ All containers -> bounded structured stdout/stderr logs
 - [Caddy automatic HTTPS](https://caddyserver.com/docs/automatic-https) и [Docker Compose guidance](https://caddyserver.com/docs/running#docker-compose) — TLS и container deployment contract.
 - [Docker Compose in production](https://docs.docker.com/compose/how-tos/production/) — single-server deployment и production override.
 - [Docker restart policies](https://docs.docker.com/engine/containers/start-containers-automatically/) и [volumes](https://docs.docker.com/engine/storage/volumes/) — restart и persistent state вне container lifecycle.
-- [Compose environment files](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/) — scoped configuration через `env_file`.
+- [Compose environment files](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/) — явные service environment mappings из application-only конфигурации.

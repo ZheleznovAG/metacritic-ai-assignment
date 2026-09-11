@@ -1,0 +1,22 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Metacritic AI Assignment — scaffold</title>
+    <link rel="stylesheet" href="{% static 'presentation/app.css' %}">
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">IMP-01 · infrastructure preview</p>
+      <h1>Metacritic AI Assignment</h1>
+      <p>The application scaffold is running. Game ingestion, reviews and recommendations are not implemented yet.</p>
+      <p class="version">Build <code>{{ version }}</code></p>
+      <nav aria-label="Service health">
+        <a href="{% url 'live' %}">Liveness</a>
+        <a href="{% url 'ready' %}">Database readiness</a>
+      </nav>
+    </main>
+  </body>
+</html>

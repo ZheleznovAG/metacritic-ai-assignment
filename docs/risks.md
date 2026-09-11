@@ -141,7 +141,7 @@
 - **Митигация:** `PLN-01` выбрала Docker Compose: Caddy, Gunicorn/Django web, UTC scheduler, один enrichment worker и PostgreSQL с named volumes; до `G4` проверить Engine/Compose и deploy permission, до `G6` — DNS/80/443, volume persistence, host reboot и два application schedule windows; при утрате capability выбрать иной hosting/managed scheduler/persistent store.
 - **Владелец:** `SPK-06/PLN-01`, затем `IMP-01/PUB-01–PUB-02`.
 - **Остаточный риск:** Docker/Compose и право deploy-user управлять daemon на VDS не подтверждены; non-interactive `sudo` недоступен, hostname и 80/443 ещё не проверены; host reboot, memory budget и volume lifecycle требуют evidence.
-- **Текущая диспозиция:** `Open — mitigate`; production contour принят в [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md), но public deployment нельзя считать доказанным до `PUB-01–PUB-02`.
+- **Текущая диспозиция:** `Open — mitigate`; после настройки владельцем повторный [preflight IMP-01](requirements/imp_01_preflight.md) подтвердил SSH и Docker/Compose daemon access. [HTTP preview, health и стартовые ресурсы](requirements/imp_01_review.md) проверены на VDS и извне. TLS, reboot, application schedule и capacity остаются до `PUB-01–PUB-02`; hosted CI пока ждёт разрешённого remote.
 
 ### `R-DEP-02` Ссылки доступны автору, но не проверяющему
 
@@ -289,7 +289,7 @@
 - **Оценка:** `P=3`, `I=4`, `U=3`; Exposure `12`, Discovery `12`; приоритет `P1`.
 - **Ранний сигнал:** setup не выполнялся с чистого checkout, отсутствует config template, state создаётся вручную.
 - **Проверка:** ранний reproducible bootstrap `IMP-01`, окончательный clean-run `REL-01–REL-02`.
-- **Митигация:** `PLN-01` зафиксировала canonical Python 3.12, Django 5.2 LTS, PostgreSQL 16, один application image, Compose production contour, `pyproject.toml`, exact resolved lock и project-local `.venv`; локальный Docker Engine подтверждён. Миграции, конфигурационный шаблон, seed/fixtures, исполнимые README-команды и CI создаются в `IMP-01`.
+- **Митигация:** canonical Python 3.12/Django 5.2 LTS/PostgreSQL 16, exact lock и отдельный `.venv-app`; исследовательский `.venv` сохраняется. IMP-01 использует встроенную build identity, сверку полного image ID и явные application-only environment mappings. Команды и проверки — в [README](../README.md); реальные product migrations/fixtures остаются последующим задачам, hosted CI и обновлённый public deployment ещё нужны.
 - **Владелец:** `IMP-01`, затем `REL-01–REL-02`.
 - **Остаточный риск:** внешние package registries/hosting остаются изменчивыми.
 - **Текущая диспозиция:** `Open — mitigate`.

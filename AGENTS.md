@@ -2,7 +2,7 @@
 
 ## Project Structure & Sources of Truth
 
-This repository has established its implementation baseline through `PLN-03` / `G3`; it does not yet contain application source, application tests, or runtime assets.
+This repository has established its implementation baseline through `PLN-03` / `G3`. The `IMP-01` scaffold is being verified; product ingestion, scheduling and AI features are not implemented yet.
 
 - `assignment.md` is the primary specification.
 - `methodology.md` defines the evidence-driven delivery process.
@@ -16,12 +16,15 @@ This repository has established its implementation baseline through `PLN-03` / `
 - `evals/reviews/baseline/` contains the published sanitised AI run and original scorecard; its offline verifier and integrity tests are research tooling, not application tests.
 - `research/methodology/` preserves prompts and exploration; it is evidence, not a requirements source.
 - `research/planning/` contains the offline baseline audit and its negative-control tests; these are planning evidence, not application tests.
+- `app/config/` contains Django settings, routes, WSGI and sanitised logging; `app/presentation/` contains the read-only preview and health endpoints; `app/tests/` contains application checks on PostgreSQL 16.
+- `scripts/` contains environment initialization/upgrade, database role provisioning, migrations, image identity verification and HTTP/CSS smoke commands; `scripts/tests/` verifies permission boundaries and deployment counterexamples.
+- `Dockerfile`, `compose*.yaml` and `deploy/` define immutable builds and isolated local/CI/preview deployment; `.github/workflows/ci.yml` runs deterministic checks, never deployment.
 
 Add source and test directories only after `PLN-01–PLN-03` establish the implementation baseline. Document their layout here when introduced.
 
 ## Build, Test, and Development Commands
 
-The stack is selected in `docs/decisions/0001-minimal-stack-and-architecture.md`, but application tooling is not scaffolded until `IMP-01`. Current repository checks are:
+The stack is selected in `docs/decisions/0001-minimal-stack-and-architecture.md`. Use Python 3.12 in `.venv-app`; preserve the existing research `.venv`. Setup, lock, build and local/container verification commands are in `README.md`. Current repository checks include:
 
 ```powershell
 git status --short          # inspect pending changes
@@ -32,6 +35,8 @@ python -B evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
 python -B -m unittest discover -s evals/reviews -p "test_*.py"
 python -B research/planning/check_plan.py
 python -B -m unittest discover -s research/planning -p "test_*.py"
+.\.venv-app\Scripts\python.exe -B scripts/check.py
+docker compose --env-file .env.app run --rm checks
 ```
 
 When tooling is added, expose reproducible commands in `README.md` and CI for setup, formatting, linting, tests, build, and local execution.
@@ -57,6 +62,8 @@ PRs should identify task and requirement IDs, summarize decisions, list verifica
 ## Agent Workflow
 
 Follow `action_plan.md` dependencies using one cycle: **one task → author → adversarial review → verify → one focused commit → stop**. The review must check requirements, acceptance criteria, risks, counterexamples, boundary conditions, and missing evidence. Unresolved material findings prevent `Verified`. Never begin the next task, skip gates, mark unverified work complete, or start Bonus before `G6`.
+
+For hosted CI, a candidate commit may record an unfinished task with its accurate status. After an authorized push, record the CI run URL and tested SHA in a focused evidence commit; CI also checks that commit. A candidate or locally verified correction does not imply task completion. When a cycle is paused by external input, one independent Ready task may be taken as a separate cycle; the blocked task remains Blocked.
 
 Keep `action_plan.md` as a concise task, dependency, status, gate, and evidence tracker—not as the detailed implementation specification. Put architecture decisions in ADRs, data and interface contracts in design documents, exploratory observations in `research/`, and examples, datasets, metrics, and thresholds in `evals/` or test artifacts. Link those artifacts from the plan instead of duplicating their content.
 

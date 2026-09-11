@@ -2,7 +2,7 @@
 
 import unittest
 
-from check_plan import check, read_sources
+from check_plan import check, key, read_sources
 
 
 class PlanAuditTests(unittest.TestCase):
@@ -77,6 +77,60 @@ class PlanAuditTests(unittest.TestCase):
         self.replace("implementation", "| `RUN-01` | `IMP-03` |",
                      "| `RUN-01` | `BON-21` |")
         with self.assertRaisesRegex(ValueError, "Must requirement depends on Bonus"):
+            check(self.docs)
+
+    def completed_scope(self, scope):
+        self.replace("action", "- Bonus scope: `pending`.", f"- Bonus scope: `{scope}`.")
+        selected = {"none": set(), "bonus1": {"bonus1"},
+                    "bonus2": {"bonus2"}, "both": {"bonus1", "bonus2"}}[scope]
+        lines = []
+        for line in self.docs["action"].splitlines():
+            cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+            if line.startswith("|") and len(cells) == 5 and key(cells[0]):
+                node = key(cells[0])
+                if cells[2] != "base" and cells[2] not in selected:
+                    cells[3:] = ["Dropped", "Excluded by BON-00 scope decision"]
+                elif not node.startswith("REL-") and node != "G7":
+                    cells[3:] = ["Verified", "[Test evidence](intake.md)"]
+                line = "| " + " | ".join(cells) + " |"
+            lines.append(line)
+        self.docs["action"] = "\n".join(lines)
+
+    def test_completed_optional_scopes(self):
+        for scope in ("none", "bonus1", "bonus2", "both"):
+            with self.subTest(scope=scope):
+                self.docs = read_sources()
+                self.completed_scope(scope)
+                self.assertEqual(check(self.docs)["selected_bonus_scope"], scope)
+
+    def test_missing_verified_evidence(self):
+        self.replace("action", "[Intake](intake.md)",
+                     "[Intake](docs/evidence/does-not-exist.md)")
+        with self.assertRaisesRegex(ValueError, "Missing local evidence artifact"):
+            check(self.docs)
+
+    def test_mandatory_task_cannot_be_dropped(self):
+        self.replace("action", "| base | Blocked |", "| base | Dropped |")
+        with self.assertRaisesRegex(ValueError, "Mandatory task cannot be Dropped"):
+            check(self.docs)
+
+    def test_scope_requires_owner_decision(self):
+        self.replace("action", "- Bonus scope: `pending`.", "- Bonus scope: `none`.")
+        with self.assertRaisesRegex(ValueError, "verified BON-00"):
+            check(self.docs)
+
+    def test_selected_bonus_still_blocks_gate(self):
+        self.completed_scope("bonus1")
+        self.replace("action", "#bon-12) | BON-11 | bonus1 | Verified |",
+                     "#bon-12) | BON-11 | bonus1 | Planned |")
+        with self.assertRaisesRegex(ValueError, "Unsatisfied prerequisite of GB"):
+            check(self.docs)
+
+    def test_selected_bonus_cannot_be_dropped(self):
+        self.completed_scope("bonus2")
+        self.replace("action", "#bon-22) | BON-21 | bonus2 | Verified |",
+                     "#bon-22) | BON-21 | bonus2 | Dropped |")
+        with self.assertRaisesRegex(ValueError, "not excluded by accepted scope"):
             check(self.docs)
 
 

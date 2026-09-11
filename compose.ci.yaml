@@ -1,0 +1,5 @@
+# Dedicated test project only. No DB port, credentials or external test network.
+services:
+  db:
+    ports: !reset []
+    networks: !override [backend]

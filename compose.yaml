@@ -1,0 +1,170 @@
+name: metacritic-imp01
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "5m"
+    max-file: "3"
+
+x-app-environment: &app-environment
+  APP_ENV: ${APP_ENV:-local}
+  DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Initialize .env.app first}
+  DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+  DJANGO_HTTPS: ${DJANGO_HTTPS:-false}
+  POSTGRES_DB: ${POSTGRES_DB:-metacritic}
+  DATABASE_USER: ${WEB_DB_USER:-metacritic_web}
+  DATABASE_PASSWORD: ${WEB_DB_PASSWORD:?Run init_env.py or --upgrade-scaffold}
+  POSTGRES_HOST: db
+  POSTGRES_PORT: "5432"
+
+services:
+  db:
+    image: postgres:16.15@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-metacritic}
+      POSTGRES_USER: ${POSTGRES_USER:-metacritic}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Initialize .env.app first}
+      TZ: UTC
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-15432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+    mem_limit: 512m
+    logging: *logging
+    # Docker Desktop needs a routable local network for the loopback DB port.
+    # Production and CI remove this network and publish no DB port.
+    networks: [backend, local_db]
+
+  db_setup:
+    profiles: [app, checks]
+    image: ${APP_IMAGE:-metacritic-imp01:local}
+    command: ["python", "scripts/provision_db.py"]
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-metacritic}
+      POSTGRES_USER: ${POSTGRES_USER:-metacritic}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Initialize .env.app first}
+      WEB_DB_USER: ${WEB_DB_USER:-metacritic_web}
+      WEB_DB_PASSWORD: ${WEB_DB_PASSWORD:?Run init_env.py or --upgrade-scaffold}
+      MIGRATE_DB_USER: ${MIGRATE_DB_USER:-metacritic_migrate}
+      MIGRATE_DB_PASSWORD: ${MIGRATE_DB_PASSWORD:?Run init_env.py or --upgrade-scaffold}
+      CHECKS_DB_USER: ${CHECKS_DB_USER:-metacritic_checks}
+      CHECKS_DB_PASSWORD: ${CHECKS_DB_PASSWORD:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [backend]
+    logging: *logging
+
+  web:
+    profiles: [app]
+    image: ${APP_IMAGE:-metacritic-imp01:local}
+    build:
+      context: .
+      target: runtime
+      args:
+        APP_VERSION: ${APP_VERSION:-local}
+    environment: *app-environment
+    depends_on:
+      db_setup:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp:size=32m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 384m
+    logging: *logging
+    networks: [backend]
+
+  caddy:
+    profiles: [app]
+    image: caddy:2.11.4-alpine@sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648
+    ports:
+      - "${APP_HTTP_BIND:-127.0.0.1}:${APP_HTTP_PORT:-18081}:8080"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      web:
+        condition: service_healthy
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp:size=16m,mode=1777"]
+    cap_drop: [ALL]
+    # The official binary has this file capability; its bounding set must allow it.
+    cap_add: [NET_BIND_SERVICE]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 96m
+    logging: *logging
+    networks: [backend, edge]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-T", "3", "-O", "/dev/null", "http://127.0.0.1:8080/health/live/"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  migrate:
+    profiles: [ops]
+    image: ${APP_IMAGE:-metacritic-imp01:local}
+    command: ["python", "app/manage.py", "migrate", "--noinput"]
+    environment:
+      <<: *app-environment
+      DATABASE_USER: ${MIGRATE_DB_USER:-metacritic_migrate}
+      DATABASE_PASSWORD: ${MIGRATE_DB_PASSWORD:?Initialize migration credentials}
+    depends_on:
+      db_setup:
+        condition: service_completed_successfully
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [backend]
+    logging: *logging
+
+  checks:
+    profiles: [checks]
+    image: ${CHECKS_IMAGE:-metacritic-imp01-checks:local}
+    build:
+      context: .
+      target: checks
+    environment:
+      <<: *app-environment
+      APP_ENV: test
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+      POSTGRES_DB: ${POSTGRES_DB:-metacritic}_checks
+      DATABASE_USER: ${CHECKS_DB_USER:-metacritic_checks}
+      DATABASE_PASSWORD: ${CHECKS_DB_PASSWORD:?Initialize checks credentials}
+      WEB_DB_USER: ${WEB_DB_USER:-metacritic_web}
+      WEB_DB_PASSWORD: ${WEB_DB_PASSWORD:?Initialize web credentials}
+      MIGRATE_DB_USER: ${MIGRATE_DB_USER:-metacritic_migrate}
+      MIGRATE_DB_PASSWORD: ${MIGRATE_DB_PASSWORD:?Initialize migration credentials}
+    depends_on:
+      db_setup:
+        condition: service_completed_successfully
+    networks: [backend]
+
+volumes:
+  postgres_data:
+    name: ${COMPOSE_PROJECT_NAME:-metacritic-imp01}_postgres_data
+  caddy_data:
+    name: ${COMPOSE_PROJECT_NAME:-metacritic-imp01}_caddy_data
+  caddy_config:
+    name: ${COMPOSE_PROJECT_NAME:-metacritic-imp01}_caddy_config
+
+networks:
+  backend:
+    internal: true
+  edge:
+  local_db:

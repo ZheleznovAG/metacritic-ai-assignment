@@ -1,0 +1,48 @@
+[project]
+name = "metacritic-ai-assignment"
+version = "0.1.0"
+description = "Metacritic assignment: IMP-01 application scaffold"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "django>=5.2,<5.3",
+    "gunicorn>=23,<26; sys_platform != 'win32'",
+    "psycopg[binary]>=3.2,<4",
+    "python-dotenv>=1,<2",
+    "whitenoise>=6,<7",
+]
+
+[dependency-groups]
+dev = ["ruff>=0.12,<1", "mypy>=1.15,<2", "django-stubs>=5.2,<5.3"]
+
+[tool.uv]
+package = false
+required-version = "==0.12.11"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+include = ["app/**/*.py", "scripts/**/*.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"app/tests/*" = ["S105", "S106", "S101"]
+"scripts/check.py" = ["S603"]
+"scripts/verify_image.py" = ["S603"]
+"scripts/migrate.py" = ["S603"]
+"scripts/tests/*" = ["S105", "S106", "S101", "S603"]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["app"]
+mypy_path = "app"
+strict = true
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
+
+[[tool.mypy.overrides]]
+module = ["whitenoise.*"]
+ignore_missing_imports = true

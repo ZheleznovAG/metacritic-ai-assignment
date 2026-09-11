@@ -2,8 +2,17 @@
 .env
 .env.*
 !.env.example
+!.env.app.example
 /.secrets/
 /.eval-runs/
 /.venv/
+/.venv-app/
+/.cache/
+/.artifacts/
+/metacritic.zip
+/.mypy_cache/
+/.ruff_cache/
+/app/staticfiles/
+/app/build-version.txt
 __pycache__/
 *.py[cod]

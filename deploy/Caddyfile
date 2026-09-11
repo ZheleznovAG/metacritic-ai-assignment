@@ -1,0 +1,16 @@
+{
+    admin off
+    auto_https off
+}
+
+:8080 {
+    header -Server
+    reverse_proxy web:8000 {
+        # Do not trust a client's claim that an HTTP connection was HTTPS.
+        header_up X-Forwarded-Proto http
+        transport http {
+            dial_timeout 3s
+            response_header_timeout 10s
+        }
+    }
+}

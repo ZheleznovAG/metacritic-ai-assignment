@@ -1,8 +1,9 @@
 # План действий: master tracker
 
 - Baseline: **1.0**, задача `PLN-03`, 2026-09-09 (Asia/Novosibirsk).
-- Реализация не начата; завершённый цикл — перебазирование плана и review `G3`.
-- Блокеров для планирования нет; отсутствие дедлайна/ёмкости принято как ограничение относительной оценки.
+- Bonus scope: `pending`.
+- Реализуется каркас IMP-01; продуктовые функции ещё не начаты. Последний завершённый цикл — PLN-03 / G3.
+- Текущий blocker: IMP-01 — Ask об удалённом репозитории и разрешении push/CI, needed-by G4. SSH/Docker preflight, локальные проверки и public preview подтверждены; внешний CI не выполнен.
 
 ## Источники истины и правила
 
@@ -10,18 +11,20 @@
 
 Этот файл — единственное место текущих task/gate статусов, зависимостей и ссылок на фактическое evidence. Описания задач и численные оценки не копируются сюда. Исторические review фиксируют состояние на дату проверки, а не конкурирующие текущие статусы.
 
-1. Один цикл: одна задача → author → adversarial review → verify → один focused commit → стоп. Новая задача начинается следующим циклом.
+1. Один цикл: одна задача → author → adversarial review → verify → один focused commit → стоп. Новая задача начинается следующим циклом. При внешнем blocker текущий цикл можно приостановить и взять одну независимую Ready-задачу отдельным циклом; незавершённая задача сохраняет Blocked.
 2. Все зависимости и предыдущие ворота должны быть выполнены. Проверенный code/документ без evidence не получает Verified; material finding даёт Changes requested.
 3. При human input: Blocked / Ask, один конкретный вопрос и needed-by gate; до ответа доступны только независимые задачи. Уже полученные решения действуют.
 4. Пригодность метода не принимается до замороженного oracle; live source/provider checks отделены от deterministic CI.
 5. Таблица задаёт **конъюнкцию** зависимостей. Колонка «Ветка»: base — всегда, bonus1/bonus2 — только после выбора в BON-00. Суффикс `?` означает зависимость GB только при активной ветке; после отказа невыбранные task rows получают Dropped с основанием.
 6. При Verified ожидаемое evidence заменяется ссылкой на существующий артефакт/check. Плановые ссылки/имена не являются доказательством.
+7. Для hosted CI разрешён candidate-коммит незавершённой задачи с её фактическим статусом. После разрешённого push записываются run URL и проверенный SHA; evidence/status оформляются отдельным focused-коммитом. CI проверяет и этот коммит. Candidate-коммит не закрывает задачу. Локальная проверенная correction может быть закоммичена отдельно при сохранении внешнего blocker.
+8. Поле Bonus scope выше — единственный текущий выбор: pending до принятия BON-00, затем none/bonus1/bonus2/both со ссылкой на решение в evidence BON-00. Невыбранные ветви получают Dropped; обязательные задачи исключать нельзя.
 
 Статусы: Planned — описано; Ready — можно брать; In progress — выполняется; Changes requested — требуется исправление; Verified — критерий доказан; Blocked — внешний вход отсутствует; Dropped — исключён только необязательный scope с основанием.
 
 ## Приоритет следующего цикла
 
-Следующая единственная приоритетная задача — IMP-01. REV-EVAL-01 и SIM-EVAL-01 также доступны по зависимостям, но не выбирают методы; их подготовка и owner acceptance выполняются отдельными циклами. Предпочтительный дальнейший порядок и ожидания описаны в [implementation plan](implementation_plan.md#порядок-и-внешнее-ожидание).
+Текущий цикл — исправления review оснастки IMP-01/PLN-03. Исторические SSH/Docker [preflight](docs/requirements/imp_01_preflight.md) и [preview](docs/requirements/imp_01_review.md) не подтверждают изменённый каркас. Внешний CI ждёт адреса репозитория и разрешения push, needed-by G4. После correction доступны отдельные независимые циклы REV-EVAL-01/SIM-EVAL-01; IMP-02 ждёт завершения IMP-01.
 
 ## Подготовка: G0–G2
 
@@ -58,7 +61,7 @@
 
 | ID | Зависимости | Ветка | Статус | Evidence |
 |---|---|---|---|---|
-| [IMP-01](implementation_plan.md#imp-01) | G3 | base | Ready | Ожидается: CI, README, image SHA, deploy smoke |
+| [IMP-01](implementation_plan.md#imp-01) | G3 | base | Blocked | [Scaffold/local tests/public preview](docs/requirements/imp_01_review.md); Ask о remote/CI к G4, hosted CI ещё не выполнен |
 | [IMP-02](implementation_plan.md#imp-02) | IMP-01 | base | Planned | Ожидается: Parser inputs/tests, migrations, карточка |
 | [IMP-03](implementation_plan.md#imp-03) | IMP-02 | base | Planned | Ожидается: Selector/clock/restart tests, run events |
 | [REV-EVAL-01](implementation_plan.md#rev-eval-01) | G3, SPK-05 | base | Ready | Ожидается: evals/review_selection: dataset/rubric/acceptance |
