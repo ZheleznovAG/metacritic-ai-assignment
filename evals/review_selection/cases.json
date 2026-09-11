@@ -1,0 +1,199 @@
+{
+  "eval_set_version": "1.0.0",
+  "frozen_at_utc": "2026-09-11T15:00:00Z",
+  "content_policy": "All review text is project-authored synthetic evaluation data, not scraped content.",
+  "page_size_note": "Synthetic page sizes are small and illustrative; the pagination SHAPE under test (offset-based, multi-page, per-platform, follow-links-only) is the real backend contract confirmed by SPK-02's research/feasibility/fixtures/metacritic/reviews-pagination.json, not the production page limits (50 user / 10 critic).",
+  "selection_policy_under_test": {
+    "max_selected_reviews": 10,
+    "max_tokens_per_review": 450,
+    "max_guarded_prompt_tokens": 6000,
+    "max_total_reservation_tokens": 6800,
+    "tokenizer": "o200k_harmony",
+    "source": "ASM-16 candidate 1.0.0; research/feasibility/ai-summary.md token-aware production boundary"
+  },
+  "cases": [
+    {
+      "id": "multi_platform_multi_page",
+      "scenario_tags": ["multi_page", "multi_platform"],
+      "audience": "user",
+      "game_slug": "aurora-drift",
+      "collection_status": "complete",
+      "notes": "11 eligible reviews across two platforms, cap 10: forces a real exclusion choice and cross-platform participation.",
+      "reviews": [
+        {"identity_key": "AD-U-P5-1", "platform_slug": "playstation-5", "page_offset": 0, "language": "en", "score": 8, "meaningful": true, "text": "The photo mode is a great excuse to stop and look at the coastline. Fast travel loading is noticeably slower after the day-one patch."},
+        {"identity_key": "AD-U-P5-2", "platform_slug": "playstation-5", "page_offset": 0, "language": "en", "score": 7, "meaningful": true, "text": "Boat handling finally feels weighty instead of floaty. The crafting menu still buries upgrade materials two tabs too deep."},
+        {"identity_key": "AD-U-P5-3", "platform_slug": "playstation-5", "page_offset": 0, "language": "en", "score": 9, "meaningful": true, "text": "Weather transitions during storms are the best I have seen this generation. A handful of side quests still reuse the same delivery objective."},
+        {"identity_key": "AD-U-P5-4", "platform_slug": "playstation-5", "page_offset": 0, "language": "en", "score": 6, "meaningful": false, "text": "It's fine."},
+        {"identity_key": "AD-U-P5-5", "platform_slug": "playstation-5", "page_offset": 4, "language": "en", "score": 8, "meaningful": true, "text": "Co-op sailing with a friend made the long crossings worth it. Voice chat cuts out for a few seconds after every loading screen."},
+        {"identity_key": "AD-U-P5-6", "platform_slug": "playstation-5", "page_offset": 4, "language": "en", "score": 7, "meaningful": true, "text": "The soundtrack shifts convincingly with the time of day. Inventory sorting resets every time you dock at a new port."},
+        {"identity_key": "AD-U-P5-7", "platform_slug": "playstation-5", "page_offset": 4, "language": "en", "score": 9, "meaningful": true, "text": "Trading routes reward planning ahead instead of grinding. The map legend does not explain half of its own icons."},
+        {"identity_key": "AD-U-XS-1", "platform_slug": "xbox-series-x", "page_offset": 0, "language": "en", "score": 8, "meaningful": true, "text": "Quick Resume brings you back mid-storm exactly where you left off, which is a nice touch. Achievements pop with a noticeable delay."},
+        {"identity_key": "AD-U-XS-2", "platform_slug": "xbox-series-x", "page_offset": 0, "language": "en", "score": 7, "meaningful": true, "text": "Frame pacing on Series X is steady even during large naval battles. The crew management screen is still confusing for new players."},
+        {"identity_key": "AD-U-XS-3", "platform_slug": "xbox-series-x", "page_offset": 0, "language": "en", "score": 8, "meaningful": true, "text": "Cross-save picked up instantly from my PC save. A few coastal towns pop in their detail textures a beat late."},
+        {"identity_key": "AD-U-XS-4", "platform_slug": "xbox-series-x", "page_offset": 0, "language": "en", "score": 6, "meaningful": true, "text": "Controller haptics during storms sell the weather better than the visuals alone. Menu navigation with the d-pad is stiffer than it should be."}
+      ]
+    },
+    {
+      "id": "first_page_bias_trap",
+      "scenario_tags": ["first_page_bias"],
+      "audience": "critic",
+      "game_slug": "emberfall-legacy",
+      "collection_status": "complete",
+      "notes": "Page 0 alone already exceeds the cap with generic content; the only reviews mentioning the game's distinctive system sit on page 2 (offset 10). A selector that only ever reads page 0 fails must_include_at_least_one_of.",
+      "must_include_at_least_one_of": ["EL-C-PC-D1", "EL-C-PC-D2", "EL-C-PC-D3"],
+      "reviews": [
+        {"identity_key": "EL-C-PC-G1", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 78, "meaningful": true, "text": "A competent action-RPG with satisfying combat feedback. The story beats rarely surprise, but the moment-to-moment play is solid."},
+        {"identity_key": "EL-C-PC-G2", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 74, "meaningful": true, "text": "Level design favors linear corridors over open exploration. Enemy variety thins out noticeably in the back half."},
+        {"identity_key": "EL-C-PC-G3", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 80, "meaningful": true, "text": "Boss encounters are the clear highlight, each demanding a distinct approach. Traversal between them is padded with filler corridors."},
+        {"identity_key": "EL-C-PC-G4", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 71, "meaningful": true, "text": "Voice acting is uneven across the main cast. Combat animations land with real weight."},
+        {"identity_key": "EL-C-PC-G5", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 76, "meaningful": true, "text": "The UI is cluttered in the opening hours but becomes second nature by the midpoint. Load times on an HDD are rough."},
+        {"identity_key": "EL-C-PC-G6", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 73, "meaningful": true, "text": "A serviceable crafting system that never quite justifies its own complexity. Boss telegraphs are readable and fair."},
+        {"identity_key": "EL-C-PC-G7", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 79, "meaningful": true, "text": "Environmental art direction carries long stretches with little else going on. Checkpoint placement before late bosses is stingy."},
+        {"identity_key": "EL-C-PC-G8", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 75, "meaningful": true, "text": "Side content is thin and mostly recycles main-path enemy encounters. The core combat loop still carries the package."},
+        {"identity_key": "EL-C-PC-G9", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 77, "meaningful": true, "text": "A safe, well-produced entry in a crowded genre. It rarely takes a real risk."},
+        {"identity_key": "EL-C-PC-G10", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 72, "meaningful": true, "text": "Performance on mid-range hardware is stable at 60fps. The narrative struggles to justify its length."},
+        {"identity_key": "EL-C-PC-D1", "platform_slug": "pc", "page_offset": 10, "language": "en", "score": 88, "meaningful": true, "text": "The roguelite meta-progression layered onto the main campaign is the real innovation here, reshaping how you approach repeat boss attempts."},
+        {"identity_key": "EL-C-PC-D2", "platform_slug": "pc", "page_offset": 10, "language": "en", "score": 85, "meaningful": true, "text": "Each run through the roguelite meta-progression wing unlocks a permanent combat modifier, and the build variety it enables is the standout feature of the whole package."},
+        {"identity_key": "EL-C-PC-D3", "platform_slug": "pc", "page_offset": 10, "language": "en", "score": 90, "meaningful": true, "text": "Nothing else in the genre currently does the roguelite meta-progression wing this well; it single-handedly elevates an otherwise conventional campaign."}
+      ]
+    },
+    {
+      "id": "last_page_bias_trap",
+      "scenario_tags": ["last_page_bias", "multi_page"],
+      "audience": "user",
+      "game_slug": "wraithbound-order",
+      "collection_status": "complete",
+      "notes": "Two full filler pages (21 total, cap 10); the only reviews mentioning the distinctive feature sit on the terminal page, just before next becomes null.",
+      "must_include_at_least_one_of": ["WO-U-SW-D1", "WO-U-SW-D2", "WO-U-SW-D3"],
+      "reviews": [
+        {"identity_key": "WO-U-SW-G01", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 7, "meaningful": true, "text": "Handheld mode holds a steady 30fps in most areas. Docked mode drops frames during larger skirmishes."},
+        {"identity_key": "WO-U-SW-G02", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 8, "meaningful": true, "text": "The turn order UI is easy to read at a glance. Random encounters feel a little too frequent early on."},
+        {"identity_key": "WO-U-SW-G03", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 6, "meaningful": true, "text": "Difficulty spikes hard against the second boss. Character portraits during dialogue are a nice touch."},
+        {"identity_key": "WO-U-SW-G04", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 8, "meaningful": true, "text": "Job customization has real depth once it opens up. The tutorial explains almost none of it."},
+        {"identity_key": "WO-U-SW-G05", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 7, "meaningful": true, "text": "Save points are generous throughout the dungeons. Menu transitions have a slight but consistent input delay."},
+        {"identity_key": "WO-U-SW-G06", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 9, "meaningful": true, "text": "Boss fights are genuinely tactical and reward positioning. Loading between map areas takes longer than it should."},
+        {"identity_key": "WO-U-SW-G07", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 6, "meaningful": true, "text": "The crafting economy feels grindy past the midpoint. Character writing carries the slower chapters."},
+        {"identity_key": "WO-U-SW-G08", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 8, "meaningful": true, "text": "Art direction on the overworld map is consistently gorgeous. Random battle transitions interrupt exploration a bit too often."},
+        {"identity_key": "WO-U-SW-G09", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 7, "meaningful": true, "text": "Party banter during travel adds real personality. The equipment comparison screen is hard to parse."},
+        {"identity_key": "WO-U-SW-G10", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 9, "meaningful": true, "text": "Late-game class combinations open up genuinely creative strategies. Getting there takes a slow first ten hours."},
+        {"identity_key": "WO-U-SW-G11", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 7, "meaningful": true, "text": "Sidequest rewards scale sensibly with the main story. A few optional dungeons repeat the same layout."},
+        {"identity_key": "WO-U-SW-G12", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 8, "meaningful": true, "text": "The final act ties earlier plot threads together well. Some earlier foreshadowing is easy to miss."},
+        {"identity_key": "WO-U-SW-G13", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 6, "meaningful": true, "text": "Random encounter rate is the single biggest friction point for me. The soundtrack is consistently strong."},
+        {"identity_key": "WO-U-SW-G14", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 8, "meaningful": true, "text": "New Game Plus carries over enough to make a second run worthwhile. Achievement tracking in-game is minimal."},
+        {"identity_key": "WO-U-SW-G15", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 7, "meaningful": true, "text": "Boss telegraphs are readable even on the smaller handheld screen. Text scaling options are limited."},
+        {"identity_key": "WO-U-SW-G16", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 9, "meaningful": true, "text": "The final dungeon's layout is the best in the game. Getting a party wipe there costs more time than it should due to slow reload."},
+        {"identity_key": "WO-U-SW-G17", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 6, "meaningful": true, "text": "Some optional bosses feel unbalanced against the recommended level. The reward for beating them is worth the trouble."},
+        {"identity_key": "WO-U-SW-G18", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 8, "meaningful": true, "text": "Dialogue choices rarely change outcomes but read well regardless. Voice acting is limited to key story beats."},
+        {"identity_key": "WO-U-SW-D1", "platform_slug": "switch", "page_offset": 20, "language": "en", "score": 9, "meaningful": true, "text": "Cross-save cloud sync between handheld and docked sessions worked flawlessly across three different consoles for me, which is rare for this genre."},
+        {"identity_key": "WO-U-SW-D2", "platform_slug": "switch", "page_offset": 20, "language": "en", "score": 8, "meaningful": true, "text": "The cross-save cloud sync feature meant I never lost progress switching between my Switch and a friend's console, which made co-op scheduling painless."},
+        {"identity_key": "WO-U-SW-D3", "platform_slug": "switch", "page_offset": 20, "language": "en", "score": 9, "meaningful": true, "text": "Nobody talks about the cross-save cloud sync in this game, but after using it daily for a month it is the most reliable implementation I have seen."}
+      ]
+    },
+    {
+      "id": "incomplete_collection_must_be_rejected",
+      "scenario_tags": ["collection_completeness"],
+      "audience": "critic",
+      "game_slug": "hollow-atrium",
+      "collection_status": "partial",
+      "notes": "Simulates a route crawl interrupted before reaching links.next=null. A conforming selector must refuse to select from this pool rather than silently sample an incomplete snapshot (ASM-16).",
+      "reviews": [
+        {"identity_key": "HA-C-PC-1", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 70, "meaningful": true, "text": "A middling entry with a few genuinely clever puzzle rooms. Pacing sags in the middle third."},
+        {"identity_key": "HA-C-PC-2", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 65, "meaningful": true, "text": "Combat encounters feel like an afterthought next to the puzzle design. Presentation is polished throughout."},
+        {"identity_key": "HA-C-PC-3", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 72, "meaningful": true, "text": "The atmosphere carries weaker sections of the game. A handful of puzzles rely on obscure logic."},
+        {"identity_key": "HA-C-PC-4", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 68, "meaningful": true, "text": "Sound design deserves real credit for the tension it builds. Some rooms are reused with only cosmetic changes."},
+        {"identity_key": "HA-C-PC-5", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 71, "meaningful": true, "text": "A short but focused experience that does not overstay its welcome. The ending resolves too abruptly."}
+      ]
+    },
+    {
+      "id": "cross_platform_duplicate_review",
+      "scenario_tags": ["duplicates", "multi_platform"],
+      "audience": "critic",
+      "game_slug": "skyline-vanguard",
+      "collection_status": "complete",
+      "notes": "The same outlet published a byte-identical review under two platform routes for a simultaneous release. 12 keys, 11 unique contents, cap 10: the duplicate must be counted once.",
+      "reviews": [
+        {"identity_key": "SV-C-P5-1", "platform_slug": "playstation-5", "page_offset": 0, "language": "en", "score": 82, "meaningful": true, "text": "Vertical traversal across the skyline is the mechanical highlight, letting fights flow between rooftops. Story pacing drags in the third act."},
+        {"identity_key": "SV-C-P5-2", "platform_slug": "playstation-5", "page_offset": 0, "language": "en", "score": 79, "meaningful": true, "text": "Grapple-based combat rewards momentum over careful positioning. Some late encounters throw too many enemy types at once."},
+        {"identity_key": "SV-C-P5-3", "platform_slug": "playstation-5", "page_offset": 0, "language": "en", "score": 80, "meaningful": true, "text": "Nova Press: A confident debut that nails its central traversal fantasy. Mission variety thins out in the open-world side content.", "duplicate_of": null},
+        {"identity_key": "SV-C-P5-4", "platform_slug": "playstation-5", "page_offset": 0, "language": "en", "score": 84, "meaningful": true, "text": "Boss fights make excellent use of the vertical arenas. Checkpoint spacing before them is occasionally too far apart."},
+        {"identity_key": "SV-C-P5-5", "platform_slug": "playstation-5", "page_offset": 0, "language": "en", "score": 77, "meaningful": true, "text": "The city itself is the best-realized character in the game. Companion AI struggles in tight indoor spaces."},
+        {"identity_key": "SV-C-P5-6", "platform_slug": "playstation-5", "page_offset": 0, "language": "en", "score": 81, "meaningful": true, "text": "A satisfying power curve that never trivializes the core traversal challenge. The photo mode is underbaked for how photogenic the city is."},
+        {"identity_key": "SV-C-XS-1", "platform_slug": "xbox-series-x", "page_offset": 0, "language": "en", "score": 78, "meaningful": true, "text": "Load times on Series X are near-instant between districts. A few side missions fail to trigger without a restart."},
+        {"identity_key": "SV-C-XS-2", "platform_slug": "xbox-series-x", "page_offset": 0, "language": "en", "score": 83, "meaningful": true, "text": "The traversal-to-combat loop rarely lets the pace drop. Enemy variety could use another pass in the mid-game."},
+        {"identity_key": "SV-C-XS-3", "platform_slug": "xbox-series-x", "page_offset": 0, "language": "en", "score": 76, "meaningful": true, "text": "Cutscene direction is a clear step up from the studio's previous game. The open-world map is cluttered with low-value icons."},
+        {"identity_key": "SV-C-XS-4", "platform_slug": "xbox-series-x", "page_offset": 0, "language": "en", "score": 80, "meaningful": true, "text": "Nova Press: A confident debut that nails its central traversal fantasy. Mission variety thins out in the open-world side content.", "duplicate_of": "SV-C-P5-3"},
+        {"identity_key": "SV-C-XS-5", "platform_slug": "xbox-series-x", "page_offset": 0, "language": "en", "score": 85, "meaningful": true, "text": "The grapple-and-glide combo is the most fun traversal has felt in the genre in years. Some rooftop geometry causes odd camera clipping."},
+        {"identity_key": "SV-C-XS-6", "platform_slug": "xbox-series-x", "page_offset": 0, "language": "en", "score": 79, "meaningful": true, "text": "Performance mode holds 60fps reliably even in dense districts. The main antagonist is underwritten relative to the world around them."}
+      ]
+    },
+    {
+      "id": "sentiment_skew_and_rare_topic",
+      "scenario_tags": ["sentiment_skew", "rare_topics"],
+      "audience": "user",
+      "game_slug": "moonlit-harbor",
+      "collection_status": "complete",
+      "notes": "Observational only, not gated: 15 reviews, heavily positive-skewed, with one negative review mentioning a topic ('local co-op split-screen desync') that appears nowhere else in the pool. Hash/round-robin selection (ASM-16) is not sentiment- or topic-aware by design; this case exists to make that non-goal explicit, not to require rare-topic surfacing.",
+      "observational": {"rare_topic_review_id": "MH-U-SW-RARE"},
+      "reviews": [
+        {"identity_key": "MH-U-SW-P01", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 9, "meaningful": true, "text": "The harbor town is cozy and inviting from the first hour. Fishing minigame controls are a little stiff."},
+        {"identity_key": "MH-U-SW-P02", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 8, "meaningful": true, "text": "Villager schedules feel alive without being overwhelming. Inventory space is tight early on."},
+        {"identity_key": "MH-U-SW-P03", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 9, "meaningful": true, "text": "Seasonal events give real reasons to keep playing. Crafting recipes are not explained clearly."},
+        {"identity_key": "MH-U-SW-P04", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 8, "meaningful": true, "text": "The soundtrack is relaxing without becoming repetitive. Shop hours are inconveniently short."},
+        {"identity_key": "MH-U-SW-P05", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 9, "meaningful": true, "text": "Character writing gives the townsfolk real personality over time. The map could use fast travel points."},
+        {"identity_key": "MH-U-SW-P06", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 8, "meaningful": true, "text": "Decorating your own boat house is genuinely satisfying. Some late recipes require excessive grinding."},
+        {"identity_key": "MH-U-SW-P07", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 9, "meaningful": true, "text": "The art style ages beautifully across seasons. Load times between the harbor and the inner town add up."},
+        {"identity_key": "MH-U-SW-P08", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 8, "meaningful": true, "text": "Festivals bring the whole town together in a way that feels earned. Text speed cannot be adjusted."},
+        {"identity_key": "MH-U-SW-P09", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 10, "meaningful": false, "text": "Great."},
+        {"identity_key": "MH-U-SW-NEG1", "platform_slug": "switch", "page_offset": 0, "language": "en", "score": 3, "meaningful": true, "text": "Save corruption cost me twelve hours of progress with no recovery option. Everything else about the game is charming, but I cannot recommend it until this is fixed."},
+        {"identity_key": "MH-U-SW-P10", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 9, "meaningful": true, "text": "Fishing rod upgrades feel meaningfully different from each other. The tutorial is longer than it needs to be."},
+        {"identity_key": "MH-U-SW-P11", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 8, "meaningful": true, "text": "Gift-giving mechanics reward paying attention to dialogue. A few late-game villagers are hard to unlock."},
+        {"identity_key": "MH-U-SW-P12", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 9, "meaningful": true, "text": "The harbor at night is one of the best-looking scenes in any game this year. Frame rate dips slightly during rainstorms."},
+        {"identity_key": "MH-U-SW-P13", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 8, "meaningful": true, "text": "New Game Plus keeps relationship progress, which respects the player's time. Achievement descriptions are vague."},
+        {"identity_key": "MH-U-SW-RARE", "platform_slug": "switch", "page_offset": 10, "language": "en", "score": 4, "meaningful": true, "text": "Local co-op split-screen desync makes couch play with my partner nearly unplayable after twenty minutes; single-player is fine, but this specific mode needs a real fix."}
+      ]
+    },
+    {
+      "id": "long_and_multilingual_mixed",
+      "scenario_tags": ["long_text", "multilingual"],
+      "audience": "user",
+      "game_slug": "crimson-atlas",
+      "collection_status": "complete",
+      "notes": "8 reviews across 7 languages/scripts, one deliberately repeated past the 450-token cap to force truncation. Cap is not exercised by count here (8 < 10); INV-CAP is exercised by the long review's post-selection token count.",
+      "reviews": [
+        {"identity_key": "CA-U-PC-LONG", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 8, "meaningful": true, "text": "The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. The atlas system genuinely changes how you plan a route across the continent, rewarding careful preparation over blind exploration. Random weather events during long crossings keep every trip tense until the very last stretch, but the encumbrance penalty for overpacking supplies is punishing enough that early routes feel overly cautious rather than adventurous."},
+        {"identity_key": "CA-U-PC-ES", "platform_slug": "pc", "page_offset": 0, "language": "es", "score": 8, "meaningful": true, "text": "El sistema de atlas cambia de verdad cómo planificas una ruta por el continente. Los combates contra bandidos en la ruta larga se sienten repetitivos hacia el final."},
+        {"identity_key": "CA-U-PC-JA", "platform_slug": "pc", "page_offset": 0, "language": "ja", "score": 9, "meaningful": true, "text": "アトラスシステムのおかげで大陸横断ルートの計画が本当に楽しくなる。長距離移動中の盗賊との戦闘は終盤になると単調に感じる。"},
+        {"identity_key": "CA-U-PC-RU", "platform_slug": "pc", "page_offset": 0, "language": "ru", "score": 7, "meaningful": true, "text": "Система атласа реально меняет подход к планированию маршрута через континент. Бои с бандитами на дальних переходах ближе к концу кажутся однообразными."},
+        {"identity_key": "CA-U-PC-DE", "platform_slug": "pc", "page_offset": 0, "language": "de", "score": 8, "meaningful": true, "text": "Das Atlas-System verändert wirklich, wie man eine Route über den Kontinent plant. Die Banditenkämpfe auf langen Strecken wirken gegen Ende repetitiv."},
+        {"identity_key": "CA-U-PC-PT", "platform_slug": "pc", "page_offset": 0, "language": "pt", "score": 8, "meaningful": true, "text": "O sistema de atlas realmente muda a forma como você planeja uma rota pelo continente. Os combates contra bandidos nas longas travessias ficam repetitivos no final."},
+        {"identity_key": "CA-U-PC-FR", "platform_slug": "pc", "page_offset": 0, "language": "fr", "score": 7, "meaningful": true, "text": "Le système d'atlas change vraiment la façon de planifier un itinéraire à travers le continent. Les combats contre les bandits sur les longs trajets deviennent répétitifs vers la fin."},
+        {"identity_key": "CA-U-PC-EN2", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 6, "meaningful": true, "text": "Encumbrance penalties punish experimentation early on. The atlas planning loop is still the best reason to keep playing."}
+      ]
+    },
+    {
+      "id": "content_independence_mutation",
+      "scenario_tags": ["deterministic_repeat", "out_of_sample_change"],
+      "audience": "critic",
+      "game_slug": "verdant-siege",
+      "collection_status": "complete",
+      "notes": "15 eligible reviews, cap 10. score_selection.py runs the selector on this pool 3x for INV-DETERMINISM, then mutates each review's text one at a time (contract.mutate_review_text) for INV-CONTENT-INDEPENDENCE: the SET of selected identity_keys must be unchanged by any single-review content edit, whether or not that review ends up selected.",
+      "reviews": [
+        {"identity_key": "VS-C-PC-01", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 84, "meaningful": true, "text": "Siege engines feel genuinely different from each other in how they approach a fortress wall. Pathfinding for allied units breaks down in narrow courtyards."},
+        {"identity_key": "VS-C-PC-02", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 81, "meaningful": true, "text": "The campaign map rewards long-term territorial planning over reactive play. Diplomacy AI folds too easily under light pressure."},
+        {"identity_key": "VS-C-PC-03", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 79, "meaningful": true, "text": "Garrison logistics add a real resource-management layer between battles. The tutorial glosses over supply lines entirely."},
+        {"identity_key": "VS-C-PC-04", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 86, "meaningful": true, "text": "Multiplayer siege battles are the best the series has offered. Matchmaking wait times are long outside peak hours."},
+        {"identity_key": "VS-C-PC-05", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 77, "meaningful": true, "text": "Faction identity comes through clearly in unit rosters and architecture. Some late-game unit tiers feel redundant with earlier ones."},
+        {"identity_key": "VS-C-PC-06", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 82, "meaningful": true, "text": "Weather affects siege tactics in ways that reward adaptation. The campaign's final act rushes its political resolution."},
+        {"identity_key": "VS-C-PC-07", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 80, "meaningful": true, "text": "Fortress customization between sieges is deep without being fiddly. AI defenders sometimes stand idle during a breach."},
+        {"identity_key": "VS-C-PC-08", "platform_slug": "pc", "page_offset": 0, "language": "en", "score": 83, "meaningful": true, "text": "The soundtrack escalates convincingly as a siege turns. Save scumming is trivially easy, undercutting some tension."},
+        {"identity_key": "VS-C-PC-09", "platform_slug": "pc", "page_offset": 8, "language": "en", "score": 78, "meaningful": true, "text": "Economic buildings finally feel worth investing in mid-campaign. Naval battles remain the weakest part of the package."},
+        {"identity_key": "VS-C-PC-10", "platform_slug": "pc", "page_offset": 8, "language": "en", "score": 85, "meaningful": true, "text": "Hero units add welcome asymmetry to otherwise even sieges. Balance patches have been slower than the community would like."},
+        {"identity_key": "VS-C-PC-11", "platform_slug": "pc", "page_offset": 8, "language": "en", "score": 76, "meaningful": true, "text": "Siege equipment upkeep costs are punishing on harder difficulties. The core moment-to-moment combat still holds up."},
+        {"identity_key": "VS-C-PC-12", "platform_slug": "pc", "page_offset": 8, "language": "en", "score": 88, "meaningful": true, "text": "This is the strongest campaign structure the series has had. A few scripted battles feel unfair on first attempt."},
+        {"identity_key": "VS-C-PC-13", "platform_slug": "pc", "page_offset": 8, "language": "en", "score": 79, "meaningful": true, "text": "Alliance mechanics between AI factions create genuinely unpredictable campaigns. UI tooltips are missing for several unit abilities."},
+        {"identity_key": "VS-C-PC-14", "platform_slug": "pc", "page_offset": 8, "language": "en", "score": 81, "meaningful": true, "text": "Terrain deformation from prolonged bombardment is a nice tactical wrinkle. Performance dips in the largest multiplayer sieges."},
+        {"identity_key": "VS-C-PC-15", "platform_slug": "pc", "page_offset": 8, "language": "en", "score": 87, "meaningful": true, "text": "Commander perks meaningfully change how a siege plays out army to army. The campaign difficulty curve spikes hard at the midpoint."}
+      ]
+    }
+  ]
+}

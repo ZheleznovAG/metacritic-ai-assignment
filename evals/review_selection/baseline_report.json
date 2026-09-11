@@ -1,0 +1,289 @@
+{
+  "selector": "baseline_naive:select_reviews",
+  "cases_sha256": "5a8b4652382adb0f06c68c6acb516727d722964e562fc72df52b9a6a083dbd8f",
+  "contract_sha256": "7bc76276bc4685f915bd27acd497dd57df313d9bbcca08d26ce95ac47bab17cc",
+  "selector_sha256": "23e44350147be19db14e3a063fae8f9cc70eb07f7f74a1c929604fdd5936d96c",
+  "report": {
+    "eval_set_version": "1.0.0",
+    "assessments": [
+      {
+        "case_id": "multi_platform_multi_page",
+        "selected_identity_keys": [
+          "AD-U-P5-1",
+          "AD-U-P5-2",
+          "AD-U-P5-3",
+          "AD-U-P5-4",
+          "AD-U-P5-5",
+          "AD-U-P5-6",
+          "AD-U-P5-7",
+          "AD-U-XS-1",
+          "AD-U-XS-2",
+          "AD-U-XS-3"
+        ],
+        "invariants": {
+          "INV-COMPLETE": "n/a",
+          "INV-CAP": "pass",
+          "INV-DEDUP": "pass",
+          "INV-PAGE-COVERAGE": "n/a",
+          "INV-DETERMINISM": "pass",
+          "INV-CONTENT-INDEPENDENCE": "pass",
+          "INV-NO-FABRICATION": "pass",
+          "INV-MEANINGFUL-COUNT": "pass"
+        },
+        "findings": {
+          "INV-COMPLETE": [],
+          "INV-CAP": [],
+          "INV-DEDUP": [],
+          "INV-PAGE-COVERAGE": [],
+          "INV-DETERMINISM": [],
+          "INV-CONTENT-INDEPENDENCE": [],
+          "INV-NO-FABRICATION": [],
+          "INV-MEANINGFUL-COUNT": []
+        }
+      },
+      {
+        "case_id": "first_page_bias_trap",
+        "selected_identity_keys": [
+          "EL-C-PC-G1",
+          "EL-C-PC-G2",
+          "EL-C-PC-G3",
+          "EL-C-PC-G4",
+          "EL-C-PC-G5",
+          "EL-C-PC-G6",
+          "EL-C-PC-G7",
+          "EL-C-PC-G8",
+          "EL-C-PC-G9",
+          "EL-C-PC-G10"
+        ],
+        "invariants": {
+          "INV-COMPLETE": "n/a",
+          "INV-CAP": "pass",
+          "INV-DEDUP": "pass",
+          "INV-PAGE-COVERAGE": "fail",
+          "INV-DETERMINISM": "pass",
+          "INV-CONTENT-INDEPENDENCE": "pass",
+          "INV-NO-FABRICATION": "pass",
+          "INV-MEANINGFUL-COUNT": "pass"
+        },
+        "findings": {
+          "INV-COMPLETE": [],
+          "INV-CAP": [],
+          "INV-DEDUP": [],
+          "INV-PAGE-COVERAGE": [
+            "selection ['EL-C-PC-G1', 'EL-C-PC-G10', 'EL-C-PC-G2', 'EL-C-PC-G3', 'EL-C-PC-G4', 'EL-C-PC-G5', 'EL-C-PC-G6', 'EL-C-PC-G7', 'EL-C-PC-G8', 'EL-C-PC-G9'] includes none of ['EL-C-PC-D1', 'EL-C-PC-D2', 'EL-C-PC-D3']"
+          ],
+          "INV-DETERMINISM": [],
+          "INV-CONTENT-INDEPENDENCE": [],
+          "INV-NO-FABRICATION": [],
+          "INV-MEANINGFUL-COUNT": []
+        }
+      },
+      {
+        "case_id": "last_page_bias_trap",
+        "selected_identity_keys": [
+          "WO-U-SW-G01",
+          "WO-U-SW-G02",
+          "WO-U-SW-G03",
+          "WO-U-SW-G04",
+          "WO-U-SW-G05",
+          "WO-U-SW-G06",
+          "WO-U-SW-G07",
+          "WO-U-SW-G08",
+          "WO-U-SW-G09",
+          "WO-U-SW-G10"
+        ],
+        "invariants": {
+          "INV-COMPLETE": "n/a",
+          "INV-CAP": "pass",
+          "INV-DEDUP": "pass",
+          "INV-PAGE-COVERAGE": "fail",
+          "INV-DETERMINISM": "pass",
+          "INV-CONTENT-INDEPENDENCE": "pass",
+          "INV-NO-FABRICATION": "pass",
+          "INV-MEANINGFUL-COUNT": "pass"
+        },
+        "findings": {
+          "INV-COMPLETE": [],
+          "INV-CAP": [],
+          "INV-DEDUP": [],
+          "INV-PAGE-COVERAGE": [
+            "selection ['WO-U-SW-G01', 'WO-U-SW-G02', 'WO-U-SW-G03', 'WO-U-SW-G04', 'WO-U-SW-G05', 'WO-U-SW-G06', 'WO-U-SW-G07', 'WO-U-SW-G08', 'WO-U-SW-G09', 'WO-U-SW-G10'] includes none of ['WO-U-SW-D1', 'WO-U-SW-D2', 'WO-U-SW-D3']"
+          ],
+          "INV-DETERMINISM": [],
+          "INV-CONTENT-INDEPENDENCE": [],
+          "INV-NO-FABRICATION": [],
+          "INV-MEANINGFUL-COUNT": []
+        }
+      },
+      {
+        "case_id": "incomplete_collection_must_be_rejected",
+        "invariants": {
+          "INV-COMPLETE": "pass",
+          "INV-CAP": "n/a",
+          "INV-DEDUP": "n/a",
+          "INV-PAGE-COVERAGE": "n/a",
+          "INV-DETERMINISM": "n/a",
+          "INV-CONTENT-INDEPENDENCE": "n/a",
+          "INV-NO-FABRICATION": "n/a",
+          "INV-MEANINGFUL-COUNT": "n/a"
+        },
+        "findings": {
+          "INV-COMPLETE": [],
+          "INV-CAP": [],
+          "INV-DEDUP": [],
+          "INV-PAGE-COVERAGE": [],
+          "INV-DETERMINISM": [],
+          "INV-CONTENT-INDEPENDENCE": [],
+          "INV-NO-FABRICATION": [],
+          "INV-MEANINGFUL-COUNT": []
+        }
+      },
+      {
+        "case_id": "cross_platform_duplicate_review",
+        "selected_identity_keys": [
+          "SV-C-P5-1",
+          "SV-C-P5-2",
+          "SV-C-P5-3",
+          "SV-C-P5-4",
+          "SV-C-P5-5",
+          "SV-C-P5-6",
+          "SV-C-XS-1",
+          "SV-C-XS-2",
+          "SV-C-XS-3",
+          "SV-C-XS-4"
+        ],
+        "invariants": {
+          "INV-COMPLETE": "n/a",
+          "INV-CAP": "pass",
+          "INV-DEDUP": "fail",
+          "INV-PAGE-COVERAGE": "n/a",
+          "INV-DETERMINISM": "pass",
+          "INV-CONTENT-INDEPENDENCE": "pass",
+          "INV-NO-FABRICATION": "pass",
+          "INV-MEANINGFUL-COUNT": "pass"
+        },
+        "findings": {
+          "INV-COMPLETE": [],
+          "INV-CAP": [],
+          "INV-DEDUP": [
+            "SV-C-XS-4 duplicates SV-C-P5-3 (canonical group SV-C-P5-3)"
+          ],
+          "INV-PAGE-COVERAGE": [],
+          "INV-DETERMINISM": [],
+          "INV-CONTENT-INDEPENDENCE": [],
+          "INV-NO-FABRICATION": [],
+          "INV-MEANINGFUL-COUNT": []
+        }
+      },
+      {
+        "case_id": "sentiment_skew_and_rare_topic",
+        "selected_identity_keys": [
+          "MH-U-SW-P01",
+          "MH-U-SW-P02",
+          "MH-U-SW-P03",
+          "MH-U-SW-P04",
+          "MH-U-SW-P05",
+          "MH-U-SW-P06",
+          "MH-U-SW-P07",
+          "MH-U-SW-P08",
+          "MH-U-SW-P09",
+          "MH-U-SW-NEG1"
+        ],
+        "invariants": {
+          "INV-COMPLETE": "n/a",
+          "INV-CAP": "pass",
+          "INV-DEDUP": "pass",
+          "INV-PAGE-COVERAGE": "n/a",
+          "INV-DETERMINISM": "pass",
+          "INV-CONTENT-INDEPENDENCE": "pass",
+          "INV-NO-FABRICATION": "pass",
+          "INV-MEANINGFUL-COUNT": "pass"
+        },
+        "findings": {
+          "INV-COMPLETE": [],
+          "INV-CAP": [],
+          "INV-DEDUP": [],
+          "INV-PAGE-COVERAGE": [],
+          "INV-DETERMINISM": [],
+          "INV-CONTENT-INDEPENDENCE": [],
+          "INV-NO-FABRICATION": [],
+          "INV-MEANINGFUL-COUNT": []
+        }
+      },
+      {
+        "case_id": "long_and_multilingual_mixed",
+        "selected_identity_keys": [
+          "CA-U-PC-LONG",
+          "CA-U-PC-ES",
+          "CA-U-PC-JA",
+          "CA-U-PC-RU",
+          "CA-U-PC-DE",
+          "CA-U-PC-PT",
+          "CA-U-PC-FR",
+          "CA-U-PC-EN2"
+        ],
+        "invariants": {
+          "INV-COMPLETE": "n/a",
+          "INV-CAP": "pass",
+          "INV-DEDUP": "pass",
+          "INV-PAGE-COVERAGE": "n/a",
+          "INV-DETERMINISM": "pass",
+          "INV-CONTENT-INDEPENDENCE": "n/a",
+          "INV-NO-FABRICATION": "pass",
+          "INV-MEANINGFUL-COUNT": "pass"
+        },
+        "findings": {
+          "INV-COMPLETE": [],
+          "INV-CAP": [],
+          "INV-DEDUP": [],
+          "INV-PAGE-COVERAGE": [],
+          "INV-DETERMINISM": [],
+          "INV-CONTENT-INDEPENDENCE": [],
+          "INV-NO-FABRICATION": [],
+          "INV-MEANINGFUL-COUNT": []
+        }
+      },
+      {
+        "case_id": "content_independence_mutation",
+        "selected_identity_keys": [
+          "VS-C-PC-01",
+          "VS-C-PC-02",
+          "VS-C-PC-03",
+          "VS-C-PC-04",
+          "VS-C-PC-05",
+          "VS-C-PC-06",
+          "VS-C-PC-07",
+          "VS-C-PC-08",
+          "VS-C-PC-09",
+          "VS-C-PC-10"
+        ],
+        "invariants": {
+          "INV-COMPLETE": "n/a",
+          "INV-CAP": "pass",
+          "INV-DEDUP": "pass",
+          "INV-PAGE-COVERAGE": "n/a",
+          "INV-DETERMINISM": "pass",
+          "INV-CONTENT-INDEPENDENCE": "pass",
+          "INV-NO-FABRICATION": "pass",
+          "INV-MEANINGFUL-COUNT": "pass"
+        },
+        "findings": {
+          "INV-COMPLETE": [],
+          "INV-CAP": [],
+          "INV-DEDUP": [],
+          "INV-PAGE-COVERAGE": [],
+          "INV-DETERMINISM": [],
+          "INV-CONTENT-INDEPENDENCE": [],
+          "INV-NO-FABRICATION": [],
+          "INV-MEANINGFUL-COUNT": []
+        }
+      }
+    ],
+    "all_pass": false,
+    "failed": [
+      "first_page_bias_trap.INV-PAGE-COVERAGE",
+      "last_page_bias_trap.INV-PAGE-COVERAGE",
+      "cross_platform_duplicate_review.INV-DEDUP"
+    ]
+  }
+}
