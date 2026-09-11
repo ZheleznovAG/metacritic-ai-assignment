@@ -110,7 +110,7 @@ class PlanAuditTests(unittest.TestCase):
             check(self.docs)
 
     def test_mandatory_task_cannot_be_dropped(self):
-        self.replace("action", "| base | Blocked |", "| base | Dropped |")
+        self.replace("action", "| base | Verified |", "| base | Dropped |")
         with self.assertRaisesRegex(ValueError, "Mandatory task cannot be Dropped"):
             check(self.docs)
 
