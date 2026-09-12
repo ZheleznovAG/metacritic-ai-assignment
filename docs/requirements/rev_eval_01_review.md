@@ -2,6 +2,12 @@
 
 Date: 2026-09-11 (UTC). Task `REV-EVAL-01`; type Evaluation design; needed-by `G4`, before `IMP-04`.
 
+**Status: `Verified`.** The owner accepted the oracle as frozen on 2026-09-12: `cases.json` `1.0.0`,
+`metric.md` `1.0.0`, and the `contract.py` selector interface are the acceptance bar `IMP-04`'s real
+review-selection candidate must pass, compared against `baseline_naive.py`. See the "Ask" section
+below for the exact question asked. `IMP-04` is unblocked on this dependency (it still depends on
+`IMP-03`, already `Verified`).
+
 ## What this freezes
 
 `IMP-04` must select a bounded sample (at most 10 reviews, at most 450 `o200k_harmony` tokens each)
@@ -98,6 +104,5 @@ invariants and pass-everything threshold in `metric.md` `1.0.0`, and the `contra
 interface — as the acceptance bar `IMP-04`'s real review-selection candidate must pass (compared
 against `baseline_naive.py`), or should something about the scope/invariants/cases change first?**
 
-Needed-by: `G4`, before `IMP-04` starts. Until answered, `IMP-04` stays `Blocked` on this decision;
-`SIM-EVAL-01` (the parallel independent oracle-freeze task for similarity) remains available
-regardless of the answer.
+**Answered 2026-09-12: accepted as frozen, no changes requested.** `IMP-04` is unblocked on this
+dependency.
