@@ -30,6 +30,7 @@ def provision() -> None:
     web = identifier("WEB_DB_USER")
     migrate = identifier("MIGRATE_DB_USER")
     scheduler = identifier("SCHEDULER_DB_USER")
+    worker = identifier("WORKER_DB_USER")
     mode = required("APP_ENV")
     if mode not in {"local", "test", "production"}:
         raise ValueError("Unknown APP_ENV")
@@ -38,6 +39,7 @@ def provision() -> None:
         (web, required("WEB_DB_PASSWORD"), False),
         (migrate, required("MIGRATE_DB_PASSWORD"), False),
         (scheduler, required("SCHEDULER_DB_PASSWORD"), False),
+        (worker, required("WORKER_DB_PASSWORD"), False),
     ]
     if with_checks:
         roles.append((identifier("CHECKS_DB_USER"), required("CHECKS_DB_PASSWORD"), True))
@@ -166,6 +168,38 @@ def provision() -> None:
                 "ALTER DEFAULT PRIVILEGES FOR ROLE {} IN SCHEMA public "
                 "GRANT USAGE, SELECT ON SEQUENCES TO {}"
             ).format(sql.Identifier(migrate), sql.Identifier(scheduler))
+        )
+        # worker (IMP-04) collects review pages and drives AI summary jobs: same least-privilege
+        # shape as scheduler (SELECT/INSERT/UPDATE only, no DELETE, no DDL).
+        connection.execute(
+            sql.SQL("GRANT CONNECT ON DATABASE {} TO {}").format(
+                sql.Identifier(database), sql.Identifier(worker)
+            )
+        )
+        connection.execute(
+            sql.SQL("GRANT USAGE ON SCHEMA public TO {}").format(sql.Identifier(worker))
+        )
+        connection.execute(
+            sql.SQL("GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO {}").format(
+                sql.Identifier(worker)
+            )
+        )
+        connection.execute(
+            sql.SQL("GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO {}").format(
+                sql.Identifier(worker)
+            )
+        )
+        connection.execute(
+            sql.SQL(
+                "ALTER DEFAULT PRIVILEGES FOR ROLE {} IN SCHEMA public "
+                "GRANT SELECT, INSERT, UPDATE ON TABLES TO {}"
+            ).format(sql.Identifier(migrate), sql.Identifier(worker))
+        )
+        connection.execute(
+            sql.SQL(
+                "ALTER DEFAULT PRIVILEGES FOR ROLE {} IN SCHEMA public "
+                "GRANT USAGE, SELECT ON SEQUENCES TO {}"
+            ).format(sql.Identifier(migrate), sql.Identifier(worker))
         )
     if with_checks:
         checks = roles[-1][0]

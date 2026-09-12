@@ -1,0 +1,69 @@
+{
+  "data": {
+    "totalResults": 86,
+    "items": [
+      {
+        "author": "",
+        "publicationSlug": "giant-bomb",
+        "publicationName": "Giant Bomb",
+        "quote": "For as many different games as Bayonetta specifically recalls, there's really nothing quite like it. It carries a certain amount of the same technical appeal as Devil May Cry, while marrying it with the deliberate quirk of something like  No More Heroes. It's definitely going to be a divisive game for many, but whether you like it or not, I have a feeling that the developers made exactly the game they wanted to.",
+        "score": 80,
+        "date": null,
+        "url": "http://www.giantbomb.com/bayonetta/61-20710/reviews/"
+      },
+      {
+        "author": "",
+        "publicationSlug": "gamespy",
+        "publicationName": "GameSpy",
+        "quote": "But just like Clover Studio's God Hand -- from which I'm convinced Kamiya took some pretty big inspiration -- it's a flawed-yet-brilliant masterpiece that deserves to be played in spite of several glaring weaknesses.",
+        "score": 80,
+        "date": null,
+        "url": "http://xbox360.gamespy.com/xbox-360/bayonetta/1060264p1.html"
+      },
+      {
+        "author": "",
+        "publicationSlug": "d+pad-magazine",
+        "publicationName": "D+PAD Magazine",
+        "quote": "The action is fun, fast and varied and makes for an enjoyable romp fans of the genre would be foolish to pass up.",
+        "score": 80,
+        "date": null,
+        "url": "http://www.dpadmagazine.com/2010/01/13/bayonetta/"
+      },
+      {
+        "author": "",
+        "publicationSlug": "gamers-temple",
+        "publicationName": "Gamers' Temple",
+        "quote": "Bayonetta is a bizarre game that some will love, but many will hate.",
+        "score": 68,
+        "date": null,
+        "url": "http://www.gamerstemple.com/vgreview.asp/r_4612"
+      },
+      {
+        "author": "",
+        "publicationSlug": "the-av-club",
+        "publicationName": "The A.V. Club",
+        "quote": "It’s tough to assess a game that swings so wildly between two poles. In its more focused portions, Bayonetta is kinetic bliss that makes hand-to-hand violence into an act of love. But too often, the game devolves to its button-mashing, raunchy norm, adopting the puerile sensibility that is making Japan a less relevant voice in a slowly maturing medium.",
+        "score": 67,
+        "date": null,
+        "url": "http://origin.avclub.com/articles/bayonetta,36870/"
+      },
+      {
+        "author": "",
+        "publicationSlug": "bigpond-gamearena",
+        "publicationName": "BigPond GameArena",
+        "quote": "Maybe Platinum Games had deliberately pushed the game so far over the top it became ridiculous and stupid, not out of an attempt to circle on round from stupid back to awesome in that out-there-crazy-no-holds-barred-explosion way, but as a direct parody of all of the previous games which have tried to do that. Maybe Bayonetta isn't a terrible game, but is in fact the pure utilisation of irony to mock both the game manufacturers and its fans!",
+        "score": 50,
+        "date": null,
+        "url": "http://www.gamearena.com.au/xbox360/games/title/bayonetta/reviews.php?id=5050252"
+      }
+    ]
+  },
+  "links": {
+    "self": {
+      "href": "https://backend.metacritic.com/reviews/metacritic/critic/games/bayonetta/platform/xbox-360/web?offset=80&limit=10&filterBySentiment=all&sort=score&componentName=critic-reviews&componentDisplayName=critic+Reviews&componentType=ReviewList"
+    },
+    "next": {
+      "href": null
+    }
+  }
+}

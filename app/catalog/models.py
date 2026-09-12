@@ -1,8 +1,8 @@
 """Identity, provenance and non-destructive upsert per `research/feasibility/game-identity.md`.
 
-Field scope matches what IMP-02 actually populates (one game, its platforms, and the fetches
-that produced them); `docs/design.md`'s fuller `source_fetch` schema (run/job ownership,
-pagination) is added when `processing_run`/review generations exist in IMP-03/IMP-04.
+`SourceFetch` also carries IMP-04's review-page attempt evidence (`review_job`/generation/page/
+attempt/fencing/reported_total/item_count) so there is one evidence table for every kind of fetch,
+per `docs/design.md`'s `source_fetch` schema.
 """
 
 from django.db import models
@@ -16,6 +16,7 @@ class SourceFetch(models.Model):
         ("platform_userscore", "platform_userscore"),
         ("new_releases", "new_releases"),
         ("browse_page", "browse_page"),
+        ("review_page", "review_page"),
     ]
     OUTCOME_CHOICES = [
         ("succeeded", "succeeded"),
@@ -32,6 +33,36 @@ class SourceFetch(models.Model):
     parser_contract_version = models.CharField(max_length=32)
     outcome = models.CharField(max_length=16, choices=OUTCOME_CHOICES)
     error_code = models.CharField(max_length=64, null=True, blank=True)
+
+    # review_page evidence only (IMP-04): one row is one page-fetch attempt owned by a
+    # ReviewCollectionJob generation. Nullable because every other kind has no such owner.
+    review_job = models.ForeignKey(
+        "reviews.ReviewCollectionJob",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="fetch_attempts",
+    )
+    collection_generation = models.PositiveIntegerField(null=True, blank=True)
+    page_ordinal = models.PositiveIntegerField(null=True, blank=True)
+    attempt_no = models.PositiveIntegerField(null=True, blank=True)
+    fencing_token = models.PositiveBigIntegerField(null=True, blank=True)
+    reported_total = models.PositiveIntegerField(null=True, blank=True)
+    item_count = models.PositiveIntegerField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["review_job", "collection_generation", "page_ordinal", "attempt_no"],
+                condition=models.Q(review_job__isnull=False),
+                name="uq_source_fetch_review_attempt",
+            ),
+            models.UniqueConstraint(
+                fields=["review_job", "collection_generation", "page_ordinal"],
+                condition=models.Q(review_job__isnull=False, outcome="succeeded"),
+                name="uq_source_fetch_review_accepted_page",
+            ),
+        ]
 
     def __str__(self) -> str:
         return f"{self.kind}:{self.outcome} @ {self.started_at:%Y-%m-%dT%H:%M:%SZ}"

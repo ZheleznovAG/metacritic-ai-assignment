@@ -30,7 +30,7 @@ if __name__ == "__main__":
         original = target.read_text(encoding="utf-8")
         names = {line.split("=", 1)[0] for line in original.splitlines() if "=" in line}
         additions = []
-        for role in ("WEB", "MIGRATE", "CHECKS", "SCHEDULER"):
+        for role in ("WEB", "MIGRATE", "CHECKS", "SCHEDULER", "WORKER"):
             for name, value in (
                 (f"{role}_DB_USER", f"metacritic_{role.lower()}"),
                 (f"{role}_DB_PASSWORD", secrets.token_hex(24)),
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     template = template.replace(
         "POSTGRES_PASSWORD=\n", f"POSTGRES_PASSWORD={secrets.token_hex(24)}\n"
     )
-    for role in ("WEB", "MIGRATE", "CHECKS", "SCHEDULER"):
+    for role in ("WEB", "MIGRATE", "CHECKS", "SCHEDULER", "WORKER"):
         template = template.replace(
             f"{role}_DB_PASSWORD=\n", f"{role}_DB_PASSWORD={secrets.token_hex(24)}\n"
         )

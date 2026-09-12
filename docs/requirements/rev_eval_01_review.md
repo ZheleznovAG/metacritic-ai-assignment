@@ -81,17 +81,19 @@ oracle tests observable behaviour, not implementation strategy.
 ## Verification
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r evals\review_selection\requirements.txt
 cd evals\review_selection
 ..\..\.venv\Scripts\python.exe -m unittest discover -s . -p test_*.py -v   # 9/9 meta-tests
 ..\..\.venv\Scripts\python.exe score_selection.py --verify baseline_report.json
 ```
 
 Run locally in this session: 9/9 meta-tests passed; the saved baseline report reproduces exactly
-(`--verify` reports no recomputation drift). `evals/review_selection/` is intentionally outside
-`scripts/check.py`'s automated suite, for the same reason `evals/reviews/check_token_budget.py` is:
-it needs `tiktoken`, which is not a core project dependency (see that eval's own precedent in
-`research/feasibility/ai-summary.md`'s reproduction section).
+(`--verify` reports no recomputation drift).
+
+**Update (`IMP-04`, 2026-09-12):** `tiktoken` became a core project dependency once the real
+selection algorithm needed it (not just this eval), so `evals/review_selection/`'s meta-tests,
+`score_selection.py --verify`, and the real-candidate cross-check (`verify_candidate.py`) are now
+part of `scripts/check.py`'s automated suite — see
+[`imp_04_review.md`](imp_04_review.md) for the real candidate's 8/8 result.
 
 ## Ask
 

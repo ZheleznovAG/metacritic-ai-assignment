@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 from decimal import Decimal
 
 from django.test import TestCase
-from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO
+from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO, ReviewPageDTO
 from processing.models import DailyCandidate, ProcessingRun
 from processing.scheduler import current_slot, run_tick, trigger_key_for_slot
 
@@ -68,6 +68,11 @@ class FakeGateway:
 
     def fetch_platform_userscore(self, url: str) -> tuple[Decimal | None, FetchEvidence]:
         return None, _evidence("platform_userscore")
+
+    def fetch_review_page(
+        self, audience: str, game_slug: str, platform_slug: str, cursor: str | None
+    ) -> tuple[ReviewPageDTO | None, FetchEvidence]:
+        return ReviewPageDTO(items=(), reported_total=0, next_cursor=None), _evidence("review_page")
 
 
 class LeaseStealingGateway(FakeGateway):

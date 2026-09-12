@@ -55,3 +55,22 @@ class GameIdentityDTO:
 class BrowsePage:
     games: tuple[GameIdentityDTO, ...]
     has_next_page: bool
+
+
+@dataclass(frozen=True, slots=True)
+class ReviewRecordDTO:
+    """One backend review-list item; the parser reads and normalizes nothing beyond this shape."""
+
+    source_review_id: str | None
+    author_or_source_label: str | None
+    score_label: str | None
+    date_label: str | None
+    text: str
+    external_url: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class ReviewPageDTO:
+    items: tuple[ReviewRecordDTO, ...]
+    reported_total: int
+    next_cursor: str | None

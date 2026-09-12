@@ -1,0 +1,105 @@
+{
+  "data": {
+    "totalResults": 86,
+    "items": [
+      {
+        "author": "",
+        "publicationSlug": "edge-magazine",
+        "publicationName": "Edge Magazine",
+        "quote": "A beautiful and graceful fighting game that lets imagination loose, and winks before slapping Dante, Kratos and every other hero back to the drawing board. [Christmas 2009, p.90]",
+        "score": 100,
+        "date": null,
+        "url": "http://www.edge-online.com/magazine/review-bayonetta"
+      },
+      {
+        "author": "",
+        "publicationSlug": "1up",
+        "publicationName": "1UP",
+        "quote": "This is as good as action games get. It controls like a dream, is extremely well balanced (not terribly difficult on Normal and incredibly challenging on Hard), has tons of variety, features great retro game references, contains tons of unlockables and challenges to keep you busy after you finish the story, and when it comes down to it, is the best game Sega has published in years.",
+        "score": 100,
+        "date": null,
+        "url": "http://www.1up.com/do/reviewPage?cId=3177422&p=4"
+      },
+      {
+        "author": "",
+        "publicationSlug": "eurogamer-spain",
+        "publicationName": "Eurogamer Spain",
+        "quote": "The best beat 'em up we've played since God Hand, a game that not only lives to its hype, but surpasses it.",
+        "score": 100,
+        "date": null,
+        "url": "http://www.eurogamer.es/articles/bayonetta-analisis"
+      },
+      {
+        "author": "",
+        "publicationSlug": "gamesradar+",
+        "publicationName": "GamesRadar+",
+        "quote": "It’s an almost flawless exhibition of gaming greatness, which can effortlessly make even the most ham-fisted of gamers feel like they’ve got elite skills. Bayonetta is already an early contender for GOTY for 2010.",
+        "score": 100,
+        "date": null,
+        "url": "http://www.gamesradar.com/xbox360/bayonetta/review/bayonetta/a-2009122215515698373414/g-2008051422316843088"
+      },
+      {
+        "author": "",
+        "publicationSlug": "telegraph",
+        "publicationName": "Telegraph",
+        "quote": "Bayonetta’s unashamedly a video game, but it’s also unashamedly Japanese, a celebration of the unique exuberance that characterises the country’s long-standing approach to video game craft. What’s the phrase? “Only in Japan?” Sometimes that’s true, and the rest of the world can only look on in envy.",
+        "score": 100,
+        "date": null,
+        "url": "http://www.telegraph.co.uk/technology/video-games/6930584/Bayonetta-video-game-review.html"
+      },
+      {
+        "author": "",
+        "publicationSlug": "play-magazine",
+        "publicationName": "Play Magazine",
+        "quote": "Bayonetta’s across-the-boards perfection can’t be measured by any scale. It’s simply in a class by itself. This is where games need to go for my money. Platinum knows no bounds. A modern-day masterpiece.",
+        "score": 100,
+        "date": null,
+        "url": "http://playmagazine.com/?fuseaction=SiteMain.Content&contentid=1994"
+      },
+      {
+        "author": "",
+        "publicationSlug": "gamer-limit",
+        "publicationName": "Gamer Limit",
+        "quote": "Bayonetta is an action masterpiece. All you action fans out there should run out and buy it, and just about everyone should give it a try on Very Easy mode at the very least.",
+        "score": 100,
+        "date": null,
+        "url": "http://gamerlimit.com/2010/01/gamer-limit-review-bayonetta/"
+      },
+      {
+        "author": "",
+        "publicationSlug": "acegamez",
+        "publicationName": "AceGamez",
+        "quote": "It’s perhaps fitting that Bayonetta should be released on the first launch day of 2010 because not only does it raise the bar for action games for the rest of the year to come it is already, without exaggeration, a firm contender for game of the year.",
+        "score": 100,
+        "date": null,
+        "url": ""
+      },
+      {
+        "author": "",
+        "publicationSlug": "eurogamer-portugal",
+        "publicationName": "Eurogamer Portugal",
+        "quote": "Bayonetta is undoubtedly a masterpiece and the best action game in recent years.",
+        "score": 100,
+        "date": null,
+        "url": "http://www.eurogamer.pt/articles/bayonetta-analise"
+      },
+      {
+        "author": "",
+        "publicationSlug": "gameshark",
+        "publicationName": "GameShark",
+        "quote": "Bayonetta is a stunning orgy of sadistic mayhem that surpassed even my unreasonably high expectations, and proved that violence can be beautiful.",
+        "score": 100,
+        "date": null,
+        "url": "http://www.gameshark.com/reviews/3445/Bayonetta-Review.htm"
+      }
+    ]
+  },
+  "links": {
+    "self": {
+      "href": "https://backend.metacritic.com/reviews/metacritic/critic/games/bayonetta/platform/xbox-360/web?offset=0&limit=10&filterBySentiment=all&sort=score&componentName=critic-reviews&componentDisplayName=critic+Reviews&componentType=ReviewList"
+    },
+    "next": {
+      "href": "https://backend.metacritic.com/reviews/metacritic/critic/games/bayonetta/platform/xbox-360/web?offset=10&limit=10&filterBySentiment=all&sort=score&componentName=critic-reviews&componentDisplayName=critic+Reviews&componentType=ReviewList"
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "review-summary-output-2.1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "audience": {
+      "type": "string",
+      "enum": [
+        "critic",
+        "user"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "description": "ok when there are at least 3 meaningful input reviews; insufficient_data otherwise.",
+      "enum": [
+        "ok",
+        "insufficient_data"
+      ]
+    },
+    "likes": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    },
+    "dislikes": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    },
+    "insufficient_data_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Stable machine-readable reason code; null when status is ok."
+    }
+  },
+  "required": [
+    "case_id",
+    "audience",
+    "status",
+    "likes",
+    "dislikes",
+    "insufficient_data_reason"
+  ],
+  "$defs": {
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "claim": {
+          "type": "string",
+          "description": "A concise grounded claim in the predominant language of the input review corpus.",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "support": {
+          "type": "array",
+          "description": "Exactly one review ID that directly supports the entire claim.",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "claim",
+        "support"
+      ]
+    }
+  }
+}

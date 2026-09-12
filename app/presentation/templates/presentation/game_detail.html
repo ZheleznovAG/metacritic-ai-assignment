@@ -43,6 +43,41 @@
           {% endfor %}
         </tbody>
       </table>
+
+      <h2>AI review summaries</h2>
+      {% for summary in summaries %}
+        <section class="game-card__summary">
+          <h3>{{ summary.audience|title }}s</h3>
+          {% if summary.state == "pending" %}
+            <p class="no-data">Pending — review collection or summarisation has not completed yet.</p>
+          {% elif summary.state == "insufficient_data" %}
+            <p class="no-data">Not enough meaningful reviews yet to summarise.</p>
+          {% else %}
+            {% if summary.state == "stale" %}
+              <p class="summary-stale">Stale — showing the last valid summary while a newer one is {{ summary.stale_reason }}.</p>
+            {% endif %}
+            <div class="game-card__summary-claims">
+              <div>
+                <h4>Likes</h4>
+                <ul>
+                  {% for claim in summary.likes %}<li>{{ claim.text }}</li>{% endfor %}
+                </ul>
+              </div>
+              <div>
+                <h4>Dislikes</h4>
+                <ul>
+                  {% for claim in summary.dislikes %}<li>{{ claim.text }}</li>{% endfor %}
+                </ul>
+              </div>
+            </div>
+            <p class="summary-provenance">
+              Model: {{ summary.model_id|default:"unknown" }} · Generated: {{ summary.generated_at_utc }} ·
+              {{ summary.selected_count }} of {{ summary.fetched_count }} fetched
+              ({{ summary.reported_count }} reported) reviews used.
+            </p>
+          {% endif %}
+        </section>
+      {% endfor %}
     </main>
   </body>
 </html>

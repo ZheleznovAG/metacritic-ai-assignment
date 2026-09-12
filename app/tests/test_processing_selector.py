@@ -14,7 +14,7 @@ from decimal import Decimal
 from catalog.models import Game
 from django.db import transaction
 from django.test import TestCase
-from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO
+from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO, ReviewPageDTO
 from processing.lease import LeaseOverlap, acquire_lease, current_fencing_token
 from processing.models import DailyCandidate, DailyCycle, ProcessingRun
 from processing.scheduler import run_tick
@@ -104,6 +104,11 @@ class FakeGateway:
 
     def fetch_platform_userscore(self, url: str) -> tuple[Decimal | None, FetchEvidence]:
         return None, _evidence("platform_userscore")
+
+    def fetch_review_page(
+        self, audience: str, game_slug: str, platform_slug: str, cursor: str | None
+    ) -> tuple[ReviewPageDTO | None, FetchEvidence]:
+        return ReviewPageDTO(items=(), reported_total=0, next_cursor=None), _evidence("review_page")
 
 
 def _make_run(clock: FakeClock, business_day: datetime, token: int) -> ProcessingRun:

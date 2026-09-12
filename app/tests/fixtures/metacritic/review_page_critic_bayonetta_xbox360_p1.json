@@ -1,0 +1,105 @@
+{
+  "data": {
+    "totalResults": 86,
+    "items": [
+      {
+        "author": "",
+        "publicationSlug": "gameplayer-sweden",
+        "publicationName": "Gameplayer Sweden",
+        "quote": "Non-stop climax action.",
+        "score": 100,
+        "date": null,
+        "url": "http://gameplayer.se/pub_text.php?pub_id=15242"
+      },
+      {
+        "author": "",
+        "publicationSlug": "gaming-age",
+        "publicationName": "Gaming Age",
+        "quote": "It's such a fantastic game to start off the New Year with, and while I haven't been fully in love with Platinum Games previous efforts, they really knocked this one out of the park for me.",
+        "score": 100,
+        "date": null,
+        "url": "http://www.gaming-age.com/cgi-bin/reviews/review.pl?sys=xbox360&game=bayonetta"
+      },
+      {
+        "author": "",
+        "publicationSlug": "ign-uk",
+        "publicationName": "IGN UK",
+        "quote": "Bayonetta flies so astonishingly close to perfection. While in essence it’s cast from the same mould as Devil May Cry and the games that followed in its wake, Platinum Games have flourished that template with an imagination that’s impossible not to be charmed by, with Bayonetta’s first five hours enthralling and its latter seven absolutely mesmeric.",
+        "score": 96,
+        "date": null,
+        "url": "http://xbox360.ign.com/articles/105/1057055p1.html"
+      },
+      {
+        "author": "",
+        "publicationSlug": "gamefocus",
+        "publicationName": "GameFocus",
+        "quote": "It’s only January and this game easily chalks itself up as a heavy contender in 2010 for Best Action Game. If you’re even remotely interested in action games, this is a must-have. Bayonetta is candy for the eyes and a pleasure for the thumbs.",
+        "score": 96,
+        "date": null,
+        "url": "http://www.gamefocus.ca/?nav=reviewCard&fid=7849"
+      },
+      {
+        "author": "",
+        "publicationSlug": "atomicgamer",
+        "publicationName": "AtomicGamer",
+        "quote": "Sexual overtones or not, there’s never been anything quite like Bayonetta.",
+        "score": 96,
+        "date": null,
+        "url": "http://www.atomicgamer.com/articles/962/bayonetta-review"
+      },
+      {
+        "author": "",
+        "publicationSlug": "ign",
+        "publicationName": "IGN",
+        "quote": "The 360 version is vastly superior to the PS3 version on a technical level, so PS3 owners fortunate enough to own a 360 should absolutely avoid the PS3 copy.",
+        "score": 95,
+        "date": null,
+        "url": "http://xbox360.ign.com/articles/105/1056885p1.html"
+      },
+      {
+        "author": "",
+        "publicationSlug": "multiplayerit",
+        "publicationName": "Multiplayer.it",
+        "quote": "Bayonetta is truly a masterpiece of the action genre, a fresh, funny and spectacular stylish game also very deep in its gameplay. Platinum Games has definitely made a title that put Devil May Cry and every other action game in shame. Must Buy, period.",
+        "score": 95,
+        "date": null,
+        "url": "http://multiplayer.it/recensioni/73218-bayonetta-la-strega-dei-nostri-sogni.html?piattaforma=x360"
+      },
+      {
+        "author": "",
+        "publicationSlug": "palgn",
+        "publicationName": "PALGN",
+        "quote": "Bayonetta is the new Queen of action games, making other games in the genre feel redundant by comparison. Kratos, Dante and Ryu… eat your heart out because Bayonetta is here.",
+        "score": 95,
+        "date": null,
+        "url": "http://palgn.com.au/xbox-360/15592/bayonetta-review/"
+      },
+      {
+        "author": "",
+        "publicationSlug": "worth-playing",
+        "publicationName": "Worth Playing",
+        "quote": "With its blend of cutting-edge action and scintillating adventure, Bayonetta comes across as an explosion of ideas that Kamiya and his crew may have had since their work on Devil May Cry. In many ways, Bayonetta is the culmination of that effort. It's the wildest ride yet.",
+        "score": 95,
+        "date": null,
+        "url": "http://worthplaying.com/article/2010/1/9/reviews/71421/"
+      },
+      {
+        "author": "",
+        "publicationSlug": "xbox-achievements",
+        "publicationName": "Xbox Achievements",
+        "quote": "It has been a while since a game of this quality has kicked off the year, but Bayonetta delivers on every front, even managing to draw in players that would normally give this genre a miss, thanks to the superb presentation, humour and charm. The game pretty much lures you into multiple playthroughs too, thanks to that ‘one more try’ mentality to surpass yourself, which is a rare feat indeed. It may be that Japan will not make them like this anymore and that would be a tragedy, so do yourself a favour and enjoy this game.",
+        "score": 95,
+        "date": null,
+        "url": "http://www.xbox360achievements.org/game/bayonetta/review/"
+      }
+    ]
+  },
+  "links": {
+    "self": {
+      "href": "https://backend.metacritic.com/reviews/metacritic/critic/games/bayonetta/platform/xbox-360/web?offset=10&limit=10&filterBySentiment=all&sort=score&componentName=critic-reviews&componentDisplayName=critic+Reviews&componentType=ReviewList"
+    },
+    "next": {
+      "href": "https://backend.metacritic.com/reviews/metacritic/critic/games/bayonetta/platform/xbox-360/web?offset=20&limit=10&filterBySentiment=all&sort=score&componentName=critic-reviews&componentDisplayName=critic+Reviews&componentType=ReviewList"
+    }
+  }
+}

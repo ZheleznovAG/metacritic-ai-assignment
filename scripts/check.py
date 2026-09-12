@@ -35,6 +35,13 @@ def main() -> None:
         ["-m", "unittest", "discover", "-s", "research/planning", "-p", "test_*.py"],
         ["evals/reviews/score_run.py", "evals/reviews/baseline/run.json", "--verify"],
         ["-m", "unittest", "discover", "-s", "evals/reviews", "-p", "test_*.py"],
+        ["-m", "unittest", "discover", "-s", "evals/review_selection", "-p", "test_*.py"],
+        [
+            "evals/review_selection/score_selection.py",
+            "--verify",
+            "evals/review_selection/baseline_report.json",
+        ],
+        ["evals/review_selection/verify_candidate.py"],
     ]
     for arguments in commands:
         print("CHECK:", " ".join(arguments), flush=True)

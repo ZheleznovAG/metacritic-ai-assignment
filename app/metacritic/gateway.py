@@ -1,14 +1,16 @@
 """Bounded single-request HTTP adapter; no retry/backoff policy (that is `HRD-01`)."""
 
 import hashlib
+from collections.abc import Callable
 from dataclasses import replace
 from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Protocol
+from urllib.parse import quote_plus, urlencode
 
 import httpx
 
-from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO
+from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO, ReviewPageDTO
 from metacritic.errors import MetacriticFetchError, MetacriticParseError
 from metacritic.parser import (
     PARSER_CONTRACT_VERSION,
@@ -16,11 +18,21 @@ from metacritic.parser import (
     parse_game_detail,
     parse_new_releases,
     parse_platform_userscore,
+    parse_review_page,
 )
 
 ALLOWED_HOST = "www.metacritic.com"
 NEW_RELEASES_URL = "https://www.metacritic.com/game/"
 BROWSE_LISTING_URL = "https://www.metacritic.com/browse/game/all/all/all-time/new/"
+
+# Confirmed live during IMP-04 (see docs/requirements/imp_04_review.md): the initial backend
+# review-list URL for a route, captured from the web review page's own embedded SSR link. Every
+# subsequent page is reached only via the previous response's `links.next.href`, never by
+# reconstructing this template again — this pins the one-time "confirmed backend link" `docs/
+# design.md` asks for without an extra web-page fetch per collection job.
+REVIEW_BACKEND_HOST = "backend.metacritic.com"
+_REVIEW_PAGE_LIMIT = {"critic": 10, "user": 50}
+_REVIEW_PAGE_SORT = {"critic": "score", "user": "date"}
 
 
 class GatewayProtocol(Protocol):
@@ -34,6 +46,19 @@ class GatewayProtocol(Protocol):
     def list_new_releases(self) -> tuple[list[GameIdentityDTO] | None, FetchEvidence]: ...
 
     def iter_browse(self, page: int) -> tuple[BrowsePage | None, FetchEvidence]: ...
+
+    def fetch_review_page(
+        self, audience: str, game_slug: str, platform_slug: str, cursor: str | None
+    ) -> tuple[ReviewPageDTO | None, FetchEvidence]: ...
+
+
+class ReviewGatewayProtocol(Protocol):
+    """What `reviews.collector` needs; narrower than `GatewayProtocol` so its fakes don't have to
+    stub unrelated game/listing fetch methods."""
+
+    def fetch_review_page(
+        self, audience: str, game_slug: str, platform_slug: str, cursor: str | None
+    ) -> tuple[ReviewPageDTO | None, FetchEvidence]: ...
 
 
 USER_AGENT = (
@@ -50,6 +75,33 @@ def _validate_url(url: str) -> None:
         raise MetacriticFetchError(f"URL is not a recognised game/listing route: {url}")
 
 
+def _validate_review_url(url: str) -> None:
+    parsed = httpx.URL(url)
+    if parsed.scheme != "https" or parsed.host != REVIEW_BACKEND_HOST:
+        raise MetacriticFetchError(f"URL is not on the allowlisted review backend host: {url}")
+    if not parsed.path.startswith("/reviews/metacritic/"):
+        raise MetacriticFetchError(f"URL is not a recognised review route: {url}")
+
+
+def _initial_review_url(audience: str, game_slug: str, platform_slug: str) -> str:
+    query = urlencode(
+        {
+            "offset": 0,
+            "limit": _REVIEW_PAGE_LIMIT[audience],
+            "filterBySentiment": "all",
+            "sort": _REVIEW_PAGE_SORT[audience],
+            "componentName": f"{audience}-reviews",
+            "componentDisplayName": f"{audience} Reviews",
+            "componentType": "ReviewList",
+        },
+        quote_via=quote_plus,
+    )
+    return (
+        f"https://{REVIEW_BACKEND_HOST}/reviews/metacritic/{audience}/games/{game_slug}"
+        f"/platform/{platform_slug}/web?{query}"
+    )
+
+
 class MetacriticGateway:
     def __init__(self, client: httpx.Client | None = None) -> None:
         self._client = client or httpx.Client(
@@ -61,8 +113,10 @@ class MetacriticGateway:
         if self._owns_client:
             self._client.close()
 
-    def _get(self, url: str, kind: str) -> tuple[str | None, FetchEvidence]:
-        _validate_url(url)
+    def _get(
+        self, url: str, kind: str, validate: Callable[[str], None] = _validate_url
+    ) -> tuple[str | None, FetchEvidence]:
+        validate(url)
         started_at = datetime.now(tz=UTC)
         try:
             response = self._client.get(url)
@@ -140,5 +194,21 @@ class MetacriticGateway:
             return None, evidence
         try:
             return parse_browse_page(body, url), evidence
+        except MetacriticParseError as error:
+            return None, replace(evidence, outcome="invalid", error_code=type(error).__name__)
+
+    def fetch_review_page(
+        self, audience: str, game_slug: str, platform_slug: str, cursor: str | None
+    ) -> tuple[ReviewPageDTO | None, FetchEvidence]:
+        url = (
+            cursor
+            if cursor is not None
+            else _initial_review_url(audience, game_slug, platform_slug)
+        )
+        body, evidence = self._get(url, kind="review_page", validate=_validate_review_url)
+        if body is None:
+            return None, evidence
+        try:
+            return parse_review_page(body, audience, game_slug, platform_slug), evidence
         except MetacriticParseError as error:
             return None, replace(evidence, outcome="invalid", error_code=type(error).__name__)

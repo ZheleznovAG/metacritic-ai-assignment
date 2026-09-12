@@ -1,0 +1,116 @@
+{
+  "review_page_critic_bayonetta_xbox360_p0": {
+    "reported_total": 86,
+    "item_count": 10,
+    "next_cursor": "https://backend.metacritic.com/reviews/metacritic/critic/games/bayonetta/platform/xbox-360/web?offset=10&limit=10&filterBySentiment=all&sort=score&componentName=critic-reviews&componentDisplayName=critic+Reviews&componentType=ReviewList",
+    "first": {
+      "source_review_id": null,
+      "author_or_source_label": "edge-magazine",
+      "score_label": "100",
+      "date_label": null,
+      "text": "A beautiful and graceful fighting game that lets imagination loose, and winks before slapping Dante, Kratos and every other hero back to the drawing board. [Christmas 2009, p.90]"
+    },
+    "last": {
+      "source_review_id": null,
+      "author_or_source_label": "gameshark",
+      "score_label": "100",
+      "date_label": null,
+      "text": "Bayonetta is a stunning orgy of sadistic mayhem that surpassed even my unreasonably high expectations, and proved that violence can be beautiful."
+    }
+  },
+  "review_page_critic_bayonetta_xbox360_p1": {
+    "reported_total": 86,
+    "item_count": 10,
+    "next_cursor": "https://backend.metacritic.com/reviews/metacritic/critic/games/bayonetta/platform/xbox-360/web?offset=20&limit=10&filterBySentiment=all&sort=score&componentName=critic-reviews&componentDisplayName=critic+Reviews&componentType=ReviewList",
+    "first": {
+      "source_review_id": null,
+      "author_or_source_label": "gameplayer-sweden",
+      "score_label": "100",
+      "date_label": null,
+      "text": "Non-stop climax action."
+    },
+    "last": {
+      "source_review_id": null,
+      "author_or_source_label": "xbox-achievements",
+      "score_label": "95",
+      "date_label": null,
+      "text": "It has been a while since a game of this quality has kicked off the year, but Bayonetta delivers on every front, even managing to draw in players that would normally give this genre a miss, thanks to the superb presentation, humour and charm. The game pretty much lures you into multiple playthroughs too, thanks to that ‘one more try’ mentality to surpass yourself, which is a rare feat indeed. It may be that Japan will not make them like this anymore and that would be a tragedy, so do yourself a favour and enjoy this game."
+    }
+  },
+  "review_page_critic_bayonetta_xbox360_last": {
+    "reported_total": 86,
+    "item_count": 6,
+    "next_cursor": null,
+    "first": {
+      "source_review_id": null,
+      "author_or_source_label": "giant-bomb",
+      "score_label": "80",
+      "date_label": null,
+      "text": "For as many different games as Bayonetta specifically recalls, there's really nothing quite like it. It carries a certain amount of the same technical appeal as Devil May Cry, while marrying it with the deliberate quirk of something like  No More Heroes. It's definitely going to be a divisive game for many, but whether you like it or not, I have a feeling that the developers made exactly the game they wanted to."
+    },
+    "last": {
+      "source_review_id": null,
+      "author_or_source_label": "bigpond-gamearena",
+      "score_label": "50",
+      "date_label": null,
+      "text": "Maybe Platinum Games had deliberately pushed the game so far over the top it became ridiculous and stupid, not out of an attempt to circle on round from stupid back to awesome in that out-there-crazy-no-holds-barred-explosion way, but as a direct parody of all of the previous games which have tried to do that. Maybe Bayonetta isn't a terrible game, but is in fact the pure utilisation of irony to mock both the game manufacturers and its fans!"
+    }
+  },
+  "review_page_user_bayonetta_xbox360_p0": {
+    "reported_total": 118,
+    "item_count": 50,
+    "next_cursor": "https://backend.metacritic.com/reviews/metacritic/user/games/bayonetta/platform/xbox-360/web?offset=50&limit=50&filterBySentiment=all&sort=date&componentName=user-reviews&componentDisplayName=user+Reviews&componentType=ReviewList",
+    "first": {
+      "source_review_id": "424fa02d-447d-49f5-b30f-16472f355fc1",
+      "author_or_source_label": "MrAzizi",
+      "score_label": "9",
+      "date_label": "2025-02-13",
+      "text": "Don't dismiss this as mere fan service. Bayonetta’s unique style, confidence and personality steal the show entirely. The game embraces pure absurdity, featuring fluid combat. It's a truly fun and memorable action game."
+    },
+    "last": {
+      "source_review_id": "09751e6f-11d0-429f-bb29-6b3d234f56b6",
+      "author_or_source_label": "SamComedian",
+      "score_label": "10",
+      "date_label": "2019-03-07",
+      "text": "Mi puntuación sobre Bayonetta es de 10, me explico;\r\nDuración corta, un máximo de 15 horas de modo historia ( un poco escaso ). Gráficamente normal, no es que fuera nada del otro mundo en el 2009, pero era llamativo. Su personaje femenino es de lo mejor que se ha visto en el mundo de los videojuegos y así mismo una sátira. Con una historia simple se consigue hacer un juego increíble, una trama interesante que envuelve el pasado de Bayonetta en un misterio. Bosses con un diseño espectacular y muy originales. Modo de combate hack and slash espectacular lleno de combos y posibiliades. Y por último una banda sonora de 10.\r\nLe pongo un 10 sobre 10, sin dudarlo ( comparándolo con juegos de su plataforma, PS3, Xbox360, WiiU, Switch y PC ). Mi vigesimoctava crítica u/o review de la sección de Games."
+    }
+  },
+  "review_page_user_bayonetta_xbox360_p1": {
+    "reported_total": 118,
+    "item_count": 50,
+    "next_cursor": "https://backend.metacritic.com/reviews/metacritic/user/games/bayonetta/platform/xbox-360/web?offset=100&limit=50&filterBySentiment=all&sort=date&componentName=user-reviews&componentDisplayName=user+Reviews&componentType=ReviewList",
+    "first": {
+      "source_review_id": "a614670d-e4bc-48d0-8c61-08c0f8fb5afd",
+      "author_or_source_label": "VETRA",
+      "score_label": "9",
+      "date_label": "2018-06-14",
+      "text": "Hablar sobre Bayonetta es hablar sobre la perfección, en todos sus apartados. Juego Hack & Slash, sobre unas 12h de duración muy rejugable.\r\nJugabilidad impecable. Frenética y Dinámica. Harás combos impresionantes a una velocidad vertiginosa. Variedad de armas y poderes.\r\nUna banda sonora....simplemente perfecta, cuando entras en combate y empieza a sonar Fly me to the moon..\r\nCinemáticas que se hacen muy amenas, personajes carismáticos y una historia buena.\r\nCuidado en todo detalle.\r\nSobre la protagonista, nuestra querida bruja Cerezita, Bayonetta simplemente enamora. Imponente, dura, coqueta, misteriosa, sexi, divertida. Da igual que o quien haya en pantalla, si esta ella se lleva todo el protagonismo. En el juego constantemente la vemos machacando a todo cristo y derrochando personalidad, carisma y fria con todo el mundo pero conforme avanza el juego podemos ir viendo su lado mas maternal y tierno cuando trata con la niña o con Luka (el pimpollo) lo que le da ese \"toque\".\r\nAhora bien, cuando tiene que entrar a la acción o se cabrea, no hay quien la pare y arrolla a todo lo que se le pone por delante.\r\nSin duda un juego y una protagonista que hacen mella en todo el que lo juege y sepa apreciarlo. Si te gusta el género es imprescindible."
+    },
+    "last": {
+      "source_review_id": "920ff7c2-d6fe-48b7-b0c2-e98e3c200e38",
+      "author_or_source_label": "SwoopTrust",
+      "score_label": "10",
+      "date_label": "2011-11-06",
+      "text": "Look at the graphics bam boom whoosh the music, the combat, the combos holy **** this game is amazing! Play it, goddamn it! The real DMC sequel, and one of the finest games on the 360. Get it."
+    }
+  },
+  "review_page_user_bayonetta_xbox360_last": {
+    "reported_total": 118,
+    "item_count": 18,
+    "next_cursor": null,
+    "first": {
+      "source_review_id": "20d44faa-85b1-4ccc-a4bd-de42c7b1e5f0",
+      "author_or_source_label": "SkizDriz",
+      "score_label": "7",
+      "date_label": "2011-10-27",
+      "text": "Insanely fast action game with horrible japanime music.  That is the summary of the gameplay.  The story of going to Paradiso to reset the balance of light and dark kept me playing it to the end.  There is a lot of room for skill to be used here, it all happens so fast and there are side-challenges that will pretty much require you to be a real-life ninja with the controller to complete.  The graphics are pretty good, and the  frame rate is 60.  The only thing stopping this game from getting a higher score from me is the cheese factor with the music and a few awkward-to-watch cut scenes.  I feel embarrassed for the characters, and to think the originated in the underworld?  Lol."
+    },
+    "last": {
+      "source_review_id": "2a84cc48-cf8c-41d0-9bb1-9fe5aa61b9e3",
+      "author_or_source_label": "JudgeMental",
+      "score_label": "9",
+      "date_label": "2010-08-22",
+      "text": "A wonderful game, with good mechanics, no glitches that I could find, an excellent story, and good characters. Some of the tribute pieces, such as Verses 1 and 2 of Chapter 14, seem out of place, but the rest of the game makes up for it. The sexuality in the game is so overblown as to be comical rather than insulting, but can still be annoying at times. I easily put 60 hours into the game, and would have put in more time had I not lent it to a friend. Buy this game."
+    }
+  }
+}

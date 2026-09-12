@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "catalog",
     "processing",
     "reviews",
+    "summaries",
     "presentation",
 ]
 MIDDLEWARE = [

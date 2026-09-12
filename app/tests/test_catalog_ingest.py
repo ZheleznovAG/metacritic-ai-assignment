@@ -5,7 +5,14 @@ from unittest import mock
 from catalog.ingest import ingest_game
 from catalog.models import Game, GameAlias, GamePlatform, SourceFetch
 from django.test import TestCase
-from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO, GamePlatformDTO
+from metacritic.dto import (
+    BrowsePage,
+    FetchEvidence,
+    GameDTO,
+    GameIdentityDTO,
+    GamePlatformDTO,
+    ReviewPageDTO,
+)
 from processing.models import DailyCandidate
 from reviews.models import ReviewCollectionJob
 
@@ -102,6 +109,11 @@ class FakeGateway:
         raise NotImplementedError("not used by catalog.ingest tests")
 
     def iter_browse(self, page: int) -> tuple[BrowsePage | None, FetchEvidence]:
+        raise NotImplementedError("not used by catalog.ingest tests")
+
+    def fetch_review_page(
+        self, audience: str, game_slug: str, platform_slug: str, cursor: str | None
+    ) -> tuple[ReviewPageDTO | None, FetchEvidence]:
         raise NotImplementedError("not used by catalog.ingest tests")
 
 
