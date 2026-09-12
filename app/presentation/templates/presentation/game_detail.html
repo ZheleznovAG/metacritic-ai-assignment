@@ -10,6 +10,7 @@
   <body>
     <main class="game-card">
       <p class="eyebrow">IMP-02 · game card</p>
+      <a class="game-card__back" href="{% url 'index' %}{% if back_query_string %}?{{ back_query_string }}{% endif %}">&larr; Back to results</a>
       <h1>{{ game.title }}</h1>
       {% if game.cover_url %}
         <img class="game-card__cover" src="{{ game.cover_url }}" alt="{{ game.title }} cover art">

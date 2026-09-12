@@ -4,14 +4,52 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Metacritic AI Assignment — scaffold</title>
+    <title>Metacritic AI Assignment</title>
     <link rel="stylesheet" href="{% static 'presentation/app.css' %}">
   </head>
   <body>
-    <main>
-      <p class="eyebrow">IMP-01 · infrastructure preview</p>
+    <main class="game-list">
+      <p class="eyebrow">IMP-05 · game list</p>
       <h1>Metacritic AI Assignment</h1>
-      <p>The application scaffold is running. Game ingestion, reviews and recommendations are not implemented yet.</p>
+      <p>Search, filter by platform, and open a card for both critic and user AI summaries. Similar games and recommendations are not implemented yet.</p>
+
+      <form class="game-list__controls" method="get" action="{% url 'index' %}">
+        <label for="q">Search titles</label>
+        <input type="search" id="q" name="q" value="{{ query }}" placeholder="Search by title&hellip;">
+
+        <label for="platform">Platform</label>
+        <select id="platform" name="platform">
+          <option value="">All platforms</option>
+          {% for option in platforms %}
+            <option value="{{ option.slug }}" {% if option.slug == selected_platform %}selected{% endif %}>{{ option.name }}</option>
+          {% endfor %}
+        </select>
+
+        <button type="submit">Filter</button>
+        <a class="game-list__reset" href="{% url 'index' %}">Reset</a>
+      </form>
+
+      {% if games %}
+        <ul class="game-list__grid">
+          {% for game in games %}
+            <li class="game-list__item">
+              <a href="{% url 'game-detail' game.id %}{% if query_string %}?{{ query_string }}{% endif %}">
+                {% if game.cover_url %}
+                  <img class="game-list__cover" src="{{ game.cover_url }}" alt="{{ game.title }} cover art">
+                {% else %}
+                  <span class="game-list__cover game-list__cover--placeholder" aria-hidden="true"></span>
+                {% endif %}
+                <span class="game-list__title">{{ game.title }}</span>
+                <span class="game-list__developer">{% if game.developer %}{{ game.developer }}{% else %}<span class="no-data">No data</span>{% endif %}</span>
+                <span class="game-list__score">{% if game.metascore is not None %}{{ game.metascore }}{% else %}<span class="no-data">No score</span>{% endif %}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="game-list__empty">No games match this search/filter combination.</p>
+      {% endif %}
+
       <p class="version">Build <code>{{ version }}</code></p>
       <nav aria-label="Service health">
         <a href="{% url 'live' %}">Liveness</a>

@@ -5,10 +5,10 @@ from unittest.mock import patch
 from config.safe_logging import SafeFormatter
 from django.conf import settings
 from django.db import OperationalError, connection
-from django.test import SimpleTestCase, TestCase
+from django.test import TestCase
 
 
-class PublicScaffoldTests(SimpleTestCase):
+class PublicScaffoldTests(TestCase):
     def test_index_states_actual_scope(self) -> None:
         response = self.client.get("/")
         self.assertContains(response, "not implemented yet")

@@ -9,6 +9,7 @@ a { color: inherit; text-underline-offset: .2em; }
 a:focus-visible { outline: 2px solid currentColor; outline-offset: .3rem; }
 
 .game-card { max-width: 46rem; margin: 8vh auto; }
+.game-card__back { display: inline-block; margin-bottom: 1rem; }
 .game-card__cover { max-width: 100%; border-radius: .5rem; margin: 1rem 0; }
 .game-card__facts { display: grid; grid-template-columns: max-content 1fr; gap: .35rem 1rem; }
 .game-card__facts dt { font-weight: 600; }
@@ -16,3 +17,37 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: .3rem; }
 .game-card__platforms { border-collapse: collapse; width: 100%; margin-top: 1rem; }
 .game-card__platforms th, .game-card__platforms td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid currentColor; }
 .no-data { opacity: .6; font-style: italic; }
+
+.game-card__summary { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid currentColor; }
+.game-card__summary-claims { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.game-card__summary-claims ul { margin: .25rem 0; padding-left: 1.2rem; }
+.summary-stale { opacity: .75; font-style: italic; }
+.summary-provenance { opacity: .65; font-size: .85rem; }
+
+.game-list { max-width: 64rem; margin: 6vh auto; }
+.game-list__controls {
+  display: flex; flex-wrap: wrap; align-items: end; gap: .75rem 1rem;
+  margin: 1.5rem 0; padding: 1rem; border: 1px solid currentColor; border-radius: .5rem;
+}
+.game-list__controls label { display: block; font-size: .8rem; font-weight: 600; margin-bottom: .25rem; }
+.game-list__reset { align-self: center; }
+.game-list__grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1.25rem; list-style: none; margin: 0; padding: 0;
+}
+.game-list__item a {
+  display: flex; flex-direction: column; gap: .35rem; text-decoration: none;
+  padding: .5rem; border: 1px solid currentColor; border-radius: .5rem; height: 100%;
+}
+.game-list__cover {
+  width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: .35rem;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.game-list__cover--placeholder { display: block; }
+.game-list__title {
+  font-weight: 600; overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.game-list__developer { font-size: .85rem; opacity: .75; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.game-list__score { font-size: .85rem; }
+.game-list__empty { opacity: .75; font-style: italic; }
