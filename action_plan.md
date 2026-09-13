@@ -2,8 +2,8 @@
 
 - Baseline: **1.0**, задача `PLN-03`, 2026-09-09 (Asia/Novosibirsk).
 - Bonus scope: `pending`.
-- [Повторный аудит `6551e42`](docs/requirements/implementation_audit_6551e42.md) подтвердил исправления R02/R15, local/Linux suites и локальную карточку; открыты 19 findings (7 P1, 12 P2), включая новые R16–R21. [24 probes и observations](research/reviews/6551e42/README.md) сохранены в Git; предыдущие аудиты остаются историческим evidence.
-- Следующий цикл: локальная IMP-04 correction collection/snapshot/handoff (R03–R06), с критериями в [очереди исправлений](docs/requirements/implementation_audit_6551e42.md#очередь-исправлений). Внешнее evidence IMP-01 остаётся незавершённым; correction существующего кода не начинает новую зависимую реализацию и не закрывает gates. SIM-EVAL-01 остаётся независимой Ready-задачей.
+- [Повторный аудит `6551e42`](docs/requirements/implementation_audit_6551e42.md) выявил 19 findings и подтвердил исправления R02/R15. [Correction R03–R06](docs/requirements/imp_04_snapshot_correction.md) проверена локально и в Linux: 198 application tests, migration/concurrency/crash regressions; остаются 15 findings (3 P1, 12 P2). [24 исходных probes и observations](research/reviews/6551e42/README.md) сохраняются как историческое evidence.
+- Следующий цикл: локальная IMP-03 correction core ownership/retry (R16/R20), с критериями в [очереди исправлений](docs/requirements/implementation_audit_6551e42.md#очередь-исправлений). Внешнее evidence IMP-01 остаётся незавершённым; correction существующего кода не начинает новую зависимую реализацию и не закрывает gates. SIM-EVAL-01 остаётся независимой Ready-задачей.
 
 ## Источники истины и правила
 
@@ -24,7 +24,7 @@
 
 ## Приоритет текущего цикла
 
-Сначала R03–R06 (IMP-04); затем core fencing/retry R16/R20, source failure isolation R19, AI budget/attempts/validation, collection retry/redelivery, worker fairness и UI. Все 19 findings распределены по отдельным циклам с проверяемыми исходами в [очереди исправлений](docs/requirements/implementation_audit_6551e42.md#очередь-исправлений). Для каждого цикла defect-confirming probes переводятся в application regressions с правильным ожидаемым результатом; исторические probes не являются acceptance suite. Контейнерная [correction](docs/requirements/imp_01_container_correction.md) и [discovery correction](docs/requirements/imp_03_discovery_correction.md) сохраняют evidence; hosted CI/public evidence и G4–G7 остаются открытыми.
+Локальная [correction R03–R06](docs/requirements/imp_04_snapshot_correction.md) проверена; следующая — core fencing/retry R16/R20, затем source failure isolation R19, AI budget/attempts/validation, collection retry/redelivery, worker fairness и UI. Оставшиеся 15 findings относятся к циклам 2–8 [очереди исправлений](docs/requirements/implementation_audit_6551e42.md#очередь-исправлений). Для каждого цикла defect-confirming probes переводятся в application regressions с правильным ожидаемым результатом; исторические probes не являются acceptance suite. Контейнерная [correction](docs/requirements/imp_01_container_correction.md) и [discovery correction](docs/requirements/imp_03_discovery_correction.md) сохраняют evidence; hosted CI/public evidence и G4–G7 остаются открытыми.
 
 ## Исторические циклы до аудита 2026-09-12
 
@@ -79,7 +79,7 @@
 | [IMP-02](implementation_plan.md#imp-02) | IMP-01 | base | Changes requested | [Аудит R19/R21](docs/requirements/implementation_audit_6551e42.md): source score validation/failure isolation и video fallback; локальный container/card path повторно проверен, hosted/public evidence остаётся открытым. Historical: [ingest/card evidence](docs/requirements/imp_02_review.md). |
 | [IMP-03](implementation_plan.md#imp-03) | IMP-02 | base | Changes requested | [Аудит R16/R20, участие в R19](docs/requirements/implementation_audit_6551e42.md): core fencing/retry/failure isolation. [Discovery correction R02/R15](docs/requirements/imp_03_discovery_correction.md) подтверждена; зависимость IMP-02/public evidence открыта. |
 | [REV-EVAL-01](implementation_plan.md#rev-eval-01) | G3, SPK-05 | base | Verified | [Oracle accepted 2026-09-12](docs/requirements/rev_eval_01_review.md): 8 cases, 8 hard invariants, naive-baseline evidence, owner Ask answered |
-| [IMP-04](implementation_plan.md#imp-04) | IMP-03, REV-EVAL-01 | base | Changes requested | [Аудит R01/R03–R11/R13/R14/R18, участие в R17](docs/requirements/implementation_audit_6551e42.md): следующий цикл R03–R06; прочие AI/retry/quota/queue corrections — отдельными циклами. Historical: [review/summary evidence](docs/requirements/imp_04_review.md). |
+| [IMP-04](implementation_plan.md#imp-04) | IMP-03, REV-EVAL-01 | base | Changes requested | [R03–R06 correction](docs/requirements/imp_04_snapshot_correction.md): local/Linux 198 tests, immutable versions, exact daily observations и atomic handoff. Открыты [R01/R07–R11/R13/R14/R18, участие в R17](docs/requirements/implementation_audit_6551e42.md); AI/retry/quota/queue corrections — отдельными циклами. Historical: [review/summary evidence](docs/requirements/imp_04_review.md). |
 | [IMP-05](implementation_plan.md#imp-05) | IMP-04 | base | Changes requested | [Аудит R12/R17/R21](docs/requirements/implementation_audit_6551e42.md): collection freshness/timestamp ties, cache-hit freshness и video fallback; UI/public acceptance открыта. Historical: [UI evidence](docs/requirements/imp_05_review.md). |
 | [SIM-EVAL-01](implementation_plan.md#sim-eval-01) | G3 | base | Ready | Ожидается: evals/similarity: dataset/metric/acceptance |
 | [IMP-06](implementation_plan.md#imp-06) | SIM-EVAL-01, IMP-02 | base | Planned | Ожидается: Frozen comparison report и policy version |

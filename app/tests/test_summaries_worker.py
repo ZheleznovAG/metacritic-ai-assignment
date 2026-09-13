@@ -5,6 +5,7 @@ import httpx
 from catalog.models import Game, GamePlatform
 from django.test import TestCase
 from reviews.models import Review, ReviewCorpus, ReviewCorpusItem
+from reviews.versioning import version_fingerprint
 from summaries import contour, worker
 from summaries.models import SummaryAttempt, SummaryJob
 
@@ -40,6 +41,9 @@ def _make_review(platform: GamePlatform, audience: str, n: int) -> Review:
         identity_key=f"id:{n}",
         text_original=f"Review text number {n} with real content.",
         content_sha256=f"sha{n}",
+        version_sha256=version_fingerprint(
+            f"Review text number {n} with real content.", None, None, None
+        ),
         first_seen_at=datetime(2026, 9, 12, tzinfo=UTC),
     )
 

@@ -8,6 +8,8 @@
 
 Датированное implementation evidence: [аудит `6551e42`, 2026-09-13](requirements/implementation_audit_6551e42.md) воспроизвёл нарушения существующих рисков `R-TIM-01/02` (fencing/retry), `R-EXT-04` (source validation), `R-AI-01/02` (corpus/input/validation/quota/queue) и `R-UI-01` (freshness/video). [Архив probes и observations](../research/reviews/6551e42/README.md) дополняет spike evidence фактическими контрпримерами runtime. Новых risk IDs, ослабления thresholds или признания этих рисков устранёнными эта запись не вводит; correction-статусы принадлежат [action_plan.md](../action_plan.md).
 
+[IMP-04 snapshot correction, 2026-09-14](requirements/imp_04_snapshot_correction.md) добавляет PostgreSQL regressions повторного дня, immutable text/metadata versions, удаления/partial observations, migration и atomic handoff/crash/concurrency. Это evidence части `R-DAT-01`, `R-AI-01/02`, `R-TST-01`; source mutability, старые неполные данные, общий AI-контракт и production capacity остаются ограничениями. Snapshot tests не заменяют quality/admission/attempt/public проверки.
+
 ## 2. Шкалы и правила приоритета
 
 Для каждого риска используются три независимые оценки от 1 до 5:

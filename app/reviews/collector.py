@@ -26,6 +26,7 @@ from processing.clock import Clock
 
 from reviews import corpus as corpus_module
 from reviews.models import Review, ReviewCollectionJob, ReviewObservation
+from reviews.versioning import version_fingerprint
 
 LEASE_TTL = timedelta(minutes=5)
 MAX_AUTOMATIC_ATTEMPTS = 5
@@ -107,8 +108,6 @@ def _identity_key(
 
 
 def _maybe_build_corpus_and_summary_job(game: Game, audience: str) -> None:
-    if not corpus_module.all_routes_terminal(game, audience):
-        return
     new_corpus = corpus_module.build(game, audience)
     if new_corpus is None:
         return
@@ -131,6 +130,10 @@ def collect_one_page(
     now = clock.now_utc()
 
     with transaction.atomic():
+        # Core upserts and all collection page commits take the game lock first. Besides
+        # serializing versions, this makes terminal readiness + corpus + summary intent one
+        # transaction even when different platform workers finish together (R05/R06).
+        Game.objects.select_for_update().get(pk=game.pk)
         current = _still_owned(job.id, fencing_token)
         if current is None:
             return job  # lease lost mid-flight; the next claim's recovery sweeps this job
@@ -191,43 +194,58 @@ def collect_one_page(
         job.reported_total = page.reported_total
         job.visited_page_fingerprints = [*job.visited_page_fingerprints, page_fingerprint]
 
+        observations = job.observations.filter(collection_generation=job.collection_generation)
+        seen = dict(
+            observations.filter(review__identity_key__in=identity_keys).values_list(
+                "review__identity_key", "review__version_sha256"
+            )
+        )
+        versions = [
+            version_fingerprint(
+                text, item.author_or_source_label, item.score_label, item.date_label
+            )
+            for item, text in zip(page.items, normalized_texts, strict=True)
+        ]
+        # A source edit within a route is not two distinct reviews. Reject that page before
+        # saving any of its observations; previous accepted pages remain an incomplete snapshot.
+        for key, version in zip(identity_keys, versions, strict=True):
+            if key in seen and seen[key] != version:
+                job.state = "unstable"
+                job.last_error = "review_changed_during_collection"
+                job.save(update_fields=["attempt_count", "state", "last_error"])
+                return job
+            seen[key] = version
+
         route_position = job.fetched_count
-        for offset, (item, key, normalized) in enumerate(
-            zip(page.items, identity_keys, normalized_texts, strict=True)
+        for offset, (item, key, normalized, version) in enumerate(
+            zip(page.items, identity_keys, normalized_texts, versions, strict=True)
         ):
             content_sha256 = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
-            review, created = Review.objects.get_or_create(
+            older = None
+            if item.source_review_id:
+                older = (
+                    Review.objects.filter(
+                        game_platform=platform, audience=job.audience, identity_key=key
+                    )
+                    .order_by("-first_seen_at", "-id")
+                    .first()
+                )
+            review, _ = Review.objects.get_or_create(
                 game_platform=platform,
                 audience=job.audience,
                 identity_key=key,
-                content_sha256=content_sha256,
+                version_sha256=version,
                 defaults={
+                    "content_sha256": content_sha256,
                     "source_review_id": item.source_review_id,
                     "author_label": item.author_or_source_label,
                     "score_label": item.score_label,
                     "date_label": item.date_label,
                     "text_original": normalized,
                     "first_seen_at": now,
+                    "supersedes": older,
                 },
             )
-            if created:
-                job.unique_count += 1
-                if item.source_review_id:
-                    older = (
-                        Review.objects.filter(
-                            game_platform=platform,
-                            audience=job.audience,
-                            identity_key=key,
-                            superseded_by__isnull=True,
-                        )
-                        .exclude(pk=review.pk)
-                        .first()
-                    )
-                    if older is not None:
-                        review.supersedes = older
-                        review.save(update_fields=["supersedes"])
-            else:
-                job.duplicate_count += 1
 
             ReviewObservation.objects.get_or_create(
                 collection_job=job,
@@ -241,13 +259,17 @@ def collect_one_page(
             )
 
         job.fetched_count += len(page.items)
+        # Count the current generation, not globally new Review rows (R03). Deriving counters
+        # from observations also corrects old counters on an in-flight job's next accepted page.
+        job.unique_count = observations.values("review__identity_key").distinct().count()
+        job.duplicate_count = job.fetched_count - job.unique_count
         job.page_count += 1
         job.next_cursor = page.next_cursor
 
         if page.next_cursor is None:
-            if job.reported_total == 0:
+            if job.reported_total == 0 and job.fetched_count == 0:
                 job.state = "empty"
-            elif job.reported_total == job.unique_count:
+            elif job.reported_total == job.unique_count and job.duplicate_count == 0:
                 job.state = "complete"
             else:
                 job.state = "unstable"
@@ -258,7 +280,7 @@ def collect_one_page(
 
         job.save()
 
-    if job.state in ("complete", "empty"):
-        _maybe_build_corpus_and_summary_job(game, job.audience)
+        if job.state in ("complete", "empty"):
+            _maybe_build_corpus_and_summary_job(game, job.audience)
 
     return job

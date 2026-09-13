@@ -87,6 +87,8 @@ class Review(models.Model):
     date_label = models.CharField(max_length=64, null=True, blank=True)
     text_original = models.TextField()
     content_sha256 = models.CharField(max_length=64)
+    # Text plus the immutable author/score/date labels: metadata-only edits are new versions.
+    version_sha256 = models.CharField(max_length=64)
     first_seen_at = models.DateTimeField()
     supersedes = models.ForeignKey(
         "self", on_delete=models.SET_NULL, null=True, blank=True, related_name="superseded_by"
@@ -95,8 +97,8 @@ class Review(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["game_platform", "audience", "identity_key", "content_sha256"],
-                name="uq_review_platform_audience_identity_content",
+                fields=["game_platform", "audience", "identity_key", "version_sha256"],
+                name="uq_review_platform_audience_identity_version",
             )
         ]
 

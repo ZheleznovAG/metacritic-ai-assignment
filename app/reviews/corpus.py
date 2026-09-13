@@ -1,15 +1,14 @@
-"""Builds the immutable, bounded `ReviewCorpus` from collected reviews (`docs/design.md`'s
-corpus-building steps 1-2, plus persistence); `reviews.selection` does steps 3-6 (the actual
-ASM-16 candidate policy) as a pure function this module feeds and persists the result of.
-"""
+"""Build immutable audience corpora from exact, complete daily route observations (R04/R05)."""
 
 from __future__ import annotations
 
 import hashlib
 import json
+from collections import Counter
 
 from catalog.models import Game, GamePlatform
-from django.db import IntegrityError, transaction
+from django.db import transaction
+from processing.models import DailyCandidate
 
 from reviews.models import Review, ReviewCollectionJob, ReviewCorpus, ReviewCorpusItem
 from reviews.selection import (
@@ -21,70 +20,137 @@ from reviews.selection import (
 )
 
 
-def _route_path_field(audience: str) -> str:
-    return "critic_reviews_path" if audience == "critic" else "user_reviews_path"
-
-
-def known_routes(game: Game, audience: str) -> list[GamePlatform]:
-    field = _route_path_field(audience)
-    return [platform for platform in game.platforms.all() if getattr(platform, field)]
-
-
-def _latest_terminal_job(platform: GamePlatform, audience: str) -> ReviewCollectionJob | None:
-    return (
-        ReviewCollectionJob.objects.filter(
-            game_platform=platform, audience=audience, state__in=["complete", "empty"]
-        )
-        .order_by("-completed_at")
-        .first()
-    )
-
-
-def all_routes_terminal(game: Game, audience: str) -> bool:
-    routes = known_routes(game, audience)
-    if not routes:
-        return False
-    return all(_latest_terminal_job(platform, audience) is not None for platform in routes)
-
-
-def _dedup_fingerprint(review: Review) -> str:
-    parts = "|".join(
-        [
-            (review.author_label or "").strip().casefold(),
-            review.date_label or "",
-            review.score_label or "",
-            " ".join((review.text_original or "").split()).casefold(),
-        ]
-    )
-    return hashlib.sha256(parts.encode("utf-8")).hexdigest()
-
-
 def _canonical_json(value: object) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
-def build(game: Game, audience: str) -> ReviewCorpus | None:
-    """Returns the current corpus for `(game, audience)`, building and persisting a new one if the
-    source set changed since the last build. Returns None if any known route has not yet reached a
-    terminal collection generation — no corpus is built from a partial snapshot."""
-    routes = known_routes(game, audience)
-    if not routes:
-        return None
-    latest_jobs = []
-    for platform in routes:
-        job = _latest_terminal_job(platform, audience)
-        if job is None:
-            return None
-        latest_jobs.append(job)
+def known_routes(game: Game, audience: str) -> list[GamePlatform]:
+    field = "critic_reviews_path" if audience == "critic" else "user_reviews_path"
+    return [
+        platform
+        for platform in game.platforms.order_by("source_platform_id", "id")
+        if getattr(platform, field)
+    ]
 
-    reviews = list(
-        Review.objects.filter(
-            game_platform__in=routes, audience=audience, superseded_by__isnull=True
-        )
-        .select_related("game_platform")
-        .order_by("identity_key")
+
+def _current_jobs(
+    game: Game, audience: str, routes: list[GamePlatform]
+) -> list[ReviewCollectionJob] | None:
+    # Daily order wins over completion/arrival times: an older backlog route can finish later.
+    # One cohort prevents a current platform snapshot from being combined with yesterday's.
+    candidate = (
+        DailyCandidate.objects.filter(game=game, state="processed")
+        .order_by("-cycle__business_date", "-id")
+        .first()
     )
+    if candidate is None or not routes:
+        return None
+    jobs = {
+        job.game_platform_id: job
+        for job in ReviewCollectionJob.objects.filter(daily_candidate=candidate, audience=audience)
+    }
+    selected = []
+    for route in routes:
+        job = jobs.get(route.id)
+        if job is None or job.state not in ("complete", "empty") or job.next_cursor is not None:
+            return None
+        if job.reported_total is None or not (
+            job.reported_total == job.unique_count == job.fetched_count and job.duplicate_count == 0
+        ):
+            return None
+        if (job.state == "empty") != (job.reported_total == 0):
+            return None
+        selected.append(job)
+    return selected
 
+
+def all_routes_terminal(game: Game, audience: str) -> bool:
+    return _current_jobs(game, audience, known_routes(game, audience)) is not None
+
+
+def _dedup_fingerprint(review: Review) -> str:
+    # Canonical tuple avoids ambiguous separators in source-supplied author/text values.
+    parts = [
+        (review.author_label or "").strip().casefold(),
+        review.date_label or "",
+        review.score_label or "",
+        " ".join(review.text_original.split()).casefold(),
+    ]
+    return hashlib.sha256(_canonical_json(parts).encode("utf-8")).hexdigest()
+
+
+@transaction.atomic
+def build(game: Game, audience: str) -> ReviewCorpus | None:
+    """Serialize against collection commits/core upserts, select current complete observations,
+    then persist the corpus atomically. No fallback to an older or partial route is permitted.
+    The game lock also makes concurrent builders agree on one corpus without a check/create race.
+    """
+    game = Game.objects.select_for_update().get(pk=game.pk)
+    routes = known_routes(game, audience)
+    jobs = _current_jobs(game, audience, routes)
+    if jobs is None:
+        return None
+
+    reviews: list[Review] = []
+    snapshots = []
+    for route, job in zip(routes, jobs, strict=True):
+        observed = list(
+            Review.objects.filter(
+                game_platform=route,
+                audience=audience,
+                observations__collection_job=job,
+                observations__collection_generation=job.collection_generation,
+                observations__source_fetch__review_job=job,
+                observations__source_fetch__collection_generation=job.collection_generation,
+                observations__source_fetch__outcome="succeeded",
+            )
+            .select_related("game_platform")
+            .order_by("identity_key", "version_sha256")
+        )
+        # A terminal label is not proof that a complete snapshot was persisted.
+        if len(observed) != job.unique_count or len({r.identity_key for r in observed}) != len(
+            observed
+        ):
+            return None
+        reviews.extend(observed)
+        snapshots.append(
+            {
+                "platform": route.source_platform_id,
+                "slug": route.slug,
+                "state": job.state,
+                "reported": job.reported_total,
+                "fetched": job.fetched_count,
+                "reviews": [
+                    {"identity": r.identity_key, "version": r.version_sha256} for r in observed
+                ],
+            }
+        )
+    source_set_fingerprint = hashlib.sha256(
+        _canonical_json({"snapshot_version": 2, "routes": snapshots}).encode("utf-8")
+    ).hexdigest()
+    existing = ReviewCorpus.objects.filter(
+        game=game,
+        audience=audience,
+        policy_version=POLICY_VERSION,
+        source_set_fingerprint=source_set_fingerprint,
+    ).first()
+    if existing is not None:
+        return existing
+
+    # Keep first canonical representatives deterministic across platform queries.
+    reviews.sort(key=lambda r: (r.identity_key, r.game_platform.source_platform_id))
+    # Review identity is platform-scoped, while the selector's group keys are pool-wide.
+    # Qualify collisions only; ordinary identities retain the frozen sampling/hash behavior.
+    identity_counts = Counter(review.identity_key for review in reviews)
+    selection_keys = {
+        review.id: (
+            "platform:"
+            + _canonical_json([review.game_platform.source_platform_id, review.identity_key])
+            if identity_counts[review.identity_key] > 1
+            else review.identity_key
+        )
+        for review in reviews
+    }
     canonical_of: dict[int, str] = {}
     seen_fingerprints: dict[str, str] = {}
     for review in reviews:
@@ -92,9 +158,9 @@ def build(game: Game, audience: str) -> ReviewCorpus | None:
         if fingerprint in seen_fingerprints:
             canonical_of[review.id] = seen_fingerprints[fingerprint]
         else:
-            seen_fingerprints[fingerprint] = review.identity_key
+            seen_fingerprints[fingerprint] = selection_keys[review.id]
 
-    def _score(review: Review) -> float | None:
+    def score(review: Review) -> float | None:
         try:
             return float(review.score_label) if review.score_label else None
         except ValueError:
@@ -102,51 +168,31 @@ def build(game: Game, audience: str) -> ReviewCorpus | None:
 
     records = tuple(
         ReviewRecord(
-            identity_key=review.identity_key,
+            identity_key=selection_keys[review.id],
             platform_slug=review.game_platform.slug,
             page_offset=0,
             language="",
-            score=_score(review),
+            score=score(review),
             text=review.text_original,
             meaningful=bool(review.text_original.strip()),
             duplicate_of=canonical_of.get(review.id),
         )
         for review in reviews
     )
-    pool = SelectionPool(
-        audience=audience,
-        game_slug=game.canonical_locator,
-        collection_status="complete",
-        reviews=records,
-    )
-    result = select_reviews(pool)
-
-    source_set_fingerprint = hashlib.sha256(
-        "|".join(sorted(r.identity_key for r in records)).encode("utf-8")
-    ).hexdigest()
-
-    def _fetch_existing() -> ReviewCorpus | None:
-        return ReviewCorpus.objects.filter(
-            game=game,
+    result = select_reviews(
+        SelectionPool(
             audience=audience,
-            policy_version=POLICY_VERSION,
-            source_set_fingerprint=source_set_fingerprint,
-        ).first()
-
-    # Fast path only: two workers can both complete a game's last needed route at nearly the same
-    # time and both pass this check before either commits. The real race guard is the unique
-    # constraint below plus the IntegrityError fallback, matching summaries.worker.ensure_job's
-    # get_or_create pattern.
-    existing = _fetch_existing()
-    if existing is not None:
-        return existing
-
-    by_key = {review.identity_key: review for review in reviews}
+            game_slug=game.canonical_locator,
+            collection_status="complete",
+            reviews=records,
+        )
+    )
+    by_key = {(review.game_platform.slug, selection_keys[review.id]): review for review in reviews}
     id_texts = []
     rows = []
     for ordinal, selected in enumerate(result.selected, start=1):
         prompt_id = f"R{ordinal:02d}"
-        review = by_key[selected.identity_key]
+        review = by_key[(selected.platform_slug, selected.identity_key)]
         rows.append((prompt_id, ordinal, review, selected))
         id_texts.append({"id": prompt_id, "text": selected.text})
 
@@ -161,49 +207,37 @@ def build(game: Game, audience: str) -> ReviewCorpus | None:
             }
         ).encode("utf-8")
     ).hexdigest()
-
     raw_prompt_tokens = sum(item.token_count for item in result.selected)
-    deduplicated_count = len(canonical_of)
-
-    try:
-        with transaction.atomic():
-            corpus = ReviewCorpus.objects.create(
-                game=game,
-                audience=audience,
-                policy_version=POLICY_VERSION,
-                source_set_fingerprint=source_set_fingerprint,
-                model_input_fingerprint=model_input_fingerprint,
-                complete_route_count=sum(1 for job in latest_jobs if job.state == "complete"),
-                empty_route_count=sum(1 for job in latest_jobs if job.state == "empty"),
-                reported_count=sum(job.reported_total or 0 for job in latest_jobs),
-                fetched_count=sum(job.fetched_count for job in latest_jobs),
-                unique_count=len(reviews),
-                deduplicated_count=deduplicated_count,
-                selected_count=len(result.selected),
-                tokenizer_id=TOKENIZER_ID,
-                tokenizer_version="0.14.0",
-                raw_prompt_tokens=raw_prompt_tokens,
-                guarded_prompt_tokens=raw_prompt_tokens + 64,
-                completion_reservation=800,
-            )
-            ReviewCorpusItem.objects.bulk_create(
-                ReviewCorpusItem(
-                    corpus=corpus,
-                    ordinal=ordinal,
-                    prompt_review_id=prompt_id,
-                    review=review,
-                    input_text=selected.text,
-                    input_token_count=selected.token_count,
-                    sha256=hashlib.sha256(selected.text.encode("utf-8")).hexdigest(),
-                    was_truncated=selected.truncated,
-                )
-                for prompt_id, ordinal, review, selected in rows
-            )
-    except IntegrityError:
-        # Lost the race to a concurrent worker building the same corpus; its row is equivalent
-        # (a pure function of the same underlying reviews), so use it instead of failing the tick.
-        winner = _fetch_existing()
-        if winner is None:
-            raise
-        return winner
+    corpus = ReviewCorpus.objects.create(
+        game=game,
+        audience=audience,
+        policy_version=POLICY_VERSION,
+        source_set_fingerprint=source_set_fingerprint,
+        model_input_fingerprint=model_input_fingerprint,
+        complete_route_count=sum(job.state == "complete" for job in jobs),
+        empty_route_count=sum(job.state == "empty" for job in jobs),
+        reported_count=sum(job.reported_total or 0 for job in jobs),
+        fetched_count=sum(job.fetched_count for job in jobs),
+        unique_count=len(reviews),
+        deduplicated_count=len(canonical_of),
+        selected_count=len(result.selected),
+        tokenizer_id=TOKENIZER_ID,
+        tokenizer_version="0.14.0",
+        raw_prompt_tokens=raw_prompt_tokens,
+        guarded_prompt_tokens=raw_prompt_tokens + 64,
+        completion_reservation=800,
+    )
+    ReviewCorpusItem.objects.bulk_create(
+        ReviewCorpusItem(
+            corpus=corpus,
+            ordinal=ordinal,
+            prompt_review_id=prompt_id,
+            review=review,
+            input_text=selected.text,
+            input_token_count=selected.token_count,
+            sha256=hashlib.sha256(selected.text.encode("utf-8")).hexdigest(),
+            was_truncated=selected.truncated,
+        )
+        for prompt_id, ordinal, review, selected in rows
+    )
     return corpus

@@ -4,6 +4,7 @@ from catalog.models import Game, GamePlatform
 from django.test import TestCase
 from presentation.summaries import get_summaries
 from reviews.models import Review, ReviewCorpus, ReviewCorpusItem
+from reviews.versioning import version_fingerprint
 from summaries.models import ReviewSummary, SummaryClaim, SummaryJob
 
 
@@ -27,6 +28,7 @@ def _make_corpus_item(corpus: ReviewCorpus, tag: str) -> ReviewCorpusItem:
         identity_key=f"id:{tag}",
         text_original="Some review text.",
         content_sha256=f"sha-{tag}",
+        version_sha256=version_fingerprint("Some review text.", None, None, None),
         first_seen_at=datetime(2026, 9, 12, tzinfo=UTC),
     )
     return ReviewCorpusItem.objects.create(
