@@ -3,6 +3,7 @@ ARG UV_IMAGE=ghcr.io/astral-sh/uv:0.12.11@sha256:79c6f4776b851471cc73b7d21d0cc83
 FROM ${UV_IMAGE} AS uv
 FROM ${PYTHON_IMAGE} AS base
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TZ=UTC
+ENV TIKTOKEN_CACHE_DIR=/opt/app/tokenizer-cache
 WORKDIR /opt/app
 
 FROM base AS dependencies
@@ -10,6 +11,10 @@ COPY --from=uv /uv /usr/local/bin/uv
 ENV UV_PYTHON_DOWNLOADS=never UV_LINK_MODE=copy
 COPY pyproject.toml uv.lock ./
 RUN uv sync --locked --no-dev --no-install-project
+# tiktoken verifies the downloaded vocabulary against its pinned SHA-256. Package it once
+# at build time so checks and the non-root runtime can tokenize without network or writes.
+RUN .venv/bin/python -c "import tiktoken; tiktoken.get_encoding('o200k_harmony')" \
+    && chmod -R a=rX /opt/app/tokenizer-cache
 
 FROM dependencies AS checks
 RUN uv sync --locked --no-install-project
@@ -19,6 +24,7 @@ COPY scripts ./scripts
 COPY research/planning ./research/planning
 COPY research/feasibility ./research/feasibility
 COPY evals/reviews ./evals/reviews
+COPY evals/review_selection ./evals/review_selection
 COPY docs ./docs
 COPY action_plan.md implementation_plan.md ./
 COPY intake.md assignment.md methodology.md AGENTS.md README.md ./
@@ -26,6 +32,7 @@ CMD ["python", "scripts/check.py"]
 
 FROM base AS runtime
 COPY --from=dependencies /opt/app/.venv /opt/app/.venv
+COPY --from=dependencies /opt/app/tokenizer-cache /opt/app/tokenizer-cache
 ENV PATH="/opt/app/.venv/bin:$PATH"
 COPY app ./app
 COPY scripts/provision_db.py ./scripts/provision_db.py

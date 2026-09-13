@@ -6,6 +6,7 @@
 !research/planning/**
 !research/feasibility/**
 !evals/reviews/**
+!evals/review_selection/**
 !docs/**
 !action_plan.md
 !implementation_plan.md

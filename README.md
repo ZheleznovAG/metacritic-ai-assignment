@@ -2,7 +2,7 @@
 
 Take-home assignment for the AI Automation Engineer position.
 
-IMP-01 provides a read-only preview, liveness and PostgreSQL readiness endpoints. IMP-02 adds a one-off manual ingest of a single real Metacritic game (identity, non-destructive upsert, provenance) and a public read-only card at `/games/<id>/`. IMP-03 adds the real scheduled batch/calendar cycle (`scripts/run_scheduler.py`): hourly New Releases/SEE ALL discovery, up to 20 candidates per run, retry-first, restart-safe state, a singleton fenced lease and idempotent hourly triggers. IMP-04 adds durable review collection and AI review summaries (`scripts/run_worker.py`): row-leased backend review-page pagination, an immutable bounded corpus built by the accepted `REV-EVAL-01` selection policy, a Groq adapter with cache/quota/backoff and no paid fallback, and both audiences' summaries on the card with honest pending/stale/insufficient states. Recommendations are **not implemented yet**. Task status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). IMP-01 through IMP-04 are `Verified`; see the [IMP-01 independent review](docs/requirements/imp_01_independent_review.md), the [IMP-02 evidence](docs/requirements/imp_02_review.md), the [IMP-03 evidence](docs/requirements/imp_03_review.md) and the [IMP-04 evidence](docs/requirements/imp_04_review.md).
+The application includes a read-only game catalog, platform filters and title search, hourly Metacritic discovery (`scripts/run_scheduler.py`), review collection and separate critic/user AI summaries (`scripts/run_worker.py`). Recommendations are **not implemented yet**. Current task and correction status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). The [2026-09-12 audit](docs/requirements/implementation_audit_2026_09_12.md) records defects in repeated processing and summary handling; a passing local suite does not close them.
 
 ## Local development
 
@@ -13,6 +13,7 @@ From a fresh checkout in PowerShell:
 ```powershell
 $env:UV_PROJECT_ENVIRONMENT = '.venv-app'
 python -m uv sync --locked --python 3.12
+.\.venv-app\Scripts\python.exe -c "import tiktoken; tiktoken.get_encoding('o200k_harmony')"
 .\.venv-app\Scripts\python.exe scripts/init_env.py
 docker compose --env-file .env.app up -d --wait db
 .\.venv-app\Scripts\python.exe scripts/provision_db.py
@@ -21,7 +22,7 @@ docker compose --env-file .env.app up -d --wait db
 .\.venv-app\Scripts\python.exe app/manage.py runserver 127.0.0.1:8000
 ```
 
-`init_env.py` refuses to overwrite an existing `.env.app`. It generates distinct random credentials for provisioning, web, migrations and checks without printing them. Keep operator SSH/Groq settings in `.env`; neither `.env` nor `.env.app` enters the Docker build context. Compose passes only each service's required credentials. On Windows, protect both files with the account's filesystem ACLs; POSIX creation uses mode 0600.
+`init_env.py` refuses to overwrite an existing `.env.app`. It generates distinct random credentials for provisioning, web, migrations, checks, scheduler and worker without printing them. Keep operator SSH/Groq settings in `.env`; neither `.env` nor `.env.app` enters the Docker build context. Compose passes only each service's required credentials. On Windows, protect both files with the account's filesystem ACLs; POSIX creation uses mode 0600.
 
 For a pre-review IMP-01 environment, run `.\.venv-app\Scripts\python.exe scripts/init_env.py --upgrade-scaffold` once, then `scripts/provision_db.py`. The explicit upgrade adds missing role settings and preserves the existing admin password, database name, ports and data volume. Provisioning can be repeated; unknown legacy product tables require a separate ownership migration. It does not reset the database. See [the upgrade procedure](deploy/README.md#upgrade-of-the-original-imp-01-preview).
 
@@ -41,7 +42,15 @@ docker compose --env-file .env.app --profile app up -d --wait
 
 The first command runs format/lint/types, Django checks, migration drift, static build, PostgreSQL permission/integration tests, deployment-tool tests and offline research evidence checks. Run local/container suites sequentially: they create/drop `test_metacritic_checks`. The permission test creates and removes its own probe table in the development application's database. Never run tests against production. Formatting changes: `.\.venv-app\Scripts\python.exe -m ruff format app scripts`; lint-only: `.\.venv-app\Scripts\python.exe -m ruff check app scripts`; type-only: set `PYTHONPATH=app`, then `python -m mypy` in the application environment.
 
-The container suite uses canonical Linux/Python 3.12 and PostgreSQL 16. Tests run on an internal network without SSH/Groq credentials; dependency downloads happen at build time. [CI workflow](.github/workflows/ci.yml) repeats build, checks and an actual Caddy HTTP/CSS smoke on a dedicated project; it validates both CI and production Compose overrides. Whitespace is checked between the event's base/head commits, or in the selected commit for manual/initial runs. CI never deploys or calls live Metacritic/AI. A workflow file alone is not a successful CI run.
+The container suite uses canonical Linux/Python 3.12 and PostgreSQL 16. Tests run on an internal network without SSH/Groq credentials; dependency and tokenizer vocabulary downloads happen at build time. Both image targets include the hash-checked tokenizer vocabulary in `TIKTOKEN_CACHE_DIR=/opt/app/tokenizer-cache`; the runtime reads it as a non-root user on a read-only filesystem. Local setup downloads the same vocabulary explicitly before checks. The checks image also includes both `evals/reviews` and `evals/review_selection`.
+
+`--profile app up` provisions the database roles, applies migrations using the schema-owner role, then starts web and Caddy. [CI workflow](.github/workflows/ci.yml) repeats build, offline runtime tokenization, checks and an actual Caddy HTTP/CSS smoke on a dedicated project with an initially empty database; it validates both CI and production Compose overrides. Whitespace is checked between the event's base/head commits, or in the selected commit for manual/initial runs. CI never deploys or calls live Metacritic/AI. A workflow file alone is not a successful CI run.
+
+The runtime's offline check can also be run after a local build (substitute the image tag if `APP_IMAGE` is set):
+
+```powershell
+docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --workdir /opt/app/app metacritic-imp01:local python -B -c "from reviews.selection import count_tokens; assert count_tokens('Hello world') == 2"
+```
 
 Preview: [http://127.0.0.1:18081](http://127.0.0.1:18081). `/health/live/` checks the process; `/health/ready/` executes a bounded PostgreSQL query and returns generic 503 on failure. Neither endpoint reports hostnames, credentials or exception text. Web runs non-root with a read-only filesystem, bounded temporary storage and two Gunicorn workers. Caddy terminates the current **HTTP-only preview**; trusted TLS/hostname remain mandatory before G6. No login, admin or mutating endpoint exists.
 
@@ -53,7 +62,7 @@ Stop only this project, preserving its data: `docker compose --env-file .env.app
 
 Set `APP_VERSION` before building: Docker writes it into `app/build-version.txt` and the image label. Runtime environment values cannot override the HTTP build identity; a source checkout reports `local`. Choose a source commit or frozen source-snapshot identifier, not the resulting image ID. Record the full image ID separately and use `scripts/verify_image.py` before startup and against the running container, followed by the HTTP/CSS smoke. Changing a deployment's environment cannot turn an old image into a new release.
 
-[IMP-01 preflight](docs/requirements/imp_01_preflight.md), [current verification](docs/requirements/imp_01_review.md) and [deployment procedure](deploy/README.md) record the evidence and outstanding inputs. Parser data models, scheduler and worker processes are deliberately absent from this scaffold, not simulated by idle containers.
+[IMP-01 preflight](docs/requirements/imp_01_preflight.md), [container correction](docs/requirements/imp_01_container_correction.md) and [deployment procedure](deploy/README.md) record deployment evidence and boundaries. Scheduler and worker management commands exist in the application image; their permanently supervised Compose services remain part of `PUB-01`.
 
 ## Baseline and research evidence
 

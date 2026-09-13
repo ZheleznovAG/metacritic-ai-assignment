@@ -2,8 +2,8 @@
 
 - Baseline: **1.0**, задача `PLN-03`, 2026-09-09 (Asia/Novosibirsk).
 - Bonus scope: `pending`.
-- IMP-01, IMP-02, IMP-03, REV-EVAL-01, IMP-04, IMP-05 verified. Последний завершённый цикл — IMP-05 (search/filter/sort + card polish).
-- Текущий blocker: нет. IMP-06 ожидает SIM-EVAL-01 (Ready, независимый); SIM-VER-01/IMP-07 следующие по цепочке после IMP-06.
+- Аудит 2026-09-12 открыл correction для IMP-01 и material findings в IMP-03–IMP-05; IMP-02 требует повторной проверки восстановленного container path. Историческое evidence сохранено.
+- Текущий цикл: IMP-01 container correction. SIM-EVAL-01 остаётся независимой Ready-задачей; новая зависимая реализация ожидает закрытия findings.
 
 ## Источники истины и правила
 
@@ -22,7 +22,11 @@
 
 Статусы: Planned — описано; Ready — можно брать; In progress — выполняется; Changes requested — требуется исправление; Verified — критерий доказан; Blocked — внешний вход отсутствует; Dropped — исключён только необязательный scope с основанием.
 
-## Приоритет следующего цикла
+## Приоритет текущего цикла
+
+Сначала восстановить контейнерную воспроизводимость ([correction](docs/requirements/imp_01_container_correction.md)): packaged tokenizer/evals, scoped provisioning и migrations перед web. Затем отдельными циклами исправить [восемь прикладных findings](docs/requirements/implementation_audit_2026_09_12.md#application-counterexamples-requiring-separate-corrections). Границы G4–G7 и frozen oracles не меняются; локальный candidate не подменяет hosted CI/public evidence.
+
+## Исторические циклы до аудита 2026-09-12
 
 `IMP-01` закрыт независимым adversarial review в отдельной сессии ([imp_01_independent_review.md](docs/requirements/imp_01_independent_review.md)): все заявленные exit criteria (build/tests/security posture, hosted CI run [34574112620](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34574112620), VDS redeploy) воспроизведены заново в этой сессии с идентичным результатом; найдена и исправлена одна тривиальная документационная неточность (устаревшая строка в README.md).
 
@@ -71,12 +75,12 @@
 
 | ID | Зависимости | Ветка | Статус | Evidence |
 |---|---|---|---|---|
-| [IMP-01](implementation_plan.md#imp-01) | G3 | base | Verified | [Scaffold/local tests/public preview](docs/requirements/imp_01_review.md), [tooling correction and VDS redeploy](docs/requirements/imp_01_correction.md), [independent adversarial review](docs/requirements/imp_01_independent_review.md); hosted CI passed [run 34574112620](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34574112620) at `6d29461`; corrected candidate redeployed and externally smoked on VDS |
-| [IMP-02](implementation_plan.md#imp-02) | IMP-01 | base | Verified | [Fixtures/parser/upsert/card evidence](docs/requirements/imp_02_review.md); пять живых запусков против реального сайта, idempotent; три раунда adversarial review (self + два прохода независимой параллельной сессии) |
-| [IMP-03](implementation_plan.md#imp-03) | IMP-02 | base | Verified | [Selector/scheduler/lease evidence](docs/requirements/imp_03_review.md); три реальных последовательных hourly-запуска, restart, найденный и исправленный live-баг canonical-проверки, подтверждённый третьим automated tick |
+| [IMP-01](implementation_plan.md#imp-01) | G3 | base | In progress | [Container correction](docs/requirements/imp_01_container_correction.md): local/container checks, fresh/repeated startup и HTTP/CSS smoke пройдены; текущие hosted CI/public evidence ещё нужны. Историческое evidence: [independent scaffold review](docs/requirements/imp_01_independent_review.md). |
+| [IMP-02](implementation_plan.md#imp-02) | IMP-01 | base | Changes requested | Revalidate the clean container/card path after IMP-01; the audit did not reject the core ingest contract. Historical: [ingest/card evidence](docs/requirements/imp_02_review.md). |
+| [IMP-03](implementation_plan.md#imp-03) | IMP-02 | base | Changes requested | [Audit: discarded SEE ALL page remainder](docs/requirements/implementation_audit_2026_09_12.md#application-counterexamples-requiring-separate-corrections). Historical: [scheduler evidence](docs/requirements/imp_03_review.md). |
 | [REV-EVAL-01](implementation_plan.md#rev-eval-01) | G3, SPK-05 | base | Verified | [Oracle accepted 2026-09-12](docs/requirements/rev_eval_01_review.md): 8 cases, 8 hard invariants, naive-baseline evidence, owner Ask answered |
-| [IMP-04](implementation_plan.md#imp-04) | IMP-03, REV-EVAL-01 | base | Verified | [Review/summary evidence](docs/requirements/imp_04_review.md); реальный сбор отзывов и Groq-резюме, REV-EVAL-01 real-candidate 8/8, реальная quota-задержка и восстановление |
-| [IMP-05](implementation_plan.md#imp-05) | IMP-04 | base | Verified | [UI evidence](docs/requirements/imp_05_review.md): реальные поиск/фильтр/сортировка против 41 живой игры, скриншоты; public VDS smoke явно отложен до PUB-03 по design.md's trace table |
+| [IMP-04](implementation_plan.md#imp-04) | IMP-03, REV-EVAL-01 | base | Changes requested | [Audit: collection recurrence, corpus/input, durable handoff, retry and support](docs/requirements/implementation_audit_2026_09_12.md#application-counterexamples-requiring-separate-corrections). Historical: [review/summary evidence](docs/requirements/imp_04_review.md). |
+| [IMP-05](implementation_plan.md#imp-05) | IMP-04 | base | Changes requested | [Audit: stale collection state and UI/smoke acceptance](docs/requirements/implementation_audit_2026_09_12.md). Historical: [UI evidence](docs/requirements/imp_05_review.md). |
 | [SIM-EVAL-01](implementation_plan.md#sim-eval-01) | G3 | base | Ready | Ожидается: evals/similarity: dataset/metric/acceptance |
 | [IMP-06](implementation_plan.md#imp-06) | SIM-EVAL-01, IMP-02 | base | Planned | Ожидается: Frozen comparison report и policy version |
 | [SIM-VER-01](implementation_plan.md#sim-ver-01) | IMP-05, IMP-06 | base | Planned | Ожидается: Integration/E2E и relevance regression |

@@ -289,7 +289,7 @@
 - **Оценка:** `P=3`, `I=4`, `U=3`; Exposure `12`, Discovery `12`; приоритет `P1`.
 - **Ранний сигнал:** setup не выполнялся с чистого checkout, отсутствует config template, state создаётся вручную.
 - **Проверка:** ранний reproducible bootstrap `IMP-01`, окончательный clean-run `REL-01–REL-02`.
-- **Митигация:** canonical Python 3.12/Django 5.2 LTS/PostgreSQL 16, exact lock и отдельный `.venv-app`; исследовательский `.venv` сохраняется. IMP-01 использует встроенную build identity, сверку полного image ID и явные application-only environment mappings. Команды и проверки — в [README](../README.md); реальные product migrations/fixtures остаются последующим задачам, hosted CI и обновлённый public deployment ещё нужны.
+- **Митигация:** canonical Python 3.12/Django 5.2 LTS/PostgreSQL 16, exact lock и отдельный `.venv-app`; исследовательский `.venv` сохраняется. IMP-01 использует встроенную build identity, сверку полного image ID и явные application-only environment mappings. [Container correction](requirements/imp_01_container_correction.md) проверяет bundled tokenizer/evals, provisioning ролей, реальные product migrations перед web и сохранность данных при повторном старте. Команды — в [README](../README.md); hosted CI текущего candidate и обновлённый public deployment ещё нужны.
 - **Владелец:** `IMP-01`, затем `REL-01–REL-02`.
 - **Остаточный риск:** внешние package registries/hosting остаются изменчивыми.
 - **Текущая диспозиция:** `Open — mitigate`.

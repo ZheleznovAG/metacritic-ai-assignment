@@ -56,6 +56,10 @@ services:
       WEB_DB_PASSWORD: ${WEB_DB_PASSWORD:?Run init_env.py or --upgrade-scaffold}
       MIGRATE_DB_USER: ${MIGRATE_DB_USER:-metacritic_migrate}
       MIGRATE_DB_PASSWORD: ${MIGRATE_DB_PASSWORD:?Run init_env.py or --upgrade-scaffold}
+      SCHEDULER_DB_USER: ${SCHEDULER_DB_USER:-metacritic_scheduler}
+      SCHEDULER_DB_PASSWORD: ${SCHEDULER_DB_PASSWORD:?Run init_env.py or --upgrade-scaffold}
+      WORKER_DB_USER: ${WORKER_DB_USER:-metacritic_worker}
+      WORKER_DB_PASSWORD: ${WORKER_DB_PASSWORD:?Run init_env.py or --upgrade-scaffold}
       CHECKS_DB_USER: ${CHECKS_DB_USER:-metacritic_checks}
       CHECKS_DB_PASSWORD: ${CHECKS_DB_PASSWORD:-}
     depends_on:
@@ -77,7 +81,7 @@ services:
         APP_VERSION: ${APP_VERSION:-local}
     environment: *app-environment
     depends_on:
-      db_setup:
+      migrate:
         condition: service_completed_successfully
     restart: unless-stopped
     read_only: true
@@ -117,7 +121,7 @@ services:
       retries: 6
 
   migrate:
-    profiles: [ops]
+    profiles: [app, ops]
     image: ${APP_IMAGE:-metacritic-imp01:local}
     command: ["python", "app/manage.py", "migrate", "--noinput"]
     environment:
@@ -150,6 +154,10 @@ services:
       WEB_DB_PASSWORD: ${WEB_DB_PASSWORD:?Initialize web credentials}
       MIGRATE_DB_USER: ${MIGRATE_DB_USER:-metacritic_migrate}
       MIGRATE_DB_PASSWORD: ${MIGRATE_DB_PASSWORD:?Initialize migration credentials}
+      SCHEDULER_DB_USER: ${SCHEDULER_DB_USER:-metacritic_scheduler}
+      SCHEDULER_DB_PASSWORD: ${SCHEDULER_DB_PASSWORD:?Initialize scheduler credentials}
+      WORKER_DB_USER: ${WORKER_DB_USER:-metacritic_worker}
+      WORKER_DB_PASSWORD: ${WORKER_DB_PASSWORD:?Initialize worker credentials}
     depends_on:
       db_setup:
         condition: service_completed_successfully

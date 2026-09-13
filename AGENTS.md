@@ -2,7 +2,7 @@
 
 ## Project Structure & Sources of Truth
 
-This repository has established its implementation baseline through `PLN-03` / `G3`. The `IMP-01` scaffold is being verified; product ingestion, scheduling and AI features are not implemented yet.
+This repository has established its implementation baseline through `PLN-03` / `G3`. Ingestion, scheduling, review collection, AI summaries and the search/filter list are implemented; similarity is pending. Current verification and correction statuses belong only to `action_plan.md`.
 
 - `assignment.md` is the primary specification.
 - `methodology.md` defines the evidence-driven delivery process.
@@ -14,9 +14,11 @@ This repository has established its implementation baseline through `PLN-03` / `
 - `docs/design.md` defines accepted internal contracts, PostgreSQL data ownership, and processing invariants.
 - `docs/risks.md` is the prioritized risk register.
 - `evals/reviews/baseline/` contains the published sanitised AI run and original scorecard; its offline verifier and integrity tests are research tooling, not application tests.
+- `evals/review_selection/` contains the frozen review-selection oracle, baseline and production-candidate verifier.
 - `research/methodology/` preserves prompts and exploration; it is evidence, not a requirements source.
 - `research/planning/` contains the offline baseline audit and its negative-control tests; these are planning evidence, not application tests.
 - `app/config/` contains Django settings, routes, WSGI and sanitised logging; `app/presentation/` contains the read-only preview and health endpoints; `app/tests/` contains application checks on PostgreSQL 16.
+- `app/metacritic/` contains external adapters/parsers; `app/catalog/` owns game data; `app/processing/` owns hourly discovery and daily progress; `app/reviews/` owns review collection/corpora; `app/summaries/` owns provider attempts and summaries.
 - `scripts/` contains environment initialization/upgrade, database role provisioning, migrations, image identity verification and HTTP/CSS smoke commands; `scripts/tests/` verifies permission boundaries and deployment counterexamples.
 - `Dockerfile`, `compose*.yaml` and `deploy/` define immutable builds and isolated local/CI/preview deployment; `.github/workflows/ci.yml` runs deterministic checks, never deployment.
 

@@ -1,6 +1,6 @@
 # IMP-01 early deployment
 
-This procedure deploys the read-only scaffold. It does not certify G6. Docker/Compose and deploy-user daemon access must already work. Use the `DEPLOY_SSH_*` values from the ignored operator `.env`; never transfer that file or print it.
+This procedure deploys the read-only catalog preview and its schema. It does not certify G6 or install permanent scheduler/worker services. Docker/Compose and deploy-user daemon access must already work. Use the `DEPLOY_SSH_*` values from the ignored operator `.env`; never transfer that file or print it.
 
 ## Build and first installation
 
@@ -22,13 +22,12 @@ Record the full `sha256:...` image ID, build version and source identity. The bu
 python3 scripts/init_env.py --production --host <public-host> --version <build-version>
 python3 scripts/verify_image.py --image metacritic-imp01:<build-version> --image-id sha256:<recorded-full-image-id> --version <build-version>
 docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml config --quiet
-docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml --profile app run --rm migrate
 docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml --profile app up -d --wait --wait-timeout 120
 python3 scripts/verify_image.py --image metacritic-imp01:<build-version> --image-id sha256:<recorded-full-image-id> --version <build-version> --container metacritic-imp01-prod-web-1
 python3 scripts/smoke.py http://127.0.0.1:18081 --version <build-version>
 ```
 
-`db_setup` runs before migrations/web, creates restricted roles and grants current/future table SELECT to web. The production setup creates no checks database or checks role. Administrative credentials stay in that one-shot service; web receives only its own login. The migration service receives the schema owner's login. Existing table data is preserved. `migrate` (`profiles: [ops]`) depends on `db_setup` (`profiles: [app, checks]`); Compose does not activate a dependency's own profile when it only activates the named service's profile, so `--profile app` (not just `run --rm migrate` alone) is required or the dependency fails with `no such service: db_setup`.
+The app profile enforces `db_setup -> migrate -> web -> caddy`: web starts only after migrations complete successfully. Provisioning creates restricted web/scheduler/worker roles and grants current/future table SELECT to web; the production setup creates no checks database or checks role. Administrative and role-provisioning credentials stay in the one-shot setup service; web receives only its own login and migrate receives the schema owner's login. The existing migrations preserve table data. To run migrations explicitly, use `--profile app run --rm migrate` with the same project/configuration; enabling the app profile also makes `db_setup` available.
 
 6. Repeat the HTTP/CSS smoke from a separate machine against the public host without an SSH tunnel. Record the source identity, full image ID, build version, checksums, status and resources. Never publish full Compose/inspect output containing environment values.
 
@@ -42,7 +41,7 @@ Keep the existing project name, `.env.app` and named volumes. First prepare and 
 python3 scripts/init_env.py --upgrade-scaffold
 ```
 
-This explicit, repeatable upgrade appends missing WEB/MIGRATE/CHECKS role settings. It preserves existing credentials and deployment settings, including `POSTGRES_PASSWORD`; do not rerun fresh initialization or delete a volume. Update only `APP_IMAGE`/`APP_VERSION` to the new release, verify the loaded image, then use the same migrate/up/image-verification/smoke commands above.
+This explicit, repeatable upgrade appends missing WEB/MIGRATE/CHECKS/SCHEDULER/WORKER role settings. It preserves existing credentials and deployment settings, including `POSTGRES_PASSWORD`; do not rerun fresh initialization or delete a volume. Update only `APP_IMAGE`/`APP_VERSION` to the new release, verify the loaded image, then use the same up/image-verification/smoke commands above. The app profile runs migrations before web starts.
 
 Provisioning handles the empty original scaffold and its optional `django_migrations` table, transferring that table to the migration owner without deleting rows. Unknown tables owned by the old administrator cause a refusal before ownership changes; product data requires a separately reviewed migration. Repeated provisioning preserves existing tables and removes excess direct web grants. The upgrade does not remove the administrative role.
 

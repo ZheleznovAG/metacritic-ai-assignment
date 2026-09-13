@@ -1,7 +1,7 @@
 [project]
 name = "metacritic-ai-assignment"
 version = "0.1.0"
-description = "Metacritic assignment: IMP-01 application scaffold"
+description = "Metacritic game catalog with scheduled ingestion and AI review summaries"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "beautifulsoup4>=4.12,<5",
