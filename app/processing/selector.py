@@ -3,6 +3,7 @@ algorithm ("Детерминированное формирование парт
 """
 
 from dataclasses import dataclass
+from time import monotonic
 
 from catalog.ingest import resolve_game_identity, save_fetch_evidence
 from django.db import transaction
@@ -15,6 +16,10 @@ from processing.models import DailyCandidate, DailyCycle, ProcessingRun
 from processing.runner import process_candidate
 
 BATCH_LIMIT = 20
+# Admission bounds for one discovery scan, not a source-volume/exhaustion limit. A fetched
+# page is committed even if it finishes after the deadline; no further request is started.
+BROWSE_PAGE_LIMIT = 100
+BROWSE_TIME_LIMIT_SECONDS = 60.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -23,6 +28,7 @@ class BatchResult:
     processed_count: int
     failed_count: int
     status: str  # succeeded | partial | failed
+    error_code: str | None = None
 
 
 def _recover_stale_candidates() -> int:
@@ -85,10 +91,10 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
     batch = list(
         DailyCandidate.objects.filter(cycle=cycle, state__in=("pending", "retryable"))
         .order_by("source_order")
-        .select_related("game")
+        .select_related("game")[:BATCH_LIMIT]
     )
     remaining = BATCH_LIMIT - len(batch)
-    discovery_failed = False
+    discovery_error = None
 
     if remaining > 0 and cycle.phase == "new_releases_pending":
         # Step 4: first batch of the day is New Releases only; SEE ALL is not read this run
@@ -96,11 +102,17 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
         games, evidence = gateway.list_new_releases()
         save_fetch_evidence(evidence)
         if games is None:
-            discovery_failed = True
+            discovery_error = evidence.error_code or "new_releases_failed"
         else:
             with transaction.atomic():
                 verify_fencing_token(fencing_token)
-                created = _append_candidates(cycle, games[:BATCH_LIMIT], clock)
+                known = _existing_source_game_ids(cycle)
+                unique_games = []
+                for game in games:
+                    if game.source_game_id not in known:
+                        unique_games.append(game)
+                        known.add(game.source_game_id)
+                created = _append_candidates(cycle, unique_games[:remaining], clock)
                 cycle.phase = "browse"
                 cycle.save(update_fields=["phase"])
             batch.extend(created)
@@ -109,21 +121,42 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
     elif remaining > 0 and cycle.phase == "browse":
         # Step 5/6: SEE ALL from the saved cursor, skipping already-known identities, until
         # capacity fills or the source confirms exhaustion; a page failure stops the scan without
-        # advancing the cursor past it.
+        # advancing the cursor past it. A partial page is reread next time; the durable cycle
+        # identity set skips its accepted prefix. Only a fully consumed page advances the cursor.
+        deadline = monotonic() + BROWSE_TIME_LIMIT_SECONDS
+        fetched_pages = 0
+        seen_pages: set[frozenset[str]] = set()
         while remaining > 0:
+            if fetched_pages >= BROWSE_PAGE_LIMIT:
+                discovery_error = "browse_page_limit"
+                break
+            if monotonic() >= deadline:
+                discovery_error = "browse_time_limit"
+                break
             page, evidence = gateway.iter_browse(cycle.browse_next_page)
+            fetched_pages += 1
             save_fetch_evidence(evidence)
             if page is None:
-                discovery_failed = True
+                discovery_error = evidence.error_code or "browse_fetch_failed"
                 break
+            signature = frozenset(game.source_game_id for game in page.games)
+            if page.has_next_page and (not signature or signature in seen_pages):
+                discovery_error = "browse_repeated_page" if signature else "browse_empty_page"
+                break
+            seen_pages.add(signature)
             with transaction.atomic():
                 verify_fencing_token(fencing_token)
                 known = _existing_source_game_ids(cycle)
-                new_identities = [g for g in page.games if g.source_game_id not in known]
+                new_identities = []
+                for game in page.games:
+                    if game.source_game_id not in known:
+                        new_identities.append(game)
+                        known.add(game.source_game_id)
                 created = _append_candidates(cycle, new_identities[:remaining], clock)
-                cycle.browse_next_page += 1
-                if not page.has_next_page:
-                    cycle.phase = "exhausted"
+                if len(new_identities) <= remaining:
+                    cycle.browse_next_page += 1
+                    if not page.has_next_page:
+                        cycle.phase = "exhausted"
                 cycle.save(update_fields=["browse_next_page", "phase"])
             batch.extend(created)
             remaining = BATCH_LIMIT - len(batch)
@@ -143,7 +176,7 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
     # Step 8: exhausted + nothing selected is still a successful run with explicit zero counters.
     # "No progress" (processing-state.md's failed row) covers both an empty batch caused by a
     # discovery/execution failure and a non-empty batch where every selected item failed.
-    if not discovery_failed and failed_count == 0:
+    if discovery_error is None and failed_count == 0:
         status = "succeeded"
     elif processed_count == 0:
         status = "failed"
@@ -155,4 +188,5 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
         processed_count=processed_count,
         failed_count=failed_count,
         status=status,
+        error_code=discovery_error,
     )

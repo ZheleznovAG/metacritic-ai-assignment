@@ -95,6 +95,7 @@ def run_tick(gateway: GatewayProtocol, clock: Clock) -> TickResult:
     run.processed_count = result.processed_count
     run.failed_count = result.failed_count
     run.status = result.status
+    run.error_code = result.error_code
     run.ended_at = clock.now_utc()
     run.save(
         update_fields=[
@@ -102,6 +103,7 @@ def run_tick(gateway: GatewayProtocol, clock: Clock) -> TickResult:
             "processed_count",
             "failed_count",
             "status",
+            "error_code",
             "ended_at",
         ]
     )
