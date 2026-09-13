@@ -71,6 +71,7 @@ Set `APP_VERSION` before building: Docker writes it into `app/build-version.txt`
 - [Published AI baseline](evals/reviews/baseline/README.md): saved synthetic inputs/outputs and original scoring, independently inspectable without another API call.
 - [PLN-02 review and verification](docs/requirements/pln_02_review.md): contract corrections, PostgreSQL probe and remaining implementation limitations.
 - [G3 planning review](docs/requirements/g3_review.md): coverage, dependency audit, workload/reserve and explicit limitations.
+- [Implementation review of `6551e42`](docs/requirements/implementation_audit_6551e42.md): findings, requirement mappings and correction exit criteria; [archived probes and observations](research/reviews/6551e42/README.md). Current correction statuses and the next cycle belong to [action_plan.md](action_plan.md).
 
 Offline evidence checks from the repository root with Python 3.12 or later (standard library only; no API key or `.env` needed):
 
@@ -82,3 +83,11 @@ python -B -m unittest discover -s research/planning -p "test_*.py"
 ```
 
 These commands verify research evidence and the planning baseline, not a working application. Token-budget and optional live checks are documented separately in [evals/reviews](evals/reviews/README.md).
+
+To reproduce the historical `6551e42` audit after the local PostgreSQL setup above:
+
+```powershell
+.\.venv-app\Scripts\python.exe -B research/reviews/6551e42/reproduce.py
+```
+
+Run sequentially with other database tests. The probe uses the checks role and Django's test database, with fake source/provider calls. Its assertions deliberately reproduce defects on the reviewed implementation; successful corrections should make the corresponding assertions fail. It is archived evidence, excluded from deterministic CI acceptance. Each correction adds desired-outcome regressions to `app/tests/`, already run by local/container/CI `scripts/check.py`.

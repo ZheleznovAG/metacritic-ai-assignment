@@ -17,6 +17,7 @@ This repository has established its implementation baseline through `PLN-03` / `
 - `evals/review_selection/` contains the frozen review-selection oracle, baseline and production-candidate verifier.
 - `research/methodology/` preserves prompts and exploration; it is evidence, not a requirements source.
 - `research/planning/` contains the offline baseline audit and its negative-control tests; these are planning evidence, not application tests.
+- `research/reviews/` preserves dated implementation-audit probes, observations and verification excerpts; defect-confirming probes are historical evidence, not application acceptance tests or CI gates.
 - `app/config/` contains Django settings, routes, WSGI and sanitised logging; `app/presentation/` contains the read-only preview and health endpoints; `app/tests/` contains application checks on PostgreSQL 16.
 - `app/metacritic/` contains external adapters/parsers; `app/catalog/` owns game data; `app/processing/` owns hourly discovery and daily progress; `app/reviews/` owns review collection/corpora; `app/summaries/` owns provider attempts and summaries.
 - `scripts/` contains environment initialization/upgrade, database role provisioning, migrations, image identity verification and HTTP/CSS smoke commands; `scripts/tests/` verifies permission boundaries and deployment counterexamples.

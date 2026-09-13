@@ -1,0 +1,82 @@
+Audit verification output excerpts for 6551e42, 2026-09-13.
+Copied from original output; omitted verbosity is identified by source hashes.
+
+checks.log
+CHECK: -m ruff format --check app scripts
+CHECK: -m ruff check app scripts
+All checks passed!
+CHECK: -m mypy
+Success: no issues found in 82 source files
+CHECK: app/manage.py check
+CHECK: app/manage.py makemigrations --check --dry-run
+CHECK: app/manage.py collectstatic --noinput
+CHECK: app/manage.py test tests --noinput -v 2
+Ran 177 tests in 36.564s
+OK
+CHECK: -m unittest discover -s scripts/tests -p test_*.py
+Ran 6 tests in 0.840s
+OK
+CHECK: research/planning/check_plan.py
+CHECK: -m unittest discover -s research/planning -p test_*.py
+Ran 18 tests in 0.447s
+OK
+CHECK: evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
+CHECK: -m unittest discover -s evals/reviews -p test_*.py
+Ran 7 tests in 0.040s
+OK
+CHECK: -m unittest discover -s evals/review_selection -p test_*.py
+Ran 9 tests in 0.008s
+OK
+CHECK: evals/review_selection/score_selection.py --verify evals/review_selection/baseline_report.json
+CHECK: evals/review_selection/verify_candidate.py
+all_pass=True failed=[]
+PASS: the real candidate passes all 8 invariants on all applicable cases.
+
+container-checks.log
+CHECK: -m ruff format --check app scripts
+CHECK: -m ruff check app scripts
+All checks passed!
+CHECK: -m mypy
+Success: no issues found in 82 source files
+CHECK: app/manage.py check
+CHECK: app/manage.py makemigrations --check --dry-run
+CHECK: app/manage.py collectstatic --noinput
+CHECK: app/manage.py test tests --noinput -v 2
+Ran 177 tests in 21.451s
+OK
+CHECK: -m unittest discover -s scripts/tests -p test_*.py
+Ran 6 tests in 0.819s
+OK
+CHECK: research/planning/check_plan.py
+CHECK: -m unittest discover -s research/planning -p test_*.py
+Ran 18 tests in 0.194s
+OK
+CHECK: evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
+CHECK: -m unittest discover -s evals/reviews -p test_*.py
+Ran 7 tests in 0.024s
+OK
+CHECK: -m unittest discover -s evals/review_selection -p test_*.py
+Ran 9 tests in 0.008s
+OK
+CHECK: evals/review_selection/score_selection.py --verify evals/review_selection/baseline_report.json
+CHECK: evals/review_selection/verify_candidate.py
+all_pass=True failed=[]
+PASS: the real candidate passes all 8 invariants on all applicable cases.
+
+probes.log
+Ran 24 tests in 8.867s
+OK
+
+http-smoke.log
+PASS /: 200
+PASS /health/live/: 200
+PASS /health/ready/: 200
+PASS /.env: 404
+PASS /.env.app: 404
+PASS /admin/: 404
+PASS /unknown: 404
+PASS /static/presentation/app.05efda703ced.css: CSS served
+
+http-card.log
+PASS saved game card /games/1/: HTTP 200, core/platform/summary sections
+PASS unmatched title search: no game cards

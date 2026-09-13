@@ -1,0 +1,15 @@
+{
+  "description": "SHA-256 of original local audit files before publication. Raw files are not required to run archived probes.",
+  "files": {
+    "checks.log": "78d1d063a0c7d74a4c5f703a0dbf341b08134501c36e92ec58ab1b10eb10b849",
+    "container-build.log": "2a1744d419870a477f9906d4653734db75f64bc7f2d2b84d13edf7b494085567",
+    "container-checks.log": "1f82767e3ae1c64d2505ef6f0abb195c2f25801074f1039d8cc2b739e95c9e96",
+    "container-startup.log": "9f63e208d76bae5aea04873668db72ffa426658ef2a99815fe5abad2ca043f77",
+    "container-stop.log": "232a5a566d89edf322b0597e4d246364c780f88985b5f0099a0b31af2e0a8833",
+    "http-card.log": "afda4a9fa768a681b7b09a20821176e33dee9a91f5d8fe4fc592feda257c94e3",
+    "http-smoke.log": "c1436899b1ae847c4334fc4925204a4016d7efcf9cdeb2b4ad5f24c8962ee6a0",
+    "probes.log": "7fdf8901843f3f732c5338c163497b27e8f09f3e14d03db39284ce8f64ba4f02",
+    "reproduce.py": "856f8e9b0910c46acf50446f22f93db6d989833f0ffd1916d8fadd164dcccfb5",
+    "review.md": "46deb23a249bc09da113f4d7e8aac52c73bf7c56d51dcd4f5c61a1addbd2ff44"
+  }
+}

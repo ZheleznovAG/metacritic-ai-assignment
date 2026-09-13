@@ -1,0 +1,166 @@
+{
+  "reviewed_commit": "6551e42badb1bb98ae53c9772fd386620097301d",
+  "review_date": "2026-09-13",
+  "probe_count": 24,
+  "result": "OK: two fix controls and twenty-two defect-confirming probes",
+  "observations": [
+    {
+      "after_stale_call": "processing",
+      "before": "processed",
+      "name": "stale_core_write_NEW",
+      "reprocessed_same_day": 1
+    },
+    {
+      "cached_job": "succeeded",
+      "corrective_job_exists": false,
+      "name": "current_cache_hit_NEW",
+      "reason": "collection_in_progress",
+      "state": "stale"
+    },
+    {
+      "collected_records": 3,
+      "distinct_input_records": 1,
+      "name": "minimum_review_guard_NEW",
+      "provider_calls": 1,
+      "state": "succeeded"
+    },
+    {
+      "accepted_parser_score": 101,
+      "candidate_states": [
+        "processing",
+        "pending"
+      ],
+      "name": "invalid_score_batch_NEW",
+      "run_state": "running",
+      "second_game_processed": false
+    },
+    {
+      "attempts": 7,
+      "documented_limit": 5,
+      "name": "core_retry_limit_NEW",
+      "state": "retryable"
+    },
+    {
+      "content_url_saved": true,
+      "embed_url": null,
+      "http_status": 200,
+      "name": "content_video_hidden_NEW",
+      "trailer_link_rendered": false
+    },
+    {
+      "actual_games": 49,
+      "expected_games": 49,
+      "name": "page_tails_FIXED",
+      "processed_per_tick": [
+        1,
+        20,
+        20,
+        8,
+        0
+      ]
+    },
+    {
+      "name": "repeat_collection",
+      "observations": 3,
+      "state": "unstable",
+      "unique": 0
+    },
+    {
+      "corpus_reused": true,
+      "model_input_still_old": true,
+      "name": "edited_text"
+    },
+    {
+      "name": "partial_pollution",
+      "reported": 3,
+      "unique": 4
+    },
+    {
+      "collection": "complete",
+      "name": "handoff_crash",
+      "reclaimable": false,
+      "summary_jobs": 0
+    },
+    {
+      "failures": 1,
+      "name": "page_retry_budget",
+      "state": "failed",
+      "successful_pages": 5
+    },
+    {
+      "claims": 0,
+      "name": "unknown_support",
+      "state": "succeeded"
+    },
+    {
+      "displayed": "ok",
+      "name": "collection_staleness",
+      "newer_collection": "pending"
+    },
+    {
+      "displayed": "ok",
+      "name": "timestamp_tie",
+      "newer_summary_job": "retryable"
+    },
+    {
+      "after": "unstable",
+      "before": "complete",
+      "http_calls": 2,
+      "name": "redelivery"
+    },
+    {
+      "actual_http_calls": 4,
+      "name": "hidden_http_retries",
+      "persisted_attempts": 1,
+      "reserved_tokens": 6800
+    },
+    {
+      "capacity_available": true,
+      "name": "worker_fairness",
+      "successful_review_ticks": 30,
+      "summary_attempts": 0
+    },
+    {
+      "actual_worker_request_tokens": 19060,
+      "advertised_prompt_limit": 6000,
+      "guarded_request_tokens": 19060,
+      "name": "token_ceiling",
+      "per_review_tokens": 450,
+      "reservation": 6800
+    },
+    {
+      "classified_as_retryable": false,
+      "error": "TypeError",
+      "name": "malformed_status"
+    },
+    {
+      "name": "score_only_edit",
+      "persisted_scores": [
+        "8",
+        "8",
+        "8"
+      ],
+      "source_score": "1"
+    },
+    {
+      "name": "browse_no_progress_FIXED",
+      "repeated_page_requests": 2,
+      "terminated_by": "browse_repeated_page"
+    },
+    {
+      "name": "abandoned_attempt",
+      "old_attempt_completed_at": null,
+      "old_attempt_outcome": null,
+      "reclaimed": true
+    },
+    {
+      "admitted_tokens": 13600,
+      "name": "concurrent_quota",
+      "states": [
+        "succeeded",
+        "succeeded"
+      ],
+      "tpm_limit": 8000
+    }
+  ]
+}

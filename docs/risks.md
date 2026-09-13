@@ -6,6 +6,8 @@
 
 В рамках исходной задачи `RSK-01` риски **не исследовались**. Последующие подтверждённые результаты spikes вносятся в этот же реестр отдельно; на 2026-09-04 добавлен результат `SPK-01`.
 
+Датированное implementation evidence: [аудит `6551e42`, 2026-09-13](requirements/implementation_audit_6551e42.md) воспроизвёл нарушения существующих рисков `R-TIM-01/02` (fencing/retry), `R-EXT-04` (source validation), `R-AI-01/02` (corpus/input/validation/quota/queue) и `R-UI-01` (freshness/video). [Архив probes и observations](../research/reviews/6551e42/README.md) дополняет spike evidence фактическими контрпримерами runtime. Новых risk IDs, ослабления thresholds или признания этих рисков устранёнными эта запись не вводит; correction-статусы принадлежат [action_plan.md](../action_plan.md).
+
 ## 2. Шкалы и правила приоритета
 
 Для каждого риска используются три независимые оценки от 1 до 5:
