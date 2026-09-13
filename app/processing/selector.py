@@ -12,8 +12,8 @@ from metacritic.gateway import GatewayProtocol
 
 from processing.clock import Clock
 from processing.lease import verify_fencing_token
-from processing.models import DailyCandidate, DailyCycle, ProcessingRun
-from processing.runner import process_candidate
+from processing.models import CoreAttempt, DailyCandidate, DailyCycle, ProcessingRun
+from processing.runner import MAX_AUTOMATIC_ATTEMPTS, process_candidate
 
 BATCH_LIMIT = 20
 # Admission bounds for one discovery scan, not a source-volume/exhaustion limit. A fetched
@@ -31,13 +31,33 @@ class BatchResult:
     error_code: str | None = None
 
 
-def _recover_stale_candidates() -> int:
+def _recover_stale_candidates(fencing_token: int, clock: Clock) -> None:
     # Step 1. A fresh lease acquisition (a prerequisite for even calling this) proves no other
     # run can still be legitimately writing, so any leftover "processing" row is necessarily from
     # a run that crashed or lost the lease (PS-08) — never a currently-active one.
-    return DailyCandidate.objects.filter(state="processing").update(
-        state="retryable", last_error="interrupted"
+    active = CoreAttempt.objects.filter(outcome__isnull=True, fencing_token=fencing_token)
+    interrupted = DailyCandidate.objects.filter(state="processing").exclude(
+        pk__in=active.values("candidate_id")
     )
+    CoreAttempt.objects.filter(candidate__in=interrupted, outcome__isnull=True).update(
+        outcome="failed", error_code="interrupted", ended_at=clock.now_utc()
+    )
+    interrupted.update(state="retryable", last_error="interrupted")
+    # History, not an operator's state/counter edit, is the durable budget authority.
+    exhausted = CoreAttempt.objects.filter(attempt_no__gte=MAX_AUTOMATIC_ATTEMPTS)
+    for candidate in DailyCandidate.objects.filter(
+        state__in=("pending", "retryable"), pk__in=exhausted.values("candidate_id")
+    ):
+        last = candidate.attempts.order_by("-attempt_no").first()
+        candidate.state = "failed"
+        candidate.attempt_count = max(
+            candidate.attempt_count, last.attempt_no if last else MAX_AUTOMATIC_ATTEMPTS
+        )
+        candidate.last_error = "attempt_limit"
+        candidate.save(update_fields=["state", "attempt_count", "last_error"])
+    DailyCandidate.objects.filter(
+        state__in=("pending", "retryable"), attempt_count__gte=MAX_AUTOMATIC_ATTEMPTS
+    ).update(state="failed", last_error="attempt_limit")
 
 
 def _existing_source_game_ids(cycle: DailyCycle) -> set[str]:
@@ -79,10 +99,9 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
         raise ValueError("run must have business_day/fencing_token set before run_batch")
     fencing_token = run.fencing_token
 
-    _recover_stale_candidates()
-
     with transaction.atomic():
-        verify_fencing_token(fencing_token)
+        verify_fencing_token(fencing_token, owner_run_id=run.pk, now=clock.now_utc())
+        _recover_stale_candidates(fencing_token, clock)
         cycle, _ = DailyCycle.objects.select_for_update().get_or_create(
             business_date=run.business_day, timezone="UTC"
         )
@@ -105,7 +124,7 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
             discovery_error = evidence.error_code or "new_releases_failed"
         else:
             with transaction.atomic():
-                verify_fencing_token(fencing_token)
+                verify_fencing_token(fencing_token, owner_run_id=run.pk, now=clock.now_utc())
                 known = _existing_source_game_ids(cycle)
                 unique_games = []
                 for game in games:
@@ -145,7 +164,7 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
                 break
             seen_pages.add(signature)
             with transaction.atomic():
-                verify_fencing_token(fencing_token)
+                verify_fencing_token(fencing_token, owner_run_id=run.pk, now=clock.now_utc())
                 known = _existing_source_game_ids(cycle)
                 new_identities = []
                 for game in page.games:

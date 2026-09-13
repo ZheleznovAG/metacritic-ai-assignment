@@ -15,6 +15,7 @@ from catalog.models import Game
 from django.db import transaction
 from django.test import TestCase
 from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO, ReviewPageDTO
+from processing.clock import Clock
 from processing.lease import LeaseOverlap, acquire_lease, current_fencing_token
 from processing.models import DailyCandidate, DailyCycle, ProcessingRun
 from processing.scheduler import run_tick
@@ -111,7 +112,7 @@ class FakeGateway:
         return ReviewPageDTO(items=(), reported_total=0, next_cursor=None), _evidence("review_page")
 
 
-def _make_run(clock: FakeClock, business_day: datetime, token: int) -> ProcessingRun:
+def _make_run(clock: Clock, business_day: datetime, token: int) -> ProcessingRun:
     run = ProcessingRun.objects.create(
         trigger_key=f"scheduled:{business_day.isoformat()}",
         scheduled_slot=business_day,
@@ -128,7 +129,7 @@ def _cycle_for(run: ProcessingRun) -> DailyCycle:
     return DailyCycle.objects.get(business_date=run.business_day)
 
 
-def _acquire(run: ProcessingRun, clock: FakeClock) -> int:
+def _acquire(run: ProcessingRun, clock: Clock) -> int:
     with transaction.atomic():
         token = acquire_lease(clock, run)
     run.fencing_token = token
@@ -170,12 +171,11 @@ class SubsequentRunTests(TestCase):
         return run
 
     def test_ps02_subsequent_pages_skip_processed_and_advance_cursor(self) -> None:
-        clock = FakeClock(
-            datetime(2026, 9, 4, 9, 0, tzinfo=UTC), datetime(2026, 9, 4, 10, 0, tzinfo=UTC)
-        )
+        clock = FakeClock(datetime(2026, 9, 4, 9, 0, tzinfo=UTC))
         self._seed_first_twenty(clock)
 
         run2 = _make_run(clock, datetime(2026, 9, 4, 10, 0, tzinfo=UTC), 1)
+        clock = FakeClock(run2.scheduled_slot)
         _acquire(run2, clock)
         gateway = FakeGateway(
             browse_pages={
@@ -198,15 +198,14 @@ class SubsequentRunTests(TestCase):
         self.assertEqual(new_ids, {f"g{n}" for n in range(21, 41)})
 
     def test_ac_sel06_exhaustion_ends_the_run_with_zero_new_candidates(self) -> None:
-        clock = FakeClock(
-            datetime(2026, 9, 4, 9, 0, tzinfo=UTC), datetime(2026, 9, 4, 10, 0, tzinfo=UTC)
-        )
+        clock = FakeClock(datetime(2026, 9, 4, 9, 0, tzinfo=UTC))
         run1 = self._seed_first_twenty(clock)
         cycle = _cycle_for(run1)
         cycle.phase = "exhausted"
         cycle.save(update_fields=["phase"])
 
         run2 = _make_run(clock, datetime(2026, 9, 4, 10, 0, tzinfo=UTC), 1)
+        clock = FakeClock(run2.scheduled_slot)
         _acquire(run2, clock)
         gateway = FakeGateway()  # no list calls expected to matter; phase is exhausted
 
@@ -219,9 +218,7 @@ class SubsequentRunTests(TestCase):
 
 class ItemFailureTests(TestCase):
     def test_ps03_item_failure_is_retryable_without_backfill_then_retried_first(self) -> None:
-        clock = FakeClock(
-            datetime(2026, 9, 4, 9, 0, tzinfo=UTC), datetime(2026, 9, 4, 10, 0, tzinfo=UTC)
-        )
+        clock = FakeClock(datetime(2026, 9, 4, 9, 0, tzinfo=UTC))
         run1 = _make_run(clock, datetime(2026, 9, 4, 9, 0, tzinfo=UTC), 0)
         _acquire(run1, clock)
         gateway1 = FakeGateway(
@@ -239,6 +236,7 @@ class ItemFailureTests(TestCase):
 
         cycle = _cycle_for(run1)
         run2 = _make_run(clock, datetime(2026, 9, 4, 10, 0, tzinfo=UTC), 1)
+        clock = FakeClock(run2.scheduled_slot)
         _acquire(run2, clock)
         gateway2 = FakeGateway(
             browse_pages={
@@ -275,9 +273,7 @@ class ItemFailureTests(TestCase):
 
 class NewDayTests(TestCase):
     def test_ps04_new_day_updates_existing_game_without_duplicate_and_keeps_old_cycle(self) -> None:
-        clock = FakeClock(
-            datetime(2026, 9, 4, 9, 0, tzinfo=UTC), datetime(2026, 9, 5, 0, 5, tzinfo=UTC)
-        )
+        clock = FakeClock(datetime(2026, 9, 4, 9, 0, tzinfo=UTC))
         run1 = _make_run(clock, datetime(2026, 9, 4, 9, 0, tzinfo=UTC), 0)
         _acquire(run1, clock)
         run_batch(FakeGateway(new_releases=[_identity(1)]), clock, run1)
@@ -285,6 +281,7 @@ class NewDayTests(TestCase):
         self.assertEqual(Game.objects.filter(source_game_id="g1").count(), 1)
 
         run2 = _make_run(clock, datetime(2026, 9, 5, 0, 5, tzinfo=UTC), 1)
+        clock = FakeClock(run2.scheduled_slot)
         _acquire(run2, clock)
         result = run_batch(FakeGateway(new_releases=[_identity(1), _identity(61)]), clock, run2)
 
@@ -317,14 +314,13 @@ class MidnightCrossingTests(TestCase):
 
 class NextPageFailureTests(TestCase):
     def test_ps09_a_failed_next_page_does_not_advance_the_cursor_past_it(self) -> None:
-        clock = FakeClock(
-            datetime(2026, 9, 4, 9, 0, tzinfo=UTC), datetime(2026, 9, 4, 10, 0, tzinfo=UTC)
-        )
+        clock = FakeClock(datetime(2026, 9, 4, 9, 0, tzinfo=UTC))
         run1 = _make_run(clock, datetime(2026, 9, 4, 9, 0, tzinfo=UTC), 0)
         _acquire(run1, clock)
         run_batch(FakeGateway(new_releases=[_identity(n) for n in range(1, 21)]), clock, run1)
 
         run2 = _make_run(clock, datetime(2026, 9, 4, 10, 0, tzinfo=UTC), 1)
+        clock = FakeClock(run2.scheduled_slot)
         _acquire(run2, clock)
         gateway = FakeGateway(
             browse_pages={
@@ -346,9 +342,7 @@ class RestartRecoveryTests(TestCase):
         # The second instant is >45 minutes after the first, so the never-released lease from
         # run1 (simulating a crash — nothing called release_lease) has genuinely expired by the
         # time run2 tries to acquire it, per the lease TTL (docs/design.md).
-        clock = FakeClock(
-            datetime(2026, 9, 4, 9, 0, tzinfo=UTC), datetime(2026, 9, 4, 10, 0, tzinfo=UTC)
-        )
+        clock = FakeClock(datetime(2026, 9, 4, 9, 0, tzinfo=UTC))
         run1 = _make_run(clock, datetime(2026, 9, 4, 9, 0, tzinfo=UTC), 0)
         _acquire(run1, clock)
         run_batch(FakeGateway(new_releases=[_identity(1)]), clock, run1)
@@ -357,6 +351,7 @@ class RestartRecoveryTests(TestCase):
         stuck.save(update_fields=["state"])
 
         run2 = _make_run(clock, datetime(2026, 9, 4, 10, 0, tzinfo=UTC), 1)
+        clock = FakeClock(run2.scheduled_slot)
         _acquire(run2, clock)
         run_batch(FakeGateway(new_releases=[]), clock, run2)
 

@@ -1,6 +1,6 @@
 """Singleton `ProcessingLease` acquisition per `SPK-04` `PS-INV-01/02`."""
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from processing.clock import Clock
 from processing.models import ProcessingLease, ProcessingRun
@@ -46,11 +46,17 @@ def current_fencing_token() -> int | None:
     return lease.fencing_token if lease is not None else None
 
 
-def verify_fencing_token(expected_token: int) -> None:
+def verify_fencing_token(
+    expected_token: int, *, owner_run_id: int | None = None, now: datetime | None = None
+) -> None:
     """Must run inside the caller's `transaction.atomic()`; locks the lease row for the rest of
     that transaction so a concurrent reclaim cannot race past this check."""
     lease = ProcessingLease.objects.select_for_update().get(resource=RESOURCE)
-    if lease.fencing_token != expected_token:
+    if (
+        lease.fencing_token != expected_token
+        or (owner_run_id is not None and lease.owner_run_id != owner_run_id)
+        or (now is not None and (lease.expires_at is None or lease.expires_at <= now))
+    ):
         raise StaleRun(
-            f"lease fencing token changed: expected {expected_token}, now {lease.fencing_token}"
+            f"lease expired or owner changed: token {expected_token}, current {lease.fencing_token}"
         )

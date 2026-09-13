@@ -20,6 +20,8 @@ from processing.clock import Clock
 from processing.lease import verify_fencing_token
 from processing.models import CoreAttempt, DailyCandidate, ProcessingRun
 
+MAX_AUTOMATIC_ATTEMPTS = 5
+
 
 def detail_url_for(candidate: DailyCandidate) -> str:
     return f"https://{ALLOWED_HOST}{candidate.game.canonical_locator}"
@@ -38,29 +40,46 @@ def process_candidate(
         raise ValueError("run must have an acquired fencing_token before processing candidates")
     fencing_token = run.fencing_token
 
-    candidate.state = "processing"
-    candidate.save(update_fields=["state"])
+    with transaction.atomic():
+        verify_fencing_token(fencing_token, owner_run_id=run.pk, now=clock.now_utc())
+        candidate = DailyCandidate.objects.select_for_update().get(pk=candidate.pk)
+        if candidate.state not in ("pending", "retryable"):
+            return candidate
+        previous_attempt = candidate.attempts.order_by("-attempt_no").first()
+        candidate.attempt_count = max(
+            candidate.attempt_count, previous_attempt.attempt_no if previous_attempt else 0
+        )
+        if candidate.attempt_count >= MAX_AUTOMATIC_ATTEMPTS:
+            candidate.state = "failed"
+            candidate.last_error = "attempt_limit"
+            candidate.save(update_fields=["state", "attempt_count", "last_error"])
+            return candidate
+        candidate.attempt_count += 1
+        attempt_no = candidate.attempt_count
+        attempt = CoreAttempt.objects.create(
+            candidate=candidate,
+            run=run,
+            attempt_no=attempt_no,
+            fencing_token=fencing_token,
+            started_at=clock.now_utc(),
+        )
+        candidate.state = "processing"
+        candidate.save(update_fields=["state", "attempt_count"])
 
     game_dto, fetch, platform_userscore_fetch = fetch_and_prepare(
         gateway, detail_url_for(candidate)
     )
     now = clock.now_utc()
-    attempt_no = candidate.attempt_count + 1
 
     if game_dto is None:
         with transaction.atomic():
-            verify_fencing_token(fencing_token)
-            CoreAttempt.objects.create(
-                candidate=candidate,
-                run=run,
-                attempt_no=attempt_no,
-                fencing_token=fencing_token,
-                started_at=fetch.started_at,
+            verify_fencing_token(fencing_token, owner_run_id=run.pk, now=clock.now_utc())
+            CoreAttempt.objects.filter(pk=attempt.pk, outcome__isnull=True).update(
                 ended_at=now,
                 outcome="failed",
                 error_code=fetch.error_code,
             )
-            candidate.state = "retryable"
+            candidate.state = "failed" if attempt_no >= MAX_AUTOMATIC_ATTEMPTS else "retryable"
             candidate.attempt_count = attempt_no
             candidate.last_error = fetch.error_code
             candidate.save(update_fields=["state", "attempt_count", "last_error"])
@@ -68,14 +87,9 @@ def process_candidate(
 
     try:
         with transaction.atomic():
-            verify_fencing_token(fencing_token)
+            verify_fencing_token(fencing_token, owner_run_id=run.pk, now=clock.now_utc())
             applied = apply_game_dto(game_dto, fetch, platform_userscore_fetch, now)
-            CoreAttempt.objects.create(
-                candidate=candidate,
-                run=run,
-                attempt_no=attempt_no,
-                fencing_token=fencing_token,
-                started_at=fetch.started_at,
+            CoreAttempt.objects.filter(pk=attempt.pk, outcome__isnull=True).update(
                 ended_at=clock.now_utc(),
                 outcome="succeeded",
             )
@@ -86,18 +100,13 @@ def process_candidate(
             ensure_jobs(candidate, applied.platforms)
     except (IdentityConflict, PlatformIdentityConflict) as error:
         with transaction.atomic():
-            verify_fencing_token(fencing_token)
-            CoreAttempt.objects.create(
-                candidate=candidate,
-                run=run,
-                attempt_no=attempt_no,
-                fencing_token=fencing_token,
-                started_at=fetch.started_at,
+            verify_fencing_token(fencing_token, owner_run_id=run.pk, now=clock.now_utc())
+            CoreAttempt.objects.filter(pk=attempt.pk, outcome__isnull=True).update(
                 ended_at=clock.now_utc(),
                 outcome="failed",
                 error_code=type(error).__name__,
             )
-            candidate.state = "retryable"
+            candidate.state = "failed" if attempt_no >= MAX_AUTOMATIC_ATTEMPTS else "retryable"
             candidate.attempt_count = attempt_no
             candidate.last_error = str(error)[:255]
             candidate.save(update_fields=["state", "attempt_count", "last_error"])
