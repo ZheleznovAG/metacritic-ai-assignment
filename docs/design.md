@@ -197,6 +197,11 @@ Baseline считается в Python по текущей базе, без со�
 2. Cursor двигается только вместе с checkpoint успешно разобранного segment.
 3. Core success атомарен и независим от review/AI; partial enrichment не меняет `processed` candidate.
 4. Failed/empty/valid source outcomes различаются; failed fetch не затирает прошлые данные.
+   Core DTO проверяется до upsert: типы/размеры строк, platform identity duplicates,
+   Metascore int 0–100 и finite Userscore 0–10 с одной значимой десятичной цифрой.
+   Invalid main DTO сохраняет диагностируемую ошибку одной игры, остальные кандидаты
+   партии продолжаются; invalid secondary Userscore сохраняет прежнее значение.
+   Неожиданное исключение завершает текущий run/его попытки до выхода наружу.
 5. Review content versions, page observations и corpus immutable; complete coverage и exact model input восстанавливаются без provider logs.
 6. Одна audience на corpus/job/attempt/summary; critic и user не могут иметь общую попытку.
 7. Одинаковые input + contour дают cache hit; изменение выбранного input или версии контура создаёт новую работу, изменение только несэмплированных reviews обновляет coverage/source fingerprint без траты AI quota.

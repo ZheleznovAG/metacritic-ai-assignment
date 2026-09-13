@@ -36,10 +36,12 @@ from metacritic.dto import (
     ReviewRecordDTO,
 )
 from metacritic.errors import MetacriticParseError
+from metacritic.validation import metascore as validate_metascore
+from metacritic.validation import userscore as validate_userscore
 
 PARSER_CONTRACT_VERSION = "1.0.0"
 
-_USER_SCORE_TITLE = re.compile(r"^User score ([0-9]+(?:\.[0-9]+)?) out of 10$")
+_USER_SCORE_TITLE = re.compile(r"^User score (.*?) out of 10$")
 
 
 def _collapse(text: str) -> str:
@@ -124,8 +126,7 @@ def _parse_platform(payload: list[object], record: dict[str, object]) -> GamePla
     critic_path: str | None = None
     if isinstance(critic_summary, dict):
         raw_score = _resolve(payload, critic_summary.get("score"))
-        if isinstance(raw_score, int) and not isinstance(raw_score, bool):
-            metascore = raw_score
+        metascore = validate_metascore(raw_score)
         raw_url = _resolve(payload, critic_summary.get("url"))
         if isinstance(raw_url, str) and raw_url:
             critic_path = raw_url
@@ -283,9 +284,9 @@ def _extract_user_score(soup: BeautifulSoup) -> Decimal | None:
         match = _USER_SCORE_TITLE.match(title.strip())
         if match:
             try:
-                return Decimal(match.group(1))
-            except InvalidOperation:  # pragma: no cover - regex already restricts the shape
-                return None
+                return validate_userscore(Decimal(match.group(1)))
+            except InvalidOperation as error:
+                raise MetacriticParseError("invalid_userscore") from error
     return None
 
 

@@ -183,6 +183,8 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
                 break
 
     # Step 7: the batch is frozen here — a core failure below does not pull in a replacement.
+    run.selected_count = len(batch)
+    run.save(update_fields=["selected_count"])
     processed_count = 0
     failed_count = 0
     for candidate in batch:

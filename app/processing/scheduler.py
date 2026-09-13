@@ -11,8 +11,15 @@ from django.db import IntegrityError, transaction
 from metacritic.gateway import GatewayProtocol
 
 from processing.clock import Clock
-from processing.lease import LeaseOverlap, StaleRun, acquire_lease, release_lease
-from processing.models import CoreAttempt, ProcessingRun
+from processing.lease import (
+    LeaseOverlap,
+    StaleRun,
+    acquire_lease,
+    release_lease,
+    verify_fencing_token,
+)
+from processing.models import CoreAttempt, DailyCandidate, ProcessingRun
+from processing.runner import MAX_AUTOMATIC_ATTEMPTS
 from processing.selector import run_batch
 
 
@@ -71,7 +78,7 @@ def run_tick(gateway: GatewayProtocol, clock: Clock) -> TickResult:
             # even though run_batch never returned a BatchResult in this path.
             processed = CoreAttempt.objects.filter(run=run, outcome="succeeded").count()
             failed = CoreAttempt.objects.filter(run=run, outcome="failed").count()
-            run.selected_count = processed + failed
+            run.selected_count = max(run.selected_count, processed + failed)
             run.processed_count = processed
             run.failed_count = failed
             run.status = "partial" if processed > 0 else "failed"
@@ -88,6 +95,44 @@ def run_tick(gateway: GatewayProtocol, clock: Clock) -> TickResult:
                 ]
             )
             return TickResult(run=run, outcome=run.status)
+        except Exception:
+            # Preserve durable diagnostics before surfacing an unexpected programming/runtime
+            # error. Expected source failures are classified per candidate and continue the batch.
+            try:
+                with transaction.atomic():
+                    verify_fencing_token(token, owner_run_id=run.pk, now=clock.now_utc())
+                    active = CoreAttempt.objects.filter(run=run, outcome__isnull=True)
+                    candidate_ids = list(active.values_list("candidate_id", flat=True))
+                    active.update(
+                        outcome="failed", error_code="unexpected_error", ended_at=clock.now_utc()
+                    )
+                    candidates = DailyCandidate.objects.filter(
+                        pk__in=candidate_ids, state="processing"
+                    )
+                    candidates.filter(attempt_count__lt=MAX_AUTOMATIC_ATTEMPTS).update(
+                        state="retryable", last_error="unexpected_error"
+                    )
+                    candidates.filter(attempt_count__gte=MAX_AUTOMATIC_ATTEMPTS).update(
+                        state="failed", last_error="unexpected_error"
+                    )
+            except StaleRun:
+                pass  # Another owner decides recovery; this run can only close its own metadata.
+            run.refresh_from_db(fields=["selected_count"])
+            run.processed_count = CoreAttempt.objects.filter(run=run, outcome="succeeded").count()
+            run.failed_count = CoreAttempt.objects.filter(run=run, outcome="failed").count()
+            run.status = "partial" if run.processed_count else "failed"
+            run.error_code = "unexpected_error"
+            run.ended_at = clock.now_utc()
+            run.save(
+                update_fields=[
+                    "processed_count",
+                    "failed_count",
+                    "status",
+                    "error_code",
+                    "ended_at",
+                ]
+            )
+            raise
     finally:
         release_lease(run)
 

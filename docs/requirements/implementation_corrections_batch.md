@@ -37,3 +37,32 @@ Adversarial review проверил границы транзакций, stale i
 AI 7, selection 9 tests и frozen/candidate verifiers — PASS, exit 0.
 Изолированные тесты и документация
 не являются доказательством hosted CI, production throughput или VDS recovery.
+
+## IMP-02/03: R19 — source validation и изоляция партии
+
+Связь: `DATA-02/03`, `NFR-02/04/05`, `AC-NFR-02/04/05`, `R-EXT-04`.
+Parser проверяет тип/диапазон Metascore и finite Userscore в 0–10 с точностью
+хранимого decimal поля. Отсутствующая оценка сохраняется как отсутствие, а
+некорректный числовой label классифицируется как invalid. Общий DTO validator
+проверяет размеры и типы строк, NUL, media URL и platform identity duplicates
+до upsert. Неверный основной DTO получает invalid source evidence; candidate
+становится retryable/failed по общему лимиту, следующая игра партии продолжается.
+Неверная отдельная platform Userscore сохраняет прежнее хорошее значение и
+собственное invalid evidence, разрешая обновить остальные валидные поля.
+
+Независимое evidence — [test_source_validation.py](../../app/tests/test_source_validation.py),
+7 tests: -1/101/bool/string/float Metascore, некорректные Userscore labels,
+NaN/выход за диапазон/лишняя точность, переполнение title, границы 0/100/10 и null,
+сохранение старых данных, продолжение второй игры и unexpected exception.
+Первые пять tests были выполнены до исправления и воспроизвели ошибки.
+Frozen batch size теперь сохраняется до обработки; unexpected exception закрывает
+свои открытые attempts/candidates и run с точными counters и `unexpected_error`,
+освобождает lease, затем выходит наружу. Это не скрывает программную ошибку;
+ожидаемые ошибки источника обрабатываются отдельно и не прерывают batch.
+
+Adversarial self-review проверил null против zero, Decimal finite/precision,
+частичный secondary fetch, rollback good values, полный batch selection против
+числа начатых attempts и запрет recovery чужого owner при неожиданной ошибке.
+Полный local `scripts/check.py`: 212 application tests, format/lint/mypy/drift,
+scripts 6, planning 18, AI 7, selection 9 и frozen/candidate verifiers — PASS,
+exit 0. Live contract текущего Metacritic и hosted CI этим не заявляются.

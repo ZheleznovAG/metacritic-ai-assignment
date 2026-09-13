@@ -13,7 +13,10 @@ from urllib.parse import urlsplit, urlunsplit
 
 from django.db import transaction
 from metacritic.dto import FetchEvidence, GameDTO, GameIdentityDTO, GamePlatformDTO
+from metacritic.errors import MetacriticParseError
 from metacritic.gateway import GatewayProtocol
+from metacritic.validation import userscore as validate_userscore
+from metacritic.validation import validate_game
 from processing.clock import Clock
 from processing.models import DailyCandidate, DailyCycle
 from reviews.models import ReviewCollectionJob
@@ -271,6 +274,13 @@ def fetch_and_prepare(
     fetch = save_fetch_evidence(evidence)
     if game_dto is None:
         return None, fetch, {}
+    try:
+        validate_game(game_dto)
+    except MetacriticParseError:
+        fetch.outcome = "invalid"
+        fetch.error_code = "invalid_game_data"
+        fetch.save(update_fields=["outcome", "error_code"])
+        return None, fetch, {}
 
     resolved_platforms: list[GamePlatformDTO] = []
     platform_userscore_fetch: dict[str, SourceFetch] = {}
@@ -282,7 +292,14 @@ def fetch_and_prepare(
             _absolute_url(detail_url, platform_dto.user_reviews_path)
         )
         saved_fetch = save_fetch_evidence(platform_evidence)
-        if platform_evidence.outcome == "succeeded":
+        try:
+            validate_userscore(userscore)
+        except MetacriticParseError:
+            saved_fetch.outcome = "invalid"
+            saved_fetch.error_code = "invalid_userscore"
+            saved_fetch.save(update_fields=["outcome", "error_code"])
+            userscore = None
+        if saved_fetch.outcome == "succeeded":
             platform_userscore_fetch[platform_dto.source_platform_id] = saved_fetch
         resolved_platforms.append(replace(platform_dto, userscore=userscore))
     game_dto = replace(game_dto, platforms=tuple(resolved_platforms))
@@ -300,6 +317,7 @@ def apply_game_dto(
     Must run inside the caller's own `transaction.atomic()` block. Raises `IdentityConflict`/
     `PlatformIdentityConflict` on a genuine identity collision (nothing is written in that case).
     """
+    validate_game(game_dto)
     game, game_created = _resolve_game(game_dto, now)
     game.last_changed_fetch = fetch
     game.save(update_fields=["last_changed_fetch"])

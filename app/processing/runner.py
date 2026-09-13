@@ -14,6 +14,7 @@ from catalog.ingest import (
     fetch_and_prepare,
 )
 from django.db import transaction
+from metacritic.errors import MetacriticParseError
 from metacritic.gateway import ALLOWED_HOST, GatewayProtocol
 
 from processing.clock import Clock
@@ -98,7 +99,7 @@ def process_candidate(
             candidate.last_error = None
             candidate.save(update_fields=["state", "attempt_count", "last_error"])
             ensure_jobs(candidate, applied.platforms)
-    except (IdentityConflict, PlatformIdentityConflict) as error:
+    except (IdentityConflict, PlatformIdentityConflict, MetacriticParseError) as error:
         with transaction.atomic():
             verify_fencing_token(fencing_token, owner_run_id=run.pk, now=clock.now_utc())
             CoreAttempt.objects.filter(pk=attempt.pk, outcome__isnull=True).update(
