@@ -229,7 +229,9 @@ def parse_game_detail(html: str, expected_url: str) -> GameDTO:
     if not platforms:
         raise MetacriticParseError("Game has zero resolvable platforms")
 
-    lead_userscore = _extract_user_score(soup)
+    lead_userscore = _extract_user_score(
+        _find_all_by_attr(soup, "data-testid", "global-score-wrapper")
+    )
     if lead_userscore is not None:
         platforms = [
             p if not p.is_lead_platform else _with_userscore(p, lead_userscore) for p in platforms
@@ -272,12 +274,17 @@ def _with_userscore(platform: GamePlatformDTO, userscore: Decimal) -> GamePlatfo
     )
 
 
-def _extract_user_score(soup: BeautifulSoup) -> Decimal | None:
-    # bs4-stubs' attrs-only find_all() overloads are stricter than the runtime signature.
-    tags = soup.find_all(attrs={"title": True})  # type: ignore[call-overload]
+def _extract_user_score(containers: list[BeautifulSoup | Tag]) -> Decimal | None:
+    """Reads the "User score ... out of 10" title from within the given hero/score-card
+    containers only. The rest of a live page (e.g. individual review cards further down, or a
+    site-templating artifact that literally renders "User score null out of 10" outside these
+    containers) is not scanned: it can carry unrelated or malformed "User score" titles of its
+    own, observed live on games with too few ratings for an aggregate score."""
+    tags: list[Tag] = []
+    for container in containers:
+        # bs4-stubs' attrs-only find_all() overloads are stricter than the runtime signature.
+        tags.extend(t for t in container.find_all(attrs={"title": True}) if isinstance(t, Tag))  # type: ignore[call-overload]
     for tag in tags:
-        if not isinstance(tag, Tag):
-            continue
         title = tag.get("title")
         if not isinstance(title, str):
             continue
@@ -299,12 +306,12 @@ def parse_platform_userscore(html: str, expected_url: str) -> Decimal | None:
     """
     soup = BeautifulSoup(html, "html.parser")
     _require_matching_canonical(soup, expected_url)
-    score = _extract_user_score(soup)
+    overview_containers = _find_all_by_attr(soup, "data-testid", "score-card-overview")
+    wrapper_containers = _find_all_by_attr(soup, "data-testid", "global-score-wrapper")
+    score = _extract_user_score(overview_containers + wrapper_containers)
     if score is not None:
         return score
-    if _find_by_testid(soup, "score-card-overview") is not None:
-        return None
-    if _find_by_testid(soup, "global-score-wrapper") is not None:
+    if overview_containers or wrapper_containers:
         return None
     raise MetacriticParseError("Missing the platform user-reviews score widget")
 

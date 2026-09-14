@@ -105,6 +105,33 @@ class ParseGameDetailTests(SimpleTestCase):
                 self.assertIsNone(platform.userscore)
 
 
+class LiveContractStrayUserScoreWidgetTests(SimpleTestCase):
+    """2026-09-14 live finding on IMP-03 revalidation: a brand-new game with zero user ratings
+    renders a *second*, unrelated widget elsewhere on the page whose title attribute literally
+    reads "User score null out of 10" -- a real site templating artifact, not the natural "TBD"
+    label the actual hero widget uses. A whole-page scan for any "User score ... out of 10"
+    title can match this stray widget (or an individual review card's own score) instead of the
+    real hero/score-card widget, either raising on the literal text "null" or silently returning
+    the wrong platform's score. Extraction must stay scoped to the hero/score-card container."""
+
+    def test_a_stray_null_titled_widget_outside_the_hero_container_does_not_raise(self) -> None:
+        dto = parse_game_detail(
+            _read("bioeden_detail_tbd_userscore.min.html"),
+            "https://www.metacritic.com/game/bioeden/",
+        )
+        lead = next(p for p in dto.platforms if p.is_lead_platform)
+        self.assertEqual(lead.slug, "pc")
+        self.assertIsNone(lead.userscore)
+
+    def test_an_individual_review_cards_own_score_is_not_mistaken_for_the_aggregate(self) -> None:
+        result = parse_platform_userscore(
+            _read("shatterverse_user_xbox_series_x_tbd.min.html"),
+            "https://www.metacritic.com/game/serious-sam-shatterverse/"
+            "user-reviews/?platform=xbox-series-x",
+        )
+        self.assertIsNone(result)
+
+
 class ParseGameDetailFailureTests(SimpleTestCase):
     def test_structurally_corrupted_payload_raises_instead_of_returning_partial_data(self) -> None:
         with self.assertRaises(MetacriticParseError):

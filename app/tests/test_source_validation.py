@@ -27,12 +27,14 @@ class SourceValidationTests(TestCase):
         for score in ("-1", "10.1", "8.55", "NaN", "Infinity", "bad"):
             with self.subTest(score=score), self.assertRaises(MetacriticParseError):
                 _extract_user_score(
-                    BeautifulSoup(
-                        f'<span title="User score {score} out of 10"></span>', "html.parser"
-                    )
+                    [
+                        BeautifulSoup(
+                            f'<span title="User score {score} out of 10"></span>', "html.parser"
+                        )
+                    ]
                 )
         self.assertIsNone(
-            _extract_user_score(BeautifulSoup("<span>No scores</span>", "html.parser"))
+            _extract_user_score([BeautifulSoup("<span>No scores</span>", "html.parser")])
         )
 
     def test_bad_secondary_userscore_preserves_previous_score_with_invalid_evidence(self) -> None:
