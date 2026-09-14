@@ -7,6 +7,7 @@
 !research/feasibility/**
 !evals/reviews/**
 !evals/review_selection/**
+!evals/similarity/**
 !docs/**
 !action_plan.md
 !implementation_plan.md
