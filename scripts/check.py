@@ -42,6 +42,8 @@ def main() -> None:
             "evals/review_selection/baseline_report.json",
         ],
         ["evals/review_selection/verify_candidate.py"],
+        ["evals/similarity/score_similarity.py", "--verify"],
+        ["-m", "unittest", "discover", "-s", "evals/similarity", "-p", "test_*.py"],
     ]
     for arguments in commands:
         print("CHECK:", " ".join(arguments), flush=True)

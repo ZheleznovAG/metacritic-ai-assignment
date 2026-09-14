@@ -25,6 +25,7 @@ COPY research/planning ./research/planning
 COPY research/feasibility ./research/feasibility
 COPY evals/reviews ./evals/reviews
 COPY evals/review_selection ./evals/review_selection
+COPY evals/similarity ./evals/similarity
 COPY docs ./docs
 COPY action_plan.md implementation_plan.md ./
 COPY intake.md assignment.md methodology.md AGENTS.md README.md ./

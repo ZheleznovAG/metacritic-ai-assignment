@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "task": "SIM-EVAL-01",
+  "sha256": {
+    "cases.json": "1d69ddc058da55ef65fa15bedb170b898ad2e48997745bb246407928bcd4e972",
+    "metric.md": "f1187dbf6e26dafc57de60732ae1c7d4e64e923ba7d89492af82a70bcb01a1de",
+    "contract.py": "43acc4f8d0eb720f3170cf1d03caff5b6af26d6eb6d99b6c24cb9f0e887a825c",
+    "score_similarity.py": "cfcc7caa190ee12a006c4fb2bec06f67210f34213f9538abea4444de25125ff3"
+  }
+}

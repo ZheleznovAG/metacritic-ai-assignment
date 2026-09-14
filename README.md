@@ -44,7 +44,16 @@ docker compose --env-file .env.app --profile app up -d --wait
 
 The first command runs format/lint/types, Django checks, migration drift, static build, PostgreSQL permission/integration tests, deployment-tool tests and offline research evidence checks. Run local/container suites sequentially: they create/drop `test_metacritic_checks`. The permission test creates and removes its own probe table in the development application's database. Never run tests against production. Formatting changes: `.\.venv-app\Scripts\python.exe -m ruff format app scripts`; lint-only: `.\.venv-app\Scripts\python.exe -m ruff check app scripts`; type-only: set `PYTHONPATH=app`, then `python -m mypy` in the application environment.
 
-The container suite uses canonical Linux/Python 3.12 and PostgreSQL 16. Tests run on an internal network without SSH/Groq credentials; dependency and tokenizer vocabulary downloads happen at build time. Both image targets include the hash-checked tokenizer vocabulary in `TIKTOKEN_CACHE_DIR=/opt/app/tokenizer-cache`; the runtime reads it as a non-root user on a read-only filesystem. Local setup downloads the same vocabulary explicitly before checks. The checks image also includes both `evals/reviews` and `evals/review_selection`.
+The container suite uses canonical Linux/Python 3.12 and PostgreSQL 16. Tests run on an internal network without SSH/Groq credentials; dependency and tokenizer vocabulary downloads happen at build time. Both image targets include the hash-checked tokenizer vocabulary in `TIKTOKEN_CACHE_DIR=/opt/app/tokenizer-cache`; the runtime reads it as a non-root user on a read-only filesystem. Local setup downloads the same vocabulary explicitly before checks. The checks image also includes `evals/reviews`, `evals/review_selection` and `evals/similarity`.
+
+The [similarity oracle](evals/similarity/metric.md) has separate offline checks, also run by `scripts/check.py` and CI:
+
+```powershell
+.\.venv-app\Scripts\python.exe -B evals/similarity/score_similarity.py --verify
+.\.venv-app\Scripts\python.exe -B -m unittest discover -s evals/similarity -p "test_*.py" -v
+```
+
+Integrity checks do not select a similarity policy or imply owner acceptance; its current decision is recorded in [the action plan](action_plan.md).
 
 `--profile app up` provisions the database roles, applies migrations using the schema-owner role, then starts web and Caddy. [CI workflow](.github/workflows/ci.yml) repeats build, offline runtime tokenization, checks and an actual Caddy HTTP/CSS smoke on a dedicated project with an initially empty database; it validates both CI and production Compose overrides. Whitespace is checked between the event's base/head commits, or in the selected commit for manual/initial runs. CI never deploys or calls live Metacritic/AI. A workflow file alone is not a successful CI run.
 

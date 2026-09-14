@@ -1,0 +1,900 @@
+{
+  "version": "1.0.0",
+  "task": "SIM-EVAL-01",
+  "authorship": "Project-authored synthetic examples and judgments, fixed before IMP-06 comparison. No live source, model output, or ranking implementation was used to generate labels.",
+  "grade_meaning": {
+    "0": "obvious non-match or insufficient affirmative evidence",
+    "1": "plausible broader relation",
+    "2": "obvious close genre match"
+  },
+  "thresholds": {
+    "macro_ndcg_at_5": 0.9,
+    "min_case_ndcg_at_5": 0.8
+  },
+  "cases": [
+    {
+      "id": "action_role_playing",
+      "purpose": "Core genre matches across platforms; broad genre is weaker; platform/developer traps.",
+      "query_id": 101,
+      "catalog": [
+        {
+          "id": 101,
+          "title": "Cinderbound",
+          "genres": [
+            "Action RPG",
+            "Role-Playing"
+          ],
+          "platforms": [
+            "pc",
+            "ps5"
+          ],
+          "developer": "Ember Workshop"
+        },
+        {
+          "id": 107,
+          "title": "Aerial League",
+          "genres": [
+            "Sports"
+          ],
+          "platforms": [
+            "pc",
+            "ps5"
+          ],
+          "developer": "Field Studio"
+        },
+        {
+          "id": 104,
+          "title": "Lantern Tactics",
+          "genres": [
+            "Role-Playing",
+            "Turn-Based Strategy"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Lantern House"
+        },
+        {
+          "id": 109,
+          "title": "Ember Mosaic",
+          "genres": [
+            "Puzzle"
+          ],
+          "platforms": [
+            "pc",
+            "ps5"
+          ],
+          "developer": "Ember Workshop"
+        },
+        {
+          "id": 102,
+          "title": "Ashen Pilgrim",
+          "genres": [
+            "Action RPG",
+            "Role-Playing"
+          ],
+          "platforms": [
+            "xbox-series-x"
+          ],
+          "developer": "Wayfarer"
+        },
+        {
+          "id": 103,
+          "title": "Stone Oath",
+          "genres": [
+            "Action RPG",
+            "Role-Playing"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Granite Games"
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 102,
+          "grade": 2,
+          "reason": "Same action role-playing core despite another platform and developer."
+        },
+        {
+          "game_id": 103,
+          "grade": 2,
+          "reason": "Same action role-playing core."
+        },
+        {
+          "game_id": 104,
+          "grade": 1,
+          "reason": "Shares role-playing but uses turn-based strategy rather than action combat."
+        },
+        {
+          "game_id": 107,
+          "grade": 0,
+          "reason": "Only platforms overlap; sports is an unrelated core."
+        },
+        {
+          "game_id": 109,
+          "grade": 0,
+          "reason": "The same studio and platforms do not make a puzzle game an action RPG."
+        }
+      ]
+    },
+    {
+      "id": "platformers",
+      "purpose": "An obvious platformer pair must survive a same-platform sports distraction.",
+      "query_id": 201,
+      "catalog": [
+        {
+          "id": 201,
+          "title": "Cloud Steps",
+          "genres": [
+            "Platformer"
+          ],
+          "platforms": [
+            "switch"
+          ],
+          "developer": "Blue Kite"
+        },
+        {
+          "id": 206,
+          "title": "Court Season",
+          "genres": [
+            "Sports"
+          ],
+          "platforms": [
+            "switch"
+          ],
+          "developer": "Side Line"
+        },
+        {
+          "id": 204,
+          "title": "Moss Leap",
+          "genres": [
+            "Platformer"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Forest Works"
+        },
+        {
+          "id": 202,
+          "title": "Sky Ladder",
+          "genres": [
+            "Platformer"
+          ],
+          "platforms": [
+            "switch"
+          ],
+          "developer": "Rung Studio"
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 202,
+          "grade": 2,
+          "reason": "Platform jumping is the shared core."
+        },
+        {
+          "game_id": 204,
+          "grade": 2,
+          "reason": "Platform jumping remains relevant on another platform."
+        },
+        {
+          "game_id": 206,
+          "grade": 0,
+          "reason": "Sports shares the console, not the play genre."
+        }
+      ]
+    },
+    {
+      "id": "racing",
+      "purpose": "Genre relevance must not require developer or platform identity.",
+      "query_id": 301,
+      "catalog": [
+        {
+          "id": 301,
+          "title": "Coastal Rally",
+          "genres": [
+            "Racing"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Coastline"
+        },
+        {
+          "id": 305,
+          "title": "Coastal Crossword",
+          "genres": [
+            "Puzzle"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Coastline"
+        },
+        {
+          "id": 303,
+          "title": "Dust Circuit",
+          "genres": [
+            "Racing"
+          ],
+          "platforms": [
+            "ps5"
+          ],
+          "developer": "Dune Team"
+        },
+        {
+          "id": 302,
+          "title": "Night Apex",
+          "genres": [
+            "Racing"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Apex House"
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 302,
+          "grade": 2,
+          "reason": "Another racing game."
+        },
+        {
+          "game_id": 303,
+          "grade": 2,
+          "reason": "Another racing game on a different platform."
+        },
+        {
+          "game_id": 305,
+          "grade": 0,
+          "reason": "A crossword is unrelated despite studio and PC overlap."
+        }
+      ]
+    },
+    {
+      "id": "strategy_grades",
+      "purpose": "Distinguish a close turn-based match from broader strategy overlap.",
+      "query_id": 401,
+      "catalog": [
+        {
+          "id": 401,
+          "title": "Hex Dominion",
+          "genres": [
+            "Strategy",
+            "Turn-Based Strategy"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Hex House"
+        },
+        {
+          "id": 405,
+          "title": "Open Pitch",
+          "genres": [
+            "Sports"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Pitch Works"
+        },
+        {
+          "id": 404,
+          "title": "Command Flow",
+          "genres": [
+            "Strategy",
+            "Real-Time Strategy"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Flow Team"
+        },
+        {
+          "id": 402,
+          "title": "Winter Council",
+          "genres": [
+            "Strategy",
+            "Turn-Based Strategy"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Council Studio"
+        },
+        {
+          "id": 403,
+          "title": "Island Orders",
+          "genres": [
+            "Strategy",
+            "Turn-Based Strategy"
+          ],
+          "platforms": [
+            "switch"
+          ],
+          "developer": "Island Studio"
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 402,
+          "grade": 2,
+          "reason": "Same turn-based strategy core."
+        },
+        {
+          "game_id": 403,
+          "grade": 2,
+          "reason": "Same turn-based strategy core on another platform."
+        },
+        {
+          "game_id": 404,
+          "grade": 1,
+          "reason": "Strategy is shared, but real-time play is a weaker match."
+        },
+        {
+          "game_id": 405,
+          "grade": 0,
+          "reason": "PC availability alone does not relate sports to strategy."
+        }
+      ]
+    },
+    {
+      "id": "sparse_features",
+      "purpose": "A known genre can support a match when developer and platforms are missing.",
+      "query_id": 501,
+      "catalog": [
+        {
+          "id": 501,
+          "title": "Quiet Tiles",
+          "genres": [
+            "Puzzle"
+          ],
+          "platforms": [],
+          "developer": null
+        },
+        {
+          "id": 504,
+          "title": "Uncatalogued",
+          "genres": [],
+          "platforms": [],
+          "developer": null
+        },
+        {
+          "id": 502,
+          "title": "Glass Pattern",
+          "genres": [
+            "Puzzle"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Glass Studio"
+        },
+        {
+          "id": 503,
+          "title": "Quick Wheels",
+          "genres": [
+            "Racing"
+          ],
+          "platforms": [],
+          "developer": null
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 502,
+          "grade": 2,
+          "reason": "Puzzle is affirmative evidence even with missing query metadata."
+        },
+        {
+          "game_id": 503,
+          "grade": 0,
+          "reason": "Known racing genre is unrelated to puzzles."
+        },
+        {
+          "game_id": 504,
+          "grade": 0,
+          "reason": "No affirmative evidence of similarity."
+        }
+      ]
+    },
+    {
+      "id": "platform_only",
+      "purpose": "A shared platform cannot by itself fill a recommendation list.",
+      "query_id": 601,
+      "catalog": [
+        {
+          "id": 601,
+          "title": "Local Unknown",
+          "genres": [],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Unmatched Studio"
+        },
+        {
+          "id": 602,
+          "title": "PC Rally",
+          "genres": [
+            "Racing"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Another Studio"
+        },
+        {
+          "id": 603,
+          "title": "PC Board",
+          "genres": [
+            "Puzzle"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": null
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 602,
+          "grade": 0,
+          "reason": "The only overlap is PC; the query has no known genre."
+        },
+        {
+          "game_id": 603,
+          "grade": 0,
+          "reason": "The only overlap is PC; do not infer a shared play style."
+        }
+      ]
+    },
+    {
+      "id": "developer_trap",
+      "purpose": "One developer can publish unrelated genres; an obvious genre match should remain.",
+      "query_id": 701,
+      "catalog": [
+        {
+          "id": 701,
+          "title": "Arena Season",
+          "genres": [
+            "Sports"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Many Worlds"
+        },
+        {
+          "id": 702,
+          "title": "Many Worlds Tiles",
+          "genres": [
+            "Puzzle"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Many Worlds"
+        },
+        {
+          "id": 703,
+          "title": "Many Worlds Wheels",
+          "genres": [
+            "Racing"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Many Worlds"
+        },
+        {
+          "id": 704,
+          "title": "Stadium Days",
+          "genres": [
+            "Sports"
+          ],
+          "platforms": [
+            "ps5"
+          ],
+          "developer": "Field Team"
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 702,
+          "grade": 0,
+          "reason": "Same developer, unrelated puzzle genre."
+        },
+        {
+          "game_id": 703,
+          "grade": 0,
+          "reason": "Same developer, unrelated racing genre."
+        },
+        {
+          "game_id": 704,
+          "grade": 2,
+          "reason": "Sports is the shared core, independent of developer/platform."
+        }
+      ]
+    },
+    {
+      "id": "title_collision_and_unicode",
+      "purpose": "Equal titles are distinct IDs; titles and language alone are not similarity evidence.",
+      "query_id": 801,
+      "catalog": [
+        {
+          "id": 801,
+          "title": "Nova",
+          "genres": [
+            "Puzzle"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "First Studio"
+        },
+        {
+          "id": 804,
+          "title": "Nova",
+          "genres": [
+            "Racing"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Second Studio"
+        },
+        {
+          "id": 803,
+          "title": "星織り",
+          "genres": [
+            "Puzzle"
+          ],
+          "platforms": [
+            "switch"
+          ],
+          "developer": "Third Studio"
+        },
+        {
+          "id": 802,
+          "title": "Nova",
+          "genres": [
+            "Puzzle"
+          ],
+          "platforms": [
+            "ps5"
+          ],
+          "developer": "Fourth Studio"
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 802,
+          "grade": 2,
+          "reason": "Distinct saved game, same puzzle core; title equality does not merge its ID."
+        },
+        {
+          "game_id": 803,
+          "grade": 2,
+          "reason": "Puzzle match despite a different script in the title."
+        },
+        {
+          "game_id": 804,
+          "grade": 0,
+          "reason": "Identical title cannot outweigh an unrelated racing genre."
+        }
+      ]
+    },
+    {
+      "id": "normalized_metadata",
+      "purpose": "Display case and surrounding whitespace do not change a stored genre's meaning.",
+      "query_id": 901,
+      "catalog": [
+        {
+          "id": 901,
+          "title": "Council North",
+          "genres": [
+            "  Turn-Based Strategy  "
+          ],
+          "platforms": [
+            "PC"
+          ],
+          "developer": " NORTH HOUSE "
+        },
+        {
+          "id": 904,
+          "title": "North Rally",
+          "genres": [
+            "Racing"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "north house"
+        },
+        {
+          "id": 902,
+          "title": "Council South",
+          "genres": [
+            "turn-based strategy"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "South House"
+        },
+        {
+          "id": 903,
+          "title": "Council East",
+          "genres": [
+            "Turn-Based Strategy"
+          ],
+          "platforms": [
+            "ps5"
+          ],
+          "developer": "East House"
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 902,
+          "grade": 2,
+          "reason": "The same genre after basic case/whitespace normalization."
+        },
+        {
+          "game_id": 903,
+          "grade": 2,
+          "reason": "The same genre on another platform."
+        },
+        {
+          "game_id": 904,
+          "grade": 0,
+          "reason": "Normalized developer equality still does not relate a racing game to strategy."
+        }
+      ]
+    },
+    {
+      "id": "dense_ties_and_cap",
+      "purpose": "More than five equally strong saved games: cap, stable ties, no arbitrary padding.",
+      "query_id": 1001,
+      "catalog": [
+        {
+          "id": 1001,
+          "title": "Anchor",
+          "genres": [
+            "Action RPG"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Anchor Studio"
+        },
+        {
+          "id": 1008,
+          "title": "Zenith",
+          "genres": [
+            "Action RPG"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Peer Studio"
+        },
+        {
+          "id": 1002,
+          "title": "Beacon",
+          "genres": [
+            "Action RPG"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Peer Studio"
+        },
+        {
+          "id": 1007,
+          "title": "Beacon",
+          "genres": [
+            "Action RPG"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Peer Studio"
+        },
+        {
+          "id": 1004,
+          "title": "Delta",
+          "genres": [
+            "Action RPG"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Peer Studio"
+        },
+        {
+          "id": 1006,
+          "title": "Foxtrot",
+          "genres": [
+            "Action RPG"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Peer Studio"
+        },
+        {
+          "id": 1003,
+          "title": "Cobalt",
+          "genres": [
+            "Action RPG"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Peer Studio"
+        },
+        {
+          "id": 1005,
+          "title": "Echo",
+          "genres": [
+            "Action RPG"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Peer Studio"
+        },
+        {
+          "id": 1010,
+          "title": "A Racing Distractor",
+          "genres": [
+            "Racing"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Anchor Studio"
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 1002,
+          "grade": 2,
+          "reason": "Equally strong action-RPG peer; no preferred arbitrary title/ID order in the relevance labels."
+        },
+        {
+          "game_id": 1003,
+          "grade": 2,
+          "reason": "Equally strong action-RPG peer; no preferred arbitrary title/ID order in the relevance labels."
+        },
+        {
+          "game_id": 1004,
+          "grade": 2,
+          "reason": "Equally strong action-RPG peer; no preferred arbitrary title/ID order in the relevance labels."
+        },
+        {
+          "game_id": 1005,
+          "grade": 2,
+          "reason": "Equally strong action-RPG peer; no preferred arbitrary title/ID order in the relevance labels."
+        },
+        {
+          "game_id": 1006,
+          "grade": 2,
+          "reason": "Equally strong action-RPG peer; no preferred arbitrary title/ID order in the relevance labels."
+        },
+        {
+          "game_id": 1007,
+          "grade": 2,
+          "reason": "Equally strong action-RPG peer; no preferred arbitrary title/ID order in the relevance labels."
+        },
+        {
+          "game_id": 1008,
+          "grade": 2,
+          "reason": "Equally strong action-RPG peer; no preferred arbitrary title/ID order in the relevance labels."
+        },
+        {
+          "game_id": 1010,
+          "grade": 0,
+          "reason": "Shared developer/platform and early title sort order do not make racing relevant."
+        }
+      ]
+    },
+    {
+      "id": "only_self",
+      "purpose": "The database contains only the requested game.",
+      "query_id": 1101,
+      "catalog": [
+        {
+          "id": 1101,
+          "title": "Only Game",
+          "genres": [
+            "Puzzle"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Solo Studio"
+        }
+      ],
+      "judgments": []
+    },
+    {
+      "id": "empty_database",
+      "purpose": "An empty saved database yields no external or fabricated candidates.",
+      "query_id": 1201,
+      "catalog": [],
+      "judgments": []
+    },
+    {
+      "id": "all_features_missing",
+      "purpose": "Blank developers and empty feature sets are absence, not affirmative matches.",
+      "query_id": 1301,
+      "catalog": [
+        {
+          "id": 1301,
+          "title": "Unknown One",
+          "genres": [],
+          "platforms": [],
+          "developer": null
+        },
+        {
+          "id": 1302,
+          "title": "Unknown Two",
+          "genres": [],
+          "platforms": [],
+          "developer": " "
+        },
+        {
+          "id": 1303,
+          "title": "Unknown Three",
+          "genres": [],
+          "platforms": [],
+          "developer": null
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 1302,
+          "grade": 0,
+          "reason": "Blank metadata supplies no known relation."
+        },
+        {
+          "game_id": 1303,
+          "grade": 0,
+          "reason": "Two null developers are not the same known developer."
+        }
+      ]
+    },
+    {
+      "id": "query_not_saved",
+      "purpose": "A missing query ID cannot be inferred from some other saved game.",
+      "query_id": 1401,
+      "catalog": [
+        {
+          "id": 1402,
+          "title": "Saved Puzzle",
+          "genres": [
+            "Puzzle"
+          ],
+          "platforms": [
+            "pc"
+          ],
+          "developer": "Saved Studio"
+        }
+      ],
+      "judgments": [
+        {
+          "game_id": 1402,
+          "grade": 0,
+          "reason": "The requested game does not exist; return no suggestions for it."
+        }
+      ]
+    }
+  ]
+}
