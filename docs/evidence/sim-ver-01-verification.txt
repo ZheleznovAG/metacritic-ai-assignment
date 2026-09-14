@@ -1,0 +1,38 @@
+SIM-VER-01 local scripts/check.py: exit 0; Python 3.12 / PostgreSQL 16; isolated checks database.
+CHECK: -m ruff format --check app scripts
+CHECK: -m ruff check app scripts
+All checks passed!
+CHECK: -m mypy
+Success: no issues found in 108 source files
+CHECK: app/manage.py check
+CHECK: app/manage.py makemigrations --check --dry-run
+No changes detected
+CHECK: app/manage.py collectstatic --noinput
+CHECK: app/manage.py test tests --noinput -v 2
+Ran 292 tests in 49.383s
+OK
+CHECK: -m unittest discover -s scripts/tests -p test_*.py
+Ran 6 tests in 0.519s
+OK
+CHECK: research/planning/check_plan.py
+CHECK: -m unittest discover -s research/planning -p test_*.py
+Ran 18 tests in 0.280s
+OK
+CHECK: evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
+CHECK: -m unittest discover -s evals/reviews -p test_*.py
+Ran 7 tests in 0.020s
+OK
+CHECK: -m unittest discover -s evals/review_selection -p test_*.py
+Ran 9 tests in 0.007s
+OK
+CHECK: evals/review_selection/score_selection.py --verify evals/review_selection/baseline_report.json
+CHECK: evals/review_selection/verify_candidate.py
+PASS: the real candidate passes all 8 invariants on all applicable cases.
+CHECK: evals/similarity/score_similarity.py --verify
+PASS SIM-EVAL-01 integrity: 14 cases; version 1.0.0; owner acceptance is recorded only in action_plan.md
+CHECK: evals/similarity/compare.py
+genre-jaccard mean= 1.0 floor= 1.0 invariants= True accepted= True
+Selected: genre-jaccard
+CHECK: -m unittest discover -s evals/similarity -p test_*.py
+Ran 14 tests in 0.052s
+OK

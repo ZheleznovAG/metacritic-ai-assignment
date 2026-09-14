@@ -2,7 +2,7 @@
 
 Take-home assignment for the AI Automation Engineer position.
 
-The application includes a read-only game catalog, platform filters and title search, hourly Metacritic discovery (`scripts/run_scheduler.py`), review collection and separate critic/user AI summaries (`scripts/run_worker.py`). The [similarity policy](docs/decisions/0002-genre-similarity-policy.md) ranks saved genre features; its card integration is pending `SIM-VER-01`. Current task and correction status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). The [2026-09-12 audit](docs/requirements/implementation_audit_2026_09_12.md) records defects in repeated processing and summary handling; a passing local suite does not close them.
+The application includes a read-only game catalog, platform filters and title search, hourly Metacritic discovery (`scripts/run_scheduler.py`), review collection and separate critic/user AI summaries (`scripts/run_worker.py`). Cards show up to five similar saved games using the [genre policy](docs/decisions/0002-genre-similarity-policy.md), with shared genres and links that retain the search/filter context. [Integration evidence](docs/requirements/sim_ver_01_review.md) records verification and limitations. Current task and correction status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). The [2026-09-12 audit](docs/requirements/implementation_audit_2026_09_12.md) records defects in repeated processing and summary handling; a passing local suite does not close them.
 
 ## Local development
 

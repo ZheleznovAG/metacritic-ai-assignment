@@ -79,6 +79,21 @@
           {% endif %}
         </section>
       {% endfor %}
+      <section class="game-card__similar" aria-labelledby="similar-games-heading">
+        <h2 id="similar-games-heading">Similar games</h2>
+        {% if similar_games %}
+          <ul class="similar-games">
+            {% for similar in similar_games %}
+              <li>
+                <a href="{% url 'game-detail' similar.id %}{% if back_query_string %}?{{ back_query_string }}{% endif %}">{{ similar.title }}</a>
+                <p class="similar-games__genres">Shared genres: {{ similar.shared_genres|join:", " }}</p>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="no-data">No similar games in the catalog yet.</p>
+        {% endif %}
+      </section>
     </main>
   </body>
 </html>

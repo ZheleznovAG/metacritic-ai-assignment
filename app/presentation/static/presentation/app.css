@@ -23,6 +23,10 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: .3rem; }
 .game-card__summary-claims ul { margin: .25rem 0; padding-left: 1.2rem; }
 .summary-stale { opacity: .75; font-style: italic; }
 .summary-provenance { opacity: .65; font-size: .85rem; }
+.game-card__similar { margin-top: 2rem; border-top: 1px solid currentColor; }
+.similar-games { padding-left: 1.25rem; }
+.similar-games li { margin: .75rem 0; }
+.similar-games__genres { margin: .15rem 0; font-size: .85rem; opacity: .75; }
 
 .game-list { max-width: 64rem; margin: 6vh auto; }
 .game-list__controls {

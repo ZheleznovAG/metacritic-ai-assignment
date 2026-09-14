@@ -2,7 +2,7 @@
 
 ## Project Structure & Sources of Truth
 
-This repository has established its implementation baseline through `PLN-03` / `G3`. Ingestion, scheduling, review collection, AI summaries, the search/filter list and the similarity policy are implemented; similarity card integration is pending. Current verification and correction statuses belong only to `action_plan.md`.
+This repository has established its implementation baseline through `PLN-03` / `G3`. Ingestion, scheduling, review collection, AI summaries, the search/filter list and similarity card integration are implemented. Current verification and correction statuses belong only to `action_plan.md`.
 
 - `assignment.md` is the primary specification.
 - `methodology.md` defines the evidence-driven delivery process.

@@ -3,6 +3,8 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
+from similarity.policy import SavedGame, rank
+
 from catalog.models import Game, GamePlatform
 
 
@@ -37,6 +39,43 @@ class GameListItemView:
 class PlatformOption:
     slug: str
     name: str
+
+
+@dataclass(frozen=True, slots=True)
+class SimilarGameView:
+    id: int
+    title: str
+    score: float
+    shared_genres: tuple[str, ...]
+    policy_id: str
+    policy_version: str
+
+
+def list_similar_games(game_id: int) -> list[SimilarGameView]:
+    """SIM-VER-01: rank one saved snapshot, without enrichment or platform joins."""
+    saved = tuple(
+        SavedGame(id=pk, title=title, genres=_saved_genres(genres))
+        for pk, title, genres in Game.objects.values_list("id", "title", "genres")
+    )
+    titles = {game.id: game.title for game in saved}
+    return [
+        SimilarGameView(
+            id=result.game_id,
+            title=titles[result.game_id],
+            score=result.score,
+            shared_genres=result.shared_genres,
+            policy_id=result.policy_id,
+            policy_version=result.policy_version,
+        )
+        for result in rank(game_id, saved)
+    ]
+
+
+def _saved_genres(value: object) -> tuple[str, ...]:
+    # Corrupt/manual JSON is unknown, never a string split into fake genre letters.
+    if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
+        return ()
+    return tuple(value)
 
 
 def list_platform_options() -> list[PlatformOption]:

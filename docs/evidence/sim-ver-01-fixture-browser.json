@@ -1,0 +1,469 @@
+{
+  "mode": "fixture",
+  "checked_at": "2026-09-14T16:39:08.248966+00:00",
+  "checks": [
+    {
+      "check": "readiness",
+      "actual": 200,
+      "expected": 200,
+      "pass": true
+    },
+    {
+      "check": "HTTP saved ID 101",
+      "actual": 200,
+      "expected": 200,
+      "pass": true
+    },
+    {
+      "check": "title saved ID 101",
+      "actual": "Cinderbound",
+      "expected": "Cinderbound",
+      "pass": true
+    },
+    {
+      "check": "saved results and order 101",
+      "actual": [
+        103,
+        107,
+        102,
+        106
+      ],
+      "expected": [
+        103,
+        107,
+        102,
+        106
+      ],
+      "pass": true
+    },
+    {
+      "check": "linked titles 101",
+      "actual": [
+        "Ashen Pilgrim",
+        "Ashen Pilgrim",
+        "Stone Oath",
+        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+      ],
+      "expected": [
+        "Ashen Pilgrim",
+        "Ashen Pilgrim",
+        "Stone Oath",
+        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+      ],
+      "pass": true
+    },
+    {
+      "check": "HTTP saved ID 102",
+      "actual": 200,
+      "expected": 200,
+      "pass": true
+    },
+    {
+      "check": "title saved ID 102",
+      "actual": "Stone Oath",
+      "expected": "Stone Oath",
+      "pass": true
+    },
+    {
+      "check": "saved results and order 102",
+      "actual": [
+        103,
+        107,
+        101,
+        106
+      ],
+      "expected": [
+        103,
+        107,
+        101,
+        106
+      ],
+      "pass": true
+    },
+    {
+      "check": "linked titles 102",
+      "actual": [
+        "Ashen Pilgrim",
+        "Ashen Pilgrim",
+        "Cinderbound",
+        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+      ],
+      "expected": [
+        "Ashen Pilgrim",
+        "Ashen Pilgrim",
+        "Cinderbound",
+        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+      ],
+      "pass": true
+    },
+    {
+      "check": "HTTP saved ID 103",
+      "actual": 200,
+      "expected": 200,
+      "pass": true
+    },
+    {
+      "check": "title saved ID 103",
+      "actual": "Ashen Pilgrim",
+      "expected": "Ashen Pilgrim",
+      "pass": true
+    },
+    {
+      "check": "saved results and order 103",
+      "actual": [
+        107,
+        101,
+        102,
+        106
+      ],
+      "expected": [
+        107,
+        101,
+        102,
+        106
+      ],
+      "pass": true
+    },
+    {
+      "check": "linked titles 103",
+      "actual": [
+        "Ashen Pilgrim",
+        "Cinderbound",
+        "Stone Oath",
+        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+      ],
+      "expected": [
+        "Ashen Pilgrim",
+        "Cinderbound",
+        "Stone Oath",
+        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+      ],
+      "pass": true
+    },
+    {
+      "check": "HTTP saved ID 104",
+      "actual": 200,
+      "expected": 200,
+      "pass": true
+    },
+    {
+      "check": "title saved ID 104",
+      "actual": "Mosaic",
+      "expected": "Mosaic",
+      "pass": true
+    },
+    {
+      "check": "saved results and order 104",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    },
+    {
+      "check": "linked titles 104",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    },
+    {
+      "check": "empty state 104",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "check": "HTTP saved ID 105",
+      "actual": 200,
+      "expected": 200,
+      "pass": true
+    },
+    {
+      "check": "title saved ID 105",
+      "actual": "Unknown genres",
+      "expected": "Unknown genres",
+      "pass": true
+    },
+    {
+      "check": "saved results and order 105",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    },
+    {
+      "check": "linked titles 105",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    },
+    {
+      "check": "empty state 105",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "check": "HTTP saved ID 106",
+      "actual": 200,
+      "expected": 200,
+      "pass": true
+    },
+    {
+      "check": "title saved ID 106",
+      "actual": "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "expected": "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "pass": true
+    },
+    {
+      "check": "saved results and order 106",
+      "actual": [
+        103,
+        107,
+        101,
+        102
+      ],
+      "expected": [
+        103,
+        107,
+        101,
+        102
+      ],
+      "pass": true
+    },
+    {
+      "check": "linked titles 106",
+      "actual": [
+        "Ashen Pilgrim",
+        "Ashen Pilgrim",
+        "Cinderbound",
+        "Stone Oath"
+      ],
+      "expected": [
+        "Ashen Pilgrim",
+        "Ashen Pilgrim",
+        "Cinderbound",
+        "Stone Oath"
+      ],
+      "pass": true
+    },
+    {
+      "check": "HTTP saved ID 107",
+      "actual": 200,
+      "expected": 200,
+      "pass": true
+    },
+    {
+      "check": "title saved ID 107",
+      "actual": "Ashen Pilgrim",
+      "expected": "Ashen Pilgrim",
+      "pass": true
+    },
+    {
+      "check": "saved results and order 107",
+      "actual": [
+        103,
+        101,
+        102,
+        106
+      ],
+      "expected": [
+        103,
+        101,
+        102,
+        106
+      ],
+      "pass": true
+    },
+    {
+      "check": "linked titles 107",
+      "actual": [
+        "Ashen Pilgrim",
+        "Cinderbound",
+        "Stone Oath",
+        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+      ],
+      "expected": [
+        "Ashen Pilgrim",
+        "Cinderbound",
+        "Stone Oath",
+        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+      ],
+      "pass": true
+    },
+    {
+      "check": "independent fixture expected order",
+      "actual": [
+        103,
+        107,
+        102,
+        106
+      ],
+      "expected": [
+        103,
+        107,
+        102,
+        106
+      ],
+      "pass": true
+    },
+    {
+      "check": "nonempty public/fixture relation",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "check": "CSS applied",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "check": "desktop relation no horizontal overflow",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "check": "mobile relation no horizontal overflow",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "check": "click opens saved ID 103",
+      "actual": "/games/103/",
+      "expected": "/games/103/",
+      "pass": true
+    },
+    {
+      "check": "click title 103",
+      "actual": "Ashen Pilgrim",
+      "expected": "Ashen Pilgrim",
+      "pass": true
+    },
+    {
+      "check": "list context 103",
+      "actual": "/?q=elden&platform=pc",
+      "expected": "/?q=elden&platform=pc",
+      "pass": true
+    },
+    {
+      "check": "mobile destination 103 no horizontal overflow",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "check": "click opens saved ID 107",
+      "actual": "/games/107/",
+      "expected": "/games/107/",
+      "pass": true
+    },
+    {
+      "check": "click title 107",
+      "actual": "Ashen Pilgrim",
+      "expected": "Ashen Pilgrim",
+      "pass": true
+    },
+    {
+      "check": "list context 107",
+      "actual": "/?q=elden&platform=pc",
+      "expected": "/?q=elden&platform=pc",
+      "pass": true
+    },
+    {
+      "check": "mobile destination 107 no horizontal overflow",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "check": "click opens saved ID 102",
+      "actual": "/games/102/",
+      "expected": "/games/102/",
+      "pass": true
+    },
+    {
+      "check": "click title 102",
+      "actual": "Stone Oath",
+      "expected": "Stone Oath",
+      "pass": true
+    },
+    {
+      "check": "list context 102",
+      "actual": "/?q=elden&platform=pc",
+      "expected": "/?q=elden&platform=pc",
+      "pass": true
+    },
+    {
+      "check": "mobile destination 102 no horizontal overflow",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "check": "click opens saved ID 106",
+      "actual": "/games/106/",
+      "expected": "/games/106/",
+      "pass": true
+    },
+    {
+      "check": "click title 106",
+      "actual": "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "expected": "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "pass": true
+    },
+    {
+      "check": "list context 106",
+      "actual": "/?q=elden&platform=pc",
+      "expected": "/?q=elden&platform=pc",
+      "pass": true
+    },
+    {
+      "check": "mobile destination 106 no horizontal overflow",
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "check": "repeat after reload",
+      "actual": [
+        103,
+        107,
+        101,
+        102
+      ],
+      "expected": [
+        103,
+        107,
+        101,
+        102
+      ],
+      "pass": true
+    },
+    {
+      "check": "back search field",
+      "actual": "elden",
+      "expected": "elden",
+      "pass": true
+    },
+    {
+      "check": "back platform field",
+      "actual": "pc",
+      "expected": "pc",
+      "pass": true
+    },
+    {
+      "check": "browser errors",
+      "actual": [],
+      "expected": [],
+      "pass": true
+    }
+  ],
+  "screenshots": [
+    "sim-ver-01-fixture-desktop.png",
+    "sim-ver-01-fixture-mobile.png"
+  ],
+  "browser": "151.0.7922.34",
+  "build_version": "local",
+  "passed": true
+}

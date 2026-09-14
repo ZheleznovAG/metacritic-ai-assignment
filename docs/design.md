@@ -220,7 +220,12 @@ Production policy использует только пересечение не�
 пять уникальных сохранённых IDs без self-match; отсутствие query или общих жанров
 даёт пустой результат. Result содержит score, shared genres, policy ID/version.
 Ranker принимает immutable snapshot, не читает ORM и не делает HTTP/model calls.
-DB adapter и UI navigation проверяются отдельно в `SIM-VER-01`.
+`catalog.queries.list_similar_games()` читает один SELECT snapshot IDs/title/genres
+без platform join, передаёт tuple в ranker и берёт названия из того же snapshot.
+Malformed stored JSON считается неизвестными жанрами. Карточка показывает shared
+genres и ссылки через `game-detail` по saved ID; `q`/`platform` сохраняются через
+переход и Back to results. Пустой результат отображается явно. Integration,
+browser и public evidence принадлежат [SIM-VER-01](requirements/sim_ver_01_review.md).
 
 Источник признака — JSON-LD `VideoGame.genre`: строка или массив строк, максимум
 255 символов на исходный label, без NUL; неверные типы отклоняются до записи.

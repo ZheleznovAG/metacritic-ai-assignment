@@ -7,7 +7,7 @@ exact list a visitor came from (`AC-UI-06`) without any new persisted state.
 from urllib.parse import urlencode
 
 from catalog.models import Game
-from catalog.queries import get_game_detail, list_games, list_platform_options
+from catalog.queries import get_game_detail, list_games, list_platform_options, list_similar_games
 from django.conf import settings
 from django.db import DatabaseError, connection
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
@@ -56,6 +56,7 @@ def game_detail(request: HttpRequest, game_id: int) -> HttpResponse:
     context = {
         "game": detail,
         "summaries": summaries,
+        "similar_games": list_similar_games(game_id),
         "back_query_string": urlencode(_list_params(request)),
     }
     return render(request, "presentation/game_detail.html", context)
