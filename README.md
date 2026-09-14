@@ -64,7 +64,7 @@ Stop only this project, preserving its data: `docker compose --env-file .env.app
 
 Set `APP_VERSION` before building: Docker writes it into `app/build-version.txt` and the image label. Runtime environment values cannot override the HTTP build identity; a source checkout reports `local`. Choose a source commit or frozen source-snapshot identifier, not the resulting image ID. Record the full image ID separately and use `scripts/verify_image.py` before startup and against the running container, followed by the HTTP/CSS smoke. Changing a deployment's environment cannot turn an old image into a new release.
 
-[IMP-01 preflight](docs/requirements/imp_01_preflight.md), [container correction](docs/requirements/imp_01_container_correction.md) and [deployment procedure](deploy/README.md) record deployment evidence and boundaries. Scheduler and worker management commands exist in the application image; their permanently supervised Compose services remain part of `PUB-01`.
+[IMP-01 revalidation](docs/requirements/imp_01_revalidation.md) records hosted CI and the public preview upgrade on source `8c76615`, including migrations, image identity, runtime permissions, external HTTP/CSS smoke and measured resources. The public catalog is empty; real-data revalidation belongs to the next `IMP-02` cycle. Follow the [deployment procedure](deploy/README.md) for subsequent upgrades. Scheduler and worker management commands exist in the application image; their permanently supervised Compose services remain part of `PUB-01`.
 
 ## Baseline and research evidence
 

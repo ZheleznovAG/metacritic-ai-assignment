@@ -1,0 +1,179 @@
+IMP-01 revalidation; 2026-09-14; execution excerpts, not a full application acceptance report.
+Source SHA: 8c766154fb147806fc67576f730b06f56aa04f03
+Hosted CI: https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34804143596
+Source exported with git archive; runtime built from that clean export with the full SHA as APP_VERSION.
+Local/VDS runtime and hosted CI were built separately from the same source; their image IDs differ.
+Host, account, key path/material and operator configuration are intentionally omitted.
+
+ARCHIVE MANIFEST
+{
+  "source_sha": "8c766154fb147806fc67576f730b06f56aa04f03",
+  "image_id": "sha256:a342245359e2296c8bad6bdd69b8a8b0a6aea076aeea6ca1aa98a5cd90daa288",
+  "source.tar": {
+    "sha256": "e36786b0465d7b150ea6a221efdcab2751527877139df0d2fa1129e43f68e61e",
+    "bytes": 3860480
+  },
+  "config.tar.gz": {
+    "sha256": "8d69cbac8f4134e16ecfcd7bba182ef5c7c03c9d06d49c15d09c35480d58ee9f",
+    "bytes": 5211
+  },
+  "image.tar": {
+    "sha256": "37081010a86a651b790b14e3432c381b511bfeb59b9614e6e81d7f26def3ee44",
+    "bytes": 61756416
+  }
+}
+
+HOSTED CI
+conclusion=success; headSha=8c766154fb147806fc67576f730b06f56aa04f03
+Set up job: success
+Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1: success
+Whitespace and Compose validation: success
+Build locked runtime and checks: success
+Record built image identity: success
+Tokenize in the read-only runtime without network: success
+Offline verification on PostgreSQL 16: success
+Start the actual runtime through Caddy: success
+External HTTP smoke: success
+Stop only this ephemeral CI project: success
+Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1: success
+Complete job: success
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:54:55.3048815Z 112 files already formatted
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:54:55.4347338Z All checks passed!
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:02.4067903Z Success: no issues found in 101 source files
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:05.3965847Z No changes detected
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:27.1379596Z Ran 261 tests in 17.142s
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:27.1380807Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:28.6073669Z Ran 6 tests in 0.466s
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:28.6074554Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:29.2263927Z Ran 18 tests in 0.121s
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:29.2264822Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:30.1009941Z Ran 7 tests in 0.013s
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:30.1010634Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:30.7630156Z Ran 9 tests in 0.006s
+verify	Offline verification on PostgreSQL 16	2026-09-14T03:55:30.7630896Z OK
+verify	External HTTP smoke	2026-09-14T03:55:55.0795222Z PASS image identity: sha256:9bbd17f7f80fd1d65fde4da89f0d75dec9f68b96bd814a7fef7e667f5b6d8e7d, build 8c766154fb147806fc67576f730b06f56aa04f03
+verify	External HTTP smoke	2026-09-14T03:55:55.2040484Z PASS /: 200
+verify	External HTTP smoke	2026-09-14T03:55:55.2044926Z PASS /health/live/: 200
+verify	External HTTP smoke	2026-09-14T03:55:55.2045507Z PASS /health/ready/: 200
+verify	External HTTP smoke	2026-09-14T03:55:55.2046116Z PASS /.env: 404
+verify	External HTTP smoke	2026-09-14T03:55:55.2046672Z PASS /.env.app: 404
+verify	External HTTP smoke	2026-09-14T03:55:55.2047239Z PASS /admin/: 404
+verify	External HTTP smoke	2026-09-14T03:55:55.2047790Z PASS /unknown: 404
+verify	External HTTP smoke	2026-09-14T03:55:55.2048450Z PASS /static/presentation/app.05efda703ced.css: CSS served
+
+READ-ONLY VDS PREFLIGHT
+docker 29.1.3
+Docker Compose version 2.40.3+ds1-0ubuntu1~24.04.1
+existing_project_environment True
+disk_free_bytes 76171939840
+{"service": "web", "image": "metacritic-imp01:6d29461066022cf94e58f605604c453be27e7640", "image_id": "sha256:187fee885f403a51fe85ed8f1de47729378197eb44f715d0ef644d30d3bce13b", "status": "running", "health": "healthy", "user": "65532:65532", "readonly": true, "volumes": []}
+{"service": "db_setup", "image": "metacritic-imp01:6d29461066022cf94e58f605604c453be27e7640", "image_id": "sha256:187fee885f403a51fe85ed8f1de47729378197eb44f715d0ef644d30d3bce13b", "status": "exited", "health": "unhealthy", "user": "65532:65532", "readonly": true, "volumes": []}
+{"service": "caddy", "image": "caddy:2.11.4-alpine@sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648", "image_id": "sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648", "status": "running", "health": "healthy", "user": "", "readonly": true, "volumes": ["metacritic-imp01-prod_caddy_data", "metacritic-imp01-prod_caddy_config"]}
+{"service": "db", "image": "postgres:16.15@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94", "image_id": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94", "status": "running", "health": "healthy", "user": "", "readonly": false, "volumes": ["metacritic-imp01-prod_postgres_data"]}
+writer_processes_present False
+preflight_passed
+
+TRANSFER CHECKSUMS AND LOADED IMAGE
+PASS archive checksum image-8c76615.tar 37081010a86a651b790b14e3432c381b511bfeb59b9614e6e81d7f26def3ee44
+PASS archive checksum config-8c76615.tar.gz 8d69cbac8f4134e16ecfcd7bba182ef5c7c03c9d06d49c15d09c35480d58ee9f
+Loaded image: metacritic-imp01:8c766154fb147806fc67576f730b06f56aa04f03
+{"loaded_image_id": "sha256:a342245359e2296c8bad6bdd69b8a8b0a6aea076aeea6ca1aa98a5cd90daa288", "build": "8c766154fb147806fc67576f730b06f56aa04f03"}
+
+VDS UPGRADE AND LOOPBACK SMOKE
+PASS image identity: sha256:a342245359e2296c8bad6bdd69b8a8b0a6aea076aeea6ca1aa98a5cd90daa288, build 8c766154fb147806fc67576f730b06f56aa04f03
+before_table_counts {}
+PASS backup archive readable; bytes 1896
+Scaffold environment upgraded; original credentials/settings preserved.
+PASS existing environment preserved except build references
+startup_elapsed_seconds 11.8
+PASS image identity: sha256:a342245359e2296c8bad6bdd69b8a8b0a6aea076aeea6ca1aa98a5cd90daa288, build 8c766154fb147806fc67576f730b06f56aa04f03
+PASS /: 200
+PASS /health/live/: 200
+PASS /health/ready/: 200
+PASS /.env: 404
+PASS /.env.app: 404
+PASS /admin/: 404
+PASS /unknown: 404
+PASS /static/presentation/app.05efda703ced.css: CSS served
+PASS pre-existing row counts and named volumes preserved
+after_table_counts {"catalog_game": "0", "catalog_gamealias": "0", "catalog_gameplatform": "0", "catalog_sourcefetch": "0", "processing_coreattempt": "0", "processing_dailycandidate": "0", "processing_dailycycle": "0", "processing_processinglease": "0", "processing_processingrun": "0", "reviews_enrichmentturn": "0", "reviews_review": "0", "reviews_reviewcollectionjob": "0", "reviews_reviewcorpus": "0", "reviews_reviewcorpushead": "0", "reviews_reviewcorpusitem": "0", "reviews_reviewobservation": "0", "summaries_reviewsummary": "0", "summaries_summaryattempt": "0", "summaries_summaryclaim": "0", "summaries_summaryjob": "0"}
+catalog.0001_initial
+catalog.0002_remove_gameplatform_last_changed_fetch_and_more
+catalog.0003_alter_sourcefetch_kind
+catalog.0004_sourcefetch_review_page_evidence
+catalog.0005_alter_sourcefetch_outcome
+processing.0001_initial
+processing.0002_processingrun_remove_dailycycle_exhausted_and_more
+reviews.0001_initial
+reviews.0002_review_collection_and_corpus
+reviews.0003_reviewcollectionjob_created_at
+reviews.0004_review_version_fingerprint
+reviews.0005_enrichmentturn
+reviews.0006_reviewcorpushead
+summaries.0001_initial
+summaries.0002_summaryjob_created_at
+summaries.0003_summaryattempt_fencing_token_and_more
+{"service": "db", "image_id": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94", "health": "healthy", "user": "", "readonly": false, "cap_drop": null, "cap_add": null}
+{"service": "web", "image_id": "sha256:a342245359e2296c8bad6bdd69b8a8b0a6aea076aeea6ca1aa98a5cd90daa288", "health": "healthy", "user": "65532:65532", "readonly": true, "cap_drop": ["ALL"], "cap_add": null}
+{"service": "caddy", "image_id": "sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648", "health": "healthy", "user": "", "readonly": true, "cap_drop": ["ALL"], "cap_add": ["CAP_NET_BIND_SERVICE"]}
+metacritic-imp01-prod-web-1 92.56MiB / 384MiB 0.02%
+metacritic-imp01-prod-db-1 32.41MiB / 512MiB 5.84%
+metacritic-imp01-prod-caddy-1 11.53MiB / 96MiB 0.00%
+DEPLOY PASS
+ Container metacritic-imp01-prod-db-1  Running
+ Container metacritic-imp01-prod-db_setup-1  Recreate
+ Container metacritic-imp01-prod-db_setup-1  Recreated
+ Container metacritic-imp01-prod-migrate-1  Creating
+ Container metacritic-imp01-prod-migrate-1  Created
+ Container metacritic-imp01-prod-web-1  Recreate
+ Container metacritic-imp01-prod-web-1  Recreated
+ Container metacritic-imp01-prod-caddy-1  Running
+ Container metacritic-imp01-prod-db-1  Waiting
+ Container metacritic-imp01-prod-db-1  Healthy
+ Container metacritic-imp01-prod-db_setup-1  Starting
+ Container metacritic-imp01-prod-db_setup-1  Started
+ Container metacritic-imp01-prod-db_setup-1  Waiting
+ Container metacritic-imp01-prod-db_setup-1  Exited
+ Container metacritic-imp01-prod-migrate-1  Starting
+ Container metacritic-imp01-prod-migrate-1  Started
+ Container metacritic-imp01-prod-migrate-1  Waiting
+ Container metacritic-imp01-prod-migrate-1  Exited
+ Container metacritic-imp01-prod-web-1  Starting
+ Container metacritic-imp01-prod-web-1  Started
+ Container metacritic-imp01-prod-web-1  Waiting
+ Container metacritic-imp01-prod-web-1  Healthy
+ Container metacritic-imp01-prod-caddy-1  Waiting
+ Container metacritic-imp01-prod-migrate-1  Waiting
+ Container metacritic-imp01-prod-db-1  Waiting
+ Container metacritic-imp01-prod-db_setup-1  Waiting
+ Container metacritic-imp01-prod-web-1  Waiting
+ Container metacritic-imp01-prod-web-1  Healthy
+ Container metacritic-imp01-prod-migrate-1  Exited
+ Container metacritic-imp01-prod-caddy-1  Healthy
+ Container metacritic-imp01-prod-db-1  Healthy
+ Container metacritic-imp01-prod-db_setup-1  Exited
+
+READ-ONLY RUNTIME CHECKS
+PASS db_setup exit 0
+PASS migrate exit 0
+PASS PostgreSQL has no published ports
+PASS web credential scope and absence of source bind mounts
+PASS actual web role: SELECT only on 21 tables; no privileged flags/schema CREATE/database TEMP
+PASS deployment check: only known HTTP-preview security.W004/security.W008; 0 silenced
+RUNTIME CHECKS PASS
+
+EXTERNAL HTTP/CSS SMOKE FROM THE DEVELOPMENT MACHINE, NO SSH TUNNEL
+PASS /: 200
+PASS /health/live/: 200
+PASS /health/ready/: 200
+PASS /.env: 404
+PASS /.env.app: 404
+PASS /admin/: 404
+PASS /unknown: 404
+PASS /static/presentation/app.05efda703ced.css: CSS served
+
+LIMITS
+The previous public scaffold had no application tables or data. Empty row-count preservation is not a populated-database migration/recovery test.
+The backup was written and its archive directory read successfully; no restore/reboot experiment was performed.
+No live source/provider calls or production acceptance tests were run. Local application DB was not migrated.
+HTTP-only preview; TLS, real-data acceptance, hourly windows and capacity remain outside this IMP-01 cycle.
