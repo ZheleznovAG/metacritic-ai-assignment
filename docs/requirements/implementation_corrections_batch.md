@@ -160,3 +160,22 @@ Local full suite: 243 application tests и все format/lint/mypy/drift/offline
 PASS. Migration `catalog.0005` расширяет choices без изменения исторических строк.
 Generation restart после unstable/failed остаётся отдельной recovery операцией;
 новая серия не сбрасывает исторические budgets и не ремонтирует старые snapshots.
+
+## IMP-04: R14 — обслуживание обеих очередей
+
+Связь: `AI-01/02`, `NFR-02`, `R-AI-02`. Singleton EnrichmentTurn хранит следующий
+предпочтительный вид работы. Dispatcher под row lock выбирает due claim, меняет
+очерёдность и коммитит до HTTP. При обеих готовых очередях каждая получает claim
+не позднее второго dispatch; этот порядок переживает новый Command/--once/restart.
+Отсутствующая, disabled или not-due очередь уступает второй без idle. Quota-delayed
+summary также отдаёт следующий ход collector; это гарантия обслуживания очереди,
+не обход квоты и не обещание wall-clock срока готовности резюме.
+
+Evidence — [test_worker_fairness.py](../../app/tests/test_worker_fairness.py):
+6 tests; первоначально 2 failures из 5 подтвердили starvation. Проверены backlog,
+новые Command instances, отсутствующий ключ, not-due job, обратный fallback,
+delayed capacity и отсутствие DB transaction при обоих видах HTTP. Adversarial
+self-review проверил singleton creation/lock, claim rollback и сохранение turn
+до возможного падения worker. Migration `reviews.0005` создаёт singleton table;
+строка инициализируется первым dispatcher. Local full suite: 249 application tests,
+format/lint/mypy/drift и все offline checks PASS.

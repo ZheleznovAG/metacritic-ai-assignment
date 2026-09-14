@@ -2,8 +2,8 @@
 
 - Baseline: **1.0**, задача `PLN-03`, 2026-09-09 (Asia/Novosibirsk).
 - Bonus scope: `pending`.
-- [Повторный аудит `6551e42`](docs/requirements/implementation_audit_6551e42.md) выявил 19 findings и подтвердил исправления R02/R15. [Correction R03–R06](docs/requirements/imp_04_snapshot_correction.md) проверена локально и в Linux: 198 application tests, migration/concurrency/crash regressions; после snapshot/core/source/AI corrections остаются 4 findings (0 P1, 4 P2). [24 исходных probes и observations](research/reviews/6551e42/README.md) сохраняются как историческое evidence.
-- Текущая серия: пользователь разрешил всю оставшуюся пачку; последовательные correction-коммиты продолжаются без остановки между блоками. [R16/R20/R19/R01/R09/R10/R07/R13/R18 проверены](docs/requirements/implementation_corrections_batch.md): local suite 243 application tests и offline checks. Следующий блок — R14 (worker fairness). Hosted/public evidence и gates этой серией не закрываются.
+- [Повторный аудит `6551e42`](docs/requirements/implementation_audit_6551e42.md) выявил 19 findings и подтвердил исправления R02/R15. [Correction R03–R06](docs/requirements/imp_04_snapshot_correction.md) проверена локально и в Linux: 198 application tests, migration/concurrency/crash regressions; после snapshot/core/source/AI corrections остаются 3 findings (0 P1, 3 P2). [24 исходных probes и observations](research/reviews/6551e42/README.md) сохраняются как историческое evidence.
+- Текущая серия: пользователь разрешил всю оставшуюся пачку; последовательные correction-коммиты продолжаются без остановки между блоками. [R16/R20/R19/R01/R09/R10/R07/R13/R18 проверены](docs/requirements/implementation_corrections_batch.md): local suite 249 application tests и offline checks. Следующий блок — R12/R17/R21 (UI freshness/cache/video). Hosted/public evidence и gates этой серией не закрываются.
 
 ## Источники истины и правила
 

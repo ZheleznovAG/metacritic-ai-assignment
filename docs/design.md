@@ -168,6 +168,11 @@ Summary и claims сохраняются одной транзакцией то�
 
 ## Внутренние interfaces
 
+Dispatcher хранит singleton `reviews.EnrichmentTurn` с предпочтением review/summary.
+Claim и смена предпочтения коммитятся вместе под row lock; HTTP начинается после
+освобождения lock. При двух due очередях каждая получает один из двух последовательных
+claims; disabled/not-due очередь уступает второй. Порядок сохраняется после restart.
+
 | Interface | Вход | Результат / error contract |
 |---|---|---|
 | `Clock.now_utc()` | нет | aware UTC datetime; fake clock в тестах |

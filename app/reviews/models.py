@@ -6,6 +6,20 @@ paraphrases, or deletes history on a partial fetch.
 from django.db import models
 
 
+class EnrichmentTurn(models.Model):
+    """Singleton dispatch preference; committed with a claim, never held across HTTP."""
+
+    id = models.PositiveSmallIntegerField(primary_key=True, default=1, editable=False)
+    next_kind = models.CharField(
+        max_length=8, choices=[("review", "review"), ("summary", "summary")], default="review"
+    )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(id=1), name="enrichment_turn_singleton")
+        ]
+
+
 class ReviewCollectionJob(models.Model):
     AUDIENCE_CHOICES = [("critic", "critic"), ("user", "user")]
     STATE_CHOICES = [

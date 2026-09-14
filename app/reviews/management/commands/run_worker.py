@@ -1,7 +1,7 @@
 """IMP-04 real worker entry point: `python scripts/run_worker.py [--once]`.
 
-One tick = try to claim and advance one review-collection page; else, if the AI contour has real
-credentials configured, try to claim and advance one summary-job attempt. Matches `docs/design.md`:
+One tick advances a review page or a summary attempt, alternating due queues durably. The
+summary queue is enabled when credentials are configured. Matches `docs/design.md`:
 "worker последовательно выполняет два вида сохранённой enrichment-работы" — one process, two job
 types, no Celery/Redis.
 """
@@ -12,12 +12,13 @@ from typing import Any
 
 import httpx
 from django.core.management.base import BaseCommand, CommandParser
-from metacritic.gateway import MetacriticGateway
-from processing.clock import SystemClock
+from metacritic.gateway import MetacriticGateway, ReviewGatewayProtocol
+from processing.clock import Clock, SystemClock
 from summaries import groq_adapter
 from summaries import worker as summary_worker
 
-from reviews import collector
+from reviews import collector, dispatch
+from reviews.models import ReviewCollectionJob
 
 POLL_INTERVAL_SECONDS = 5
 
@@ -50,15 +51,15 @@ class Command(BaseCommand):
 
     def _tick(
         self,
-        gateway: MetacriticGateway,
+        gateway: ReviewGatewayProtocol,
         client: httpx.Client,
-        clock: SystemClock,
+        clock: Clock,
         api_key: str,
         base_url: str,
     ) -> None:
-        review_job = collector.claim_next_job(clock)
-        if review_job is not None:
-            updated_review_job = collector.collect_one_page(gateway, clock, review_job)
+        job = dispatch.claim_next(clock, summaries_enabled=bool(api_key))
+        if isinstance(job, ReviewCollectionJob):
+            updated_review_job = collector.collect_one_page(gateway, clock, job)
             self.stdout.write(
                 self.style.SUCCESS(
                     f"review_job_id={updated_review_job.id} audience={updated_review_job.audience} "
@@ -74,10 +75,9 @@ class Command(BaseCommand):
             )
             return
 
-        summary_job = summary_worker.claim_next_job(clock)
-        if summary_job is not None:
+        if job is not None:
             updated_summary_job = summary_worker.process_job(
-                client, clock, summary_job, api_key=api_key, base_url=base_url
+                client, clock, job, api_key=api_key, base_url=base_url
             )
             self.stdout.write(
                 self.style.SUCCESS(
