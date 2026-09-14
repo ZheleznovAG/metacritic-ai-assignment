@@ -21,6 +21,7 @@ from processing.clock import Clock
 from processing.models import DailyCandidate, DailyCycle
 from reviews.models import ReviewCollectionJob
 
+from catalog.genres import normalize_genres
 from catalog.models import Game, GameAlias, GamePlatform, SourceFetch
 
 
@@ -96,6 +97,7 @@ def _resolve_game(dto: GameDTO, now: datetime) -> tuple[Game, bool]:
             description=dto.description,
             video_embed_url=dto.video_embed_url,
             video_content_url=dto.video_content_url,
+            genres=list(normalize_genres(dto.genres or ())),
         )
         GameAlias.objects.create(
             game=game,
@@ -132,6 +134,8 @@ def _resolve_game(dto: GameDTO, now: datetime) -> tuple[Game, bool]:
     game.description = _merge_field(game.description, dto.description)
     game.video_embed_url = _merge_field(game.video_embed_url, dto.video_embed_url)
     game.video_content_url = _merge_field(game.video_content_url, dto.video_content_url)
+    if incoming_genres := normalize_genres(dto.genres or ()):
+        game.genres = list(incoming_genres)
     game.save()
     return game, False
 
@@ -320,7 +324,9 @@ def apply_game_dto(
     validate_game(game_dto)
     game, game_created = _resolve_game(game_dto, now)
     game.last_changed_fetch = fetch
-    game.save(update_fields=["last_changed_fetch"])
+    if normalize_genres(game_dto.genres or ()):
+        game.genres_last_changed_fetch = fetch
+    game.save(update_fields=["last_changed_fetch", "genres_last_changed_fetch"])
 
     platforms: list[GamePlatform] = []
     platforms_created = 0

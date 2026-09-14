@@ -47,6 +47,11 @@ def validate_game(dto: GameDTO) -> None:
         raise MetacriticParseError("invalid_game_locator")
     _text(dto.developer, 255)
     _text(dto.description, None)
+    if dto.genres is not None:
+        if not isinstance(dto.genres, tuple):
+            raise MetacriticParseError("invalid_genres")
+        for genre in dto.genres:
+            _text(genre, 255, required=True)
     for value in (dto.cover_url, dto.video_embed_url, dto.video_content_url):
         _text(value, None)
         if value:

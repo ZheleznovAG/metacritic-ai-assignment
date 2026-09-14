@@ -52,7 +52,7 @@ Django ORM используется прямо внутри application services
 
 | Таблица | Ключевые данные | Обязательные ограничения |
 |---|---|---|
-| `game` | `source`, `source_game_id`, current locator, title, cover URL, developer, description, video URL, ordered normalized genre names, `last_changed_fetch_id`, timestamps | `UNIQUE(source, source_game_id)`; обязательны identity/title/locator; source text хранится без перевода |
+| `game` | `source`, `source_game_id`, current locator, title, cover URL, developer, description, video URL, `genres` (ordered normalized names), `genres_last_changed_fetch_id`, `last_changed_fetch_id`, timestamps | `UNIQUE(source, source_game_id)`; обязательны identity/title/locator; source text хранится без перевода |
 | `game_alias` | `game_id`, source locator, first/last seen UTC | `UNIQUE(source, locator)`; alias другого game вызывает conflict, не merge |
 | `game_platform` | `game_id`, `source_platform_id`, `source_game_platform_id`, slug/name, Metascore, Userscore, critic/user route, `metascore_last_changed_fetch_id`, `userscore_last_changed_fetch_id` | `UNIQUE(game_id, source_platform_id)` и `UNIQUE(source, source_game_platform_id)`; score ranges; `null` не равен нулю |
 | `source_fetch` | owning run или review job, kind, collection generation nullable, allowlisted URL, cursor/offset, page ordinal, attempt number, fencing token, reported total, item count, started/completed UTC, HTTP status, response SHA-256, parser contract version, outcome/error code | Ровно один owner; review attempt требует non-null generation/page/attempt и `attempt_no > 0`; `UNIQUE(review_job_id, collection_generation, page_ordinal, attempt_no)`; отдельная partial unique constraint на `(review_job_id, collection_generation, page_ordinal)` только для `outcome IN ('succeeded', 'empty')`; полный HTML, cookies и authorization headers не сохраняются |
@@ -204,15 +204,33 @@ claims; disabled/not-due очередь уступает второй. Поря�
 | `CatalogQuery.detail(game_id)` | internal game ID | game/platforms/current summaries/staleness/similar games либо not found |
 | `SimilarityService.rank(game_id)` | current saved catalog | до пяти versioned deterministic results с score components |
 
-## Candidate similarity policy `0.1.0`
+## Similarity policy `genre-jaccard` 1.0.0
 
-Baseline считается в Python по текущей базе, без сохранённого similarity index:
+[ADR-0002](decisions/0002-genre-similarity-policy.md) выбирает простой genre Jaccard
+по результатам [замороженного comparison](../evals/similarity/comparison_report.json).
+Исходный candidate `0.1.0` (`0.60 × genre_jaccard + 0.25 × platform_jaccard +
+0.15 × same_developer`, eligibility по genre либо developer, cutoff `>= 0.15`)
+сохранён в eval, но отвергнут: четыре случая нарушают `INV-NONMATCH`.
 
-`score = 0.60 × genre_jaccard + 0.25 × platform_jaccard + 0.15 × same_developer`
+Production policy использует только пересечение непустых сохранённых жанров:
+`score = |genres(query) ∩ genres(candidate)| / |genres(query) ∪ genres(candidate)|`.
+Жанры сравниваются как множества целых labels после collapse whitespace/casefold;
+пустые labels исключаются, synonyms/перевод/parent genres не выводятся.
+Сортировка — score descending, title casefold, internal ID. Возвращается максимум
+пять уникальных сохранённых IDs без self-match; отсутствие query или общих жанров
+даёт пустой результат. Result содержит score, shared genres, policy ID/version.
+Ranker принимает immutable snapshot, не читает ORM и не делает HTTP/model calls.
+DB adapter и UI navigation проверяются отдельно в `SIM-VER-01`.
 
-Кандидат допустим, если это другая Game, есть хотя бы один общий genre либо тот же non-empty normalized developer, и `score >= 0.15`. Результаты сортируются по score descending, затем title casefold и internal ID; возвращаются первые пять уникальных Game. Пустые признаки дают вклад `0`, а не фиктивное совпадение. На карточке можно объяснить совпавшие genres/platforms/developer.
-
-Формула является кандидатом, а не принятой policy. Она использует только уже необходимые сохранённые признаки, не переводит description и не добавляет embeddings/vector service. `SIM-EVAL-01` независимо замораживает examples/golden set, metric, threshold и hard invariants до сравнения методов; `IMP-06` сравнивает этот и более простой baseline без изменения oracle. Только прошедший вариант получает release policy version. Непройденный threshold требует пересмотра кандидата, а не скрытой подстройки теста.
+Источник признака — JSON-LD `VideoGame.genre`: строка или массив строк, максимум
+255 символов на исходный label, без NUL; неверные типы отклоняются до записи.
+`GameDTO.genres` передаёт tuple либо `None`. Ingestion сохраняет canonical labels
+в JSON-массиве `Game.genres`, удаляя дубли с сохранением исходного порядка.
+Пустое/отсутствующее значение не затирает прежние жанры; новый непустой набор
+заменяет их и устанавливает `genres_last_changed_fetch`. При сохранении старого
+значения сохраняется и его отдельная provenance. Migration `catalog.0006`
+добавляет поля без реконструкции истории: прежние записи получают `[]`/null до
+обычного успешного detail ingest. Parser contract — `1.1.0`.
 
 ## Транзакционные инварианты
 
@@ -240,7 +258,7 @@ Baseline считается в Python по текущей базе, без со�
 | `RUN-01`, `SEL-01–SEL-03`, `R-TIM-01–R-TIM-02` | Unique UTC slot, cycle/candidate state, lease/fencing, checkpoint | `IMP-03`, `HRD-02–HRD-03`, `PUB-02` |
 | `AI-01–AI-03`, `R-AI-01–R-AI-02` | Complete paginated source snapshots, persisted original-language reviews, immutable token-bounded corpus, versioned attempts/model/time/usage, grounded claims, cache | Independent pagination fixture; multilingual token-boundary report; `REV-EVAL-01` frozen selection oracle; `IMP-04`, `HRD-04`, frozen summary eval |
 | `UI-01–UI-05`, `R-UI-01` | Read-only deterministic list/detail queries and visible summary provenance/staleness | `IMP-05`, `IMP-07`, `PUB-03` |
-| `SIM-01–SIM-03`, `R-SIM-01` | Candidate local scoring, hard exclusions, deterministic tie-break | `SIM-EVAL-01` frozen oracle; `IMP-06` comparison; `SIM-VER-01` integration evidence |
+| `SIM-01–SIM-03`, `R-SIM-01` | Genre Jaccard 1.0.0, hard exclusions, deterministic tie-break | `SIM-EVAL-01` frozen oracle; [IMP-06 comparison](../evals/similarity/comparison_report.json); `SIM-VER-01` integration evidence |
 | `NFR-01–NFR-05`, `R-OPS-01` | Persistent state, isolated failure, unique work, run/job timestamps and counters | `HRD-02–HRD-05`, `PUB-02` |
 | `NFR-06`, `R-TST-01`, `R-SEC-01`, `R-REP-01` | External protocols replaceable by fakes; no live calls/secrets/raw envelopes in CI | `IMP-01`, `HRD-06`, `REL-01–REL-03` |
 

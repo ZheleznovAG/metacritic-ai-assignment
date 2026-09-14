@@ -81,6 +81,10 @@ class Game(models.Model):
     description = models.TextField(null=True, blank=True)
     video_embed_url = models.TextField(null=True, blank=True)
     video_content_url = models.TextField(null=True, blank=True)
+    genres = models.JSONField(default=list, blank=True)
+    genres_last_changed_fetch = models.ForeignKey(
+        SourceFetch, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
     last_changed_fetch = models.ForeignKey(
         SourceFetch, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )

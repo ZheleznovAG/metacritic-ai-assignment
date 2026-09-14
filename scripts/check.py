@@ -43,6 +43,7 @@ def main() -> None:
         ],
         ["evals/review_selection/verify_candidate.py"],
         ["evals/similarity/score_similarity.py", "--verify"],
+        ["evals/similarity/compare.py"],
         ["-m", "unittest", "discover", "-s", "evals/similarity", "-p", "test_*.py"],
     ]
     for arguments in commands:

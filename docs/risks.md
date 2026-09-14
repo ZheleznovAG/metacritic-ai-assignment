@@ -221,8 +221,8 @@
 - **Проверка:** доступные признаки в `SPK-02`; candidate `0.1.0` в `PLN-02`; независимые examples/metric/threshold/invariants — `SIM-EVAL-01`; comparison — `IMP-06`; integration — `SIM-VER-01`.
 - **Митигация:** сначала заморозить quality oracle, затем без его изменения сравнить candidate score по genre/platform/developer как минимум с простым baseline, выбрать простейший проходящий вариант и отдельно проверить hard self/duplicate/external exclusions и UI navigation.
 - **Владелец:** `SPK-02/PLN-02`, затем `SIM-EVAL-01/IMP-06/SIM-VER-01`.
-- **Остаточный риск:** субъективность релевантности на малом наборе.
-- **Текущая диспозиция:** `Open — mitigate`; формула понижена до candidate `0.1.0` в [`docs/design.md`](design.md). Policy не может стать accepted до frozen oracle и comparison evidence; новый внешний сервис не требуется.
+- **Остаточный риск:** субъективность релевантности на малом synthetic set, широкие общие labels, разные словари жанров и устаревшие/отсутствующие source metadata.
+- **Текущая диспозиция:** `Open — integration/public verification`; [comparison IMP-06](../evals/similarity/comparison_report.json) выбрал genre Jaccard 1.0.0 (mean/floor 1.0, все invariants) и отверг weighted candidate из-за grade-0 результатов. [ADR-0002](decisions/0002-genre-similarity-policy.md) фиксирует метод; DB/card integration и public evidence остаются в `SIM-VER-01`.
 
 ## 6. Риски доказуемости, поставки и безопасности
 
@@ -382,7 +382,7 @@
 | Игра и платформы не дублируются | `R-ID-01` | `IMP-01–IMP-02`, `HRD-02–HRD-03` после `SPK-03` | ID-first contract и коллизии проверены; нужны executable unique/concurrency tests |
 | Частичный ответ не портит данные | `R-EXT-04`, `R-DAT-01` | `SPK-02`, позднее `HRD-01–HRD-02` | Есть ранняя и финальная проверка |
 | AI grounded и разделяет аудитории | `R-AI-01` | `IMP-04/HRD-04` после baseline `SPK-05` | `9/9` structural, rubric `96/98`, `0` blockers; нужны executable provider-fake/regression tests |
-| Similarity не формальна | `R-SIM-01` | `SIM-EVAL-01/IMP-06/SIM-VER-01` после исправления `PLN-02` | Stored-feature formula остаётся candidate; oracle замораживается до comparison |
+| Similarity не формальна | `R-SIM-01` | `SIM-EVAL-01/IMP-06/SIM-VER-01` | Frozen comparison выбирает genre Jaccard 1.0.0; saved-data/card/public evidence проверяется в `SIM-VER-01` |
 | UI работает единым сценарием | `R-UI-01` | `IMP-07/PUB-03` | Не требует отдельного spike |
 | Сдача воспроизводима и безопасна | `R-SEC-01`, `R-DEL-01`, `R-REP-01` | implementation/release tasks | Есть непрерывная митигация |
 

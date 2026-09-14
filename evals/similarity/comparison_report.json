@@ -1,0 +1,570 @@
+{
+  "task": "IMP-06",
+  "oracle_manifest": {
+    "version": "1.0.0",
+    "task": "SIM-EVAL-01",
+    "sha256": {
+      "cases.json": "1d69ddc058da55ef65fa15bedb170b898ad2e48997745bb246407928bcd4e972",
+      "metric.md": "f1187dbf6e26dafc57de60732ae1c7d4e64e923ba7d89492af82a70bcb01a1de",
+      "contract.py": "43acc4f8d0eb720f3170cf1d03caff5b6af26d6eb6d99b6c24cb9f0e887a825c",
+      "score_similarity.py": "cfcc7caa190ee12a006c4fb2bec06f67210f34213f9538abea4444de25125ff3"
+    }
+  },
+  "source_sha256": {
+    "app/catalog/genres.py": "4eb8c626cc53edef32d795577bb06b0e3faa271f38a6e2f9ccb71a2532bc5299",
+    "app/similarity/policy.py": "c9cc696960717a5cdd48612ba5514b9993f62e6409c0598d10f3a6d6030c4821",
+    "evals/similarity/candidates.py": "fd6a24bec3a4b90eb644f837ac44225c3da26c95b6a288fab76fc1e8c88e733c",
+    "evals/similarity/compare.py": "b1e4e40e9b2b2413e02ff42642ee60a3d1508e5d75c4e41bbb2e50835d223a5b"
+  },
+  "methods": {
+    "weighted-metadata": {
+      "policy_version": "0.1.0",
+      "oracle_version": "1.0.0",
+      "thresholds": {
+        "macro_ndcg_at_5": 0.9,
+        "min_case_ndcg_at_5": 0.8
+      },
+      "positive_case_count": 9,
+      "empty_or_negative_case_count": 5,
+      "macro_ndcg_at_5": 0.9985716844686247,
+      "min_case_ndcg_at_5": 0.9871451602176229,
+      "hard_invariants_pass": false,
+      "quality_pass": true,
+      "accepted": false,
+      "cases": [
+        {
+          "case_id": "action_role_playing",
+          "selected_ids": [
+            103,
+            102,
+            109,
+            104
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": false,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 0.9871451602176229,
+          "errors": []
+        },
+        {
+          "case_id": "platformers",
+          "selected_ids": [
+            202,
+            204
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "racing",
+          "selected_ids": [
+            302,
+            303,
+            305
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": false,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "strategy_grades",
+          "selected_ids": [
+            402,
+            403,
+            404
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "sparse_features",
+          "selected_ids": [
+            502
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "platform_only",
+          "selected_ids": [],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": null,
+          "errors": []
+        },
+        {
+          "case_id": "developer_trap",
+          "selected_ids": [
+            704,
+            702,
+            703
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": false,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "title_collision_and_unicode",
+          "selected_ids": [
+            802,
+            803
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "normalized_metadata",
+          "selected_ids": [
+            902,
+            903,
+            904
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": false,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "dense_ties_and_cap",
+          "selected_ids": [
+            1002,
+            1007,
+            1003,
+            1004,
+            1005
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "only_self",
+          "selected_ids": [],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": null,
+          "errors": []
+        },
+        {
+          "case_id": "empty_database",
+          "selected_ids": [],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": null,
+          "errors": []
+        },
+        {
+          "case_id": "all_features_missing",
+          "selected_ids": [],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": null,
+          "errors": []
+        },
+        {
+          "case_id": "query_not_saved",
+          "selected_ids": [],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": null,
+          "errors": []
+        }
+      ]
+    },
+    "genre-jaccard": {
+      "policy_version": "1.0.0",
+      "oracle_version": "1.0.0",
+      "thresholds": {
+        "macro_ndcg_at_5": 0.9,
+        "min_case_ndcg_at_5": 0.8
+      },
+      "positive_case_count": 9,
+      "empty_or_negative_case_count": 5,
+      "macro_ndcg_at_5": 1.0,
+      "min_case_ndcg_at_5": 1.0,
+      "hard_invariants_pass": true,
+      "quality_pass": true,
+      "accepted": true,
+      "cases": [
+        {
+          "case_id": "action_role_playing",
+          "selected_ids": [
+            102,
+            103,
+            104
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "platformers",
+          "selected_ids": [
+            204,
+            202
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "racing",
+          "selected_ids": [
+            303,
+            302
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "strategy_grades",
+          "selected_ids": [
+            403,
+            402,
+            404
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "sparse_features",
+          "selected_ids": [
+            502
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "platform_only",
+          "selected_ids": [],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": null,
+          "errors": []
+        },
+        {
+          "case_id": "developer_trap",
+          "selected_ids": [
+            704
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "title_collision_and_unicode",
+          "selected_ids": [
+            802,
+            803
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "normalized_metadata",
+          "selected_ids": [
+            903,
+            902
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "dense_ties_and_cap",
+          "selected_ids": [
+            1002,
+            1007,
+            1003,
+            1004,
+            1005
+          ],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": 1.0,
+          "errors": []
+        },
+        {
+          "case_id": "only_self",
+          "selected_ids": [],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": null,
+          "errors": []
+        },
+        {
+          "case_id": "empty_database",
+          "selected_ids": [],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": null,
+          "errors": []
+        },
+        {
+          "case_id": "all_features_missing",
+          "selected_ids": [],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": null,
+          "errors": []
+        },
+        {
+          "case_id": "query_not_saved",
+          "selected_ids": [],
+          "hard_invariants": {
+            "INV-VALID-RESULT": true,
+            "INV-CAP": true,
+            "INV-SAVED": true,
+            "INV-NO-SELF": true,
+            "INV-UNIQUE": true,
+            "INV-NONMATCH": true,
+            "INV-DETERMINISTIC": true,
+            "INV-QUERY": true
+          },
+          "ndcg_at_5": null,
+          "errors": []
+        }
+      ]
+    }
+  },
+  "selected_policy": "genre-jaccard",
+  "selection_rule": "Choose the simpler genre-only baseline if it passes every frozen criterion; otherwise no release policy is selected."
+}

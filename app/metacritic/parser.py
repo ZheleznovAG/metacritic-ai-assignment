@@ -39,7 +39,7 @@ from metacritic.errors import MetacriticParseError
 from metacritic.validation import metascore as validate_metascore
 from metacritic.validation import userscore as validate_userscore
 
-PARSER_CONTRACT_VERSION = "1.0.0"
+PARSER_CONTRACT_VERSION = "1.1.0"
 
 _USER_SCORE_TITLE = re.compile(r"^User score (.*?) out of 10$")
 
@@ -257,7 +257,21 @@ def parse_game_detail(html: str, expected_url: str) -> GameDTO:
         video_embed_url=video_embed_url,
         video_content_url=video_content_url,
         platforms=tuple(platforms),
+        genres=_extract_genres(ld.get("genre")),
     )
+
+
+def _extract_genres(value: object) -> tuple[str, ...] | None:
+    """Read this VideoGame's JSON-LD genre; absence never fabricates a taxonomy."""
+    if value is None:
+        return None
+    values = [value] if isinstance(value, str) else value
+    if not isinstance(values, list) or any(not isinstance(item, str) for item in values):
+        raise MetacriticParseError("invalid_genres")
+    genres = tuple(_collapse(item) for item in values if item.strip())
+    if any(len(genre) > 255 or "\x00" in genre for genre in genres):
+        raise MetacriticParseError("invalid_genres")
+    return genres or None
 
 
 def _with_userscore(platform: GamePlatformDTO, userscore: Decimal) -> GamePlatformDTO:

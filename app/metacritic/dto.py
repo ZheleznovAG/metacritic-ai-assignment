@@ -40,6 +40,7 @@ class GameDTO:
     video_embed_url: str | None
     video_content_url: str | None
     platforms: tuple[GamePlatformDTO, ...]
+    genres: tuple[str, ...] | None = None
 
 
 @dataclass(frozen=True, slots=True)

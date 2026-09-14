@@ -2,7 +2,7 @@
 
 ## Project Structure & Sources of Truth
 
-This repository has established its implementation baseline through `PLN-03` / `G3`. Ingestion, scheduling, review collection, AI summaries and the search/filter list are implemented; similarity is pending. Current verification and correction statuses belong only to `action_plan.md`.
+This repository has established its implementation baseline through `PLN-03` / `G3`. Ingestion, scheduling, review collection, AI summaries, the search/filter list and the similarity policy are implemented; similarity card integration is pending. Current verification and correction statuses belong only to `action_plan.md`.
 
 - `assignment.md` is the primary specification.
 - `methodology.md` defines the evidence-driven delivery process.
@@ -21,6 +21,7 @@ This repository has established its implementation baseline through `PLN-03` / `
 - `research/reviews/` preserves dated implementation-audit probes, observations and verification excerpts; defect-confirming probes are historical evidence, not application acceptance tests or CI gates.
 - `app/config/` contains Django settings, routes, WSGI and sanitised logging; `app/presentation/` contains the read-only preview and health endpoints; `app/tests/` contains application checks on PostgreSQL 16.
 - `app/metacritic/` contains external adapters/parsers; `app/catalog/` owns game data; `app/processing/` owns hourly discovery and daily progress; `app/reviews/` owns review collection/corpora; `app/summaries/` owns provider attempts and summaries.
+- `app/similarity/` contains the versioned pure ranking policy over saved catalog features; it has no ORM, HTTP or provider dependencies. `evals/similarity/compare.py` reproduces the candidate/baseline comparison against the frozen oracle.
 - `scripts/` contains environment initialization/upgrade, database role provisioning, migrations, image identity verification and HTTP/CSS smoke commands; `scripts/tests/` verifies permission boundaries and deployment counterexamples.
 - `Dockerfile`, `compose*.yaml` and `deploy/` define immutable builds and isolated local/CI/preview deployment; `.github/workflows/ci.yml` runs deterministic checks, never deployment.
 

@@ -2,7 +2,7 @@
 
 Take-home assignment for the AI Automation Engineer position.
 
-The application includes a read-only game catalog, platform filters and title search, hourly Metacritic discovery (`scripts/run_scheduler.py`), review collection and separate critic/user AI summaries (`scripts/run_worker.py`). Recommendations are **not implemented yet**. Current task and correction status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). The [2026-09-12 audit](docs/requirements/implementation_audit_2026_09_12.md) records defects in repeated processing and summary handling; a passing local suite does not close them.
+The application includes a read-only game catalog, platform filters and title search, hourly Metacritic discovery (`scripts/run_scheduler.py`), review collection and separate critic/user AI summaries (`scripts/run_worker.py`). The [similarity policy](docs/decisions/0002-genre-similarity-policy.md) ranks saved genre features; its card integration is pending `SIM-VER-01`. Current task and correction status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). The [2026-09-12 audit](docs/requirements/implementation_audit_2026_09_12.md) records defects in repeated processing and summary handling; a passing local suite does not close them.
 
 ## Local development
 
@@ -50,10 +50,13 @@ The [similarity oracle](evals/similarity/metric.md) has separate offline checks,
 
 ```powershell
 .\.venv-app\Scripts\python.exe -B evals/similarity/score_similarity.py --verify
+.\.venv-app\Scripts\python.exe -B evals/similarity/compare.py
 .\.venv-app\Scripts\python.exe -B -m unittest discover -s evals/similarity -p "test_*.py" -v
 ```
 
 Integrity checks do not select a similarity policy or imply owner acceptance; its current decision is recorded in [the action plan](action_plan.md).
+
+The comparison command recomputes both methods against the frozen oracle and verifies the published [comparison report](evals/similarity/comparison_report.json), including source hashes. `--write` explicitly publishes a reviewed new report; normal checks never rewrite it. [IMP-06](docs/requirements/imp_06_review.md) documents the method and its limitations. Apply `scripts/migrate.py` before starting updated application code: `catalog.0006_game_genres` adds stored genres and provenance. Existing games start with unknown genres until a normal successful detail fetch supplies them; the migration does not fabricate a taxonomy.
 
 `--profile app up` provisions the database roles, applies migrations using the schema-owner role, then starts web and Caddy. [CI workflow](.github/workflows/ci.yml) repeats build, offline runtime tokenization, checks and an actual Caddy HTTP/CSS smoke on a dedicated project with an initially empty database; it validates both CI and production Compose overrides. Whitespace is checked between the event's base/head commits, or in the selected commit for manual/initial runs. CI never deploys or calls live Metacritic/AI. A workflow file alone is not a successful CI run.
 
