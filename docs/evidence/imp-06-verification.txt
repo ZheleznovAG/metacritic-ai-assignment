@@ -40,3 +40,12 @@ Selected: genre-jaccard
 CHECK: -m unittest discover -s evals/similarity -p test_*.py
 Ran 14 tests in 0.061s
 OK
+
+Hosted CI: https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34867974090
+Tested SHA: 813c5d0afb68ae60d09afad660332d8bf4163057
+Conclusion: success; completed 2026-09-14 16:22:17 UTC.
+verify	Offline verification on PostgreSQL 16	2026-09-14T16:21:26.3798532Z Success: no issues found in 107 source files
+verify	Offline verification on PostgreSQL 16	2026-09-14T16:21:45.2418526Z Ran 284 tests in 13.021s
+verify	Offline verification on PostgreSQL 16	2026-09-14T16:21:49.5538898Z genre-jaccard mean= 1.0 floor= 1.0 invariants= True accepted= True
+verify	Offline verification on PostgreSQL 16	2026-09-14T16:21:49.5539389Z Selected: genre-jaccard
+PASS steps: Set up job; Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1; Whitespace and Compose validation; Build locked runtime and checks; Record built image identity; Tokenize in the read-only runtime without network; Offline verification on PostgreSQL 16; Start the actual runtime through Caddy; External HTTP smoke; Stop only this ephemeral CI project; Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1; Complete job

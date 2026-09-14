@@ -75,7 +75,15 @@ static collection, six scripts tests, 18 planning tests, seven AI-integrity test
 nine review-selection tests and 14 similarity evaluator tests. Frozen baseline,
 production review-selection and similarity comparison verifiers all passed.
 [Verification excerpts](../evidence/imp-06-verification.txt) record the run.
-Hosted CI evidence will be added after the candidate push.
+Candidate commit: `813c5d0afb68ae60d09afad660332d8bf4163057`.
+The owner explicitly authorized pushing this candidate and its subsequent CI
+evidence commit to `ZheleznovAG/metacritic-ai-assignment`, branch `main`.
+[Hosted CI 34867974090](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34867974090)
+passed on the exact candidate SHA above, completing at 2026-09-14 16:22:17 UTC.
+Its Linux/PostgreSQL 16 run passed all 284 application tests, the unchanged frozen
+comparison, locked image build, offline runtime tokenization, Compose validation,
+migrations and runtime startup through Caddy, image identity and HTTP/CSS smoke.
+Current task and gate disposition remains in `action_plan.md`.
 `SIM-VER-01` owns the DB-to-ranker query, card integration, ID navigation and
 public deployment/genre refresh. No UI change, live source/provider call or
 application/VDS migration is claimed by this cycle. Existing application databases
