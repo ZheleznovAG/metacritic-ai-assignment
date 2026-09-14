@@ -83,3 +83,75 @@ OK
 CHECK: evals/review_selection/score_selection.py --verify evals/review_selection/baseline_report.json
 CHECK: evals/review_selection/verify_candidate.py
 PASS: the real candidate passes all 8 invariants on all applicable cases.
+
+CORRECTED CANDIDATE HOSTED CI
+Source: 92c846a3a5e6a84b0798633c97f74f23104d97c4
+https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34808052113
+Candidate cbd17eb failed only the whitespace step on two trailing spaces in these excerpts; 92c846a removed them.
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:01:51.9640316Z All checks passed!
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:01:58.6320321Z Success: no issues found in 101 source files
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:01.4522062Z No changes detected
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:05.8957383Z test_missing_scores_preserve_values_and_their_accepted_source (tests.test_catalog_ingest.IngestPlatformUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) ... ok
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:05.9252088Z test_natural_nulls_and_new_zero_scores_have_their_own_source (tests.test_catalog_ingest.IngestPlatformUserscoreFanOutTests.test_natural_nulls_and_new_zero_scores_have_their_own_source) ... ok
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:21.1389694Z Ran 263 tests in 15.540s
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:21.1391444Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:22.4833377Z Ran 6 tests in 0.438s
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:22.4834044Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:22.9924028Z Ran 18 tests in 0.115s
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:22.9924829Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:23.8030542Z Ran 7 tests in 0.013s
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:23.8031141Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:24.3909903Z Ran 9 tests in 0.006s
+verify	Offline verification on PostgreSQL 16	2026-09-14T05:02:24.3910985Z OK
+verify	External HTTP smoke	2026-09-14T05:02:47.6723544Z PASS image identity: sha256:ebc9a6556e08b3434986bbfd86e2be382aecaf21275d8216450a10037db2f9bc, build 92c846a3a5e6a84b0798633c97f74f23104d97c4
+verify	External HTTP smoke	2026-09-14T05:02:47.8076582Z PASS /: 200
+verify	External HTTP smoke	2026-09-14T05:02:47.8096036Z PASS /health/live/: 200
+verify	External HTTP smoke	2026-09-14T05:02:47.8106481Z PASS /health/ready/: 200
+verify	External HTTP smoke	2026-09-14T05:02:47.8116446Z PASS /.env: 404
+verify	External HTTP smoke	2026-09-14T05:02:47.8117005Z PASS /.env.app: 404
+verify	External HTTP smoke	2026-09-14T05:02:47.8117597Z PASS /admin/: 404
+verify	External HTTP smoke	2026-09-14T05:02:47.8118152Z PASS /unknown: 404
+verify	External HTTP smoke	2026-09-14T05:02:47.8118807Z PASS /static/presentation/app.05efda703ced.css: CSS served
+
+TRANSFER AND IMPORT
+PASS archive checksum image-92c846a.tar 47aa8b5e2be1ac2f1b6016c6f826ee339c84bf74aeac5fd33c1e212b12099f6f
+PASS archive checksum config-92c846a.tar.gz bad31a66b1fcc4f79a0a2d6b1f7d36ace9d0c8d08e67d132f199ea2d41578ce6
+Loaded image: metacritic-imp01:92c846a3a5e6a84b0798633c97f74f23104d97c4
+{"loaded_image_id": "sha256:f5e92182298388c8937c96054fb524979de0afde048696d98c519f850162b109", "build": "92c846a3a5e6a84b0798633c97f74f23104d97c4"}
+
+CORRECTED VDS DEPLOYMENT
+PASS image identity: sha256:f5e92182298388c8937c96054fb524979de0afde048696d98c519f850162b109, build 92c846a3a5e6a84b0798633c97f74f23104d97c4
+before_table_counts {"catalog_game": "1", "catalog_gamealias": "1", "catalog_gameplatform": "5", "catalog_sourcefetch": "10", "processing_coreattempt": "0", "processing_dailycandidate": "1", "processing_dailycycle": "1", "processing_processinglease": "0", "processing_processingrun": "0", "reviews_enrichmentturn": "0", "reviews_review": "0", "reviews_reviewcollectionjob": "10", "reviews_reviewcorpus": "0", "reviews_reviewcorpushead": "0", "reviews_reviewcorpusitem": "0", "reviews_reviewobservation": "0", "summaries_reviewsummary": "0", "summaries_summaryattempt": "0", "summaries_summaryclaim": "0", "summaries_summaryjob": "0"}
+PASS backup archive readable; bytes 110730
+PASS existing environment preserved except build references
+startup_elapsed_seconds 10.92
+PASS image identity: sha256:f5e92182298388c8937c96054fb524979de0afde048696d98c519f850162b109, build 92c846a3a5e6a84b0798633c97f74f23104d97c4
+PASS /: 200
+PASS /health/live/: 200
+PASS /health/ready/: 200
+PASS /.env: 404
+PASS /.env.app: 404
+PASS /admin/: 404
+PASS /unknown: 404
+PASS /static/presentation/app.05efda703ced.css: CSS served
+PASS pre-existing row counts and named volumes preserved
+after_table_counts {"catalog_game": "1", "catalog_gamealias": "1", "catalog_gameplatform": "5", "catalog_sourcefetch": "10", "processing_coreattempt": "0", "processing_dailycandidate": "1", "processing_dailycycle": "1", "processing_processinglease": "0", "processing_processingrun": "0", "reviews_enrichmentturn": "0", "reviews_review": "0", "reviews_reviewcollectionjob": "10", "reviews_reviewcorpus": "0", "reviews_reviewcorpushead": "0", "reviews_reviewcorpusitem": "0", "reviews_reviewobservation": "0", "summaries_reviewsummary": "0", "summaries_summaryattempt": "0", "summaries_summaryclaim": "0", "summaries_summaryjob": "0"}
+{"service": "db", "image_id": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94", "health": "healthy", "user": "", "readonly": false, "cap_drop": null, "cap_add": null}
+{"service": "web", "image_id": "sha256:f5e92182298388c8937c96054fb524979de0afde048696d98c519f850162b109", "health": "healthy", "user": "65532:65532", "readonly": true, "cap_drop": ["ALL"], "cap_add": null}
+{"service": "caddy", "image_id": "sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648", "health": "healthy", "user": "", "readonly": true, "cap_drop": ["ALL"], "cap_add": ["CAP_NET_BIND_SERVICE"]}
+metacritic-imp01-prod-web-1 92.7MiB / 384MiB 0.02%
+metacritic-imp01-prod-db-1 34.41MiB / 512MiB 5.62%
+metacritic-imp01-prod-caddy-1 11.6MiB / 96MiB 0.00%
+DEPLOY PASS
+
+CORRECTED IMAGE LIVE RECHECK
+INGEST 3 exit 0 game_id=1 created=False platforms_created=0 platforms_updated=5 jobs_created=0 candidate_state=processed
+PASS corrected image real ingest: stable existing IDs; five additional successful source fetches; no AI calls
+PASS temporary scheduler-only environment file removed
+PASS selected full DB snapshot after run 2 equals pre-run-3 snapshot after redeploy exactly.
+PASS corrected image: all source/DB/public fields, score provenance, description hash, natural nulls and summary pending states.
+FINAL EXTERNAL HTTP CHECK
+{"checked_at": "2026-09-14T05:11:56.133606+00:00", "card_path": "/games/1/", "status": 200, "game_fields_match": true, "platform_rows": 5, "natural_nulls_shown": 2, "summary_states": ["pending", "pending"], "list_link_count": 1, "css_path": "/static/presentation/app.05efda703ced.css", "build_version": "92c846a3a5e6a84b0798633c97f74f23104d97c4", "card_response_sha256": "79d54baf9c0c2632569a1c881cf283fbcea0b7f0a1e2c337ff4b8629583a77d1"}
+FINAL CHROMIUM CHECK
+{"checked_at": "2026-09-14T05:12:03.436231+00:00", "browser": "151.0.7922.34", "build_version": "92c846a3a5e6a84b0798633c97f74f23104d97c4", "public_navigation": "/ -> /games/1/ -> /", "card_cover_loaded": true, "css_applied": true, "platform_rows": 5, "natural_nulls": 2, "page_errors": 0, "desktop_width": 1280, "mobile_width": 390, "horizontal_overflow": false, "screenshots": ["imp-02-card-desktop.png", "imp-02-card-mobile.png"]}
+LIMITS: Manual ingest only; no scheduler/worker/provider acceptance, no restore/reboot test, no historical provenance reconstruction.

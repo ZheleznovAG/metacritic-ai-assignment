@@ -35,6 +35,7 @@ and its read-only DB role were preserved. No worker or AI provider was invoked.
 |---|---|---|---|---|
 | First, 04:43:36–04:43:42 UTC | ID 1, created | 5 / 0 | 10 | 1 / 5 / 10 |
 | Repeat, 04:43:48 UTC | Same ID 1, updated | 0 / 5 | 0 | 1 / 5 / 10 |
+| Corrected image repeat, 05:10:40–05:10:50 UTC | Same ID 1, updated | 0 / 5 | 0 | 1 / 5 / 10 |
 
 Both runs retained one alias and one processed manual candidate. All game, platform,
 alias, candidate and collection-job IDs remained stable on repeat. Ten actual
@@ -105,9 +106,53 @@ claimed. The HTTP verifier initially compared the whole list-link text to the ti
 the link also contains developer/score, so the verifier was corrected to check the
 title element and exact target ID. Application UI and the frozen oracle were unchanged.
 
-The first two live runs and screenshots above precede the provenance correction.
-Hosted CI and public redeployment/recheck of the corrected candidate are still
-required before completing this cycle. No quality oracle, source contract or
-acceptance threshold was weakened. Manual candidate state does not prove hourly
-scheduling; live source failures, populated restore/concurrency, summaries and later
-gates remain their own tasks.
+The first two live runs preceded the provenance correction. The final corrected-image
+run and refreshed screenshots below confirm the same source/DB/UI path after the fix.
+No quality oracle, source contract or acceptance threshold was weakened. Manual
+candidate state does not prove hourly scheduling; live source failures, populated
+restore/concurrency, summaries and later gates remain their own tasks.
+
+## Corrected candidate: hosted CI and public recheck
+
+The code correction is commit `cbd17eb`. Its first hosted run
+[34807828987](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34807828987)
+failed the whitespace step on two trailing spaces in saved test-output excerpts.
+The focused formatting correction `92c846a3a5e6a84b0798633c97f74f23104d97c4` passed
+[hosted CI 34808052113](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34808052113):
+all 263 application tests, including both new provenance regressions, and every
+format/lint/type/offline/build/runtime/HTTP-CSS stage passed on Linux/PostgreSQL 16.
+
+A clean `git archive` of that exact SHA produced the deployed runtime image
+`sha256:f5e92182298388c8937c96054fb524979de0afde048696d98c519f850162b109`.
+Image/config archive hashes matched on the VDS before import. Loaded and running
+image IDs, embedded build version and external health version all matched this
+release. The hosted image is a separate build from the same source; identical
+image bytes across builders are not claimed.
+
+The existing database/configuration were backed up (custom-format DB dump 110,730
+bytes, archive directory readable). Deployment retained credentials, named volumes
+and every existing application-table row count. No new migration was introduced.
+Compose startup took 10.92 seconds; DB/web/Caddy were healthy. Web remained non-root
+and read-only with all capabilities dropped. The recorded memory snapshot was
+92.7 MiB for web, 34.41 MiB for DB and 11.6 MiB for Caddy.
+
+On this corrected image the third real ingest created no new game, platform, alias,
+candidate or collection job, and added exactly five successful `SourceFetch` records.
+The selected full database snapshot immediately before this repeat matched the
+pre-deployment snapshot exactly, including IDs, fields, scores, job states and fetch
+metadata. After the repeat, all core fields and per-score provenance again matched
+the independently observed source oracle. The dataset now has one game, five
+platforms, one alias/candidate, ten pending collection jobs and fifteen successful
+fetches. Summary/provider attempt counts remain zero.
+
+External HTTP and Chromium checks were repeated against build `92c846a`; the linked
+screenshots were refreshed. The final JSON evidence binds browser timestamps and
+screenshots to the checked health build. Explicit source observation and ingest
+requests total 20 Metacritic GETs (5 observation + 10 initial + 5 corrected-image).
+Neither paid AI calls nor production fault injections were used.
+
+Adversarial review found no unresolved material issue in this `IMP-02` scope after
+the correction. Final tracker/README changes are checked by the planning verifier,
+its negative controls, whitespace/privacy checks and the subsequent hosted run of
+the evidence commit. The next task is `IMP-03` revalidation; its scheduler and gate
+criteria were not executed by this manual-ingest cycle.
