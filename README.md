@@ -77,6 +77,8 @@ Set `APP_VERSION` before building: Docker writes it into `app/build-version.txt`
 
 ## Baseline and research evidence
 
+[IMP-05 revalidation](docs/requirements/imp_05_revalidation.md) records public list/filter/card checks and the long-title layout correction. Its [dated browser probes](research/reviews/20260914_imp05/README.md) document reproduction with an isolated PostgreSQL fixture database and separate live preview checks; they are research evidence, excluded from deterministic CI.
+
 - [Assignment](assignment.md), [requirements and acceptance](docs/requirements/acceptance.md).
 - [Architecture](docs/decisions/0001-minimal-stack-and-architecture.md), [data and processing contracts](docs/design.md).
 - [Published AI baseline](evals/reviews/baseline/README.md): saved synthetic inputs/outputs and original scoring, independently inspectable without another API call.

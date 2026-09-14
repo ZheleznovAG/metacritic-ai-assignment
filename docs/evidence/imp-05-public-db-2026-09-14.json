@@ -1,0 +1,1788 @@
+{
+  "games": [
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/86c7a59722e76cf9cb2c83bfac863f18f815bc2a/catalog/provider/6/12/6-1-824956-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "9827979e11749766a52d79e20e6935816ebf6d8e700d3437c58b75ca428832b6",
+      "developer": "From Software",
+      "id": 1,
+      "platforms": [
+        {
+          "metascore": 94,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "7.6"
+        },
+        {
+          "metascore": null,
+          "name": "PlayStation 4",
+          "slug": "playstation-4",
+          "userscore": "7.5"
+        },
+        {
+          "metascore": 96,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "8.4"
+        },
+        {
+          "metascore": null,
+          "name": "Xbox One",
+          "slug": "xbox-one",
+          "userscore": "7.0"
+        },
+        {
+          "metascore": 96,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": "8.0"
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Elden Ring",
+      "video_content_url": "https://cdn.jwplayer.com/manifests/OXExoEAD.m3u8",
+      "video_embed_url": "https://cdn.jwplayer.com/players/OXExoEAD.html"
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/a1fc1fe019437b9d8d5c30df528ad2d1a6adef19/catalog/provider/7/2/7-1788247056.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "fcbe87b63387b5c3ad578b66aabd252c4b1720d16acd05a5f71fce1248452c1d",
+      "developer": "EA Vancouver",
+      "id": 2,
+      "platforms": [
+        {
+          "metascore": 68,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "3.3"
+        },
+        {
+          "metascore": 62,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "NHL 27",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/341685a53d2f3994432253bea78c44b26e1415ce/catalog/provider/7/2/7-1788886639.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "0e8dc521ed7f5c32a24631dd9051832589a1507cdc5f0902b78ce612212fb9d0",
+      "developer": "Chris Cote",
+      "id": 3,
+      "platforms": [
+        {
+          "metascore": 86,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "8.5"
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Welcome to Elderfield",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/ec620645dee2ba24a7bed3ec7882dd691d3cdb74/catalog/provider/7/2/7-1781631024.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "4dab71324e43c7ce34815d70cc7924bde14be750d2e40b5ee762f6ade6181a69",
+      "developer": "Milestone S.r.l",
+      "id": 4,
+      "platforms": [
+        {
+          "metascore": 66,
+          "name": "Nintendo Switch 2",
+          "slug": "nintendo-switch-2",
+          "userscore": null
+        },
+        {
+          "metascore": 79,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        },
+        {
+          "metascore": 75,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "7.9"
+        },
+        {
+          "metascore": 76,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": "10.0"
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Hot Wheels Infinite Rush",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/d76ac3966938d5104693e2acc63e844172c18b38/catalog/provider/7/2/7-1781630465.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "4574d75cf11b8d9d260371debb120144cec312f862fc112b53116b7c32ff1cd9",
+      "developer": "Iron Gate AB",
+      "id": 5,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "Nintendo Switch 2",
+          "slug": "nintendo-switch-2",
+          "userscore": null
+        },
+        {
+          "metascore": 90,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "7.8"
+        },
+        {
+          "metascore": null,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "9.0"
+        },
+        {
+          "metascore": null,
+          "name": "Xbox One",
+          "slug": "xbox-one",
+          "userscore": null
+        },
+        {
+          "metascore": null,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": "8.0"
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Valheim",
+      "video_content_url": "https://cdn.jwplayer.com/manifests/sEL0xkzy.m3u8",
+      "video_embed_url": "https://cdn.jwplayer.com/players/sEL0xkzy.html"
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/8c334ea34e531b0173925be9f59c0481883801be/catalog/provider/7/2/7-1788751702.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "f6b40e317774694100bc22de26eaef752be9d227755ac9c192ea32ca735d041a",
+      "developer": "MAETH",
+      "id": 6,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "Nintendo Switch 2",
+          "slug": "nintendo-switch-2",
+          "userscore": "3.0"
+        },
+        {
+          "metascore": 75,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "8.0"
+        },
+        {
+          "metascore": null,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": null
+        },
+        {
+          "metascore": null,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "SPRAWL zero",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": null,
+      "description_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "developer": null,
+      "id": 7,
+      "platforms": [],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Bus Simulator 27",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/3125e38675131994c760b8aeb9c9ffee447d4d22/catalog/provider/7/2/7-1776805800.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "190620570d206a40dd29d66a7ffb673f5e436888dd3ba78e1dd04e2b1724482a",
+      "developer": "IllFonic",
+      "id": 8,
+      "platforms": [
+        {
+          "metascore": 71,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "6.3"
+        },
+        {
+          "metascore": 68,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "7.8"
+        },
+        {
+          "metascore": 60,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": "6.3"
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Halloween: The Game",
+      "video_content_url": "https://cdn.jwplayer.com/manifests/FGCp8Kop.m3u8",
+      "video_embed_url": "https://cdn.jwplayer.com/players/FGCp8Kop.html"
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/3b9d644c44993fba6e3d56da0ea22111b80e4023/catalog/provider/7/2/7-1781631527.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "a362f5829fbc12bbe678eaad4fd7af8e471c552d3925541b2405afb1541d1027",
+      "developer": "Capcom",
+      "id": 9,
+      "platforms": [
+        {
+          "metascore": 90,
+          "name": "Nintendo Switch 2",
+          "slug": "nintendo-switch-2",
+          "userscore": "9.5"
+        },
+        {
+          "metascore": 83,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "9.2"
+        },
+        {
+          "metascore": 85,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "8.6"
+        },
+        {
+          "metascore": 83,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": "8.6"
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Onimusha: Way of the Sword",
+      "video_content_url": "https://cdn.jwplayer.com/manifests/Eibtv31Y.m3u8",
+      "video_embed_url": "https://cdn.jwplayer.com/players/Eibtv31Y.html"
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/14f0d0f4419c5f699b91161bcf8a989d4164c175/catalog/provider/7/2/7-1787423832.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "b9642817626e270551cc17a0b67490a42a6c7b42707571b15c3dba8a4d3cecb9",
+      "developer": "Visual Concepts",
+      "id": 10,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "Nintendo Switch 2",
+          "slug": "nintendo-switch-2",
+          "userscore": "0.0"
+        },
+        {
+          "metascore": 73,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "0.0"
+        },
+        {
+          "metascore": 77,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "4.8"
+        },
+        {
+          "metascore": 81,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "NBA 2K27",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/dbf066794fab6a91f365591bbf45f34eb013b107/catalog/provider/7/2/7-1777678310.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "65f4a1edb5e4141b385236c17091fdf763c20b8443d81e360ef1acfb1a189a22",
+      "developer": "Rebel Wolves",
+      "id": 11,
+      "platforms": [
+        {
+          "metascore": 84,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "8.2"
+        },
+        {
+          "metascore": 83,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "8.2"
+        },
+        {
+          "metascore": 86,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": "8.2"
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "The Blood of Dawnwalker",
+      "video_content_url": "https://cdn.jwplayer.com/manifests/eSfGZryF.m3u8",
+      "video_embed_url": "https://cdn.jwplayer.com/players/eSfGZryF.html"
+    },
+    {
+      "cover_url": null,
+      "description_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "developer": null,
+      "id": 12,
+      "platforms": [],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "BioEden",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/5ed48262bdcda1b0a082a425a3c288bcc28fcf23/catalog/provider/6/12/6-1-1246478-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "6053f7e553fe4a964acaacd9bb102434c44a12d3578f5180894accb533aacb15",
+      "developer": "Team Ninja",
+      "id": 13,
+      "platforms": [
+        {
+          "metascore": 67,
+          "name": "Nintendo Switch 2",
+          "slug": "nintendo-switch-2",
+          "userscore": "5.3"
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Wo Long: Fallen Dynasty - Complete Edition",
+      "video_content_url": "https://cdn.jwplayer.com/manifests/m7bm9LAW.m3u8",
+      "video_embed_url": "https://cdn.jwplayer.com/players/m7bm9LAW.html"
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/6e05bb8666586c7ae7231858b6e636b61f5a5bf1/catalog/provider/7/2/7-1787423528.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "c2b29cc4fa062f056c069aa3e7f9dc85dca34f922ecd302a082bc764c54478e7",
+      "developer": "Shapefarm",
+      "id": 14,
+      "platforms": [
+        {
+          "metascore": 82,
+          "name": "Nintendo Switch 2",
+          "slug": "nintendo-switch-2",
+          "userscore": "8.5"
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Orbitals",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/80a5ab9b5ffdfc33384c7ff66332a4ee11f4955e/catalog/provider/7/2/7-1788547750.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "f0dd306f1519d2cd98c9b56bd189dfbc959245aba12ab17d84f301e41adf7d5a",
+      "developer": "Ocellus Studio",
+      "id": 15,
+      "platforms": [
+        {
+          "metascore": 74,
+          "name": "Nintendo Switch",
+          "slug": "nintendo-switch",
+          "userscore": null
+        },
+        {
+          "metascore": 81,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "8.3"
+        },
+        {
+          "metascore": 80,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": null
+        },
+        {
+          "metascore": null,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Marsupilami 2 - Salsa Palombia",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/d1b787af49c75d300cc7d41602e4a986bb7fa60e/catalog/provider/7/2/7-1788147576.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "da815d96b85edd44a7745567b205f0d8f20ca39005a76bb3af152ce92b53af47",
+      "developer": "Digital Sun",
+      "id": 16,
+      "platforms": [
+        {
+          "metascore": 81,
+          "name": "Nintendo Switch 2",
+          "slug": "nintendo-switch-2",
+          "userscore": null
+        },
+        {
+          "metascore": 80,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "8.0"
+        },
+        {
+          "metascore": 77,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "8.0"
+        },
+        {
+          "metascore": null,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Moonlighter 2: The Endless Vault",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/e0790558bc8ae7d0b5d8c2bd829c790cd5e0d6cd/catalog/provider/7/2/7-1788279884.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "1bf846e2e90528c29f5c9f51b620dfee1d2284f2bc83d7b1af889a517755edbe",
+      "developer": "ProbablyMonsters",
+      "id": 17,
+      "platforms": [
+        {
+          "metascore": 72,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "6.7"
+        },
+        {
+          "metascore": null,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "8.0"
+        },
+        {
+          "metascore": null,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Crimson Moon",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": null,
+      "description_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "developer": null,
+      "id": 18,
+      "platforms": [],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Serious Sam: Shatterverse",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/aa7050ea1aaecf9997b3146aedc4604768bbb113/catalog/provider/7/2/7-1787423357.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "72c127b33a0e73e3c6c97f2b78a75c1a0cc768021de91867bf97f4e2ffed204a",
+      "developer": "From Software",
+      "id": 19,
+      "platforms": [
+        {
+          "metascore": 90,
+          "name": "Nintendo Switch 2",
+          "slug": "nintendo-switch-2",
+          "userscore": "8.1"
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Elden Ring: Tarnished Edition",
+      "video_content_url": "https://cdn.jwplayer.com/manifests/OXExoEAD.m3u8",
+      "video_embed_url": "https://cdn.jwplayer.com/players/OXExoEAD.html"
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/fac49808def6edfe42d765c369d5e55a4e3305d5/catalog/provider/7/2/7-1787756252.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "3badb38334637fd9aa0b98fc85fb2a585d37741bc589b951cfdfa3adff579c09",
+      "developer": "Tamsoft",
+      "id": 20,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "Nintendo Switch",
+          "slug": "nintendo-switch",
+          "userscore": null
+        },
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": "4.0"
+        },
+        {
+          "metascore": 74,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "6.3"
+        },
+        {
+          "metascore": null,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Captain Tsubasa 2: World Fighters",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/efdd1685c042cd7c32473bd7f9a4110fc3029b2a/catalog/provider/7/2/7-1787241047.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "9e07f593f8812bc95b7b8c13f4ab845e9b05cf79a9664d2d1da1be3d259c6a8f",
+      "developer": "Adglobe",
+      "id": 21,
+      "platforms": [
+        {
+          "metascore": 71,
+          "name": "Nintendo Switch 2",
+          "slug": "nintendo-switch-2",
+          "userscore": "6.7"
+        },
+        {
+          "metascore": 70,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        },
+        {
+          "metascore": 67,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "userscore": "6.7"
+        },
+        {
+          "metascore": null,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Brigandine Abyss",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/f6903e260ace9f564652638e49ef0756f47b1789/catalog/provider/6/12/6-1-921660-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "developer": "Frentwick Indie",
+      "id": 22,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Cube Crusaders",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/4169cd7440fcde61f90ffcfd1f39df2d8b1e52d1/catalog/provider/6/12/6-1-1191836-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "developer": "NOENOE GAMES",
+      "id": 23,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "GRID/",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/2a299f2dc62edb0fcf5a1e1bc42c04556b245de7/catalog/provider/6/12/6-1-1195777-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "developer": "Purpledoor Studios",
+      "id": 24,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Idle Bookstore",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/bcb38cb014437c8da844f6757dbd123e5dc13cf5/catalog/provider/6/12/6-1-1215525-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "developer": "Simply Artizan",
+      "id": 25,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Meeple Incremental",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/412851a1ebd274b3e562bb3efcb50abe298910bd/catalog/provider/6/12/6-1-1234410-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "developer": "Arcane Cabinet",
+      "id": 26,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Pibcremental",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/aba155ff5376130660cf53ca5660abf87c5e2cb1/catalog/provider/6/12/6-1-1230237-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "developer": "Little Horror Studios",
+      "id": 27,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "How to Grow Your Sausage",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/59a8306ff592cdeef9b5c85989986bb96cc5d252/catalog/provider/6/12/6-1-1241024-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "f94bb65b726bd70777ee1641a49020dec36c69738385cd253e72e0874d8eaa48",
+      "developer": "Seal",
+      "id": 28,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Parry Survivor",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/7d72931ec8372050202bf94fc33addc474303ec5/catalog/provider/6/12/6-1-1150039-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "95ed9b0a0e659c9566a1727c3b5ff90fe072dc667063e7aa309d8045d1d8269f",
+      "developer": "Sounding Stone",
+      "id": 29,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Blood Lily: Killers Can't Sink a Yuri Ship",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/855505104bfb55cf2724e2763e6bab1080284bf4/catalog/provider/6/12/6-1-963674-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "developer": "Sounding Stone",
+      "id": 30,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Peacemaker: Bloody Emperor",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/c7f352805512aceb47c90935f2e631fe6462dd76/catalog/provider/6/12/6-1-1093574-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "developer": "Sage Boatman",
+      "id": 31,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "RIG Riot",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": null,
+      "description_sha256": "e2d050a616cfc0a8d1e8f917b01d7737c5d5a0cf7a3281134f51f47a43744c9d",
+      "developer": "Odd&YangNa",
+      "id": 32,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Wait, Cards I Memorized?",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/ef197c327ea10eb2b160a015ab1f8fa6fe60c254/catalog/provider/6/12/6-1-1277980-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "5ae7b3dcbb8d0de8837259e1c5291e4f67c4cefc7088a8553cffb86f943ecc21",
+      "developer": "Wovley Games",
+      "id": 33,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Don't Stop Cutting The Trees!",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/2584eed8200e12cabb7f8e606d6cae03552ee23a/catalog/provider/6/12/6-1-1279015-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "dfb09065961c8aa1789f00c17cf2f5d92f97cee6cdf3fc25d61d4d95714478ad",
+      "developer": "Hidden File",
+      "id": 34,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "After Dark Jigsaw",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/bc1da8a07b121e52fe87f10b771398ea4b46597e/catalog/provider/6/12/6-1-1272030-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "e53074c735a5aed4342ad3ba3e089b34857e77c723a5f2f7ed6b353ab931ba3a",
+      "developer": "J&V ENTERTAINMENT LTDA",
+      "id": 35,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "RPG System",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/0a5f97eb45f6459a58ad5b1c3ec0bef2fbfd5de4/catalog/provider/6/12/6-1-1275202-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "388d3598054645b1c0b5f43022161d1095ae65d8f6484edf878960c058787a30",
+      "developer": "Hu Ping",
+      "id": 36,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "Jumpy vs. Chompy",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/1e31635902243cb14fda1891573d321213fd58a5/catalog/provider/6/12/6-1-1276717-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "11c7070279da6c88d927e555eacf955f99e27f6e1460eb017c16ddeb56019885",
+      "developer": "pon",
+      "id": 37,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "ClayMonsters",
+      "video_content_url": null,
+      "video_embed_url": null
+    },
+    {
+      "cover_url": "https://www.metacritic.com/a/img/resize/688a0e2261058b135863dc76383aeba320a2d262/catalog/provider/6/12/6-1-1258671-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "description_sha256": "a5c4cab2672258cf7cab4715adeb410542fd4bca235888011d493c78b8a6e370",
+      "developer": "kgrdev",
+      "id": 38,
+      "platforms": [
+        {
+          "metascore": null,
+          "name": "PC",
+          "slug": "pc",
+          "userscore": null
+        }
+      ],
+      "summaries": [
+        {
+          "audience": "critic",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "fetched_count": null,
+          "generated_at_utc": null,
+          "insufficient_data": false,
+          "model_id": null,
+          "reported_count": null,
+          "selected_count": null,
+          "stale_reason": null,
+          "state": "pending"
+        }
+      ],
+      "title": "KasMind",
+      "video_content_url": null,
+      "video_embed_url": null
+    }
+  ],
+  "healthy": true,
+  "image_id": "sha256:f5e92182298388c8937c96054fb524979de0afde048696d98c519f850162b109",
+  "postgresql": "16.15 (Debian 16.15-1.pgdg13+2)",
+  "source_hashes": {
+    "app/catalog/queries.py": "42e21b48b746380d6ac0c4914e012fdbd0961a5d46e62d07d436f50921d175b8",
+    "app/presentation/static/presentation/app.css": "13bbc0b6a21c3e2e88a80e6a1e89a23b72a3aacb55754e14450349210382dd6c",
+    "app/presentation/summaries.py": "52538f33827a804aa9e01899339a4fff08120c52a6dfe7cff6d0d9d6af1054f9",
+    "app/presentation/templates/presentation/game_detail.html": "118a4c1084fbfebdd64e1f501ec21e300a0c30070437e9bd44a5b3bcbf11ad22",
+    "app/presentation/templates/presentation/index.html": "525ec8f83e4f0959bce6bea5dd666501852e6b912a268b347e68e9322363b6b0",
+    "app/presentation/views.py": "cec9c6576b99bd062407a33351124df05655945ba1b8cf2fca9af364412b7f1a",
+    "app/reviews/snapshots.py": "b41ae086e0f8add9fe4826d4bd1012fafcb0b61afd38259257d522ea9ff25951",
+    "app/summaries/contour.py": "e0e6088c30ae5876aa41f3f8871cd76400730b6fef6c723eeafc6f954b5d5759"
+  }
+}
