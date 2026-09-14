@@ -135,6 +135,12 @@ fix (2 from 2026-09-11, 3 from the pre-fix 09:00 run today) are retained as
 history, not rewritten; the retained-score-provenance contract already proven
 by `IMP-02` is what keeps stored data correct despite them.
 
+## Hosted CI
+
+The fix commit `39018e7` passed [hosted CI 34831324946](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34831324946):
+all 265 application tests and every format/lint/type/offline/build/runtime/HTTP-CSS
+stage passed on Linux/PostgreSQL 16.
+
 ## Boundaries and remaining scope
 
 This is a mechanism-and-correctness revalidation, not new scope: the scheduler
