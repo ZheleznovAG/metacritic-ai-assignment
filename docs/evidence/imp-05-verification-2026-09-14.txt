@@ -42,4 +42,8 @@ Public browser probe: 50 checks passed; 38 games compared with read-only VDS DB 
 Corrected fixture browser probe: 35 checks passed; 9 synthetic games in an isolated PostgreSQL database.
 No real source/provider calls in fixture verification; no application/VDS data writes.
 Original probe expectations corrected: public catalog had grown to 38 games; real CSRF rejection is 403 (Django test client had bypassed CSRF).
-Public screenshot shows original deployed CSS; corrected fixture screenshot has scroll_width=390 at viewport_width=390.
+Initial public observation used original CSS. Final public screenshots supersede it after deployment; corrected fixture screenshot has scroll_width=390 at viewport_width=390.
+
+Hosted candidate CI: https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34837423748; SHA=5a038d4703cbabc11fec07644dcb1f9e4b172558; conclusion=success.
+Immutable candidate deployed; archive checksums, backup, runtime identity, preserved rows/volumes and external browser smoke passed.
+Published JSON artifact hashes now use canonical LF bytes, matching Git contents.

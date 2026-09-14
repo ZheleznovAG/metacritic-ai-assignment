@@ -2,7 +2,7 @@
   "task": "IMP-05",
   "observed_head": "88b933fbc6eb08002956d84e16382a150900e046",
   "public": {
-    "checked_at": "2026-09-14T11:03:28.323192+00:00",
+    "checked_at": "2026-09-14T14:11:35.182431+00:00",
     "mode": "public",
     "checks": [
       {
@@ -1591,7 +1591,7 @@
       "imp-05-public-filter-mobile-2026-09-14.png"
     ],
     "browser": "151.0.7922.34",
-    "build_version": "92c846a3a5e6a84b0798633c97f74f23104d97c4",
+    "build_version": "5a038d4703cbabc11fec07644dcb1f9e4b172558",
     "initial_list": [
       {
         "title": "Elden Ring",
@@ -1784,7 +1784,7 @@
         "path": "/games/32/"
       }
     ],
-    "css_sha256": "13bbc0b6a21c3e2e88a80e6a1e89a23b72a3aacb55754e14450349210382dd6c",
+    "css_sha256": "27f0e1d4b6fd8b763acf747f9364c92d6fbc5c8bf03740941c614d58555b87e1",
     "layout": [
       {
         "page": "desktop list",
@@ -2901,7 +2901,7 @@
     "css_sha256": "13bbc0b6a21c3e2e88a80e6a1e89a23b72a3aacb55754e14450349210382dd6c",
     "all_pass": false
   },
-  "public_deployment_includes_css_fix": false,
+  "public_deployment_includes_css_fix": true,
   "source_hashes": {
     "app/catalog/queries.py": "42e21b48b746380d6ac0c4914e012fdbd0961a5d46e62d07d436f50921d175b8",
     "app/presentation/static/presentation/app.css": "27f0e1d4b6fd8b763acf747f9364c92d6fbc5c8bf03740941c614d58555b87e1",
@@ -2920,8 +2920,1862 @@
     "imp-05-fixture-stale-mobile-2026-09-14.png": "c41a9090c4eabcfda51d2977e561df457e5efb1a66a33516016a3045daa3a105",
     "imp-05-public-card-desktop-2026-09-14.png": "b66b19422c60f1b4130a89db49eedea408a22399be67ebd089d97b0be10dad57",
     "imp-05-public-card-mobile-2026-09-14.png": "2ae72c8d7ee0a9bc804a88472a7b6837ae1600d1adf449b33a111fec1178ed89",
-    "imp-05-public-filter-mobile-2026-09-14.png": "f80f2e504a4f16683f51fe6d7d0f49e08c226b49b451027bdcabbbb7962be4ca",
-    "imp-05-public-list-2026-09-14.png": "def2512dc0756184b450cc5f1c458c8e421e622d5dc546ef0f2e3673eeb758dc",
-    "imp-05-public-db-2026-09-14.json": "b38672825d6a74e5b08a7b20a583b0ad12b30f15440db0bb85a29f80794d68d6"
+    "imp-05-public-filter-mobile-2026-09-14.png": "993b3a6c6e74beca40abcb6b8d19cf644510546add5c07908529716078157565",
+    "imp-05-public-list-2026-09-14.png": "60dfadaf3f781749afe6bad5dc4a63585ba4d187584f1a430f3baa023be7cc75",
+    "imp-05-public-db-2026-09-14.json": "7997a69bf3a72b2152adc37e74f646e422775e3a3f0eb995a554802de8489f0c"
+  },
+  "initial_public": {
+    "checked_at": "2026-09-14T11:03:28.323192+00:00",
+    "mode": "public",
+    "checks": [
+      {
+        "check": "readiness",
+        "actual": 200,
+        "expected": 200,
+        "pass": true
+      },
+      {
+        "check": "HTTP /",
+        "actual": 200,
+        "expected": 200,
+        "pass": true
+      },
+      {
+        "check": "every card ID appears once",
+        "actual": 38,
+        "expected": 38,
+        "pass": true
+      },
+      {
+        "check": "CSS applied",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "CSS response",
+        "actual": 200,
+        "expected": 200,
+        "pass": true
+      },
+      {
+        "check": "desktop list has no horizontal overflow",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "entire real catalog matches independent DB snapshot",
+        "actual": [
+          [
+            "Elden Ring",
+            "96",
+            "/games/1/"
+          ],
+          [
+            "Elden Ring: Tarnished Edition",
+            "90",
+            "/games/19/"
+          ],
+          [
+            "Onimusha: Way of the Sword",
+            "90",
+            "/games/9/"
+          ],
+          [
+            "Valheim",
+            "90",
+            "/games/5/"
+          ],
+          [
+            "The Blood of Dawnwalker",
+            "86",
+            "/games/11/"
+          ],
+          [
+            "Welcome to Elderfield",
+            "86",
+            "/games/3/"
+          ],
+          [
+            "Orbitals",
+            "82",
+            "/games/14/"
+          ],
+          [
+            "Marsupilami 2 - Salsa Palombia",
+            "81",
+            "/games/15/"
+          ],
+          [
+            "Moonlighter 2: The Endless Vault",
+            "81",
+            "/games/16/"
+          ],
+          [
+            "NBA 2K27",
+            "81",
+            "/games/10/"
+          ],
+          [
+            "Hot Wheels Infinite Rush",
+            "79",
+            "/games/4/"
+          ],
+          [
+            "SPRAWL zero",
+            "75",
+            "/games/6/"
+          ],
+          [
+            "Captain Tsubasa 2: World Fighters",
+            "74",
+            "/games/20/"
+          ],
+          [
+            "Crimson Moon",
+            "72",
+            "/games/17/"
+          ],
+          [
+            "Brigandine Abyss",
+            "71",
+            "/games/21/"
+          ],
+          [
+            "Halloween: The Game",
+            "71",
+            "/games/8/"
+          ],
+          [
+            "NHL 27",
+            "68",
+            "/games/2/"
+          ],
+          [
+            "Wo Long: Fallen Dynasty - Complete Edition",
+            "67",
+            "/games/13/"
+          ],
+          [
+            "After Dark Jigsaw",
+            "No score",
+            "/games/34/"
+          ],
+          [
+            "BioEden",
+            "No score",
+            "/games/12/"
+          ],
+          [
+            "Blood Lily: Killers Can't Sink a Yuri Ship",
+            "No score",
+            "/games/29/"
+          ],
+          [
+            "Bus Simulator 27",
+            "No score",
+            "/games/7/"
+          ],
+          [
+            "ClayMonsters",
+            "No score",
+            "/games/37/"
+          ],
+          [
+            "Cube Crusaders",
+            "No score",
+            "/games/22/"
+          ],
+          [
+            "Don't Stop Cutting The Trees!",
+            "No score",
+            "/games/33/"
+          ],
+          [
+            "GRID/",
+            "No score",
+            "/games/23/"
+          ],
+          [
+            "How to Grow Your Sausage",
+            "No score",
+            "/games/27/"
+          ],
+          [
+            "Idle Bookstore",
+            "No score",
+            "/games/24/"
+          ],
+          [
+            "Jumpy vs. Chompy",
+            "No score",
+            "/games/36/"
+          ],
+          [
+            "KasMind",
+            "No score",
+            "/games/38/"
+          ],
+          [
+            "Meeple Incremental",
+            "No score",
+            "/games/25/"
+          ],
+          [
+            "Parry Survivor",
+            "No score",
+            "/games/28/"
+          ],
+          [
+            "Peacemaker: Bloody Emperor",
+            "No score",
+            "/games/30/"
+          ],
+          [
+            "Pibcremental",
+            "No score",
+            "/games/26/"
+          ],
+          [
+            "RIG Riot",
+            "No score",
+            "/games/31/"
+          ],
+          [
+            "RPG System",
+            "No score",
+            "/games/35/"
+          ],
+          [
+            "Serious Sam: Shatterverse",
+            "No score",
+            "/games/18/"
+          ],
+          [
+            "Wait, Cards I Memorized?",
+            "No score",
+            "/games/32/"
+          ]
+        ],
+        "expected": [
+          [
+            "Elden Ring",
+            "96",
+            "/games/1/"
+          ],
+          [
+            "Elden Ring: Tarnished Edition",
+            "90",
+            "/games/19/"
+          ],
+          [
+            "Onimusha: Way of the Sword",
+            "90",
+            "/games/9/"
+          ],
+          [
+            "Valheim",
+            "90",
+            "/games/5/"
+          ],
+          [
+            "The Blood of Dawnwalker",
+            "86",
+            "/games/11/"
+          ],
+          [
+            "Welcome to Elderfield",
+            "86",
+            "/games/3/"
+          ],
+          [
+            "Orbitals",
+            "82",
+            "/games/14/"
+          ],
+          [
+            "Marsupilami 2 - Salsa Palombia",
+            "81",
+            "/games/15/"
+          ],
+          [
+            "Moonlighter 2: The Endless Vault",
+            "81",
+            "/games/16/"
+          ],
+          [
+            "NBA 2K27",
+            "81",
+            "/games/10/"
+          ],
+          [
+            "Hot Wheels Infinite Rush",
+            "79",
+            "/games/4/"
+          ],
+          [
+            "SPRAWL zero",
+            "75",
+            "/games/6/"
+          ],
+          [
+            "Captain Tsubasa 2: World Fighters",
+            "74",
+            "/games/20/"
+          ],
+          [
+            "Crimson Moon",
+            "72",
+            "/games/17/"
+          ],
+          [
+            "Brigandine Abyss",
+            "71",
+            "/games/21/"
+          ],
+          [
+            "Halloween: The Game",
+            "71",
+            "/games/8/"
+          ],
+          [
+            "NHL 27",
+            "68",
+            "/games/2/"
+          ],
+          [
+            "Wo Long: Fallen Dynasty - Complete Edition",
+            "67",
+            "/games/13/"
+          ],
+          [
+            "After Dark Jigsaw",
+            "No score",
+            "/games/34/"
+          ],
+          [
+            "BioEden",
+            "No score",
+            "/games/12/"
+          ],
+          [
+            "Blood Lily: Killers Can't Sink a Yuri Ship",
+            "No score",
+            "/games/29/"
+          ],
+          [
+            "Bus Simulator 27",
+            "No score",
+            "/games/7/"
+          ],
+          [
+            "ClayMonsters",
+            "No score",
+            "/games/37/"
+          ],
+          [
+            "Cube Crusaders",
+            "No score",
+            "/games/22/"
+          ],
+          [
+            "Don't Stop Cutting The Trees!",
+            "No score",
+            "/games/33/"
+          ],
+          [
+            "GRID/",
+            "No score",
+            "/games/23/"
+          ],
+          [
+            "How to Grow Your Sausage",
+            "No score",
+            "/games/27/"
+          ],
+          [
+            "Idle Bookstore",
+            "No score",
+            "/games/24/"
+          ],
+          [
+            "Jumpy vs. Chompy",
+            "No score",
+            "/games/36/"
+          ],
+          [
+            "KasMind",
+            "No score",
+            "/games/38/"
+          ],
+          [
+            "Meeple Incremental",
+            "No score",
+            "/games/25/"
+          ],
+          [
+            "Parry Survivor",
+            "No score",
+            "/games/28/"
+          ],
+          [
+            "Peacemaker: Bloody Emperor",
+            "No score",
+            "/games/30/"
+          ],
+          [
+            "Pibcremental",
+            "No score",
+            "/games/26/"
+          ],
+          [
+            "RIG Riot",
+            "No score",
+            "/games/31/"
+          ],
+          [
+            "RPG System",
+            "No score",
+            "/games/35/"
+          ],
+          [
+            "Serious Sam: Shatterverse",
+            "No score",
+            "/games/18/"
+          ],
+          [
+            "Wait, Cards I Memorized?",
+            "No score",
+            "/games/32/"
+          ]
+        ],
+        "pass": true
+      },
+      {
+        "check": "HTTP /?platform=pc",
+        "actual": 200,
+        "expected": 200,
+        "pass": true
+      },
+      {
+        "check": "public pc membership and order match DB",
+        "actual": [
+          [
+            "Elden Ring",
+            "94",
+            "/games/1/"
+          ],
+          [
+            "Valheim",
+            "90",
+            "/games/5/"
+          ],
+          [
+            "Welcome to Elderfield",
+            "86",
+            "/games/3/"
+          ],
+          [
+            "The Blood of Dawnwalker",
+            "84",
+            "/games/11/"
+          ],
+          [
+            "Onimusha: Way of the Sword",
+            "83",
+            "/games/9/"
+          ],
+          [
+            "Marsupilami 2 - Salsa Palombia",
+            "81",
+            "/games/15/"
+          ],
+          [
+            "Moonlighter 2: The Endless Vault",
+            "80",
+            "/games/16/"
+          ],
+          [
+            "Hot Wheels Infinite Rush",
+            "79",
+            "/games/4/"
+          ],
+          [
+            "SPRAWL zero",
+            "75",
+            "/games/6/"
+          ],
+          [
+            "NBA 2K27",
+            "73",
+            "/games/10/"
+          ],
+          [
+            "Crimson Moon",
+            "72",
+            "/games/17/"
+          ],
+          [
+            "Halloween: The Game",
+            "71",
+            "/games/8/"
+          ],
+          [
+            "Brigandine Abyss",
+            "70",
+            "/games/21/"
+          ],
+          [
+            "After Dark Jigsaw",
+            "No score",
+            "/games/34/"
+          ],
+          [
+            "Blood Lily: Killers Can't Sink a Yuri Ship",
+            "No score",
+            "/games/29/"
+          ],
+          [
+            "Captain Tsubasa 2: World Fighters",
+            "No score",
+            "/games/20/"
+          ],
+          [
+            "ClayMonsters",
+            "No score",
+            "/games/37/"
+          ],
+          [
+            "Cube Crusaders",
+            "No score",
+            "/games/22/"
+          ],
+          [
+            "Don't Stop Cutting The Trees!",
+            "No score",
+            "/games/33/"
+          ],
+          [
+            "GRID/",
+            "No score",
+            "/games/23/"
+          ],
+          [
+            "How to Grow Your Sausage",
+            "No score",
+            "/games/27/"
+          ],
+          [
+            "Idle Bookstore",
+            "No score",
+            "/games/24/"
+          ],
+          [
+            "Jumpy vs. Chompy",
+            "No score",
+            "/games/36/"
+          ],
+          [
+            "KasMind",
+            "No score",
+            "/games/38/"
+          ],
+          [
+            "Meeple Incremental",
+            "No score",
+            "/games/25/"
+          ],
+          [
+            "Parry Survivor",
+            "No score",
+            "/games/28/"
+          ],
+          [
+            "Peacemaker: Bloody Emperor",
+            "No score",
+            "/games/30/"
+          ],
+          [
+            "Pibcremental",
+            "No score",
+            "/games/26/"
+          ],
+          [
+            "RIG Riot",
+            "No score",
+            "/games/31/"
+          ],
+          [
+            "RPG System",
+            "No score",
+            "/games/35/"
+          ],
+          [
+            "Wait, Cards I Memorized?",
+            "No score",
+            "/games/32/"
+          ]
+        ],
+        "expected": [
+          [
+            "Elden Ring",
+            "94",
+            "/games/1/"
+          ],
+          [
+            "Valheim",
+            "90",
+            "/games/5/"
+          ],
+          [
+            "Welcome to Elderfield",
+            "86",
+            "/games/3/"
+          ],
+          [
+            "The Blood of Dawnwalker",
+            "84",
+            "/games/11/"
+          ],
+          [
+            "Onimusha: Way of the Sword",
+            "83",
+            "/games/9/"
+          ],
+          [
+            "Marsupilami 2 - Salsa Palombia",
+            "81",
+            "/games/15/"
+          ],
+          [
+            "Moonlighter 2: The Endless Vault",
+            "80",
+            "/games/16/"
+          ],
+          [
+            "Hot Wheels Infinite Rush",
+            "79",
+            "/games/4/"
+          ],
+          [
+            "SPRAWL zero",
+            "75",
+            "/games/6/"
+          ],
+          [
+            "NBA 2K27",
+            "73",
+            "/games/10/"
+          ],
+          [
+            "Crimson Moon",
+            "72",
+            "/games/17/"
+          ],
+          [
+            "Halloween: The Game",
+            "71",
+            "/games/8/"
+          ],
+          [
+            "Brigandine Abyss",
+            "70",
+            "/games/21/"
+          ],
+          [
+            "After Dark Jigsaw",
+            "No score",
+            "/games/34/"
+          ],
+          [
+            "Blood Lily: Killers Can't Sink a Yuri Ship",
+            "No score",
+            "/games/29/"
+          ],
+          [
+            "Captain Tsubasa 2: World Fighters",
+            "No score",
+            "/games/20/"
+          ],
+          [
+            "ClayMonsters",
+            "No score",
+            "/games/37/"
+          ],
+          [
+            "Cube Crusaders",
+            "No score",
+            "/games/22/"
+          ],
+          [
+            "Don't Stop Cutting The Trees!",
+            "No score",
+            "/games/33/"
+          ],
+          [
+            "GRID/",
+            "No score",
+            "/games/23/"
+          ],
+          [
+            "How to Grow Your Sausage",
+            "No score",
+            "/games/27/"
+          ],
+          [
+            "Idle Bookstore",
+            "No score",
+            "/games/24/"
+          ],
+          [
+            "Jumpy vs. Chompy",
+            "No score",
+            "/games/36/"
+          ],
+          [
+            "KasMind",
+            "No score",
+            "/games/38/"
+          ],
+          [
+            "Meeple Incremental",
+            "No score",
+            "/games/25/"
+          ],
+          [
+            "Parry Survivor",
+            "No score",
+            "/games/28/"
+          ],
+          [
+            "Peacemaker: Bloody Emperor",
+            "No score",
+            "/games/30/"
+          ],
+          [
+            "Pibcremental",
+            "No score",
+            "/games/26/"
+          ],
+          [
+            "RIG Riot",
+            "No score",
+            "/games/31/"
+          ],
+          [
+            "RPG System",
+            "No score",
+            "/games/35/"
+          ],
+          [
+            "Wait, Cards I Memorized?",
+            "No score",
+            "/games/32/"
+          ]
+        ],
+        "pass": true
+      },
+      {
+        "check": "HTTP /?platform=playstation-5",
+        "actual": 200,
+        "expected": 200,
+        "pass": true
+      },
+      {
+        "check": "public playstation-5 membership and order match DB",
+        "actual": [
+          [
+            "Elden Ring",
+            "96",
+            "/games/1/"
+          ],
+          [
+            "Onimusha: Way of the Sword",
+            "85",
+            "/games/9/"
+          ],
+          [
+            "The Blood of Dawnwalker",
+            "83",
+            "/games/11/"
+          ],
+          [
+            "Marsupilami 2 - Salsa Palombia",
+            "80",
+            "/games/15/"
+          ],
+          [
+            "Moonlighter 2: The Endless Vault",
+            "77",
+            "/games/16/"
+          ],
+          [
+            "NBA 2K27",
+            "77",
+            "/games/10/"
+          ],
+          [
+            "Hot Wheels Infinite Rush",
+            "75",
+            "/games/4/"
+          ],
+          [
+            "Captain Tsubasa 2: World Fighters",
+            "74",
+            "/games/20/"
+          ],
+          [
+            "Halloween: The Game",
+            "68",
+            "/games/8/"
+          ],
+          [
+            "NHL 27",
+            "68",
+            "/games/2/"
+          ],
+          [
+            "Brigandine Abyss",
+            "67",
+            "/games/21/"
+          ],
+          [
+            "Crimson Moon",
+            "No score",
+            "/games/17/"
+          ],
+          [
+            "SPRAWL zero",
+            "No score",
+            "/games/6/"
+          ],
+          [
+            "Valheim",
+            "No score",
+            "/games/5/"
+          ]
+        ],
+        "expected": [
+          [
+            "Elden Ring",
+            "96",
+            "/games/1/"
+          ],
+          [
+            "Onimusha: Way of the Sword",
+            "85",
+            "/games/9/"
+          ],
+          [
+            "The Blood of Dawnwalker",
+            "83",
+            "/games/11/"
+          ],
+          [
+            "Marsupilami 2 - Salsa Palombia",
+            "80",
+            "/games/15/"
+          ],
+          [
+            "Moonlighter 2: The Endless Vault",
+            "77",
+            "/games/16/"
+          ],
+          [
+            "NBA 2K27",
+            "77",
+            "/games/10/"
+          ],
+          [
+            "Hot Wheels Infinite Rush",
+            "75",
+            "/games/4/"
+          ],
+          [
+            "Captain Tsubasa 2: World Fighters",
+            "74",
+            "/games/20/"
+          ],
+          [
+            "Halloween: The Game",
+            "68",
+            "/games/8/"
+          ],
+          [
+            "NHL 27",
+            "68",
+            "/games/2/"
+          ],
+          [
+            "Brigandine Abyss",
+            "67",
+            "/games/21/"
+          ],
+          [
+            "Crimson Moon",
+            "No score",
+            "/games/17/"
+          ],
+          [
+            "SPRAWL zero",
+            "No score",
+            "/games/6/"
+          ],
+          [
+            "Valheim",
+            "No score",
+            "/games/5/"
+          ]
+        ],
+        "pass": true
+      },
+      {
+        "check": "HTTP /?platform=xbox-one",
+        "actual": 200,
+        "expected": 200,
+        "pass": true
+      },
+      {
+        "check": "public xbox-one membership and order match DB",
+        "actual": [
+          [
+            "Elden Ring",
+            "No score",
+            "/games/1/"
+          ],
+          [
+            "Valheim",
+            "No score",
+            "/games/5/"
+          ]
+        ],
+        "expected": [
+          [
+            "Elden Ring",
+            "No score",
+            "/games/1/"
+          ],
+          [
+            "Valheim",
+            "No score",
+            "/games/5/"
+          ]
+        ],
+        "pass": true
+      },
+      {
+        "check": "HTTP /?q=ELDEN",
+        "actual": 200,
+        "expected": 200,
+        "pass": true
+      },
+      {
+        "check": "public uppercase substring matches DB",
+        "actual": [
+          [
+            "Elden Ring",
+            "96",
+            "/games/1/"
+          ],
+          [
+            "Elden Ring: Tarnished Edition",
+            "90",
+            "/games/19/"
+          ]
+        ],
+        "expected": [
+          [
+            "Elden Ring",
+            "96",
+            "/games/1/"
+          ],
+          [
+            "Elden Ring: Tarnished Edition",
+            "90",
+            "/games/19/"
+          ]
+        ],
+        "pass": true
+      },
+      {
+        "check": "HTTP /",
+        "actual": 200,
+        "expected": 200,
+        "pass": true
+      },
+      {
+        "check": "case-insensitive search plus PC uses matched score",
+        "actual": [
+          [
+            "Elden Ring",
+            "94"
+          ]
+        ],
+        "expected": [
+          [
+            "Elden Ring",
+            "94"
+          ]
+        ],
+        "pass": true
+      },
+      {
+        "check": "card title",
+        "actual": "Elden Ring",
+        "expected": "Elden Ring",
+        "pass": true
+      },
+      {
+        "check": "developer matches source oracle",
+        "actual": "From Software",
+        "expected": "From Software",
+        "pass": true
+      },
+      {
+        "check": "description matches source oracle",
+        "actual": "9827979e11749766a52d79e20e6935816ebf6d8e700d3437c58b75ca428832b6",
+        "expected": "9827979e11749766a52d79e20e6935816ebf6d8e700d3437c58b75ca428832b6",
+        "pass": true
+      },
+      {
+        "check": "trailer matches source oracle",
+        "actual": "https://cdn.jwplayer.com/players/OXExoEAD.html",
+        "expected": "https://cdn.jwplayer.com/players/OXExoEAD.html",
+        "pass": true
+      },
+      {
+        "check": "cover matches source oracle",
+        "actual": "https://www.metacritic.com/a/img/resize/86c7a59722e76cf9cb2c83bfac863f18f815bc2a/catalog/provider/6/12/6-1-824956-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+        "expected": "https://www.metacritic.com/a/img/resize/86c7a59722e76cf9cb2c83bfac863f18f815bc2a/catalog/provider/6/12/6-1-824956-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+        "pass": true
+      },
+      {
+        "check": "cover actually loaded",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "five real platforms",
+        "actual": 5,
+        "expected": 5,
+        "pass": true
+      },
+      {
+        "check": "PC Metascore",
+        "actual": "94",
+        "expected": "94",
+        "pass": true
+      },
+      {
+        "check": "PC Userscore",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "PlayStation 4 Metascore",
+        "actual": "No data",
+        "expected": "No data",
+        "pass": true
+      },
+      {
+        "check": "PlayStation 4 Userscore",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "PlayStation 5 Metascore",
+        "actual": "96",
+        "expected": "96",
+        "pass": true
+      },
+      {
+        "check": "PlayStation 5 Userscore",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "Xbox One Metascore",
+        "actual": "No data",
+        "expected": "No data",
+        "pass": true
+      },
+      {
+        "check": "Xbox One Userscore",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "Xbox Series X Metascore",
+        "actual": "96",
+        "expected": "96",
+        "pass": true
+      },
+      {
+        "check": "Xbox Series X Userscore",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "two summaries pending",
+        "actual": [
+          true,
+          true
+        ],
+        "expected": [
+          true,
+          true
+        ],
+        "pass": true
+      },
+      {
+        "check": "desktop card has no horizontal overflow",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "mobile card has no horizontal overflow",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "navigation retains query",
+        "actual": "q=ELDEN&platform=pc",
+        "expected": "q=ELDEN&platform=pc",
+        "pass": true
+      },
+      {
+        "check": "form query retained",
+        "actual": "ELDEN",
+        "expected": "ELDEN",
+        "pass": true
+      },
+      {
+        "check": "form platform retained",
+        "actual": "pc",
+        "expected": "pc",
+        "pass": true
+      },
+      {
+        "check": "mobile combined list has no horizontal overflow",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "HTTP /?q=zzznotagame",
+        "actual": 200,
+        "expected": 200,
+        "pass": true
+      },
+      {
+        "check": "unknown search empty",
+        "actual": 0,
+        "expected": 0,
+        "pass": true
+      },
+      {
+        "check": "empty message",
+        "actual": "No games match this search/filter combination.",
+        "expected": "No games match this search/filter combination.",
+        "pass": true
+      },
+      {
+        "check": "reset restores entire catalog",
+        "actual": [
+          {
+            "title": "Elden Ring",
+            "score": "96",
+            "path": "/games/1/"
+          },
+          {
+            "title": "Elden Ring: Tarnished Edition",
+            "score": "90",
+            "path": "/games/19/"
+          },
+          {
+            "title": "Onimusha: Way of the Sword",
+            "score": "90",
+            "path": "/games/9/"
+          },
+          {
+            "title": "Valheim",
+            "score": "90",
+            "path": "/games/5/"
+          },
+          {
+            "title": "The Blood of Dawnwalker",
+            "score": "86",
+            "path": "/games/11/"
+          },
+          {
+            "title": "Welcome to Elderfield",
+            "score": "86",
+            "path": "/games/3/"
+          },
+          {
+            "title": "Orbitals",
+            "score": "82",
+            "path": "/games/14/"
+          },
+          {
+            "title": "Marsupilami 2 - Salsa Palombia",
+            "score": "81",
+            "path": "/games/15/"
+          },
+          {
+            "title": "Moonlighter 2: The Endless Vault",
+            "score": "81",
+            "path": "/games/16/"
+          },
+          {
+            "title": "NBA 2K27",
+            "score": "81",
+            "path": "/games/10/"
+          },
+          {
+            "title": "Hot Wheels Infinite Rush",
+            "score": "79",
+            "path": "/games/4/"
+          },
+          {
+            "title": "SPRAWL zero",
+            "score": "75",
+            "path": "/games/6/"
+          },
+          {
+            "title": "Captain Tsubasa 2: World Fighters",
+            "score": "74",
+            "path": "/games/20/"
+          },
+          {
+            "title": "Crimson Moon",
+            "score": "72",
+            "path": "/games/17/"
+          },
+          {
+            "title": "Brigandine Abyss",
+            "score": "71",
+            "path": "/games/21/"
+          },
+          {
+            "title": "Halloween: The Game",
+            "score": "71",
+            "path": "/games/8/"
+          },
+          {
+            "title": "NHL 27",
+            "score": "68",
+            "path": "/games/2/"
+          },
+          {
+            "title": "Wo Long: Fallen Dynasty - Complete Edition",
+            "score": "67",
+            "path": "/games/13/"
+          },
+          {
+            "title": "After Dark Jigsaw",
+            "score": "No score",
+            "path": "/games/34/"
+          },
+          {
+            "title": "BioEden",
+            "score": "No score",
+            "path": "/games/12/"
+          },
+          {
+            "title": "Blood Lily: Killers Can't Sink a Yuri Ship",
+            "score": "No score",
+            "path": "/games/29/"
+          },
+          {
+            "title": "Bus Simulator 27",
+            "score": "No score",
+            "path": "/games/7/"
+          },
+          {
+            "title": "ClayMonsters",
+            "score": "No score",
+            "path": "/games/37/"
+          },
+          {
+            "title": "Cube Crusaders",
+            "score": "No score",
+            "path": "/games/22/"
+          },
+          {
+            "title": "Don't Stop Cutting The Trees!",
+            "score": "No score",
+            "path": "/games/33/"
+          },
+          {
+            "title": "GRID/",
+            "score": "No score",
+            "path": "/games/23/"
+          },
+          {
+            "title": "How to Grow Your Sausage",
+            "score": "No score",
+            "path": "/games/27/"
+          },
+          {
+            "title": "Idle Bookstore",
+            "score": "No score",
+            "path": "/games/24/"
+          },
+          {
+            "title": "Jumpy vs. Chompy",
+            "score": "No score",
+            "path": "/games/36/"
+          },
+          {
+            "title": "KasMind",
+            "score": "No score",
+            "path": "/games/38/"
+          },
+          {
+            "title": "Meeple Incremental",
+            "score": "No score",
+            "path": "/games/25/"
+          },
+          {
+            "title": "Parry Survivor",
+            "score": "No score",
+            "path": "/games/28/"
+          },
+          {
+            "title": "Peacemaker: Bloody Emperor",
+            "score": "No score",
+            "path": "/games/30/"
+          },
+          {
+            "title": "Pibcremental",
+            "score": "No score",
+            "path": "/games/26/"
+          },
+          {
+            "title": "RIG Riot",
+            "score": "No score",
+            "path": "/games/31/"
+          },
+          {
+            "title": "RPG System",
+            "score": "No score",
+            "path": "/games/35/"
+          },
+          {
+            "title": "Serious Sam: Shatterverse",
+            "score": "No score",
+            "path": "/games/18/"
+          },
+          {
+            "title": "Wait, Cards I Memorized?",
+            "score": "No score",
+            "path": "/games/32/"
+          }
+        ],
+        "expected": [
+          {
+            "title": "Elden Ring",
+            "score": "96",
+            "path": "/games/1/"
+          },
+          {
+            "title": "Elden Ring: Tarnished Edition",
+            "score": "90",
+            "path": "/games/19/"
+          },
+          {
+            "title": "Onimusha: Way of the Sword",
+            "score": "90",
+            "path": "/games/9/"
+          },
+          {
+            "title": "Valheim",
+            "score": "90",
+            "path": "/games/5/"
+          },
+          {
+            "title": "The Blood of Dawnwalker",
+            "score": "86",
+            "path": "/games/11/"
+          },
+          {
+            "title": "Welcome to Elderfield",
+            "score": "86",
+            "path": "/games/3/"
+          },
+          {
+            "title": "Orbitals",
+            "score": "82",
+            "path": "/games/14/"
+          },
+          {
+            "title": "Marsupilami 2 - Salsa Palombia",
+            "score": "81",
+            "path": "/games/15/"
+          },
+          {
+            "title": "Moonlighter 2: The Endless Vault",
+            "score": "81",
+            "path": "/games/16/"
+          },
+          {
+            "title": "NBA 2K27",
+            "score": "81",
+            "path": "/games/10/"
+          },
+          {
+            "title": "Hot Wheels Infinite Rush",
+            "score": "79",
+            "path": "/games/4/"
+          },
+          {
+            "title": "SPRAWL zero",
+            "score": "75",
+            "path": "/games/6/"
+          },
+          {
+            "title": "Captain Tsubasa 2: World Fighters",
+            "score": "74",
+            "path": "/games/20/"
+          },
+          {
+            "title": "Crimson Moon",
+            "score": "72",
+            "path": "/games/17/"
+          },
+          {
+            "title": "Brigandine Abyss",
+            "score": "71",
+            "path": "/games/21/"
+          },
+          {
+            "title": "Halloween: The Game",
+            "score": "71",
+            "path": "/games/8/"
+          },
+          {
+            "title": "NHL 27",
+            "score": "68",
+            "path": "/games/2/"
+          },
+          {
+            "title": "Wo Long: Fallen Dynasty - Complete Edition",
+            "score": "67",
+            "path": "/games/13/"
+          },
+          {
+            "title": "After Dark Jigsaw",
+            "score": "No score",
+            "path": "/games/34/"
+          },
+          {
+            "title": "BioEden",
+            "score": "No score",
+            "path": "/games/12/"
+          },
+          {
+            "title": "Blood Lily: Killers Can't Sink a Yuri Ship",
+            "score": "No score",
+            "path": "/games/29/"
+          },
+          {
+            "title": "Bus Simulator 27",
+            "score": "No score",
+            "path": "/games/7/"
+          },
+          {
+            "title": "ClayMonsters",
+            "score": "No score",
+            "path": "/games/37/"
+          },
+          {
+            "title": "Cube Crusaders",
+            "score": "No score",
+            "path": "/games/22/"
+          },
+          {
+            "title": "Don't Stop Cutting The Trees!",
+            "score": "No score",
+            "path": "/games/33/"
+          },
+          {
+            "title": "GRID/",
+            "score": "No score",
+            "path": "/games/23/"
+          },
+          {
+            "title": "How to Grow Your Sausage",
+            "score": "No score",
+            "path": "/games/27/"
+          },
+          {
+            "title": "Idle Bookstore",
+            "score": "No score",
+            "path": "/games/24/"
+          },
+          {
+            "title": "Jumpy vs. Chompy",
+            "score": "No score",
+            "path": "/games/36/"
+          },
+          {
+            "title": "KasMind",
+            "score": "No score",
+            "path": "/games/38/"
+          },
+          {
+            "title": "Meeple Incremental",
+            "score": "No score",
+            "path": "/games/25/"
+          },
+          {
+            "title": "Parry Survivor",
+            "score": "No score",
+            "path": "/games/28/"
+          },
+          {
+            "title": "Peacemaker: Bloody Emperor",
+            "score": "No score",
+            "path": "/games/30/"
+          },
+          {
+            "title": "Pibcremental",
+            "score": "No score",
+            "path": "/games/26/"
+          },
+          {
+            "title": "RIG Riot",
+            "score": "No score",
+            "path": "/games/31/"
+          },
+          {
+            "title": "RPG System",
+            "score": "No score",
+            "path": "/games/35/"
+          },
+          {
+            "title": "Serious Sam: Shatterverse",
+            "score": "No score",
+            "path": "/games/18/"
+          },
+          {
+            "title": "Wait, Cards I Memorized?",
+            "score": "No score",
+            "path": "/games/32/"
+          }
+        ],
+        "pass": true
+      },
+      {
+        "check": "HTTP /?platform=not-a-platform",
+        "actual": 200,
+        "expected": 200,
+        "pass": true
+      },
+      {
+        "check": "unknown platform yields no cards",
+        "actual": 0,
+        "expected": 0,
+        "pass": true
+      },
+      {
+        "check": "unknown card is 404",
+        "actual": 404,
+        "expected": 404,
+        "pass": true
+      },
+      {
+        "check": "read-only method boundary",
+        "actual": true,
+        "expected": true,
+        "pass": true
+      },
+      {
+        "check": "no browser script errors",
+        "actual": [],
+        "expected": [],
+        "pass": true
+      }
+    ],
+    "browser": "151.0.7922.34",
+    "build_version": "92c846a3a5e6a84b0798633c97f74f23104d97c4",
+    "initial_list": [
+      {
+        "title": "Elden Ring",
+        "score": "96",
+        "path": "/games/1/"
+      },
+      {
+        "title": "Elden Ring: Tarnished Edition",
+        "score": "90",
+        "path": "/games/19/"
+      },
+      {
+        "title": "Onimusha: Way of the Sword",
+        "score": "90",
+        "path": "/games/9/"
+      },
+      {
+        "title": "Valheim",
+        "score": "90",
+        "path": "/games/5/"
+      },
+      {
+        "title": "The Blood of Dawnwalker",
+        "score": "86",
+        "path": "/games/11/"
+      },
+      {
+        "title": "Welcome to Elderfield",
+        "score": "86",
+        "path": "/games/3/"
+      },
+      {
+        "title": "Orbitals",
+        "score": "82",
+        "path": "/games/14/"
+      },
+      {
+        "title": "Marsupilami 2 - Salsa Palombia",
+        "score": "81",
+        "path": "/games/15/"
+      },
+      {
+        "title": "Moonlighter 2: The Endless Vault",
+        "score": "81",
+        "path": "/games/16/"
+      },
+      {
+        "title": "NBA 2K27",
+        "score": "81",
+        "path": "/games/10/"
+      },
+      {
+        "title": "Hot Wheels Infinite Rush",
+        "score": "79",
+        "path": "/games/4/"
+      },
+      {
+        "title": "SPRAWL zero",
+        "score": "75",
+        "path": "/games/6/"
+      },
+      {
+        "title": "Captain Tsubasa 2: World Fighters",
+        "score": "74",
+        "path": "/games/20/"
+      },
+      {
+        "title": "Crimson Moon",
+        "score": "72",
+        "path": "/games/17/"
+      },
+      {
+        "title": "Brigandine Abyss",
+        "score": "71",
+        "path": "/games/21/"
+      },
+      {
+        "title": "Halloween: The Game",
+        "score": "71",
+        "path": "/games/8/"
+      },
+      {
+        "title": "NHL 27",
+        "score": "68",
+        "path": "/games/2/"
+      },
+      {
+        "title": "Wo Long: Fallen Dynasty - Complete Edition",
+        "score": "67",
+        "path": "/games/13/"
+      },
+      {
+        "title": "After Dark Jigsaw",
+        "score": "No score",
+        "path": "/games/34/"
+      },
+      {
+        "title": "BioEden",
+        "score": "No score",
+        "path": "/games/12/"
+      },
+      {
+        "title": "Blood Lily: Killers Can't Sink a Yuri Ship",
+        "score": "No score",
+        "path": "/games/29/"
+      },
+      {
+        "title": "Bus Simulator 27",
+        "score": "No score",
+        "path": "/games/7/"
+      },
+      {
+        "title": "ClayMonsters",
+        "score": "No score",
+        "path": "/games/37/"
+      },
+      {
+        "title": "Cube Crusaders",
+        "score": "No score",
+        "path": "/games/22/"
+      },
+      {
+        "title": "Don't Stop Cutting The Trees!",
+        "score": "No score",
+        "path": "/games/33/"
+      },
+      {
+        "title": "GRID/",
+        "score": "No score",
+        "path": "/games/23/"
+      },
+      {
+        "title": "How to Grow Your Sausage",
+        "score": "No score",
+        "path": "/games/27/"
+      },
+      {
+        "title": "Idle Bookstore",
+        "score": "No score",
+        "path": "/games/24/"
+      },
+      {
+        "title": "Jumpy vs. Chompy",
+        "score": "No score",
+        "path": "/games/36/"
+      },
+      {
+        "title": "KasMind",
+        "score": "No score",
+        "path": "/games/38/"
+      },
+      {
+        "title": "Meeple Incremental",
+        "score": "No score",
+        "path": "/games/25/"
+      },
+      {
+        "title": "Parry Survivor",
+        "score": "No score",
+        "path": "/games/28/"
+      },
+      {
+        "title": "Peacemaker: Bloody Emperor",
+        "score": "No score",
+        "path": "/games/30/"
+      },
+      {
+        "title": "Pibcremental",
+        "score": "No score",
+        "path": "/games/26/"
+      },
+      {
+        "title": "RIG Riot",
+        "score": "No score",
+        "path": "/games/31/"
+      },
+      {
+        "title": "RPG System",
+        "score": "No score",
+        "path": "/games/35/"
+      },
+      {
+        "title": "Serious Sam: Shatterverse",
+        "score": "No score",
+        "path": "/games/18/"
+      },
+      {
+        "title": "Wait, Cards I Memorized?",
+        "score": "No score",
+        "path": "/games/32/"
+      }
+    ],
+    "css_sha256": "13bbc0b6a21c3e2e88a80e6a1e89a23b72a3aacb55754e14450349210382dd6c",
+    "layout": [
+      {
+        "page": "desktop list",
+        "viewport": {
+          "width": 1280,
+          "height": 1050
+        },
+        "scroll_width": 1280
+      },
+      {
+        "page": "desktop card",
+        "viewport": {
+          "width": 1280,
+          "height": 1050
+        },
+        "scroll_width": 1280
+      },
+      {
+        "page": "mobile card",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "scroll_width": 390
+      },
+      {
+        "page": "mobile combined list",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "scroll_width": 390
+      }
+    ],
+    "post_status": 403,
+    "all_pass": true,
+    "screenshot_evidence_commit": "5a038d4703cbabc11fec07644dcb1f9e4b172558"
+  },
+  "release": {
+    "source_sha": "5a038d4703cbabc11fec07644dcb1f9e4b172558",
+    "image_id": "sha256:57a3713123f729dabdb5417ec474b245575a9fa9466c1b1fab3a5a7c9265ffab",
+    "release-source.tar": {
+      "sha256": "c184fcf260492230bf0491b647d029325826aa10d9cec7e8e8dd4ed0b718a2b1",
+      "bytes": 8540160
+    },
+    "release-config.tar.gz": {
+      "sha256": "a30841619c1a9f87227d0259d0849ec6bcd89035918819f7eab44ce044c7701a",
+      "bytes": 5216
+    },
+    "release-image.tar": {
+      "sha256": "ff65e2d18216e63fdaf2d3c2194ba788aa28570147fe4e354a19ed14c81cb5a6",
+      "bytes": 61762560
+    }
+  },
+  "hosted_ci": {
+    "conclusion": "success",
+    "headSha": "5a038d4703cbabc11fec07644dcb1f9e4b172558",
+    "url": "https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34837423748"
+  },
+  "deployment": {
+    "healthy": true,
+    "image_id": "sha256:57a3713123f729dabdb5417ec474b245575a9fa9466c1b1fab3a5a7c9265ffab",
+    "postgresql": "16.15 (Debian 16.15-1.pgdg13+2)",
+    "source_hashes": {
+      "app/catalog/queries.py": "42e21b48b746380d6ac0c4914e012fdbd0961a5d46e62d07d436f50921d175b8",
+      "app/presentation/static/presentation/app.css": "27f0e1d4b6fd8b763acf747f9364c92d6fbc5c8bf03740941c614d58555b87e1",
+      "app/presentation/summaries.py": "52538f33827a804aa9e01899339a4fff08120c52a6dfe7cff6d0d9d6af1054f9",
+      "app/presentation/templates/presentation/game_detail.html": "118a4c1084fbfebdd64e1f501ec21e300a0c30070437e9bd44a5b3bcbf11ad22",
+      "app/presentation/templates/presentation/index.html": "525ec8f83e4f0959bce6bea5dd666501852e6b912a268b347e68e9322363b6b0",
+      "app/presentation/views.py": "cec9c6576b99bd062407a33351124df05655945ba1b8cf2fca9af364412b7f1a",
+      "app/reviews/snapshots.py": "b41ae086e0f8add9fe4826d4bd1012fafcb0b61afd38259257d522ea9ff25951",
+      "app/summaries/contour.py": "e0e6088c30ae5876aa41f3f8871cd76400730b6fef6c723eeafc6f954b5d5759"
+    },
+    "catalog_and_summary_metadata_unchanged": true,
+    "catalog_and_summary_metadata_sha256": "2ffead1735355d2f673428f7192db2e25ae9e829c8c7bef9c823a0ce28b8b656"
   }
 }

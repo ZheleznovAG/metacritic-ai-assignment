@@ -85,11 +85,35 @@ checks were repeated after it. The unchanged application regressions already
 cover summary state transitions and query behavior; a test asserting CSS text
 would not establish layout correctness.
 
-The initial public evidence uses the previous deployed CSS. Hosted CI and an
-immutable preview upgrade of this correction are still required before accepting
-this cycle's final public result. Public ready/stale AI summaries, similarity,
+Public ready/stale AI summaries, similarity,
 full mandatory E2E, HTTPS and later operational gates remain owned by their
 respective tasks. This cycle does not claim those later outcomes.
+
+## Hosted CI and final public upgrade
+
+Candidate `5a038d4703cbabc11fec07644dcb1f9e4b172558` passed
+[hosted CI 34837423748](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34837423748),
+including locked builds, PostgreSQL offline checks, restricted runtime tokenization,
+Caddy startup and HTTP/CSS smoke. A clean `git archive` of that same SHA built
+runtime image `sha256:57a3713123f729dabdb5417ec474b245575a9fa9466c1b1fab3a5a7c9265ffab`.
+The [release manifest](../evidence/imp-05-revalidation-2026-09-14.json) records
+source/config/image archive hashes and sizes.
+
+The existing preview was upgraded using the documented procedure. Archive
+checksums matched before import; a readable database backup was retained;
+existing credentials, settings and named volumes were preserved. Migration
+`summaries.0003_summaryattempt_fencing_token_and_more` was applied by the normal
+migration service. All pre-existing table counts, all 38 games' fields and
+platforms, and their summary metadata remained unchanged. Web runs as
+`65532:65532` with a read-only filesystem, and the three services are healthy.
+[Deployment output](../evidence/imp-05-deployment-2026-09-14.txt) records the checks.
+
+All **50 public browser checks passed again** on the new build. The served CSS
+SHA-256 is `27f0e1d4b6fd8b763acf747f9364c92d6fbc5c8bf03740941c614d58555b87e1`,
+identical to the corrected CSS exercised by the fixture probe. The linked public
+screenshots now show this final build; initial observations and their screenshot
+commit are preserved in the JSON report. The source and final evidence commits
+are both checked by the same hosted workflow. No task beyond IMP-05 was started.
 
 Dated probes and reproduction instructions are in
 [research/reviews/20260914_imp05](../../research/reviews/20260914_imp05/README.md).
