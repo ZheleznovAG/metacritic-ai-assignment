@@ -66,7 +66,14 @@ identity. Жанровые labels и пороги не выведены из can
 Полный local `scripts/check.py` пройден: format/lint/mypy, migration drift,
 263 application tests на PostgreSQL 16, scripts 6, planning 18, AI integrity 7,
 review selection 9 и similarity oracle 14 tests; frozen/candidate verifiers PASS.
-Hosted run и его SHA записываются после фактического выполнения.
+
+Первый hosted run на этой ветке ([34815169727](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34815169727))
+упал: `Dockerfile` получил `COPY evals/similarity`, но `.dockerignore` не был
+обновлён, и checks-образ не собрался (`"/evals/similarity": not found`).
+Исправлено добавлением `!evals/similarity/**` в allowlist (commit `c6ec16b`),
+подтверждено локальной сборкой `docker build --target checks`. Скорректированный
+hosted run [34828861545](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34828861545)
+прошёл полностью на SHA `c6ec16b`.
 
 ## Ask владельцу
 
