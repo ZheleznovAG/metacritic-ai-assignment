@@ -101,6 +101,12 @@ Checked that this fix does not touch `validate_userscore`/`validate_metascore`,
 `_require_matching_review_route`, or the `R01/R09/R10` quota/admission path.
 `ruff format`/`ruff check`/`mypy --strict` all pass on the changed files.
 
+## Hosted CI
+
+The fix commit `93662bc` passed [hosted CI 34834110481](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34834110481):
+all 266 application tests and every format/lint/type/offline/build/runtime/HTTP-CSS
+stage passed on Linux/PostgreSQL 16.
+
 ## Boundaries and remaining scope
 
 This cycle deliberately did not clear the full 333-job backlog (not the goal
