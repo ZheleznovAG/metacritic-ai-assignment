@@ -1,0 +1,707 @@
+{
+  "observed_source_sha": "d093ee2c2602ecb2fb0da01929d0520bda562241",
+  "initial_public_build": "8c766154fb147806fc67576f730b06f56aa04f03",
+  "initial_ci_url": "https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34804900760",
+  "oracle": {
+    "source_fixture": "app/tests/fixtures/metacritic/elden_ring_expected.json",
+    "fixture_sha256": "9c572a21dfbfc9fbb836dce0ecc4f1558ba09eeb2a9fbcaa81c02220fed086f5",
+    "game": {
+      "source": "metacritic",
+      "source_game_id": "1300501979",
+      "canonical_locator": "/game/elden-ring/",
+      "title": "Elden Ring",
+      "cover_url": "https://www.metacritic.com/a/img/resize/86c7a59722e76cf9cb2c83bfac863f18f815bc2a/catalog/provider/6/12/6-1-824956-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+      "developer": "From Software",
+      "video_embed_url": "https://cdn.jwplayer.com/players/OXExoEAD.html",
+      "video_content_url": "https://cdn.jwplayer.com/manifests/OXExoEAD.m3u8"
+    },
+    "description_sha256": "9827979e11749766a52d79e20e6935816ebf6d8e700d3437c58b75ca428832b6",
+    "description_chars": 1059,
+    "platforms": [
+      {
+        "source_platform_id": "1500000121",
+        "source_game_platform_id": "1400570837",
+        "slug": "xbox-one",
+        "name": "Xbox One",
+        "is_lead_platform": false,
+        "metascore": null,
+        "userscore": "7.0",
+        "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=xbox-one",
+        "user_reviews_path": "/game/elden-ring/user-reviews/?platform=xbox-one"
+      },
+      {
+        "source_platform_id": "1500000019",
+        "source_game_platform_id": "1400570838",
+        "slug": "pc",
+        "name": "PC",
+        "is_lead_platform": false,
+        "metascore": 94,
+        "userscore": "7.6",
+        "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=pc",
+        "user_reviews_path": "/game/elden-ring/user-reviews/?platform=pc"
+      },
+      {
+        "source_platform_id": "1500000120",
+        "source_game_platform_id": "1400570841",
+        "slug": "playstation-4",
+        "name": "PlayStation 4",
+        "is_lead_platform": false,
+        "metascore": null,
+        "userscore": "7.5",
+        "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=playstation-4",
+        "user_reviews_path": "/game/elden-ring/user-reviews/?platform=playstation-4"
+      },
+      {
+        "source_platform_id": "1500000129",
+        "source_game_platform_id": "1400627894",
+        "slug": "xbox-series-x",
+        "name": "Xbox Series X",
+        "is_lead_platform": false,
+        "metascore": 96,
+        "userscore": "8.0",
+        "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=xbox-series-x",
+        "user_reviews_path": "/game/elden-ring/user-reviews/?platform=xbox-series-x"
+      },
+      {
+        "source_platform_id": "1500000128",
+        "source_game_platform_id": "1400627895",
+        "slug": "playstation-5",
+        "name": "PlayStation 5",
+        "is_lead_platform": true,
+        "metascore": 96,
+        "userscore": "8.4",
+        "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=playstation-5",
+        "user_reviews_path": "/game/elden-ring/user-reviews/?platform=playstation-5"
+      }
+    ],
+    "captures": [
+      {
+        "url": "https://www.metacritic.com/game/elden-ring/",
+        "captured_at": "2026-09-14T04:41:04.937761+00:00",
+        "bytes": 760479,
+        "sha256": "7e99290eeea00fc6aa92a75b4b1c0c223dd2494efe3ae7e779395d22896796b0"
+      },
+      {
+        "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=xbox-one",
+        "captured_at": "2026-09-14T04:41:07.432365+00:00",
+        "bytes": 460895,
+        "sha256": "69eb4d3a221acc86ee3a0c35f517965c3502cf0448506d77a6d87e0d44331e8a"
+      },
+      {
+        "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=pc",
+        "captured_at": "2026-09-14T04:41:09.483038+00:00",
+        "bytes": 463900,
+        "sha256": "4c161837c643a3ccc10daa909736b902956162f822c232094edba7cfaf2f414b"
+      },
+      {
+        "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=playstation-4",
+        "captured_at": "2026-09-14T04:41:12.169817+00:00",
+        "bytes": 472447,
+        "sha256": "6ba5a112f760df12dfc6eba6b9476c4543f622388a133db361055b299066a67b"
+      },
+      {
+        "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=xbox-series-x",
+        "captured_at": "2026-09-14T04:41:14.934105+00:00",
+        "bytes": 464306,
+        "sha256": "197ae4b4209bb827a99f5e0f8e45def248259a74c67533070f1a616ea59faf3d"
+      }
+    ]
+  },
+  "initial_database_snapshots": {
+    "before": {
+      "counts": {
+        "DailyCandidate": 0,
+        "DailyCycle": 0,
+        "Game": 0,
+        "GameAlias": 0,
+        "GamePlatform": 0,
+        "ReviewCollectionJob": 0,
+        "ReviewSummary": 0,
+        "SourceFetch": 0,
+        "SummaryAttempt": 0
+      },
+      "fetches": []
+    },
+    "after1": {
+      "aliases": [
+        {
+          "id": 1,
+          "locator": "/game/elden-ring/"
+        }
+      ],
+      "candidates": [
+        {
+          "game_id": 1,
+          "id": 1,
+          "source_order": 1,
+          "state": "processed"
+        }
+      ],
+      "counts": {
+        "DailyCandidate": 1,
+        "DailyCycle": 1,
+        "Game": 1,
+        "GameAlias": 1,
+        "GamePlatform": 5,
+        "ReviewCollectionJob": 10,
+        "ReviewSummary": 0,
+        "SourceFetch": 5,
+        "SummaryAttempt": 0
+      },
+      "fetches": [
+        {
+          "completed_at": "2026-09-14 04:43:37.989913+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 1,
+          "kind": "game_detail",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "f0cf41bfd109943ec6e45e53783602c1775487a28df8798e2b0eb9d20d0ed00d",
+          "started_at": "2026-09-14 04:43:36.943511+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:39.053846+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 2,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "aab393ecdc053ff19c3d66db74733a7af4becaf83dba5118aab9eba84d17e4b7",
+          "started_at": "2026-09-14 04:43:38.133874+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=xbox-one"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:40.244689+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 3,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "111ec5d4e1aa41a10aca2c98f15298c1fe52f08de36ac2161249f9ae090f4169",
+          "started_at": "2026-09-14 04:43:39.134323+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=pc"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:41.022487+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 4,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "12213165fc5ad011e7c85c240e832020583f56ed9ded1fa16a3ef90cbb66449c",
+          "started_at": "2026-09-14 04:43:40.320310+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=playstation-4"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:42.112911+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 5,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "2d2b462fbcf412733bd4279e39b9c9b3a6dc9f9fcc01805b0b8f67beb3e4e81f",
+          "started_at": "2026-09-14 04:43:41.097302+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=xbox-series-x"
+        }
+      ],
+      "game": {
+        "canonical_locator": "/game/elden-ring/",
+        "cover_url": "https://www.metacritic.com/a/img/resize/86c7a59722e76cf9cb2c83bfac863f18f815bc2a/catalog/provider/6/12/6-1-824956-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+        "description_chars": 1059,
+        "description_sha256": "9827979e11749766a52d79e20e6935816ebf6d8e700d3437c58b75ca428832b6",
+        "developer": "From Software",
+        "id": 1,
+        "last_changed_fetch_id": 1,
+        "source": "metacritic",
+        "source_game_id": "1300501979",
+        "title": "Elden Ring",
+        "video_content_url": "https://cdn.jwplayer.com/manifests/OXExoEAD.m3u8",
+        "video_embed_url": "https://cdn.jwplayer.com/players/OXExoEAD.html"
+      },
+      "jobs": [
+        {
+          "audience": "critic",
+          "daily_candidate_id": 1,
+          "game_platform_id": 1,
+          "id": 1,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "daily_candidate_id": 1,
+          "game_platform_id": 1,
+          "id": 2,
+          "state": "pending"
+        },
+        {
+          "audience": "critic",
+          "daily_candidate_id": 1,
+          "game_platform_id": 2,
+          "id": 3,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "daily_candidate_id": 1,
+          "game_platform_id": 2,
+          "id": 4,
+          "state": "pending"
+        },
+        {
+          "audience": "critic",
+          "daily_candidate_id": 1,
+          "game_platform_id": 3,
+          "id": 5,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "daily_candidate_id": 1,
+          "game_platform_id": 3,
+          "id": 6,
+          "state": "pending"
+        },
+        {
+          "audience": "critic",
+          "daily_candidate_id": 1,
+          "game_platform_id": 4,
+          "id": 7,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "daily_candidate_id": 1,
+          "game_platform_id": 4,
+          "id": 8,
+          "state": "pending"
+        },
+        {
+          "audience": "critic",
+          "daily_candidate_id": 1,
+          "game_platform_id": 5,
+          "id": 9,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "daily_candidate_id": 1,
+          "game_platform_id": 5,
+          "id": 10,
+          "state": "pending"
+        }
+      ],
+      "platforms": [
+        {
+          "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=pc",
+          "id": 2,
+          "metascore": 94,
+          "metascore_last_changed_fetch_id": 1,
+          "name": "PC",
+          "slug": "pc",
+          "source_game_platform_id": "1400570838",
+          "source_platform_id": "1500000019",
+          "user_reviews_path": "/game/elden-ring/user-reviews/?platform=pc",
+          "userscore": "7.6",
+          "userscore_last_changed_fetch_id": 3
+        },
+        {
+          "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=playstation-4",
+          "id": 3,
+          "metascore": null,
+          "metascore_last_changed_fetch_id": 1,
+          "name": "PlayStation 4",
+          "slug": "playstation-4",
+          "source_game_platform_id": "1400570841",
+          "source_platform_id": "1500000120",
+          "user_reviews_path": "/game/elden-ring/user-reviews/?platform=playstation-4",
+          "userscore": "7.5",
+          "userscore_last_changed_fetch_id": 4
+        },
+        {
+          "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=playstation-5",
+          "id": 5,
+          "metascore": 96,
+          "metascore_last_changed_fetch_id": 1,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "source_game_platform_id": "1400627895",
+          "source_platform_id": "1500000128",
+          "user_reviews_path": "/game/elden-ring/user-reviews/?platform=playstation-5",
+          "userscore": "8.4",
+          "userscore_last_changed_fetch_id": 1
+        },
+        {
+          "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=xbox-one",
+          "id": 1,
+          "metascore": null,
+          "metascore_last_changed_fetch_id": 1,
+          "name": "Xbox One",
+          "slug": "xbox-one",
+          "source_game_platform_id": "1400570837",
+          "source_platform_id": "1500000121",
+          "user_reviews_path": "/game/elden-ring/user-reviews/?platform=xbox-one",
+          "userscore": "7.0",
+          "userscore_last_changed_fetch_id": 2
+        },
+        {
+          "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=xbox-series-x",
+          "id": 4,
+          "metascore": 96,
+          "metascore_last_changed_fetch_id": 1,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "source_game_platform_id": "1400627894",
+          "source_platform_id": "1500000129",
+          "user_reviews_path": "/game/elden-ring/user-reviews/?platform=xbox-series-x",
+          "userscore": "8.0",
+          "userscore_last_changed_fetch_id": 5
+        }
+      ]
+    },
+    "after2": {
+      "aliases": [
+        {
+          "id": 1,
+          "locator": "/game/elden-ring/"
+        }
+      ],
+      "candidates": [
+        {
+          "game_id": 1,
+          "id": 1,
+          "source_order": 1,
+          "state": "processed"
+        }
+      ],
+      "counts": {
+        "DailyCandidate": 1,
+        "DailyCycle": 1,
+        "Game": 1,
+        "GameAlias": 1,
+        "GamePlatform": 5,
+        "ReviewCollectionJob": 10,
+        "ReviewSummary": 0,
+        "SourceFetch": 10,
+        "SummaryAttempt": 0
+      },
+      "fetches": [
+        {
+          "completed_at": "2026-09-14 04:43:37.989913+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 1,
+          "kind": "game_detail",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "f0cf41bfd109943ec6e45e53783602c1775487a28df8798e2b0eb9d20d0ed00d",
+          "started_at": "2026-09-14 04:43:36.943511+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:39.053846+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 2,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "aab393ecdc053ff19c3d66db74733a7af4becaf83dba5118aab9eba84d17e4b7",
+          "started_at": "2026-09-14 04:43:38.133874+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=xbox-one"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:40.244689+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 3,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "111ec5d4e1aa41a10aca2c98f15298c1fe52f08de36ac2161249f9ae090f4169",
+          "started_at": "2026-09-14 04:43:39.134323+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=pc"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:41.022487+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 4,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "12213165fc5ad011e7c85c240e832020583f56ed9ded1fa16a3ef90cbb66449c",
+          "started_at": "2026-09-14 04:43:40.320310+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=playstation-4"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:42.112911+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 5,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "2d2b462fbcf412733bd4279e39b9c9b3a6dc9f9fcc01805b0b8f67beb3e4e81f",
+          "started_at": "2026-09-14 04:43:41.097302+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=xbox-series-x"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:48.150089+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 6,
+          "kind": "game_detail",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "ed4457acfa5b6feed1a0b66b0392ef1cdfd40dc23864889cb590a1b4c2be4203",
+          "started_at": "2026-09-14 04:43:48.082775+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:48.320032+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 7,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "d297bcb84f0b824b0d9db349115ac38bf38f67e1c82bbf5ad6627f8b3d8e65d2",
+          "started_at": "2026-09-14 04:43:48.288965+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=xbox-one"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:48.421437+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 8,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "5abd6af074c99e0510f3214427daab7ad18083aa03cbf28e383b1790f4f92b06",
+          "started_at": "2026-09-14 04:43:48.393978+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=pc"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:48.525851+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 9,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "188dd64ec3a3d6c6a5cbce96f44f54dc09d7cc1a0d2af5d6eefa4117c3f0fb51",
+          "started_at": "2026-09-14 04:43:48.496709+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=playstation-4"
+        },
+        {
+          "completed_at": "2026-09-14 04:43:48.631347+00:00",
+          "error_code": null,
+          "http_status": 200,
+          "id": 10,
+          "kind": "platform_userscore",
+          "outcome": "succeeded",
+          "parser_contract_version": "1.0.0",
+          "response_sha256": "0964910877cd355f7d3c04da5c9535b85e5d5a58080f359c6c739e4ed68c3520",
+          "started_at": "2026-09-14 04:43:48.600478+00:00",
+          "url": "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=xbox-series-x"
+        }
+      ],
+      "game": {
+        "canonical_locator": "/game/elden-ring/",
+        "cover_url": "https://www.metacritic.com/a/img/resize/86c7a59722e76cf9cb2c83bfac863f18f815bc2a/catalog/provider/6/12/6-1-824956-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+        "description_chars": 1059,
+        "description_sha256": "9827979e11749766a52d79e20e6935816ebf6d8e700d3437c58b75ca428832b6",
+        "developer": "From Software",
+        "id": 1,
+        "last_changed_fetch_id": 6,
+        "source": "metacritic",
+        "source_game_id": "1300501979",
+        "title": "Elden Ring",
+        "video_content_url": "https://cdn.jwplayer.com/manifests/OXExoEAD.m3u8",
+        "video_embed_url": "https://cdn.jwplayer.com/players/OXExoEAD.html"
+      },
+      "jobs": [
+        {
+          "audience": "critic",
+          "daily_candidate_id": 1,
+          "game_platform_id": 1,
+          "id": 1,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "daily_candidate_id": 1,
+          "game_platform_id": 1,
+          "id": 2,
+          "state": "pending"
+        },
+        {
+          "audience": "critic",
+          "daily_candidate_id": 1,
+          "game_platform_id": 2,
+          "id": 3,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "daily_candidate_id": 1,
+          "game_platform_id": 2,
+          "id": 4,
+          "state": "pending"
+        },
+        {
+          "audience": "critic",
+          "daily_candidate_id": 1,
+          "game_platform_id": 3,
+          "id": 5,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "daily_candidate_id": 1,
+          "game_platform_id": 3,
+          "id": 6,
+          "state": "pending"
+        },
+        {
+          "audience": "critic",
+          "daily_candidate_id": 1,
+          "game_platform_id": 4,
+          "id": 7,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "daily_candidate_id": 1,
+          "game_platform_id": 4,
+          "id": 8,
+          "state": "pending"
+        },
+        {
+          "audience": "critic",
+          "daily_candidate_id": 1,
+          "game_platform_id": 5,
+          "id": 9,
+          "state": "pending"
+        },
+        {
+          "audience": "user",
+          "daily_candidate_id": 1,
+          "game_platform_id": 5,
+          "id": 10,
+          "state": "pending"
+        }
+      ],
+      "platforms": [
+        {
+          "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=pc",
+          "id": 2,
+          "metascore": 94,
+          "metascore_last_changed_fetch_id": 6,
+          "name": "PC",
+          "slug": "pc",
+          "source_game_platform_id": "1400570838",
+          "source_platform_id": "1500000019",
+          "user_reviews_path": "/game/elden-ring/user-reviews/?platform=pc",
+          "userscore": "7.6",
+          "userscore_last_changed_fetch_id": 8
+        },
+        {
+          "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=playstation-4",
+          "id": 3,
+          "metascore": null,
+          "metascore_last_changed_fetch_id": 6,
+          "name": "PlayStation 4",
+          "slug": "playstation-4",
+          "source_game_platform_id": "1400570841",
+          "source_platform_id": "1500000120",
+          "user_reviews_path": "/game/elden-ring/user-reviews/?platform=playstation-4",
+          "userscore": "7.5",
+          "userscore_last_changed_fetch_id": 9
+        },
+        {
+          "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=playstation-5",
+          "id": 5,
+          "metascore": 96,
+          "metascore_last_changed_fetch_id": 6,
+          "name": "PlayStation 5",
+          "slug": "playstation-5",
+          "source_game_platform_id": "1400627895",
+          "source_platform_id": "1500000128",
+          "user_reviews_path": "/game/elden-ring/user-reviews/?platform=playstation-5",
+          "userscore": "8.4",
+          "userscore_last_changed_fetch_id": 6
+        },
+        {
+          "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=xbox-one",
+          "id": 1,
+          "metascore": null,
+          "metascore_last_changed_fetch_id": 6,
+          "name": "Xbox One",
+          "slug": "xbox-one",
+          "source_game_platform_id": "1400570837",
+          "source_platform_id": "1500000121",
+          "user_reviews_path": "/game/elden-ring/user-reviews/?platform=xbox-one",
+          "userscore": "7.0",
+          "userscore_last_changed_fetch_id": 7
+        },
+        {
+          "critic_reviews_path": "/game/elden-ring/critic-reviews/?platform=xbox-series-x",
+          "id": 4,
+          "metascore": 96,
+          "metascore_last_changed_fetch_id": 6,
+          "name": "Xbox Series X",
+          "slug": "xbox-series-x",
+          "source_game_platform_id": "1400627894",
+          "source_platform_id": "1500000129",
+          "user_reviews_path": "/game/elden-ring/user-reviews/?platform=xbox-series-x",
+          "userscore": "8.0",
+          "userscore_last_changed_fetch_id": 10
+        }
+      ]
+    }
+  },
+  "initial_public_check": {
+    "checked_at": "2026-09-14T04:46:26.730396+00:00",
+    "card_path": "/games/1/",
+    "status": 200,
+    "game_fields_match": true,
+    "platform_rows": 5,
+    "natural_nulls_shown": 2,
+    "summary_states": [
+      "pending",
+      "pending"
+    ],
+    "list_link_count": 1,
+    "css_path": "/static/presentation/app.05efda703ced.css",
+    "build_version": "8c766154fb147806fc67576f730b06f56aa04f03",
+    "card_response_sha256": "79d54baf9c0c2632569a1c881cf283fbcea0b7f0a1e2c337ff4b8629583a77d1"
+  },
+  "initial_browser_check": {
+    "checked_at": "2026-09-14T04:46:34.257157+00:00",
+    "browser": "151.0.7922.34",
+    "public_navigation": "/ -> /games/1/ -> /",
+    "card_cover_loaded": true,
+    "css_applied": true,
+    "platform_rows": 5,
+    "natural_nulls": 2,
+    "page_errors": 0,
+    "desktop_width": 1280,
+    "mobile_width": 390,
+    "horizontal_overflow": false,
+    "screenshots": [
+      "imp-02-card-desktop.png",
+      "imp-02-card-mobile.png"
+    ]
+  },
+  "screenshot_sha256": {
+    "imp-02-card-desktop.png": "b66b19422c60f1b4130a89db49eedea408a22399be67ebd089d97b0be10dad57",
+    "imp-02-card-mobile.png": "2ae72c8d7ee0a9bc804a88472a7b6837ae1600d1adf449b33a111fec1178ed89"
+  }
+}

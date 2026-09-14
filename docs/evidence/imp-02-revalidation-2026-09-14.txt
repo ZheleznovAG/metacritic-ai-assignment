@@ -1,0 +1,85 @@
+IMP-02 revalidation; 2026-09-14. Sanitised execution excerpts.
+Initial public source build: 8c766154fb147806fc67576f730b06f56aa04f03
+Initial hosted CI: https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34804900760
+Raw external HTML, host/account/key settings and description text are omitted.
+
+INITIAL LIVE INGEST
+INGEST 1 exit 0 game_id=1 created=True platforms_created=5 platforms_updated=0 jobs_created=10 candidate_state=processed
+INGEST 2 exit 0 game_id=1 created=False platforms_created=0 platforms_updated=5 jobs_created=0 candidate_state=processed
+PASS two real ingests: stable game/platform/alias/candidate/job IDs; ten successful source fetches; no AI calls
+PASS temporary scheduler-only environment file removed
+
+INITIAL HOSTED REGRESSIONS
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:26.1397624Z All checks passed!
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:32.6570629Z Success: no issues found in 101 source files
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:35.6675833Z No changes detected
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:40.1501286Z test_a_failure_creating_jobs_rolls_back_the_whole_transaction (tests.test_catalog_ingest.IngestAtomicityTests.test_a_failure_creating_jobs_rolls_back_the_whole_transaction) ... ok
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:40.2554369Z test_a_failed_userscore_fetch_does_not_claim_provenance_over_a_preserved_value (tests.test_catalog_ingest.IngestPlatformUserscoreFanOutTests.test_a_failed_userscore_fetch_does_not_claim_provenance_over_a_preserved_value) ... ok
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:40.3724262Z test_a_later_null_field_does_not_clobber_a_previously_known_value (tests.test_catalog_ingest.IngestUpdateTests.test_a_later_null_field_does_not_clobber_a_previously_known_value) ... ok
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:40.4445299Z test_new_locator_becomes_alias_old_locator_retained (tests.test_catalog_ingest.IngestUpdateTests.test_new_locator_becomes_alias_old_locator_retained) ... ok
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:50.6274057Z test_invalid_dto_does_not_overwrite_existing_good_values (tests.test_source_validation.SourceValidationTests.test_invalid_dto_does_not_overwrite_existing_good_values) ... ok
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:53.8825166Z test_natural_nulls_are_preserved_as_none_not_zero (tests.test_metacritic_parser.ParseGameDetailTests.test_natural_nulls_are_preserved_as_none_not_zero) ... ok
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:55.5242749Z Ran 261 tests in 15.447s
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:55.5243784Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:56.9620330Z Ran 6 tests in 0.457s
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:56.9620661Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:57.4920393Z Ran 18 tests in 0.109s
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:57.4921408Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:58.3735587Z Ran 7 tests in 0.013s
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:58.3735916Z OK
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:59.0408014Z Ran 9 tests in 0.006s
+verify	Offline verification on PostgreSQL 16	2026-09-14T04:08:59.0420449Z OK
+
+PROVENANCE REGRESSION BEFORE CORRECTION
+rmUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=True, metas
+rmUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=True, metas
+rmUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=False, meta
+rmUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=False, meta
+FAIL: test_missing_scores_preserve_values_and_their_accepted_source (tests.test_catalog_ingest.IngestPl
+atformUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=True, m
+AssertionError: 2 != 1
+FAIL: test_missing_scores_preserve_values_and_their_accepted_source (tests.test_catalog_ingest.IngestPl
+atformUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=True, m
+AssertionError: 4 != 3
+FAIL: test_missing_scores_preserve_values_and_their_accepted_source (tests.test_catalog_ingest.IngestPl
+atformUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=False, 
+metascore=94)
+AssertionError: 7 != 5
+FAIL: test_missing_scores_preserve_values_and_their_accepted_source (tests.test_catalog_ingest.IngestPl
+atformUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=False, 
+metascore=0)
+AssertionError: 11 != 9
+Ran 1 test in 0.341s
+FAILED (failures=4)
+
+LOCAL FULL CHECK AFTER CORRECTION
+CHECK: -m ruff format --check app scripts
+112 files already formatted
+CHECK: -m ruff check app scripts
+All checks passed!
+CHECK: -m mypy
+Success: no issues found in 101 source files
+CHECK: app/manage.py check
+CHECK: app/manage.py makemigrations --check --dry-run
+No changes detected
+CHECK: app/manage.py collectstatic --noinput
+CHECK: app/manage.py test tests --noinput -v 2
+Ran 263 tests in 50.697s
+OK
+CHECK: -m unittest discover -s scripts/tests -p test_*.py
+Ran 6 tests in 0.538s
+OK
+CHECK: research/planning/check_plan.py
+CHECK: -m unittest discover -s research/planning -p test_*.py
+Ran 18 tests in 0.290s
+OK
+CHECK: evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
+CHECK: -m unittest discover -s evals/reviews -p test_*.py
+Ran 7 tests in 0.019s
+OK
+CHECK: -m unittest discover -s evals/review_selection -p test_*.py
+Ran 9 tests in 0.006s
+OK
+CHECK: evals/review_selection/score_selection.py --verify evals/review_selection/baseline_report.json
+CHECK: evals/review_selection/verify_candidate.py
+PASS: the real candidate passes all 8 invariants on all applicable cases.

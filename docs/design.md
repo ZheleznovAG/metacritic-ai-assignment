@@ -54,10 +54,17 @@ Django ORM используется прямо внутри application services
 |---|---|---|
 | `game` | `source`, `source_game_id`, current locator, title, cover URL, developer, description, video URL, ordered normalized genre names, `last_changed_fetch_id`, timestamps | `UNIQUE(source, source_game_id)`; обязательны identity/title/locator; source text хранится без перевода |
 | `game_alias` | `game_id`, source locator, first/last seen UTC | `UNIQUE(source, locator)`; alias другого game вызывает conflict, не merge |
-| `game_platform` | `game_id`, `source_platform_id`, `source_game_platform_id`, slug/name, Metascore, Userscore, critic/user route, `last_changed_fetch_id` | `UNIQUE(game_id, source_platform_id)` и `UNIQUE(source, source_game_platform_id)`; score ranges; `null` не равен нулю |
+| `game_platform` | `game_id`, `source_platform_id`, `source_game_platform_id`, slug/name, Metascore, Userscore, critic/user route, `metascore_last_changed_fetch_id`, `userscore_last_changed_fetch_id` | `UNIQUE(game_id, source_platform_id)` и `UNIQUE(source, source_game_platform_id)`; score ranges; `null` не равен нулю |
 | `source_fetch` | owning run или review job, kind, collection generation nullable, allowlisted URL, cursor/offset, page ordinal, attempt number, fencing token, reported total, item count, started/completed UTC, HTTP status, response SHA-256, parser contract version, outcome/error code | Ровно один owner; review attempt требует non-null generation/page/attempt и `attempt_no > 0`; `UNIQUE(review_job_id, collection_generation, page_ordinal, attempt_no)`; отдельная partial unique constraint на `(review_job_id, collection_generation, page_ordinal)` только для `outcome IN ('succeeded', 'empty')`; полный HTML, cookies и authorization headers не сохраняются |
 
 `last_changed_fetch_id` указывает на fetch, из которого принято текущее значение. Failed/structurally invalid fetch создаёт evidence, но не меняет хорошее поле. Отсутствовавшая в partial response платформа не удаляется.
+
+Для каждой платформенной оценки provenance хранится отдельно. Если новый успешный
+ответ содержит `null`, а non-destructive merge сохраняет прежнюю оценку (включая
+ноль), её ссылка на источник также сохраняется. Принятая числовая оценка или
+подтверждённое отсутствие при отсутствии старого значения указывает на текущий
+успешный fetch: detail для Metascore/lead Userscore, platform fetch для остальных
+Userscore. Ранее неверно перемещённые ссылки автоматически не реконструируются.
 
 `source_fetch` представляет одну фактическую попытку HTTP-запроса. Worker под row lock job выделяет следующий `attempt_no`, сохраняет `started` и текущий fencing token до внешнего вызова. Допустим один переход в terminal `succeeded/empty/failed/invalid/abandoned/superseded`; terminal запись не переписывается. Failed/invalid attempt не занимает ключ успешно принятой страницы: retry той же generation/page получает новый номер и сохраняет прежнюю ошибку. При reclaim незавершённая попытка становится `abandoned`; поздний ответ не переоткрывает её. Если владение потеряно до применения ответа, ещё открытая попытка завершается как `superseded` без observations и cursor update.
 

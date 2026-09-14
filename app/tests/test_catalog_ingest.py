@@ -1,3 +1,4 @@
+from dataclasses import replace
 from datetime import UTC, datetime
 from decimal import Decimal
 from unittest import mock
@@ -264,6 +265,71 @@ class IngestAtomicityTests(TestCase):
 
 
 class IngestPlatformUserscoreFanOutTests(TestCase):
+    def test_missing_scores_preserve_values_and_their_accepted_source(self) -> None:
+        pc_url = "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=pc"
+        for lead in (True, False):
+            for metascore, userscore in ((94, Decimal("7.6")), (0, Decimal("0"))):
+                with self.subTest(lead=lead, metascore=metascore):
+                    platform = replace(
+                        _platform(metascore=metascore, userscore=userscore),
+                        is_lead_platform=lead,
+                    )
+                    good = FakeGateway(
+                        _game(platforms=(platform,)), platform_userscores={pc_url: userscore}
+                    )
+                    self.assertTrue(ingest_game(good, FakeClock(), DETAIL_URL).ok)
+                    previous = GamePlatform.objects.get()
+                    fetch_count = SourceFetch.objects.count()
+                    missing = FakeGateway(
+                        _game(
+                            title="Updated title",
+                            platforms=(replace(platform, metascore=None, userscore=None),),
+                        ),
+                        platform_userscores={pc_url: None},
+                    )
+                    self.assertTrue(ingest_game(missing, FakeClock(), DETAIL_URL).ok)
+                    current = GamePlatform.objects.get()
+                    self.assertEqual(current.metascore, metascore)
+                    self.assertEqual(current.userscore, userscore)
+                    self.assertEqual(
+                        current.metascore_last_changed_fetch_id,
+                        previous.metascore_last_changed_fetch_id,
+                    )
+                    self.assertEqual(
+                        current.userscore_last_changed_fetch_id,
+                        previous.userscore_last_changed_fetch_id,
+                    )
+                    self.assertEqual(Game.objects.get().title, "Updated title")
+                    self.assertEqual(SourceFetch.objects.count() - fetch_count, 1 if lead else 2)
+
+    def test_natural_nulls_and_new_zero_scores_have_their_own_source(self) -> None:
+        pc_url = "https://www.metacritic.com/game/elden-ring/user-reviews/?platform=pc"
+        platform = replace(_platform(metascore=None, userscore=None), is_lead_platform=False)
+        gateway = FakeGateway(_game(platforms=(platform,)), platform_userscores={pc_url: None})
+        self.assertTrue(ingest_game(gateway, FakeClock(), DETAIL_URL).ok)
+        missing = GamePlatform.objects.get()
+        self.assertIsNone(missing.metascore)
+        self.assertIsNone(missing.userscore)
+        self.assertIsNotNone(missing.metascore_last_changed_fetch_id)
+        self.assertIsNotNone(missing.userscore_last_changed_fetch_id)
+        observed = FakeGateway(
+            _game(platforms=(replace(platform, metascore=0),)),
+            platform_userscores={pc_url: Decimal("0")},
+        )
+        self.assertTrue(ingest_game(observed, FakeClock(), DETAIL_URL).ok)
+        current = GamePlatform.objects.get()
+        self.assertEqual((current.metascore, current.userscore), (0, Decimal("0")))
+        self.assertNotEqual(
+            current.metascore_last_changed_fetch_id, missing.metascore_last_changed_fetch_id
+        )
+        self.assertNotEqual(
+            current.userscore_last_changed_fetch_id, missing.userscore_last_changed_fetch_id
+        )
+        assert current.metascore_last_changed_fetch is not None
+        assert current.userscore_last_changed_fetch is not None
+        self.assertEqual(current.metascore_last_changed_fetch.kind, "game_detail")
+        self.assertEqual(current.userscore_last_changed_fetch.kind, "platform_userscore")
+
     def test_non_lead_platform_userscore_comes_from_its_own_fetch(self) -> None:
         lead = _platform(
             source_platform_id="p1", slug="ps5", metascore=96, userscore=Decimal("8.4")

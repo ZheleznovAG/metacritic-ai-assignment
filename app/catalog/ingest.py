@@ -327,15 +327,19 @@ def apply_game_dto(
     platforms_updated = 0
     for platform_dto in game_dto.platforms:
         platform, created = _upsert_platform(game, platform_dto)
-        # `fetch` (game_detail) is only reached here once it has already succeeded, so
-        # Metascore's provenance is always this fetch, whatever it read (including null).
-        platform.metascore_last_changed_fetch = fetch
-        if platform_dto.is_lead_platform:
-            platform.userscore_last_changed_fetch = fetch
-        elif platform_dto.source_platform_id in platform_userscore_fetch:
-            platform.userscore_last_changed_fetch = platform_userscore_fetch[
-                platform_dto.source_platform_id
-            ]
+        # A missing new score can leave an older value (including zero) in place.
+        # Keep that value's source; record this fetch only when its score was accepted
+        # or the stored score is itself absent. A successful HTTP response alone does
+        # not prove it supplied the value retained by the non-destructive merge.
+        if platform_dto.metascore is not None or platform.metascore is None:
+            platform.metascore_last_changed_fetch = fetch
+        if platform_dto.userscore is not None or platform.userscore is None:
+            if platform_dto.is_lead_platform:
+                platform.userscore_last_changed_fetch = fetch
+            elif platform_dto.source_platform_id in platform_userscore_fetch:
+                platform.userscore_last_changed_fetch = platform_userscore_fetch[
+                    platform_dto.source_platform_id
+                ]
         platform.save(
             update_fields=["metascore_last_changed_fetch", "userscore_last_changed_fetch"]
         )
