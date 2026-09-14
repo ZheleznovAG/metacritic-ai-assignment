@@ -207,7 +207,14 @@ def build(game: Game, audience: str) -> ReviewCorpus | None:
             }
         ).encode("utf-8")
     ).hexdigest()
-    raw_prompt_tokens = sum(item.token_count for item in result.selected)
+    from summaries import contour, preflight
+
+    # Before a job has an ID, use the longest PostgreSQL bigint correlation suffix. These
+    # corpus diagnostics bound that placeholder; admission always measures the actual request.
+    measured = preflight.measure(
+        contour.build_request_payload("summary-job-9223372036854775807", audience, id_texts)
+    )
+    raw_prompt_tokens = measured.raw_tokens
     corpus = ReviewCorpus.objects.create(
         game=game,
         audience=audience,
@@ -224,8 +231,8 @@ def build(game: Game, audience: str) -> ReviewCorpus | None:
         tokenizer_id=TOKENIZER_ID,
         tokenizer_version="0.14.0",
         raw_prompt_tokens=raw_prompt_tokens,
-        guarded_prompt_tokens=raw_prompt_tokens + 64,
-        completion_reservation=800,
+        guarded_prompt_tokens=measured.guarded_tokens,
+        completion_reservation=contour.MAX_COMPLETION_TOKENS,
     )
     ReviewCorpusItem.objects.bulk_create(
         ReviewCorpusItem(

@@ -56,10 +56,15 @@ class SummaryAttempt(models.Model):
         ("retryable", "retryable"),
         ("delayed_capacity", "delayed_capacity"),
         ("failed", "failed"),
+        ("abandoned", "abandoned"),
     ]
 
     job = models.ForeignKey(SummaryJob, on_delete=models.PROTECT, related_name="attempts")
     attempt_no = models.PositiveIntegerField()
+    fencing_token = models.PositiveBigIntegerField(default=0)
+    request_sha256 = models.CharField(max_length=64, default="", blank=True)
+    raw_prompt_tokens = models.PositiveIntegerField(null=True, blank=True)
+    rate_limit_headers = models.JSONField(default=dict, blank=True)
     provider = models.CharField(max_length=32, default="groq")
     api_kind = models.CharField(max_length=32, default="chat_completions")
     requested_model = models.CharField(max_length=64)

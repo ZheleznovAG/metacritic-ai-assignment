@@ -66,3 +66,45 @@ Adversarial self-review проверил null против zero, Decimal finite/
 Полный local `scripts/check.py`: 212 application tests, format/lint/mypy/drift,
 scripts 6, planning 18, AI 7, selection 9 и frozen/candidate verifiers — PASS,
 exit 0. Live contract текущего Metacritic и hosted CI этим не заявляются.
+
+## IMP-04: R01/R09/R10 — измеренный запрос, квота и попытки
+
+Связь: `REV-01/02`, `NFR-02/03`, `R-AI-01/02`, `R-TIM-02`.
+Preflight считает canonical messages + schema фактически отправляемого payload,
+добавляет 64 framing tokens и резервирует ещё 800 completion tokens. Prompt выше
+6000 или недоступный tokenizer закрывают job без HTTP. Hash, raw/guarded tokens,
+версии и fencing token сохраняются до HTTP; adapter отправляет те же bytes.
+Старые corpus estimates не используются для admission. Новые corpus diagnostics
+учитывают полный запрос; превышение лимита не откатывает уже собранную страницу.
+
+PostgreSQL transaction advisory lock сериализует проверку и создание reservation.
+Ledger учитывает token и request limits в rolling minute/day windows, открытые и
+прерванные attempts. Allowlisted provider headers могут отложить следующий вызов;
+без достоверных headers он ждёт минуту. Превышение фактического usage останавливает
+данный contour. Ограничения относятся к одному provider account в этой БД;
+потребление его ключа другими приложениями требует актуальных provider headers.
+
+Внутренние HTTP retries удалены: один вызов соответствует одной durable attempt.
+Пять попыток исчерпывают automatic budget; recovery закрывает незавершённую как
+abandoned. State/token/expiry проверяются до admission и после HTTP; redelivery
+и поздний ответ не переписывают terminal history. HTTP выполняется вне DB locks,
+с timeout 180 секунд на I/O phase и lease 5 минут; это не обещание общего
+wall-clock deadline для произвольно медленного streaming response.
+
+Evidence — [test_summary_admission.py](../../app/tests/test_summary_admission.py):
+16 regressions, включая десять multilingual inputs по 450 tokens, actual wire
+hash, две реальные DB connections, minute/day/request limits, headers, NaN,
+crash/reclaim/late response, пять ошибок и usage overrun. Начальные девять tests
+дали 6 failures и 2 errors до исправлений. Adversarial self-review дополнительно
+проверил отсутствие DB locks при HTTP и неизменность выигравшего результата.
+Общий application suite: 228 tests PASS; format/lint/mypy/drift и scripts 6 PASS.
+При общей проверке обнаружена неверная постановка IMP-02/03 в In progress при
+незакрытых prerequisites; tracker сохраняет Changes requested до полного evidence,
+отдельно указывая проверенные локальные corrections. Offline checks повторены
+после этой правки. Prompt/schema и frozen quality/selection oracles не менялись.
+
+Migration `summaries.0003` добавляет attempt metadata. Исторические unknown fields
+остаются пустыми; adapter version 1.1.0 и tokenizer package version входят в новый
+contour, старые pending jobs получают contour_changed без вызова API. Новое
+обычное построение corpus создаёт job для текущего contour. Production database
+этой серией не мигрировалась; hosted/live throughput здесь не проверен.

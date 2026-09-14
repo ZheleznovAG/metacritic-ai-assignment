@@ -12,6 +12,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any
 
@@ -25,7 +26,7 @@ REQUESTED_MODEL = "openai/gpt-oss-20b"
 PROMPT_VERSION = "3.0.0"
 SCHEMA_VERSION = "2.1.0"
 NORMALIZER_VERSION = "1.0.0"
-ADAPTER_VERSION = "1.0.0"
+ADAPTER_VERSION = "1.1.0"
 SELECTION_POLICY_VERSION = "1.0.0-candidate"
 TOKENIZER_ID = "o200k_harmony"
 
@@ -117,6 +118,7 @@ def contour_versions() -> dict[str, str]:
         "adapter_version": ADAPTER_VERSION,
         "selection_policy_version": SELECTION_POLICY_VERSION,
         "tokenizer_id": TOKENIZER_ID,
+        "tokenizer_version": version("tiktoken"),
     }
 
 

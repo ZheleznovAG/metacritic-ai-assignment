@@ -9,6 +9,7 @@ directory is a frozen historical harness the shipped app must not depend on at r
 from __future__ import annotations
 
 import json
+import math
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -23,9 +24,8 @@ USER_AGENT = (
     "metacritic-ai-assignment-worker/1.0 (+https://github.com/ZheleznovAG/metacritic-ai-assignment)"
 )
 DEFAULT_TIMEOUT_SECONDS = 180.0
-DEFAULT_MAX_RETRIES = 3
-RETRYABLE_STATUSES = {429, 500, 502, 503, 504}
 RATE_LIMIT_HEADER_NAMES = (
+    "retry-after",
     "x-ratelimit-limit-requests",
     "x-ratelimit-limit-tokens",
     "x-ratelimit-remaining-requests",
@@ -42,10 +42,17 @@ class GroqConfigError(Exception):
 class GroqApiError(Exception):
     """A sanitized Groq API error with retry metadata; never carries the API key."""
 
-    def __init__(self, message: str, status: int | None = None, retry_after: float | None = None):
+    def __init__(
+        self,
+        message: str,
+        status: int | None = None,
+        retry_after: float | None = None,
+        rate_limit_headers: dict[str, str] | None = None,
+    ):
         super().__init__(message)
         self.status = status
         self.retry_after = retry_after
+        self.rate_limit_headers = rate_limit_headers or {}
 
 
 @dataclass(frozen=True, slots=True)
@@ -100,27 +107,37 @@ def _post(
     try:
         response = client.post(
             url,
-            json=payload,
+            content=contour.canonical_json(payload).encode("utf-8"),
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Accept": "application/json",
+                "Content-Type": "application/json",
                 "User-Agent": USER_AGENT,
             },
+            timeout=DEFAULT_TIMEOUT_SECONDS,
         )
     except httpx.HTTPError as error:
         raise GroqApiError(f"Groq API connection failed: {type(error).__name__}") from error
+    headers = {
+        name: response.headers[name] for name in RATE_LIMIT_HEADER_NAMES if name in response.headers
+    }
     if response.status_code != httpx.codes.OK:
         retry_after = None
         raw_retry_after = response.headers.get("Retry-After")
         if raw_retry_after:
             try:
                 retry_after = float(raw_retry_after)
+                if not math.isfinite(retry_after) or retry_after < 0:
+                    retry_after = None
+                elif retry_after > 86400:
+                    retry_after = 86400.0
             except ValueError:
                 retry_after = None
         raise GroqApiError(
             f"Groq API HTTP {response.status_code}: {_safe_api_error(response.content, api_key)}",
             status=response.status_code,
             retry_after=retry_after,
+            rate_limit_headers=headers,
         )
     try:
         document = response.json()
@@ -128,31 +145,7 @@ def _post(
         raise GroqApiError("Groq API returned a non-JSON response") from error
     if not isinstance(document, dict):
         raise GroqApiError("Groq API returned an unexpected JSON value")
-    headers = {
-        name: response.headers[name] for name in RATE_LIMIT_HEADER_NAMES if name in response.headers
-    }
     return document, headers
-
-
-def _post_with_retry(
-    client: httpx.Client,
-    url: str,
-    api_key: str,
-    payload: dict[str, Any],
-    max_retries: int,
-) -> tuple[dict[str, Any], dict[str, str]]:
-    retries = 0
-    while True:
-        try:
-            return _post(client, url, api_key, payload)
-        except GroqApiError as error:
-            retryable = error.status in RETRYABLE_STATUSES or error.status is None
-            if not retryable or retries >= max_retries:
-                raise
-            delay = error.retry_after if error.retry_after is not None else float(2**retries)
-            delay = min(60.0, max(1.0, delay))
-            retries += 1
-            time.sleep(delay)
 
 
 def _extract_output_text(response: dict[str, Any]) -> str:
@@ -175,7 +168,7 @@ def _safe_usage(response: dict[str, Any]) -> dict[str, int]:
     result: dict[str, int] = {}
     for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
         value = usage.get(key)
-        if isinstance(value, int) and not isinstance(value, bool):
+        if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
             result[key] = value
     return result
 
@@ -188,15 +181,19 @@ def generate_summary(
     correlation_id: str,
     audience: str,
     reviews: list[dict[str, str]],
-    max_retries: int = DEFAULT_MAX_RETRIES,
+    payload: dict[str, Any] | None = None,
 ) -> GroqCallResult:
     """One real Groq call. Raises `GroqApiError` for transport/HTTP failures (the caller decides
     retryable vs. delayed_capacity vs. failed); returns a result with `structural_errors` set
     (never raises) for a schema-invalid response, since that outcome is `retryable`, not fatal."""
-    payload = contour.build_request_payload(correlation_id, audience, reviews)
+    payload = (
+        payload
+        if payload is not None
+        else contour.build_request_payload(correlation_id, audience, reviews)
+    )
     started = time.perf_counter()
-    response, rate_headers = _post_with_retry(
-        client, f"{base_url}/chat/completions", api_key, payload, max_retries
+    response, rate_headers = _post(
+        client, f"{validate_base_url(base_url)}/chat/completions", api_key, payload
     )
     latency_ms = round((time.perf_counter() - started) * 1000)
 

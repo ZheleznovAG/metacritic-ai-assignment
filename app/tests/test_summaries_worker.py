@@ -1,3 +1,4 @@
+import hashlib
 import json
 from datetime import UTC, datetime, timedelta
 
@@ -56,8 +57,12 @@ def _make_corpus(
         game=game,
         audience=audience,
         policy_version="1.0.0-candidate",
-        source_set_fingerprint=f"fp-{game.id}-{audience}-{review_key}",
-        model_input_fingerprint=f"input-{game.id}-{audience}-{review_key}",
+        source_set_fingerprint=hashlib.sha256(
+            f"fp-{game.id}-{audience}-{review_key}".encode()
+        ).hexdigest(),
+        model_input_fingerprint=hashlib.sha256(
+            f"input-{game.id}-{audience}-{review_key}".encode()
+        ).hexdigest(),
         complete_route_count=1,
         empty_route_count=0,
         reported_count=len(reviews),
