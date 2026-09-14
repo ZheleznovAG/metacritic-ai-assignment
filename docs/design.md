@@ -138,6 +138,15 @@ Corpus для одной игры и ровно одной аудитории с
 
 ### AI jobs, attempts и summaries
 
+`reviews.ReviewCorpusHead` хранит один текущий corpus для game/audience и checkpoint
+последнего проверенного collection cohort. Builder обновляет head под Game lock
+в той же транзакции, включая возврат к старому cached corpus. Checkpoint содержит
+current processed candidate, route identity/path, generation/page/cursor/state и
+counts. Он не меняет immutable corpus или исходный summary provenance. UI читает
+только этот лёгкий checkpoint и проверяет его против текущих routes/jobs;
+отсутствующий или несовпадающий head означает stale. Legacy heads автоматически
+не выдумываются: их создаёт обычный успешный build после проверки observations.
+
 | Таблица | Ключевые данные | Обязательные ограничения |
 |---|---|---|
 | `summary_job` | game/audience, source corpus, input fingerprint, contour fingerprint, state, attempts, available/lease UTC, last safe error | `UNIQUE(game_id, audience, input_fingerprint, contour_fingerprint)`; неизменный input/config является cache hit |
@@ -164,7 +173,7 @@ Job states: `pending -> running -> succeeded | insufficient_data | retryable | d
 
 Preflight измеряет canonical messages + schema фактического запроса: максимум 6000 prompt tokens с guard 64 и reserve 800 completion. Tokenizer failure запрещает HTTP; actual usage выше резерва останавливает contour. Attempt хранит hash отправленных canonical bytes, raw/guarded estimate, fencing token и allowlisted rate headers. HTTP timeout 180 секунд ограничивает отдельную I/O phase; просроченная lease запрещает применение ответа.
 
-Summary и claims сохраняются одной транзакцией только после normalizer и canonical validation. Card показывает последний валидный summary; если current input/config или review collection уже имеет pending/error job, старый результат помечается stale с причиной. Для прозрачности рядом доступны returned model ID, `generated_at`, `selected / unique fetched / reported` review counts и coverage state; исходные отзывы публично не выводятся как часть Must UI.
+Summary и claims сохраняются одной транзакцией только после normalizer и canonical validation. Card выбирает job по game/audience/input/current contour, а не по исходному corpus FK. Cache hit сохраняет исходные summary/claim FKs и показывает current coverage из head corpus. Если current input/config или review collection имеет pending/error job, последний валидный результат (generated_at/id) помечается stale с причиной. Для прозрачности рядом доступны returned model ID, `generated_at`, `selected / unique fetched / reported` review counts; исходные отзывы публично не выводятся как часть Must UI.
 
 ## Внутренние interfaces
 

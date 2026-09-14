@@ -22,8 +22,8 @@
         <dd>{% if game.description %}{{ game.description }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
         <dt>Trailer</dt>
         <dd>
-          {% if game.video_embed_url %}
-            <a href="{{ game.video_embed_url }}">Watch trailer</a>
+          {% if game.video_url %}
+            <a href="{{ game.video_url }}">Watch trailer</a>
           {% else %}
             <span class="no-data">No data</span>
           {% endif %}
@@ -49,14 +49,14 @@
       {% for summary in summaries %}
         <section class="game-card__summary">
           <h3>{{ summary.audience|title }}s</h3>
+          {% if summary.state == "stale" %}
+            <p class="summary-stale">Stale — showing the last valid summary. {{ summary.stale_message }}</p>
+          {% endif %}
           {% if summary.state == "pending" %}
             <p class="no-data">Pending — review collection or summarisation has not completed yet.</p>
-          {% elif summary.state == "insufficient_data" %}
+          {% elif summary.insufficient_data %}
             <p class="no-data">Not enough meaningful reviews yet to summarise.</p>
           {% else %}
-            {% if summary.state == "stale" %}
-              <p class="summary-stale">Stale — showing the last valid summary while a newer one is {{ summary.stale_reason }}.</p>
-            {% endif %}
             <div class="game-card__summary-claims">
               <div>
                 <h4>Likes</h4>

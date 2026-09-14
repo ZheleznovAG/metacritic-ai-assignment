@@ -1,10 +1,19 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from catalog.models import Game, GamePlatform
 from django.test import TestCase
 from presentation.summaries import get_summaries
-from reviews.models import Review, ReviewCorpus, ReviewCorpusItem
+from processing.models import DailyCandidate, DailyCycle
+from reviews.models import (
+    Review,
+    ReviewCollectionJob,
+    ReviewCorpus,
+    ReviewCorpusHead,
+    ReviewCorpusItem,
+)
+from reviews.snapshots import collection_state
 from reviews.versioning import version_fingerprint
+from summaries.contour import contour_fingerprint
 from summaries.models import ReviewSummary, SummaryClaim, SummaryJob
 
 
@@ -44,7 +53,7 @@ def _make_corpus_item(corpus: ReviewCorpus, tag: str) -> ReviewCorpusItem:
 
 
 def _make_corpus(game: Game, audience: str, tag: str) -> ReviewCorpus:
-    return ReviewCorpus.objects.create(
+    corpus = ReviewCorpus.objects.create(
         game=game,
         audience=audience,
         policy_version="1.0.0-candidate",
@@ -63,6 +72,42 @@ def _make_corpus(game: Game, audience: str, tag: str) -> ReviewCorpus:
         guarded_prompt_tokens=164,
         completion_reservation=800,
     )
+    # This presentation fixture supplies the verified-head contract. Builder correctness is
+    # tested through real observations in test_summary_freshness/test_reviews_snapshots.
+    route, _ = GamePlatform.objects.get_or_create(
+        game=game,
+        source_platform_id="route",
+        defaults={
+            "source_game_platform_id": f"route-{game.pk}",
+            "slug": "route",
+            "name": "Route",
+            "critic_reviews_path": "/critic/",
+            "user_reviews_path": "/user/",
+        },
+    )
+    day = datetime(2026, 9, 12, tzinfo=UTC).date() + timedelta(days=game.review_corpora.count())
+    cycle, _ = DailyCycle.objects.get_or_create(business_date=day)
+    candidate = DailyCandidate.objects.create(
+        cycle=cycle, game=game, source_order=1, state="processed"
+    )
+    ReviewCollectionJob.objects.create(
+        daily_candidate=candidate,
+        game_platform=route,
+        audience=audience,
+        state="complete",
+        reported_total=10,
+        unique_count=10,
+        fetched_count=10,
+    )
+    ReviewCorpusHead.objects.update_or_create(
+        game=game,
+        audience=audience,
+        defaults={
+            "corpus": corpus,
+            "collection_checkpoint": collection_state(game, audience).checkpoint,
+        },
+    )
+    return corpus
 
 
 class PendingStateTests(TestCase):
@@ -81,8 +126,8 @@ class OkStateTests(TestCase):
             game=game,
             audience="critic",
             source_corpus=corpus,
-            input_fingerprint="fp1",
-            contour_fingerprint="cf1",
+            input_fingerprint=corpus.model_input_fingerprint,
+            contour_fingerprint=contour_fingerprint(),
             state="succeeded",
         )
         summary = ReviewSummary.objects.create(
@@ -115,8 +160,8 @@ class InsufficientDataStateTests(TestCase):
             game=game,
             audience="user",
             source_corpus=corpus,
-            input_fingerprint="fp2",
-            contour_fingerprint="cf1",
+            input_fingerprint=corpus.model_input_fingerprint,
+            contour_fingerprint=contour_fingerprint(),
             state="insufficient_data",
         )
         ReviewSummary.objects.create(
@@ -140,8 +185,8 @@ class StaleStateTests(TestCase):
             game=game,
             audience="critic",
             source_corpus=old_corpus,
-            input_fingerprint="fp-old",
-            contour_fingerprint="cf1",
+            input_fingerprint=old_corpus.model_input_fingerprint,
+            contour_fingerprint=contour_fingerprint(),
             state="succeeded",
         )
         ReviewSummary.objects.create(
@@ -156,8 +201,8 @@ class StaleStateTests(TestCase):
             game=game,
             audience="critic",
             source_corpus=new_corpus,
-            input_fingerprint="fp-new",
-            contour_fingerprint="cf1",
+            input_fingerprint=new_corpus.model_input_fingerprint,
+            contour_fingerprint=contour_fingerprint(),
             state="retryable",
         )
 

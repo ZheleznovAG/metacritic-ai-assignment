@@ -6,11 +6,15 @@ import hashlib
 import json
 from collections import Counter
 
-from catalog.models import Game, GamePlatform
+from catalog.models import Game
 from django.db import transaction
-from processing.models import DailyCandidate
 
-from reviews.models import Review, ReviewCollectionJob, ReviewCorpus, ReviewCorpusItem
+from reviews.models import (
+    Review,
+    ReviewCorpus,
+    ReviewCorpusHead,
+    ReviewCorpusItem,
+)
 from reviews.selection import (
     POLICY_VERSION,
     TOKENIZER_ID,
@@ -18,54 +22,15 @@ from reviews.selection import (
     SelectionPool,
     select_reviews,
 )
+from reviews.snapshots import collection_state, known_routes
 
 
 def _canonical_json(value: object) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
-def known_routes(game: Game, audience: str) -> list[GamePlatform]:
-    field = "critic_reviews_path" if audience == "critic" else "user_reviews_path"
-    return [
-        platform
-        for platform in game.platforms.order_by("source_platform_id", "id")
-        if getattr(platform, field)
-    ]
-
-
-def _current_jobs(
-    game: Game, audience: str, routes: list[GamePlatform]
-) -> list[ReviewCollectionJob] | None:
-    # Daily order wins over completion/arrival times: an older backlog route can finish later.
-    # One cohort prevents a current platform snapshot from being combined with yesterday's.
-    candidate = (
-        DailyCandidate.objects.filter(game=game, state="processed")
-        .order_by("-cycle__business_date", "-id")
-        .first()
-    )
-    if candidate is None or not routes:
-        return None
-    jobs = {
-        job.game_platform_id: job
-        for job in ReviewCollectionJob.objects.filter(daily_candidate=candidate, audience=audience)
-    }
-    selected = []
-    for route in routes:
-        job = jobs.get(route.id)
-        if job is None or job.state not in ("complete", "empty") or job.next_cursor is not None:
-            return None
-        if job.reported_total is None or not (
-            job.reported_total == job.unique_count == job.fetched_count and job.duplicate_count == 0
-        ):
-            return None
-        if (job.state == "empty") != (job.reported_total == 0):
-            return None
-        selected.append(job)
-    return selected
-
-
 def all_routes_terminal(game: Game, audience: str) -> bool:
-    return _current_jobs(game, audience, known_routes(game, audience)) is not None
+    return collection_state(game, audience).jobs is not None
 
 
 def _dedup_fingerprint(review: Review) -> str:
@@ -87,7 +52,8 @@ def build(game: Game, audience: str) -> ReviewCorpus | None:
     """
     game = Game.objects.select_for_update().get(pk=game.pk)
     routes = known_routes(game, audience)
-    jobs = _current_jobs(game, audience, routes)
+    state = collection_state(game, audience, routes)
+    jobs = state.jobs
     if jobs is None:
         return None
 
@@ -135,6 +101,11 @@ def build(game: Game, audience: str) -> ReviewCorpus | None:
         source_set_fingerprint=source_set_fingerprint,
     ).first()
     if existing is not None:
+        ReviewCorpusHead.objects.update_or_create(
+            game=game,
+            audience=audience,
+            defaults={"corpus": existing, "collection_checkpoint": state.checkpoint},
+        )
         return existing
 
     # Keep first canonical representatives deterministic across platform queries.
@@ -246,5 +217,10 @@ def build(game: Game, audience: str) -> ReviewCorpus | None:
             was_truncated=selected.truncated,
         )
         for prompt_id, ordinal, review, selected in rows
+    )
+    ReviewCorpusHead.objects.update_or_create(
+        game=game,
+        audience=audience,
+        defaults={"corpus": corpus, "collection_checkpoint": state.checkpoint},
     )
     return corpus

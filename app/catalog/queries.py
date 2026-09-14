@@ -20,7 +20,7 @@ class GameDetailView:
     cover_url: str | None
     developer: str | None
     description: str | None
-    video_embed_url: str | None
+    video_url: str | None
     platforms: list[PlatformView]
 
 
@@ -96,6 +96,6 @@ def get_game_detail(game_id: int) -> GameDetailView | None:
         cover_url=game.cover_url,
         developer=game.developer,
         description=game.description,
-        video_embed_url=game.video_embed_url,
+        video_url=game.video_embed_url or game.video_content_url,
         platforms=platforms,
     )

@@ -1,0 +1,117 @@
+Audit correction series: verification excerpts (2026-09-14)
+Application code tested before final evidence commit; source hashes below.
+Windows command: .venv-app/Scripts/python.exe -B scripts/check.py (exit 0)
+
+Windows
+CHECK: -m ruff format --check app scripts
+112 files already formatted
+CHECK: -m ruff check app scripts
+All checks passed!
+CHECK: -m mypy
+Success: no issues found in 101 source files
+CHECK: app/manage.py check
+System check identified no issues (0 silenced).
+CHECK: app/manage.py makemigrations --check --dry-run
+No changes detected
+CHECK: app/manage.py collectstatic --noinput
+CHECK: app/manage.py test tests --noinput -v 2
+Ran 261 tests in 45.039s
+OK
+System check identified no issues (0 silenced).
+CHECK: -m unittest discover -s scripts/tests -p test_*.py
+Ran 6 tests in 0.577s
+OK
+CHECK: research/planning/check_plan.py
+CHECK: -m unittest discover -s research/planning -p test_*.py
+Ran 18 tests in 0.251s
+OK
+CHECK: evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
+CHECK: -m unittest discover -s evals/reviews -p test_*.py
+Ran 7 tests in 0.019s
+OK
+CHECK: -m unittest discover -s evals/review_selection -p test_*.py
+Ran 9 tests in 0.006s
+OK
+CHECK: evals/review_selection/score_selection.py --verify evals/review_selection/baseline_report.json
+CHECK: evals/review_selection/verify_candidate.py
+PASS: the real candidate passes all 8 invariants on all applicable cases.
+
+Linux/Docker: docker compose --env-file .env.app run --rm checks (exit 0)
+CHECK: -m ruff format --check app scripts
+112 files already formatted
+CHECK: -m ruff check app scripts
+All checks passed!
+CHECK: -m mypy
+Success: no issues found in 101 source files
+CHECK: app/manage.py check
+System check identified no issues (0 silenced).
+CHECK: app/manage.py makemigrations --check --dry-run
+No changes detected
+CHECK: app/manage.py collectstatic --noinput
+CHECK: app/manage.py test tests --noinput -v 2
+System check identified no issues (0 silenced).
+Ran 261 tests in 23.408s
+OK
+CHECK: -m unittest discover -s scripts/tests -p test_*.py
+Ran 6 tests in 0.523s
+OK
+CHECK: research/planning/check_plan.py
+CHECK: -m unittest discover -s research/planning -p test_*.py
+Ran 18 tests in 0.122s
+OK
+CHECK: evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
+CHECK: -m unittest discover -s evals/reviews -p test_*.py
+Ran 7 tests in 0.013s
+OK
+CHECK: -m unittest discover -s evals/review_selection -p test_*.py
+Ran 9 tests in 0.005s
+OK
+CHECK: evals/review_selection/score_selection.py --verify evals/review_selection/baseline_report.json
+CHECK: evals/review_selection/verify_candidate.py
+PASS: the real candidate passes all 8 invariants on all applicable cases.
+
+Browser: Chromium headless / Playwright, isolated PostgreSQL test DB, read-only WSGI connections.
+PASS: cache 10/11 coverage; stale critic/user states; insufficient explanation; content-only trailer; HTTP/CSS; mobile 390px without horizontal overflow; no page errors.
+Preview stopped; its temporary database removed. No application migrations, live API calls or deployment.
+
+SHA-256: changed application sources across the series (base ca5a3c3)
+03ca620906ce1dadc4237df61fdb57b2d93dfdc5006d8d4bfabb032e8855a50f  app/catalog/ingest.py
+40500de11f14c0d4118a4381c43ff6cc5fc94de7418300891f6591f9cf2f5f15  app/catalog/migrations/0005_alter_sourcefetch_outcome.py
+8168108d228b532e1c734de62428b87e816b6a975c51e53907e1a7050747ae4e  app/catalog/models.py
+42e21b48b746380d6ac0c4914e012fdbd0961a5d46e62d07d436f50921d175b8  app/catalog/queries.py
+326263c418537d4876401c2728a248b5c6fdac4914ac0be661125da10cfa0c86  app/metacritic/gateway.py
+ae2d0e9634625d519059d34f718f5a95414f106649ef05d2aba73c2ac083692f  app/metacritic/parser.py
+bc51a2cbd1faf19b5da4aaf22ac6b1de2ba1d712c5caf02f99256451c3ec0f31  app/metacritic/validation.py
+52538f33827a804aa9e01899339a4fff08120c52a6dfe7cff6d0d9d6af1054f9  app/presentation/summaries.py
+118a4c1084fbfebdd64e1f501ec21e300a0c30070437e9bd44a5b3bcbf11ad22  app/presentation/templates/presentation/game_detail.html
+6edc7298d7c609620d1835ef7924cd335d3a8dffe3f22bc5efb46c5491ea8845  app/processing/lease.py
+2984bd3cafa033f6120aecd1ca37523780eb4ebde8a234832ccdaae834d8bb93  app/processing/runner.py
+59a4676943be6f9282cb853af0496fedb6eb00082c00e8320906a295ac21257c  app/processing/scheduler.py
+205eea86c9461c3527b773008e20e7ca8cf837f4586f5003ef9d710a22dd619e  app/processing/selector.py
+50c7bbd818f78bf11f8b85524ec059cf54eb4eb76c33b133f5e994b8d28668cf  app/reviews/collector.py
+00f0be628f111b00e830ae91ac8c67d689a9c3b65e943f522b4322da069cf6be  app/reviews/corpus.py
+49aa8c91e6b0ae4f926c24800186d0ad83fa180b48cbd61f28915a176b6fd269  app/reviews/dispatch.py
+2055e9d3992dc5871263e884814f64f8d0e24948912351d6d9b47dbbaaa39437  app/reviews/management/commands/run_worker.py
+8e32128d5a90c81886540e1094c5ff85864090b9638f488e20b49c2c986dd434  app/reviews/migrations/0005_enrichmentturn.py
+a509d94ea23da5d086f75e52793e92a39141d33d0afa418f175fde6c3e8a917a  app/reviews/migrations/0006_reviewcorpushead.py
+a5c5f84c418fe2a7b8e3e856af1747481863a4e97993fa528d28f59fdd476aa0  app/reviews/models.py
+b41ae086e0f8add9fe4826d4bd1012fafcb0b61afd38259257d522ea9ff25951  app/reviews/snapshots.py
+e0e6088c30ae5876aa41f3f8871cd76400730b6fef6c723eeafc6f954b5d5759  app/summaries/contour.py
+4a062e5558a760d19fa1db21a21e3c12c3d7cbac4a3d6884159c5d03fc579ca7  app/summaries/groq_adapter.py
+e411a38dbbe113087fa91817c0384c04f4e12d3aab39ba0f3e230d6876edf51a  app/summaries/migrations/0003_summaryattempt_fencing_token_and_more.py
+d13a85d164af35be65f777d068efc19a4f08c26a73277a848ff4eeacc6d8bf05  app/summaries/models.py
+78ea999adc9379e7838f37c75410234578b68a91e8cbab23a78c5de6c130723a  app/summaries/preflight.py
+be5e46e15da4f0ed9562d66508606bd57f08f0a5423dd6a738445d4ae1543b93  app/summaries/quota.py
+41f88df74be0730eabd51648b1ad6ab203dd501ca57d1b4ff94da0896a89cb9e  app/summaries/worker.py
+5ec9405b220929e234493b7b383abaac9a94b95b960c06692c6c665ca5dc4795  app/tests/test_collection_attempts.py
+d696f3f8ee9da786fdd2bc6bd12edc127c3a0db55182364cb2b4678b35f34d67  app/tests/test_presentation_summaries.py
+7a414a691617c28d6b201cab37a4373f979ce499ba4141e4a8e77ae9c9ddf961  app/tests/test_processing_ownership.py
+807d0fd29d0947f94fd7daca3b14daf8b852ec008ab025dd9b7a7bf3123e1113  app/tests/test_processing_selector.py
+df44a195fe0888b8c327c2e0bc5b4200be4c8b3c863dfd108d114393fd079e78  app/tests/test_reviews_collector.py
+9633e1a65f252f2d22bb1bf5a82cc8cf0c696490aff99287efd6c620a25e0d3c  app/tests/test_reviews_snapshots.py
+5205d5a95a3c7a7d88ddf2079c9e28ba09f3059117d6cedd6a7045949f7d6869  app/tests/test_source_validation.py
+0cec4f7272691eb2d7d273b159ed699c3038a9c118d41130b212b7cf7eaf3824  app/tests/test_summaries_worker.py
+1262dd3760a893450aed664389c6d121a71d52174a4c672e9a9b65d3379ff5c9  app/tests/test_summary_admission.py
+0db26d4c09ae12237d95f29c896e908df3cb45406265cafbf29165e4a365f4bd  app/tests/test_summary_freshness.py
+468bdaf90a7addc1115a3a88fa52fb9bb17a5f6d3c3898f37ec30e4fa654e363  app/tests/test_summary_validation.py
+d844fa325f3071ea681ed45ef16327a3bb4f3b678ea01cf45ef8a77b88ef2796  app/tests/test_worker_fairness.py

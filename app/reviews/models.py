@@ -20,6 +20,22 @@ class EnrichmentTurn(models.Model):
         ]
 
 
+class ReviewCorpusHead(models.Model):
+    """Current verified snapshot binding; immutable corpora and summary provenance stay intact."""
+
+    game = models.ForeignKey("catalog.Game", on_delete=models.PROTECT, related_name="corpus_heads")
+    audience = models.CharField(max_length=8, choices=[("critic", "critic"), ("user", "user")])
+    corpus = models.ForeignKey("ReviewCorpus", on_delete=models.PROTECT, related_name="heads")
+    collection_checkpoint = models.CharField(max_length=64)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["game", "audience"], name="uq_corpus_head_game_audience"
+            )
+        ]
+
+
 class ReviewCollectionJob(models.Model):
     AUDIENCE_CHOICES = [("critic", "critic"), ("user", "user")]
     STATE_CHOICES = [

@@ -6,7 +6,9 @@
 from dataclasses import dataclass
 
 from catalog.models import Game
-from reviews.models import ReviewCorpus
+from reviews.models import ReviewCorpus, ReviewCorpusHead
+from reviews.snapshots import collection_state
+from summaries.contour import contour_fingerprint
 from summaries.models import ReviewSummary, SummaryJob
 
 AUDIENCES = ("critic", "user")
@@ -29,6 +31,23 @@ class SummaryView:
     fetched_count: int | None
     reported_count: int | None
     stale_reason: str | None
+    insufficient_data: bool = False
+
+    @property
+    def stale_message(self) -> str:
+        return {
+            "collection_in_progress": "New reviews are being collected.",
+            "collection_retryable": "Review collection is waiting for a retry.",
+            "collection_failed": "The latest review collection failed.",
+            "collection_unstable": "The source changed during review collection.",
+            "collection_unverified": "The latest collection has not been verified yet.",
+            "contour_changed": "A summary using the current settings is not ready yet.",
+            "pending": "An updated summary is waiting to be generated.",
+            "running": "An updated summary is being generated.",
+            "retryable": "The summary update is waiting for a retry.",
+            "delayed_capacity": "The summary update is waiting for provider capacity.",
+            "failed": "The latest summary update failed.",
+        }.get(self.stale_reason or "", "An updated summary is not ready yet.")
 
 
 def _empty(audience: str) -> SummaryView:
@@ -74,16 +93,29 @@ def _view_from_summary(
         fetched_count=corpus.fetched_count,
         reported_count=corpus.reported_count,
         stale_reason=stale_reason,
+        insufficient_data=summary.status == "insufficient_data",
     )
 
 
 def _summary_view(game: Game, audience: str) -> SummaryView:
-    latest_corpus = (
-        ReviewCorpus.objects.filter(game=game, audience=audience).order_by("-created_at").first()
+    collection = collection_state(game, audience)
+    head = (
+        ReviewCorpusHead.objects.filter(game=game, audience=audience)
+        .select_related("corpus")
+        .first()
     )
+    latest_corpus = head.corpus if head else None
+    reason = collection.reason
+    if reason is None and (head is None or head.collection_checkpoint != collection.checkpoint):
+        reason = "collection_unverified"
     current_job = None
-    if latest_corpus is not None:
-        current_job = SummaryJob.objects.filter(source_corpus=latest_corpus).order_by("-id").first()
+    if latest_corpus is not None and reason is None:
+        current_job = SummaryJob.objects.filter(
+            game=game,
+            audience=audience,
+            input_fingerprint=latest_corpus.model_input_fingerprint,
+            contour_fingerprint=contour_fingerprint(),
+        ).first()
         if current_job is not None and current_job.state in ("succeeded", "insufficient_data"):
             current_summary = getattr(current_job, "summary", None)
             if current_summary is not None:
@@ -91,16 +123,16 @@ def _summary_view(game: Game, audience: str) -> SummaryView:
                 return _view_from_summary(
                     current_summary, latest_corpus, audience, state=state, stale_reason=None
                 )
+        reason = current_job.state if current_job else "contour_changed"
 
     stale_summary = (
         ReviewSummary.objects.filter(job__game=game, job__audience=audience)
         .select_related("job__source_corpus")
-        .order_by("-generated_at")
+        .order_by("-generated_at", "-id")
         .first()
     )
     if stale_summary is None:
         return _empty(audience)
-    reason = current_job.state if current_job is not None else "collection_in_progress"
     return _view_from_summary(
         stale_summary, stale_summary.job.source_corpus, audience, state="stale", stale_reason=reason
     )

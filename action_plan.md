@@ -2,8 +2,8 @@
 
 - Baseline: **1.0**, задача `PLN-03`, 2026-09-09 (Asia/Novosibirsk).
 - Bonus scope: `pending`.
-- [Повторный аудит `6551e42`](docs/requirements/implementation_audit_6551e42.md) выявил 19 findings и подтвердил исправления R02/R15. [Correction R03–R06](docs/requirements/imp_04_snapshot_correction.md) проверена локально и в Linux: 198 application tests, migration/concurrency/crash regressions; после snapshot/core/source/AI corrections остаются 3 findings (0 P1, 3 P2). [24 исходных probes и observations](research/reviews/6551e42/README.md) сохраняются как историческое evidence.
-- Текущая серия: пользователь разрешил всю оставшуюся пачку; последовательные correction-коммиты продолжаются без остановки между блоками. [R16/R20/R19/R01/R09/R10/R07/R13/R18 проверены](docs/requirements/implementation_corrections_batch.md): local suite 249 application tests и offline checks. Следующий блок — R12/R17/R21 (UI freshness/cache/video). Hosted/public evidence и gates этой серией не закрываются.
+- [Повторный аудит `6551e42`](docs/requirements/implementation_audit_6551e42.md) выявил 19 findings и подтвердил исправления R02/R15. После [R03–R06](docs/requirements/imp_04_snapshot_correction.md) и [серии оставшихся 15 corrections](docs/requirements/implementation_corrections_batch.md) открытых findings этого аудита нет. [24 исходных probes и observations](research/reviews/6551e42/README.md) сохраняются как историческое evidence.
+- Разрешённая пользователем пачка завершена: 261 application tests и offline checks пройдены локально и в Linux/Docker; browser/CSS/mobile checks и screenshots сохранены. [Verification excerpts и source hashes](docs/evidence/audit-batch-verification.txt). Hosted/public evidence и gates этой серией не закрываются; application DB не мигрировалась.
 
 ## Источники истины и правила
 
@@ -24,7 +24,7 @@
 
 ## Приоритет текущего цикла
 
-Локальные corrections перечислены в [evidence серии](docs/requirements/implementation_corrections_batch.md). Оставшиеся 9 findings относятся к циклам 5–8 [очереди исправлений](docs/requirements/implementation_audit_6551e42.md#очередь-исправлений): AI validation, collection retry/redelivery, worker fairness и UI. Для каждого цикла defect-confirming probes переводятся в application regressions с правильным ожидаемым результатом; исторические probes не являются acceptance suite. Контейнерная [correction](docs/requirements/imp_01_container_correction.md) и [discovery correction](docs/requirements/imp_03_discovery_correction.md) сохраняют evidence; hosted CI/public evidence и G4–G7 остаются открытыми.
+[Очередь исправлений](docs/requirements/implementation_audit_6551e42.md#очередь-исправлений) закрыта локальными и Docker regressions. Дальше по зависимостям: повторное hosted CI/public evidence актуального SHA для IMP-01–05; независимый SIM-EVAL-01 остаётся Ready. Новые implementation/HRD/PUB/REL задачи и G4–G7 не начаты и не закрыты этой серией. До запуска обновлённого приложения нужны [миграции](README.md), затем обычный успешный collection/build для verified current heads; исторические incomplete данные не реконструируются.
 
 ## Исторические циклы до аудита 2026-09-12
 
@@ -76,11 +76,11 @@
 | ID | Зависимости | Ветка | Статус | Evidence |
 |---|---|---|---|---|
 | [IMP-01](implementation_plan.md#imp-01) | G3 | base | In progress | [Аудит `6551e42`](docs/requirements/implementation_audit_6551e42.md): build/local/Linux checks и HTTP/CSS smoke повторно пройдены; hosted CI/current public evidence ещё нужны. [Container correction](docs/requirements/imp_01_container_correction.md). |
-| [IMP-02](implementation_plan.md#imp-02) | IMP-01 | base | Changes requested | [R19 correction](docs/requirements/implementation_corrections_batch.md) проверена локально; R21 video fallback и hosted/public evidence ещё открыты. Historical: [ingest/card evidence](docs/requirements/imp_02_review.md). |
-| [IMP-03](implementation_plan.md#imp-03) | IMP-02 | base | Changes requested | [R16/R20/R19 correction](docs/requirements/implementation_corrections_batch.md): local 212 tests; локальные замечания устранены. [Discovery correction R02/R15](docs/requirements/imp_03_discovery_correction.md) подтверждена; зависимость IMP-02/public evidence открыта. |
+| [IMP-02](implementation_plan.md#imp-02) | IMP-01 | base | Changes requested | [R19/R21 corrections](docs/requirements/implementation_corrections_batch.md): local/Linux suite и browser checks пройдены; замечания к коду устранены. Для Verified ещё нужны dependency IMP-01 и hosted/public evidence актуальной версии. Historical: [ingest/card evidence](docs/requirements/imp_02_review.md). |
+| [IMP-03](implementation_plan.md#imp-03) | IMP-02 | base | Changes requested | [R16/R20/R19 corrections](docs/requirements/implementation_corrections_batch.md): local/Linux suite 261 tests, замечания к коду устранены. [Discovery R02/R15](docs/requirements/imp_03_discovery_correction.md) подтверждена; для Verified ещё нужны dependency IMP-02 и актуальное public evidence. |
 | [REV-EVAL-01](implementation_plan.md#rev-eval-01) | G3, SPK-05 | base | Verified | [Oracle accepted 2026-09-12](docs/requirements/rev_eval_01_review.md): 8 cases, 8 hard invariants, naive-baseline evidence, owner Ask answered |
-| [IMP-04](implementation_plan.md#imp-04) | IMP-03, REV-EVAL-01 | base | Changes requested | [R03–R06 correction](docs/requirements/imp_04_snapshot_correction.md) и [R01/R09/R10](docs/requirements/implementation_corrections_batch.md) проверены. Открыты R14, участие в R17; corrections — отдельными циклами. Historical: [review/summary evidence](docs/requirements/imp_04_review.md). |
-| [IMP-05](implementation_plan.md#imp-05) | IMP-04 | base | Changes requested | [Аудит R12/R17/R21](docs/requirements/implementation_audit_6551e42.md): collection freshness/timestamp ties, cache-hit freshness и video fallback; UI/public acceptance открыта. Historical: [UI evidence](docs/requirements/imp_05_review.md). |
+| [IMP-04](implementation_plan.md#imp-04) | IMP-03, REV-EVAL-01 | base | Changes requested | [R03–R06](docs/requirements/imp_04_snapshot_correction.md) и [все AI/collection/queue corrections](docs/requirements/implementation_corrections_batch.md) проверены: local/Linux suite 261 tests. Замечания к коду устранены; dependency IMP-03 и новое provider/public evidence остаются открыты. Historical: [review/summary evidence](docs/requirements/imp_04_review.md). |
+| [IMP-05](implementation_plan.md#imp-05) | IMP-04 | base | Changes requested | [R12/R17/R21 corrections](docs/requirements/implementation_corrections_batch.md): local/Linux suite, browser/CSS/mobile screenshots пройдены. Замечания к коду устранены; dependency IMP-04 и public acceptance открыты. Historical: [UI evidence](docs/requirements/imp_05_review.md). |
 | [SIM-EVAL-01](implementation_plan.md#sim-eval-01) | G3 | base | Ready | Ожидается: evals/similarity: dataset/metric/acceptance |
 | [IMP-06](implementation_plan.md#imp-06) | SIM-EVAL-01, IMP-02 | base | Planned | Ожидается: Frozen comparison report и policy version |
 | [SIM-VER-01](implementation_plan.md#sim-ver-01) | IMP-05, IMP-06 | base | Planned | Ожидается: Integration/E2E и relevance regression |

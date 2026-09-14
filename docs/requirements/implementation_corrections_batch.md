@@ -179,3 +179,61 @@ self-review проверил singleton creation/lock, claim rollback и сохр
 до возможного падения worker. Migration `reviews.0005` создаёт singleton table;
 строка инициализируется первым dispatcher. Local full suite: 249 application tests,
 format/lint/mypy/drift и все offline checks PASS.
+
+## IMP-05: R12/R17/R21 — актуальность карточки и trailer fallback
+
+Связь: `AI-03`, `UI-02`, `AC-AI-05/06`, `R-UI-01`. Builder атомарно сохраняет
+ReviewCorpusHead для game/audience, включая cache hit на старый immutable corpus.
+Checkpoint включает текущий processed business-day candidate, известные routes,
+generation, cursor/state и collection counts. Read-only card сравнивает checkpoint
+с текущим сбором без чтения текстов отзывов или записи в БД. Pending/error/new route
+показывают последнее валидное резюме как stale с понятной причиной. Legacy corpus
+без подтверждённого head остаётся stale до обычного успешного collection/build.
+
+Summary job ищется по game/audience/input/current contour, сохраняя исходный
+source_corpus FK и provenance. Изменение unsampled review обновляет coverage без
+нового model call; A → B → A выбирает первоначальное A, независимо от created_at.
+Fallback последних summaries детерминирован по generated_at/id. Stale rule result
+сохраняет сообщение insufficient_data. Trailer использует embed URL, затем content
+URL, затем существующее No data.
+
+Evidence — [test_summary_freshness.py](../../app/tests/test_summary_freshness.py):
+12 tests через настоящий collector/corpus/worker/query; исходные девять дали
+11 failures, включая subtests. Проверены pending/failed/unstable/retryable,
+unsampled deletion 12 → 11 с прежними 10 selected, cache provenance, A/B/A,
+timestamp ties, contour/generation/routes, legacy head и SELECT-only read path,
+insufficient fallback и оба video sources. Старые presentation fixtures теперь
+явно задают verified-head и current-contour contracts; их произвольные fingerprints
+больше не выдаются за актуальные данные. Adversarial self-review проверил отсутствие
+backfill без evidence и отделение лёгкого checkpoint reader от tokenizer/builder.
+
+Local `scripts/check.py`: 261 application tests, format/lint/mypy/drift, scripts 6,
+planning 18, AI 7, selection 9 и frozen/candidate checks — PASS. Migration
+`reviews.0006` создаёт head table, не меняет исторические corpora/summary FKs.
+
+Browser evidence: Chromium/Playwright, synthetic fixtures в отдельной временной
+PostgreSQL test DB, WSGI GET с read-only connections. Проверены HTTP 200, CSS,
+10/11 current coverage, две stale audience, insufficient explanation, content-only
+trailer и отсутствие horizontal overflow при 390 px. Скриншоты:
+[cache hit, desktop](../evidence/audit-batch-cache.png),
+[stale, desktop](../evidence/audit-batch-stale.png),
+[stale, mobile](../evidence/audit-batch-stale-mobile.png).
+Browser завершён, временная БД удалена. Это не публичный VDS smoke и не browser matrix.
+
+## Итоговая проверка серии
+
+`docker compose --env-file .env.app build web checks` и
+`docker compose --env-file .env.app run --rm checks` — exit 0.
+Linux image повторил весь штатный suite: 261 application tests, scripts 6,
+planning 18, AI integrity 7, selection scorer 9, frozen/candidate verifiers,
+format/lint/mypy/Django checks/migration drift/collectstatic. PostgreSQL 16;
+test DB создавалась и удалялась штатным runner. Production/application schema не
+мигрировалась, push/deploy и live source/provider calls не выполнялись.
+[Sanitised verification excerpts и hashes проверенного кода](../evidence/audit-batch-verification.txt)
+сохраняют независимое executable evidence вместе с regression tests.
+
+Adversarial self-review всей серии проверил согласованность snapshot → summary
+cache → UI, совместную работу двух очередей, сохранение прежних FKs при миграции,
+lease/attempt boundaries и неизменность frozen oracle. Качество модели, provider
+capacity вне fake tests, hosted CI/public smoke и старые потерянные данные остаются
+пределами этого evidence. Task/gate решения находятся только в master tracker.
