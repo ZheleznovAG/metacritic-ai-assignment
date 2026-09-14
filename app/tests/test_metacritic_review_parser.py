@@ -126,13 +126,35 @@ class ParseReviewPageTests(SimpleTestCase):
         with self.assertRaises(MetacriticParseError):
             parse_review_page("not json", "critic", GAME_SLUG, PLATFORM_SLUG)
 
-    def test_item_missing_quote_raises(self) -> None:
+    def test_item_missing_or_null_quote_is_a_real_score_only_review_not_an_error(self) -> None:
+        # 2026-09-14 live finding on IMP-04 revalidation: a real Elden Ring Xbox Series X user
+        # review (id 038fac3e-3617-4101-b11c-daa7633f0e9e, score 6, author "Hulsee") has
+        # `"quote": null` -- a genuine score-only review, not a malformed or absent field.
         expected_path = (
             "/reviews/metacritic/critic/games/bayonetta/platform/xbox-360/web?offset=0&limit=10"
         )
         body = json.dumps(
             {
-                "data": {"totalResults": 1, "items": [{"score": 80}]},
+                "data": {
+                    "totalResults": 2,
+                    "items": [{"score": 80}, {"quote": None, "score": 60}],
+                },
+                "links": {
+                    "self": {"href": f"https://backend.metacritic.com{expected_path}"},
+                    "next": {"href": None},
+                },
+            }
+        )
+        page = parse_review_page(body, "critic", GAME_SLUG, PLATFORM_SLUG)
+        self.assertEqual([item.text for item in page.items], ["", ""])
+
+    def test_item_with_a_non_string_quote_raises(self) -> None:
+        expected_path = (
+            "/reviews/metacritic/critic/games/bayonetta/platform/xbox-360/web?offset=0&limit=10"
+        )
+        body = json.dumps(
+            {
+                "data": {"totalResults": 1, "items": [{"quote": 123, "score": 80}]},
                 "links": {
                     "self": {"href": f"https://backend.metacritic.com{expected_path}"},
                     "next": {"href": None},

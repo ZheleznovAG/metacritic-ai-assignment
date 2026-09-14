@@ -445,9 +445,15 @@ def _require_matching_review_route(
 def _parse_review_item(item: object) -> ReviewRecordDTO:
     if not isinstance(item, dict):
         raise MetacriticParseError("Review item is not an object")
-    quote = item.get("quote")
-    if not isinstance(quote, str):
-        raise MetacriticParseError("Review item is missing quote text")
+    raw_quote = item.get("quote")
+    # A real, live-observed fact about this route: a user can submit a score-only review with no
+    # written text at all, in which case `quote` is `null` (not merely absent or empty).
+    if raw_quote is None:
+        quote = ""
+    elif isinstance(raw_quote, str):
+        quote = raw_quote
+    else:
+        raise MetacriticParseError("Review item has a non-string quote")
     source_id = item.get("id")
     if source_id is not None and not isinstance(source_id, str):
         raise MetacriticParseError("Review item has a non-string id")
