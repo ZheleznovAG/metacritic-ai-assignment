@@ -26,7 +26,7 @@ REQUESTED_MODEL = "openai/gpt-oss-20b"
 PROMPT_VERSION = "3.0.0"
 SCHEMA_VERSION = "2.1.0"
 NORMALIZER_VERSION = "1.0.0"
-ADAPTER_VERSION = "1.1.0"
+ADAPTER_VERSION = "1.2.0"
 SELECTION_POLICY_VERSION = "1.0.0-candidate"
 TOKENIZER_ID = "o200k_harmony"
 
@@ -146,7 +146,9 @@ def normalize_output(output: Any) -> tuple[Any, list[str]]:
 OUTPUT_KEYS = {"case_id", "audience", "status", "likes", "dislikes", "insufficient_data_reason"}
 
 
-def validate_output(output: Any, correlation_id: str, audience: str) -> list[str]:
+def validate_output(
+    output: Any, correlation_id: str, audience: str, allowed_review_ids: set[str] | None = None
+) -> list[str]:
     """Local canonical validation mirroring the frozen schema; never trusts the provider alone."""
     errors: list[str] = []
     if not isinstance(output, dict):
@@ -163,7 +165,7 @@ def validate_output(output: Any, correlation_id: str, audience: str) -> list[str
         errors.append("audience does not match the request")
 
     status = output.get("status")
-    if status not in {"ok", "insufficient_data"}:
+    if not isinstance(status, str) or status not in {"ok", "insufficient_data"}:
         errors.append("status is invalid")
 
     for field in ("likes", "dislikes"):
@@ -188,6 +190,10 @@ def validate_output(output: Any, correlation_id: str, audience: str) -> list[str
                 or not isinstance(support[0], str)
             ):
                 errors.append(f"{prefix}.support must contain exactly one review id")
+            elif not re.fullmatch(r"R(?:0[1-9]|10)", support[0]) or (
+                allowed_review_ids is not None and support[0] not in allowed_review_ids
+            ):
+                errors.append(f"{prefix}.support must reference a review in this request")
 
     if status == "insufficient_data":
         if output.get("likes") != [] or output.get("dislikes") != []:

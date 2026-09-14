@@ -218,7 +218,9 @@ def generate_summary(
         )
 
     normalized, normalizations = contour.normalize_output(raw_output)
-    structural_errors = contour.validate_output(normalized, correlation_id, audience)
+    structural_errors = contour.validate_output(
+        normalized, correlation_id, audience, {review["id"] for review in reviews}
+    )
     usage = _safe_usage(response)
     returned_model = response.get("model") if isinstance(response.get("model"), str) else None
     system_fingerprint = (

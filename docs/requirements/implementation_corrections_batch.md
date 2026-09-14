@@ -108,3 +108,25 @@ Migration `summaries.0003` добавляет attempt metadata. Историче
 contour, старые pending jobs получают contour_changed без вызова API. Новое
 обычное построение corpus создаёт job для текущего contour. Production database
 этой серией не мигрировалась; hosted/live throughput здесь не проверен.
+
+## IMP-04: R07/R13/R18 — grounding и фактический input
+
+Связь: `AI-01/02`, `ASM-16/17/19`, audit R07/R13/R18.
+Canonical validator проверяет тип status до membership, формат support и его
+принадлежность именно отправленному набору IDs. Adapter и worker проверяют
+grounding перед публикацией; один неверный claim отклоняет весь output, без
+частичной записи и без молчаливого пропуска support. Неверные JSON field types
+дают классифицированную malformed_output attempt, не незавершённый running job.
+Порог three reviews применяется к фактическим corpus items после frozen dedup;
+недостаточный input создаёт rule insufficient_data без reservation/HTTP.
+
+Evidence — [test_summary_validation.py](../../app/tests/test_summary_validation.py):
+6 tests с malformed type matrix, неизвестным R10, валидным R01, защитой worker
+при неверной отметке adapter и реальным collector → corpus → worker для трёх
+дубликатов. До исправлений получены failures/errors; исправленная sparse fixture
+отдельно подтвердила нежелательный вызов adapter. Adversarial self-review проверил
+атомарное отклонение смешанного valid/invalid output и сохранение исходных claims.
+Adapter version 1.2.0 меняет contour; prompt/schema и selection oracle неизменны.
+Local suite: 234 application tests, format/lint/mypy/drift, scripts 6, planning 18,
+AI 7, selection 9 и frozen/candidate checks PASS. Семантическое соответствие claim
+тексту отзыва остаётся качеством frozen AI evaluation; ID check его не доказывает.

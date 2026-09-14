@@ -154,7 +154,7 @@ def process_job(
         corpus = job.source_corpus
         items = list(corpus.items.order_by("ordinal"))
         now = clock.now_utc()
-        if corpus.unique_count < MINIMUM_REVIEWS_FOR_A_SUMMARY:
+        if len(items) < MINIMUM_REVIEWS_FOR_A_SUMMARY:
             job.state = "insufficient_data"
             job.last_error = None
             job.save(update_fields=["state", "last_error"])
@@ -273,7 +273,11 @@ def process_job(
             )
         ):
             return _attempt_failure(job, attempt, now, "usage_exceeds_budget", terminal=True)
-        if result.structural_errors or result.output is None:
+        if result.structural_errors or contour.validate_output(
+            result.output, correlation_id, job.audience, {item.prompt_review_id for item in items}
+        ):
+            return _attempt_failure(job, attempt, now, "malformed_output")
+        if result.output is None:
             return _attempt_failure(job, attempt, now, "malformed_output")
         output = result.output
         status = output["status"]
@@ -295,9 +299,7 @@ def process_job(
             items_by_prompt_id = {item.prompt_review_id: item for item in items}
             for polarity, field in (("like", "likes"), ("dislike", "dislikes")):
                 for ordinal, claim in enumerate(output.get(field, []), start=1):
-                    support_item = items_by_prompt_id.get(claim["support"][0])
-                    if support_item is None:
-                        continue
+                    support_item = items_by_prompt_id[claim["support"][0]]
                     SummaryClaim.objects.create(
                         summary=summary,
                         polarity=polarity,
