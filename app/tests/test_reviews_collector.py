@@ -298,7 +298,7 @@ class LeaseLostMidCollectionTests(TestCase):
         collector.collect_one_page(gateway, clock, claimed)
 
         self.assertEqual(Review.objects.count(), 0)
-        self.assertEqual(SourceFetch.objects.filter(kind="review_page").count(), 0)
+        self.assertEqual(SourceFetch.objects.get(kind="review_page").outcome, "superseded")
         current = ReviewCollectionJob.objects.get(pk=job.id)
         self.assertEqual(current.state, "pending")
 

@@ -261,7 +261,8 @@ class SnapshotTests(TestCase):
         self.assertEqual((first.state, first.next_cursor, first.page_count), ("running", "next", 1))
         self.assertEqual(Review.objects.count(), 1)
         self.assertEqual(ReviewObservation.objects.count(), 1)
-        self.assertEqual(SourceFetch.objects.filter(kind="review_page").count(), 1)
+        self.assertEqual(SourceFetch.objects.filter(kind="review_page").count(), 2)
+        self.assertEqual(SourceFetch.objects.filter(outcome="started").count(), 1)
         self.assertEqual(ReviewCorpus.objects.count(), 0)
         self.assertEqual(SummaryJob.objects.count(), 0)
         self.clock.instant += collector.LEASE_TTL + timedelta(seconds=1)
@@ -269,6 +270,7 @@ class SnapshotTests(TestCase):
         self.assertEqual(restored.state, "complete")
         self.assertEqual((ReviewCorpus.objects.count(), SummaryJob.objects.count()), (1, 1))
         self.assertEqual(self.initial.daily_candidate.state, "processed")
+        self.assertEqual(SourceFetch.objects.filter(outcome="abandoned").count(), 1)
 
     def test_crash_after_terminal_commit_already_has_durable_summary_job(self) -> None:
         self.collect(self.initial, page(1, 2, 3))

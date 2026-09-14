@@ -19,9 +19,10 @@ from datetime import datetime, timedelta
 
 from catalog.models import Game, SourceFetch
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import Q
 from metacritic.dto import ReviewRecordDTO
-from metacritic.gateway import ReviewGatewayProtocol
+from metacritic.gateway import ReviewGatewayProtocol, review_page_url
+from metacritic.parser import PARSER_CONTRACT_VERSION
 from processing.clock import Clock
 
 from reviews import corpus as corpus_module
@@ -44,17 +45,24 @@ def _backoff_for(attempt_count: int) -> timedelta:
     return BACKOFF_STEPS[index]
 
 
+def _page_attempt_count(job: ReviewCollectionJob) -> int:
+    return job.fetch_attempts.filter(
+        collection_generation=job.collection_generation, page_ordinal=job.page_count
+    ).count()
+
+
 def _recover_stale_leases(now: datetime) -> None:
-    """A `running` job whose lease has expired was left mid-flight by a crashed/killed worker
-    (or one that outlived its lease). Bumping the fencing token here — not only on the next
-    claim — immediately invalidates any late commit the presumed-dead worker might still attempt,
-    even before anyone re-claims the row (same reasoning as `processing.selector`'s stale-
-    candidate recovery, adapted to a per-row lease instead of one singleton lease)."""
-    ReviewCollectionJob.objects.filter(state="running", lease_expires_at__lt=now).update(
-        state="retryable",
-        fencing_token=F("fencing_token") + 1,
-        last_error="lease_expired",
-    )
+    for job in ReviewCollectionJob.objects.select_for_update(skip_locked=True).filter(
+        state="running", lease_expires_at__lte=now
+    ):
+        job.fetch_attempts.filter(outcome="started").update(
+            outcome="abandoned", error_code="lease_expired", completed_at=now
+        )
+        job.state = "failed" if _page_attempt_count(job) >= MAX_AUTOMATIC_ATTEMPTS else "retryable"
+        job.fencing_token += 1
+        job.last_error = "lease_expired"
+        job.available_at = now
+        job.save(update_fields=["state", "fencing_token", "last_error", "available_at"])
 
 
 def claim_next_job(clock: Clock) -> ReviewCollectionJob | None:
@@ -79,9 +87,26 @@ def claim_next_job(clock: Clock) -> ReviewCollectionJob | None:
         return job
 
 
-def _still_owned(job_id: int, expected_token: int) -> ReviewCollectionJob | None:
-    job = ReviewCollectionJob.objects.select_for_update().get(pk=job_id)
-    return job if job.fencing_token == expected_token else None
+def _still_owned(claim: ReviewCollectionJob, now: datetime) -> ReviewCollectionJob | None:
+    job = ReviewCollectionJob.objects.select_for_update().get(pk=claim.pk)
+    if (
+        job.fencing_token == claim.fencing_token
+        and job.state == "running"
+        and job.lease_expires_at is not None
+        and job.lease_expires_at > now
+        and job.collection_generation == claim.collection_generation
+        and job.page_count == claim.page_count
+        and job.next_cursor == claim.next_cursor
+    ):
+        return job
+    return None
+
+
+def _finish_fetch(fetch: SourceFetch, now: datetime, outcome: str, error: str | None) -> None:
+    fetch.completed_at = now
+    fetch.outcome = outcome
+    fetch.error_code = error
+    fetch.save()
 
 
 def _normalize_text(text: str) -> str:
@@ -124,6 +149,34 @@ def collect_one_page(
     game = platform.game
     game_slug = game.canonical_locator.strip("/").removeprefix("game/").rstrip("/")
 
+    with transaction.atomic():
+        Game.objects.select_for_update().get(pk=game.pk)
+        current = _still_owned(job, clock.now_utc())
+        if current is None:
+            return ReviewCollectionJob.objects.get(pk=job.pk)
+        if current.fetch_attempts.filter(outcome="started", fencing_token=fencing_token).exists():
+            return current
+        page_attempt_count = _page_attempt_count(current)
+        if page_attempt_count >= MAX_AUTOMATIC_ATTEMPTS:
+            current.state = "failed"
+            current.last_error = "attempt_limit"
+            current.save(update_fields=["state", "last_error"])
+            return current
+        current.attempt_count += 1
+        source_fetch = SourceFetch.objects.create(
+            kind="review_page",
+            url=review_page_url(job.audience, game_slug, platform.slug, job.next_cursor),
+            started_at=clock.now_utc(),
+            parser_contract_version=PARSER_CONTRACT_VERSION,
+            outcome="started",
+            review_job=current,
+            collection_generation=current.collection_generation,
+            page_ordinal=current.page_count,
+            attempt_no=current.attempt_count,
+            fencing_token=fencing_token,
+        )
+        current.save(update_fields=["attempt_count"])
+
     page, evidence = gateway.fetch_review_page(
         job.audience, game_slug, platform.slug, job.next_cursor
     )
@@ -134,37 +187,29 @@ def collect_one_page(
         # serializing versions, this makes terminal readiness + corpus + summary intent one
         # transaction even when different platform workers finish together (R05/R06).
         Game.objects.select_for_update().get(pk=game.pk)
-        current = _still_owned(job.id, fencing_token)
+        current = _still_owned(job, now)
         if current is None:
-            return job  # lease lost mid-flight; the next claim's recovery sweeps this job
+            SourceFetch.objects.filter(pk=source_fetch.pk, outcome="started").update(
+                outcome="superseded", completed_at=now, error_code="lease_lost"
+            )
+            return ReviewCollectionJob.objects.get(pk=job.pk)
         job = current
-
-        source_fetch = SourceFetch.objects.create(
-            kind="review_page",
-            url=evidence.url,
-            started_at=evidence.started_at,
-            completed_at=evidence.completed_at,
-            http_status=evidence.http_status,
-            response_sha256=evidence.response_sha256,
-            parser_contract_version=evidence.parser_contract_version,
-            outcome=evidence.outcome,
-            error_code=evidence.error_code,
-            review_job=job,
-            collection_generation=job.collection_generation,
-            page_ordinal=job.page_count,
-            attempt_no=job.attempt_count + 1,
-            fencing_token=fencing_token,
-            reported_total=page.reported_total if page else None,
-            item_count=len(page.items) if page else None,
-        )
-        job.attempt_count += 1
+        source_fetch.refresh_from_db()
+        if source_fetch.outcome != "started":
+            return job
+        source_fetch.http_status = evidence.http_status
+        source_fetch.response_sha256 = evidence.response_sha256
+        source_fetch.parser_contract_version = evidence.parser_contract_version
+        source_fetch.reported_total = page.reported_total if page else None
+        source_fetch.item_count = len(page.items) if page else None
 
         if page is None:
-            if job.attempt_count >= MAX_AUTOMATIC_ATTEMPTS:
+            _finish_fetch(source_fetch, now, evidence.outcome, evidence.error_code)
+            if page_attempt_count + 1 >= MAX_AUTOMATIC_ATTEMPTS:
                 job.state = "failed"
             else:
                 job.state = "retryable"
-                job.available_at = now + _backoff_for(job.attempt_count)
+                job.available_at = now + _backoff_for(page_attempt_count + 1)
             job.last_error = evidence.error_code
             job.save(update_fields=["attempt_count", "state", "available_at", "last_error"])
             return job
@@ -183,11 +228,13 @@ def collect_one_page(
         if page_fingerprint in job.visited_page_fingerprints:
             job.state = "unstable"
             job.last_error = "repeated_page_identity"
+            _finish_fetch(source_fetch, now, "invalid", job.last_error)
             job.save(update_fields=["attempt_count", "state", "last_error"])
             return job
         if job.reported_total is not None and page.reported_total != job.reported_total:
             job.state = "unstable"
             job.last_error = "total_results_changed"
+            _finish_fetch(source_fetch, now, "invalid", job.last_error)
             job.save(update_fields=["attempt_count", "state", "last_error"])
             return job
 
@@ -212,6 +259,7 @@ def collect_one_page(
             if key in seen and seen[key] != version:
                 job.state = "unstable"
                 job.last_error = "review_changed_during_collection"
+                _finish_fetch(source_fetch, now, "invalid", job.last_error)
                 job.save(update_fields=["attempt_count", "state", "last_error"])
                 return job
             seen[key] = version
@@ -278,6 +326,10 @@ def collect_one_page(
         else:
             job.state = "pending"
 
+        _finish_fetch(
+            source_fetch, now, "invalid" if job.state == "unstable" else "succeeded", job.last_error
+        )
+        job.available_at = None
         job.save()
 
         if job.state in ("complete", "empty"):

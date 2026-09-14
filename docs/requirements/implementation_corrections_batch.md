@@ -69,7 +69,7 @@ exit 0. Live contract текущего Metacritic и hosted CI этим не з�
 
 ## IMP-04: R01/R09/R10 — измеренный запрос, квота и попытки
 
-Связь: `REV-01/02`, `NFR-02/03`, `R-AI-01/02`, `R-TIM-02`.
+Связь: `AI-01/02/03`, `NFR-02/03`, `R-AI-01/02`, `R-TIM-02`.
 Preflight считает canonical messages + schema фактически отправляемого payload,
 добавляет 64 framing tokens и резервирует ещё 800 completion tokens. Prompt выше
 6000 или недоступный tokenizer закрывают job без HTTP. Hash, raw/guarded tokens,
@@ -130,3 +130,33 @@ Adapter version 1.2.0 меняет contour; prompt/schema и selection oracle н
 Local suite: 234 application tests, format/lint/mypy/drift, scripts 6, planning 18,
 AI 7, selection 9 и frozen/candidate checks PASS. Семантическое соответствие claim
 тексту отзыва остаётся качеством frozen AI evaluation; ID check его не доказывает.
+
+## IMP-04: R08/R11 — повтор страницы и durable SourceFetch
+
+Связь: `NFR-02/03`, `R-TIM-02`, audit R08/R11. Лимит пяти попыток теперь
+считается по ledger текущей generation/page; успешное продвижение курсора даёт
+следующей странице собственный бюджет. Общий attempt_count остаётся числом всех
+HTTP intents, включая успешные страницы. Backoff также считается для текущей
+страницы. Пять crashes не обходят лимит: reclaim закрывает started как abandoned.
+
+Перед HTTP под Game → job locks проверяются state/token/expiry/generation/cursor/
+page и отсутствие открытой попытки этого claim. SourceFetch started и attempt
+counter коммитятся до вызова; URL строится той же функцией, что в gateway.
+После ответа повторная проверка допускает единственный terminal transition.
+Старый ответ закрывает ещё открытую попытку как superseded; abandoned/terminal
+history не переписывается. Ошибочная страница получает invalid и не занимает
+unique key принятой страницы. Cursor, observations, corpus и summary intent
+сохраняются одной транзакцией; при handoff rollback durable started остаётся.
+
+Evidence — [test_collection_attempts.py](../../app/tests/test_collection_attempts.py):
+9 tests, первые 8 до исправления дали 7 failures и 1 error. Проверены шесть
+успешных страниц + retry, reset бюджета после четырёх ошибок, terminal/in-flight
+redelivery, expiry, пять crashes, late response после победившего нового owner,
+смена generation/cursor и видимость started из другой DB connection вне atomic
+HTTP. Два прежних crash tests уточнены: уже начатый HTTP оставляет evidence,
+при этом observations/corpus/summary по незафиксированной странице отсутствуют.
+Adversarial self-review проверил порядок locks и failed/invalid page uniqueness.
+Local full suite: 243 application tests и все format/lint/mypy/drift/offline checks
+PASS. Migration `catalog.0005` расширяет choices без изменения исторических строк.
+Generation restart после unstable/failed остаётся отдельной recovery операцией;
+новая серия не сбрасывает исторические budgets и не ремонтирует старые snapshots.

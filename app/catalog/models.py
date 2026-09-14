@@ -19,6 +19,9 @@ class SourceFetch(models.Model):
         ("review_page", "review_page"),
     ]
     OUTCOME_CHOICES = [
+        ("started", "started"),
+        ("abandoned", "abandoned"),
+        ("superseded", "superseded"),
         ("succeeded", "succeeded"),
         ("failed", "failed"),
         ("invalid", "invalid"),

@@ -102,6 +102,10 @@ def _initial_review_url(audience: str, game_slug: str, platform_slug: str) -> st
     )
 
 
+def review_page_url(audience: str, game_slug: str, platform_slug: str, cursor: str | None) -> str:
+    return cursor if cursor is not None else _initial_review_url(audience, game_slug, platform_slug)
+
+
 class MetacriticGateway:
     def __init__(self, client: httpx.Client | None = None) -> None:
         self._client = client or httpx.Client(
@@ -200,11 +204,7 @@ class MetacriticGateway:
     def fetch_review_page(
         self, audience: str, game_slug: str, platform_slug: str, cursor: str | None
     ) -> tuple[ReviewPageDTO | None, FetchEvidence]:
-        url = (
-            cursor
-            if cursor is not None
-            else _initial_review_url(audience, game_slug, platform_slug)
-        )
+        url = review_page_url(audience, game_slug, platform_slug, cursor)
         body, evidence = self._get(url, kind="review_page", validate=_validate_review_url)
         if body is None:
             return None, evidence
