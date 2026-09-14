@@ -42,11 +42,11 @@ FAIL: test_missing_scores_preserve_values_and_their_accepted_source (tests.test_
 atformUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=True, m
 AssertionError: 4 != 3
 FAIL: test_missing_scores_preserve_values_and_their_accepted_source (tests.test_catalog_ingest.IngestPl
-atformUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=False, 
+atformUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=False,
 metascore=94)
 AssertionError: 7 != 5
 FAIL: test_missing_scores_preserve_values_and_their_accepted_source (tests.test_catalog_ingest.IngestPl
-atformUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=False, 
+atformUserscoreFanOutTests.test_missing_scores_preserve_values_and_their_accepted_source) (lead=False,
 metascore=0)
 AssertionError: 11 != 9
 Ran 1 test in 0.341s
