@@ -93,7 +93,7 @@
 
 | ID | Зависимости | Ветка | Статус | Evidence |
 |---|---|---|---|---|
-| [HRD-01](implementation_plan.md#hrd-01) | G4 | base | Ready | Ожидается: Parser/HTTP failure report |
+| [HRD-01](implementation_plan.md#hrd-01) | G4 | base | In progress | [Review](docs/requirements/hrd_01_review.md): HTTP-adapter половина закрыта — независимый аудит нашёл `A07` (нет bound на размер/время ответа, нет retry/backoff). Добавлены streaming с bounded size (8MiB)/time (30s), bounded retry только для transient failures. Adversarial review (два прохода) нашёл и закрыл три реальных дефекта: `ResponseNotRead` crash на каждом нормальном ответе, retryable=True для нетранзиентных httpx-ошибок, compression bomb через decoded-size check после decompression. 310 tests зелёные. Половина parser-input extension (включая known limitation из IMP-02) остаётся open. |
 | [HRD-02](implementation_plan.md#hrd-02) | G4 | base | Verified | [Review](docs/requirements/hrd_02_review.md): независимый аудит нашёл `A05` — scheduler навсегда терял восстановление в текущем часовом слоте после сбоя до/после lease; исправлено безопасным resume того же `ProcessingRun` под `select_for_update`+existing lease machinery; adversarial review нашёл и закрыл race в самом фиксе (stale snapshot при конкурентном resume); 298 tests зелёные. Попутно закрыт `A06` (Groq client timeout игнорировался). |
 | [HRD-03](implementation_plan.md#hrd-03) | G4 | base | Ready | Ожидается: PostgreSQL concurrency report |
 | [HRD-04](implementation_plan.md#hrd-04) | G4 | base | Ready | Ожидается: Final AI/failure/capacity eval |

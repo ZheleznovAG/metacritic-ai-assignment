@@ -18,6 +18,11 @@ from processing.runner import MAX_AUTOMATIC_ATTEMPTS, process_candidate
 BATCH_LIMIT = 20
 # Admission bounds for one discovery scan, not a source-volume/exhaustion limit. A fetched
 # page is committed even if it finishes after the deadline; no further request is started.
+# The deadline is checked only between whole `iter_browse` calls, not during one — a single call
+# can now (HRD-01) take up to roughly `gateway.MAX_ATTEMPTS` attempts' worth of
+# `gateway.RESPONSE_DEADLINE_SECONDS` plus backoff on transient failures, so a call starting just
+# under this deadline can still push the actual scan well past it in that worst case. This bound
+# stays a soft admission cap on scan *length*, not a hard latency guarantee.
 BROWSE_PAGE_LIMIT = 100
 BROWSE_TIME_LIMIT_SECONDS = 60.0
 
