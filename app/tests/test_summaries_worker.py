@@ -330,6 +330,92 @@ class InsufficientDataTests(TestCase):
         self.assertEqual(updated.summary.insufficient_reason, "not_enough_meaningful_reviews")
 
 
+class TransportFailureTests(TestCase):
+    """HRD-04: timeout/transport failures isolated from the batch -- a provider-side network
+    failure on one job must not crash the worker or block an independent job's own processing."""
+
+    def test_a_network_timeout_is_retryable_and_records_no_summary(self) -> None:
+        game = _make_game(10)
+        platform = _make_platform(game)
+        reviews = [_make_review(platform, "critic", i) for i in range(3)]
+        corpus = _make_corpus(game, "critic", reviews)
+        worker.ensure_job(corpus)
+        clock = FakeClock(datetime(2026, 9, 12, 10, 0, tzinfo=UTC))
+        claimed = worker.claim_next_job(clock)
+        assert claimed is not None
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            raise httpx.ReadTimeout("simulated network timeout", request=request)
+
+        client = httpx.Client(transport=httpx.MockTransport(handler))
+        updated = worker.process_job(
+            client, clock, claimed, api_key="test-key", base_url="https://api.groq.com/openai/v1"
+        )
+
+        self.assertEqual(updated.state, "retryable")
+        self.assertEqual(updated.last_error, "transport_error")
+        self.assertFalse(hasattr(updated, "summary"))
+        attempt = SummaryAttempt.objects.get(job=updated)
+        self.assertEqual(attempt.outcome, "retryable")
+
+    def test_one_jobs_timeout_does_not_corrupt_an_independent_jobs_own_claim(self) -> None:
+        failing_game = _make_game(11)
+        failing_platform = _make_platform(failing_game, 11)
+        failing_reviews = [_make_review(failing_platform, "critic", i) for i in range(3)]
+        failing_corpus = _make_corpus(failing_game, "critic", failing_reviews)
+        worker.ensure_job(failing_corpus)
+
+        healthy_game = _make_game(12)
+        healthy_platform = _make_platform(healthy_game, 12)
+        healthy_reviews = [_make_review(healthy_platform, "critic", 100 + i) for i in range(3)]
+        healthy_corpus = _make_corpus(healthy_game, "critic", healthy_reviews)
+        worker.ensure_job(healthy_corpus)
+
+        clock = FakeClock(datetime(2026, 9, 12, 10, 0, tzinfo=UTC))
+
+        def timeout_handler(request: httpx.Request) -> httpx.Response:
+            raise httpx.ConnectTimeout("simulated connect timeout", request=request)
+
+        failing_claim = worker.claim_next_job(clock)
+        assert failing_claim is not None
+        timeout_client = httpx.Client(transport=httpx.MockTransport(timeout_handler))
+        failed = worker.process_job(
+            timeout_client,
+            clock,
+            failing_claim,
+            api_key="test-key",
+            base_url="https://api.groq.com/openai/v1",
+        )
+        self.assertEqual(failed.state, "retryable")
+
+        # claim_next_job still finds the independent, still-pending healthy job -- job A's
+        # failure did not lock, corrupt, or otherwise remove it from the claimable set.
+        healthy_claim = worker.claim_next_job(clock)
+        assert healthy_claim is not None
+        self.assertEqual(healthy_claim.game_id, healthy_game.id)
+
+        def unreachable_handler(request: httpx.Request) -> httpx.Response:
+            raise AssertionError("no provider call should happen while quota is paused")
+
+        # The shared per-credential quota ledger (quota.py's `_blocks`) conservatively pauses one
+        # minute after *any* attempt whose response carried no rate-limit headers, success or
+        # failure alike (`WorkerFairnessTests` already covers this after a success) -- so job B's
+        # own admission correctly defers too. That is the ledger being global by design, not job
+        # A's failure corrupting job B: the claim, corpus, and job identity above are all intact.
+        client = httpx.Client(transport=httpx.MockTransport(unreachable_handler))
+        deferred = worker.process_job(
+            client,
+            clock,
+            healthy_claim,
+            api_key="test-key",
+            base_url="https://api.groq.com/openai/v1",
+        )
+
+        self.assertEqual(deferred.state, "delayed_capacity")
+        self.assertEqual(deferred.last_error, "quota_exhausted")
+        self.assertEqual(deferred.game_id, healthy_game.id)
+
+
 class LeaseLostMidAttemptTests(TestCase):
     def test_a_reclaimed_job_does_not_get_overwritten_by_the_stale_worker(self) -> None:
         game = _make_game(8)
