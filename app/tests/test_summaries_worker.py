@@ -4,11 +4,13 @@ from datetime import UTC, datetime, timedelta
 
 import httpx
 from catalog.models import Game, GamePlatform
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from reviews.models import Review, ReviewCorpus, ReviewCorpusItem
 from reviews.versioning import version_fingerprint
 from summaries import contour, worker
 from summaries.models import SummaryAttempt, SummaryJob
+
+from tests.concurrency import run_concurrently
 
 
 class FakeClock:
@@ -358,3 +360,53 @@ class LeaseLostMidAttemptTests(TestCase):
         self.assertFalse(hasattr(result, "summary"))
         current = SummaryJob.objects.get(pk=claimed.id)
         self.assertEqual(current.state, "pending")
+
+
+class ClaimNextJobRaceTests(TransactionTestCase):
+    """HRD-03: mirrors `tests.test_reviews_collector.ClaimNextJobRaceTests` for the summaries
+    queue. The sequential/`FakeClock` tests above (e.g. `StaleLeaseRecoveryTests`) prove the
+    reclaim logic is correct given a known interleaving on one connection; they cannot prove
+    `select_for_update(skip_locked=True)` actually serializes two genuinely concurrent
+    PostgreSQL claimants, since `TestCase` wraps each test in a single transaction. These use
+    real threads with their own DB connections, synchronized with a `threading.Barrier`."""
+
+    def _job_for(self, n: int) -> SummaryJob:
+        game = _make_game(n)
+        platform = _make_platform(game, n)
+        reviews = [_make_review(platform, "critic", n * 10 + i) for i in range(3)]
+        corpus = _make_corpus(game, "critic", reviews)
+        return worker.ensure_job(corpus)
+
+    def test_two_real_threads_racing_for_one_job_never_both_claim_it(self) -> None:
+        job = self._job_for(1)
+        clock = FakeClock(datetime(2026, 9, 12, 10, 0, tzinfo=UTC))
+
+        def claim() -> SummaryJob | None:
+            return worker.claim_next_job(clock)
+
+        claims, errors = run_concurrently(claim, claim)
+
+        self.assertEqual(errors, [], f"claim_next_job raised under real concurrency: {errors}")
+        winners = [claim for claim in claims if claim is not None]
+        self.assertEqual(len(winners), 1, f"exactly one racer must claim the job, got {claims}")
+        self.assertEqual(winners[0].id, job.id)
+        self.assertEqual(winners[0].fencing_token, 1)
+        current = SummaryJob.objects.get(pk=job.id)
+        self.assertEqual((current.state, current.fencing_token), ("running", 1))
+
+    def test_two_real_threads_with_two_jobs_each_claim_a_different_one(self) -> None:
+        first = self._job_for(2)
+        second = self._job_for(3)
+        clock = FakeClock(datetime(2026, 9, 12, 10, 0, tzinfo=UTC))
+
+        def claim() -> SummaryJob | None:
+            return worker.claim_next_job(clock)
+
+        claims, errors = run_concurrently(claim, claim)
+
+        self.assertEqual(errors, [])
+        assert claims[0] is not None and claims[1] is not None
+        self.assertEqual({claims[0].id, claims[1].id}, {first.id, second.id})
+        self.assertEqual(
+            SummaryJob.objects.filter(state="running").count(), 2, "no lost/duplicate claim"
+        )

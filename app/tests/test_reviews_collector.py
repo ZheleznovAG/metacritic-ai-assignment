@@ -1,12 +1,14 @@
 from datetime import UTC, datetime, timedelta
 
 from catalog.models import Game, GamePlatform, SourceFetch
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from metacritic.dto import FetchEvidence, ReviewPageDTO, ReviewRecordDTO
 from processing.models import DailyCandidate, DailyCycle
 from reviews import collector
 from reviews.models import Review, ReviewCollectionJob, ReviewObservation
 from summaries.models import SummaryJob
+
+from tests.concurrency import run_concurrently
 
 
 class FakeClock:
@@ -318,4 +320,60 @@ class CorpusAndSummaryJobTriggerTests(TestCase):
 
         self.assertEqual(
             SummaryJob.objects.filter(game=job.game_platform.game, audience="critic").count(), 1
+        )
+
+
+class ClaimNextJobRaceTests(TransactionTestCase):
+    """HRD-03: `ClaimNextJobTests` above proves the stale-owner/reclaim/late-write logic is
+    correct given a known interleaving on one connection (`TestCase` wraps each test in a single
+    transaction, where two genuinely concurrent claimants can never occur). These use real
+    threads with their own DB connections, synchronized with a `threading.Barrier`, to prove
+    `select_for_update(skip_locked=True)` actually serializes two real concurrent PostgreSQL
+    claimants rather than only looking correct on paper."""
+
+    def test_two_real_threads_racing_for_one_job_never_both_claim_it(self) -> None:
+        job = _make_job()
+        clock = FakeClock(datetime(2026, 9, 12, 10, 0, tzinfo=UTC))
+
+        def claim() -> ReviewCollectionJob | None:
+            return collector.claim_next_job(clock)
+
+        claims, errors = run_concurrently(claim, claim)
+
+        self.assertEqual(errors, [], f"claim_next_job raised under real concurrency: {errors}")
+        winners = [claim for claim in claims if claim is not None]
+        self.assertEqual(len(winners), 1, f"exactly one racer must claim the job, got {claims}")
+        self.assertEqual(winners[0].id, job.id)
+        self.assertEqual(winners[0].fencing_token, 1)
+        current = ReviewCollectionJob.objects.get(pk=job.id)
+        self.assertEqual((current.state, current.fencing_token), ("running", 1))
+
+    def test_two_real_threads_with_two_jobs_each_claim_a_different_one(self) -> None:
+        first_job = _make_job()
+        second_platform = GamePlatform.objects.create(
+            game=first_job.game_platform.game,
+            source_platform_id="p2",
+            source_game_platform_id="gp2",
+            slug="ps5",
+            name="PlayStation 5",
+        )
+        second_job = ReviewCollectionJob.objects.create(
+            daily_candidate=first_job.daily_candidate,
+            game_platform=second_platform,
+            audience="critic",
+        )
+        clock = FakeClock(datetime(2026, 9, 12, 10, 0, tzinfo=UTC))
+
+        def claim() -> ReviewCollectionJob | None:
+            return collector.claim_next_job(clock)
+
+        claims, errors = run_concurrently(claim, claim)
+
+        self.assertEqual(errors, [])
+        assert claims[0] is not None and claims[1] is not None
+        self.assertEqual({claims[0].id, claims[1].id}, {first_job.id, second_job.id})
+        self.assertEqual(
+            ReviewCollectionJob.objects.filter(state="running").count(),
+            2,
+            "no lost/duplicate claim",
         )

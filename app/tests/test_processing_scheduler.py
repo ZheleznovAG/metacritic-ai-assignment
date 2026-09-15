@@ -3,11 +3,13 @@ from decimal import Decimal
 from unittest.mock import patch
 
 from django.db import transaction
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO, ReviewPageDTO
-from processing.lease import LEASE_TTL, acquire_lease
+from processing.lease import LEASE_TTL, LeaseOverlap, acquire_lease
 from processing.models import DailyCandidate, ProcessingLease, ProcessingRun
 from processing.scheduler import current_slot, run_tick, trigger_key_for_slot
+
+from tests.concurrency import run_concurrently
 
 
 def _identity(n: int) -> GameIdentityDTO:
@@ -283,3 +285,49 @@ class AbandonedRunRecoveryTests(TestCase):
         self.assertEqual(result.run.status, "succeeded")
         self.assertEqual(result.run.processed_count, 3)
         self.assertEqual(result.outcome, "skipped_duplicate")
+
+
+class LeaseAcquisitionRaceTests(TransactionTestCase):
+    """HRD-03: the sequential/`FakeClock` coverage above proves the resume/reclaim *logic* is
+    correct given a known interleaving; it never proves the underlying `select_for_update()` lock
+    actually serializes two genuinely concurrent PostgreSQL transactions, since `TestCase` wraps
+    every test in one connection/transaction where real concurrency cannot occur. These use real
+    threads with their own DB connections, synchronized with a `threading.Barrier` so both call
+    `acquire_lease` at (as close as the OS scheduler allows to) the same instant."""
+
+    def test_two_real_threads_racing_for_the_same_lease_resource_never_both_win(self) -> None:
+        clock = FakeClock(datetime(2026, 9, 11, 14, 0, tzinfo=UTC))
+        slot = current_slot(clock)
+        # Pre-create the singleton row so the race under test is purely the acquisition itself
+        # (select_for_update + owner assignment), not get_or_create's own separately-covered
+        # first-ever-row creation race.
+        ProcessingLease.objects.create(resource="ingestion")
+        first_run, second_run = (
+            ProcessingRun.objects.create(
+                trigger_key=f"scheduled:race-{i}", scheduled_slot=slot, status="running"
+            )
+            for i in range(2)
+        )
+
+        def attempt(run: ProcessingRun) -> int | None:
+            try:
+                with transaction.atomic():
+                    return acquire_lease(clock, run)
+            except LeaseOverlap:
+                return None
+
+        def attempt_first() -> int | None:
+            return attempt(first_run)
+
+        def attempt_second() -> int | None:
+            return attempt(second_run)
+
+        tokens, errors = run_concurrently(attempt_first, attempt_second)
+
+        self.assertEqual(errors, [], f"acquire_lease raised under real concurrency: {errors}")
+        winners = [token for token in tokens if token is not None]
+        self.assertEqual(len(winners), 1, f"exactly one racer must win the lease, got {tokens}")
+        lease = ProcessingLease.objects.get(resource="ingestion")
+        self.assertEqual(lease.fencing_token, winners[0])
+        winner_run = first_run if tokens[0] is not None else second_run
+        self.assertEqual(lease.owner_run_id, winner_run.pk)
