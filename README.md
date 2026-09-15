@@ -82,6 +82,8 @@ Set `APP_VERSION` before building: Docker writes it into `app/build-version.txt`
 
 [IMP-05 revalidation](docs/requirements/imp_05_revalidation.md) records public list/filter/card checks and the long-title layout correction. Its [dated browser probes](research/reviews/20260914_imp05/README.md) document reproduction with an isolated PostgreSQL fixture database and separate live preview checks; they are research evidence, excluded from deterministic CI.
 
+[SIM-VER-01](docs/requirements/sim_ver_01_review.md) records the public upgrade to source `408bd62`, migration `catalog.0006`, 292 application tests and 202 public browser checks. Normal live detail ingestion supplied shared genres for Elden Ring and Wo Long; their cards link to each other by saved ID. Other unknown-genre games show an empty state until ordinary ingestion refreshes them. [Similarity browser probes](research/reviews/20260914_sim_ver_01/README.md) reproduce fixture and public navigation checks.
+
 - [Assignment](assignment.md), [requirements and acceptance](docs/requirements/acceptance.md).
 - [Architecture](docs/decisions/0001-minimal-stack-and-architecture.md), [data and processing contracts](docs/design.md).
 - [Published AI baseline](evals/reviews/baseline/README.md): saved synthetic inputs/outputs and original scoring, independently inspectable without another API call.

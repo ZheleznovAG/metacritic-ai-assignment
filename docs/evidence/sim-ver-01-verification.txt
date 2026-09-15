@@ -36,3 +36,14 @@ Selected: genre-jaccard
 CHECK: -m unittest discover -s evals/similarity -p test_*.py
 Ran 14 tests in 0.052s
 OK
+
+Hosted CI: https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34929125538
+Tested SHA: 408bd62bce72b2bfb6bfb53788b50bf9db618b28
+Conclusion: success; completed 2026-09-15 04:32:50 UTC.
+verify	Offline verification on PostgreSQL 16	2026-09-15T04:31:55.1994375Z Success: no issues found in 108 source files
+verify	Offline verification on PostgreSQL 16	2026-09-15T04:32:19.5141181Z Ran 292 tests in 17.120s
+verify	Offline verification on PostgreSQL 16	2026-09-15T04:32:24.6310620Z genre-jaccard mean= 1.0 floor= 1.0 invariants= True accepted= True
+verify	Offline verification on PostgreSQL 16	2026-09-15T04:32:24.6313043Z Selected: genre-jaccard
+INGEST 1 exit 0 game_id=1 created=False platforms_created=0 platforms_updated=5 jobs_created=10 candidate_state=processed {"level": "INFO", "logger": "httpx", "event": "application_log", "status_code": null, "exception_type": null}
+INGEST 13 exit 0 game_id=13 created=False platforms_created=0 platforms_updated=1 jobs_created=2 candidate_state=processed {"level": "INFO", "logger": "httpx", "event": "application_log", "status_code": null, "exception_type": null}
+PASS normal source -> stored genre/provenance for IDs 1 and 13; stable catalog identities; no AI attempts

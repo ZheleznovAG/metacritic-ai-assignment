@@ -1,0 +1,73 @@
+PASS image identity: sha256:d6f6e12fc9098089f70e4f4946c8e9632bfe543a6e3ea6d62ca166d86e18d914, build 408bd62bce72b2bfb6bfb53788b50bf9db618b28
+before_table_counts {"catalog_game": "38", "catalog_gamealias": "38", "catalog_gameplatform": "74", "catalog_sourcefetch": "91", "processing_coreattempt": "40", "processing_dailycandidate": "38", "processing_dailycycle": "1", "processing_processinglease": "1", "processing_processingrun": "2", "reviews_enrichmentturn": "0", "reviews_review": "0", "reviews_reviewcollectionjob": "148", "reviews_reviewcorpus": "0", "reviews_reviewcorpushead": "0", "reviews_reviewcorpusitem": "0", "reviews_reviewobservation": "0", "summaries_reviewsummary": "0", "summaries_summaryattempt": "0", "summaries_summaryclaim": "0", "summaries_summaryjob": "0"}
+PASS backup archive readable; bytes 134973
+Scaffold environment upgraded; original credentials/settings preserved.
+PASS existing environment preserved except build references
+startup_elapsed_seconds 10.98
+PASS image identity: sha256:d6f6e12fc9098089f70e4f4946c8e9632bfe543a6e3ea6d62ca166d86e18d914, build 408bd62bce72b2bfb6bfb53788b50bf9db618b28
+PASS /: 200
+PASS /health/live/: 200
+PASS /health/ready/: 200
+PASS /.env: 404
+PASS /.env.app: 404
+PASS /admin/: 404
+PASS /unknown: 404
+PASS /static/presentation/app.07f615b636aa.css: CSS served
+PASS pre-existing row counts and named volumes preserved
+after_table_counts {"catalog_game": "38", "catalog_gamealias": "38", "catalog_gameplatform": "74", "catalog_sourcefetch": "91", "processing_coreattempt": "40", "processing_dailycandidate": "38", "processing_dailycycle": "1", "processing_processinglease": "1", "processing_processingrun": "2", "reviews_enrichmentturn": "0", "reviews_review": "0", "reviews_reviewcollectionjob": "148", "reviews_reviewcorpus": "0", "reviews_reviewcorpushead": "0", "reviews_reviewcorpusitem": "0", "reviews_reviewobservation": "0", "summaries_reviewsummary": "0", "summaries_summaryattempt": "0", "summaries_summaryclaim": "0", "summaries_summaryjob": "0"}
+catalog.0001_initial
+catalog.0002_remove_gameplatform_last_changed_fetch_and_more
+catalog.0003_alter_sourcefetch_kind
+catalog.0004_sourcefetch_review_page_evidence
+catalog.0005_alter_sourcefetch_outcome
+catalog.0006_game_genres
+processing.0001_initial
+processing.0002_processingrun_remove_dailycycle_exhausted_and_more
+reviews.0001_initial
+reviews.0002_review_collection_and_corpus
+reviews.0003_reviewcollectionjob_created_at
+reviews.0004_review_version_fingerprint
+reviews.0005_enrichmentturn
+reviews.0006_reviewcorpushead
+summaries.0001_initial
+summaries.0002_summaryjob_created_at
+summaries.0003_summaryattempt_fencing_token_and_more
+{"service": "db", "image_id": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94", "health": "healthy", "user": "", "readonly": false, "cap_drop": null, "cap_add": null}
+{"service": "web", "image_id": "sha256:d6f6e12fc9098089f70e4f4946c8e9632bfe543a6e3ea6d62ca166d86e18d914", "health": "healthy", "user": "65532:65532", "readonly": true, "cap_drop": ["ALL"], "cap_add": null}
+{"service": "caddy", "image_id": "sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648", "health": "healthy", "user": "", "readonly": true, "cap_drop": ["ALL"], "cap_add": ["CAP_NET_BIND_SERVICE"]}
+metacritic-imp01-prod-web-1 93.79MiB / 384MiB 0.02%
+metacritic-imp01-prod-db-1 34.01MiB / 512MiB 5.68%
+metacritic-imp01-prod-caddy-1 11.57MiB / 96MiB 0.00%
+DEPLOY PASS
+ Container metacritic-imp01-prod-db-1  Running
+ Container metacritic-imp01-prod-db_setup-1  Recreate
+ Container metacritic-imp01-prod-db_setup-1  Recreated
+ Container metacritic-imp01-prod-migrate-1  Recreate
+ Container metacritic-imp01-prod-migrate-1  Recreated
+ Container metacritic-imp01-prod-web-1  Recreate
+ Container metacritic-imp01-prod-web-1  Recreated
+ Container metacritic-imp01-prod-caddy-1  Running
+ Container metacritic-imp01-prod-db-1  Waiting
+ Container metacritic-imp01-prod-db-1  Healthy
+ Container metacritic-imp01-prod-db_setup-1  Starting
+ Container metacritic-imp01-prod-db_setup-1  Started
+ Container metacritic-imp01-prod-db_setup-1  Waiting
+ Container metacritic-imp01-prod-db_setup-1  Exited
+ Container metacritic-imp01-prod-migrate-1  Starting
+ Container metacritic-imp01-prod-migrate-1  Started
+ Container metacritic-imp01-prod-migrate-1  Waiting
+ Container metacritic-imp01-prod-migrate-1  Exited
+ Container metacritic-imp01-prod-web-1  Starting
+ Container metacritic-imp01-prod-web-1  Started
+ Container metacritic-imp01-prod-web-1  Waiting
+ Container metacritic-imp01-prod-web-1  Healthy
+ Container metacritic-imp01-prod-web-1  Waiting
+ Container metacritic-imp01-prod-caddy-1  Waiting
+ Container metacritic-imp01-prod-migrate-1  Waiting
+ Container metacritic-imp01-prod-db-1  Waiting
+ Container metacritic-imp01-prod-db_setup-1  Waiting
+ Container metacritic-imp01-prod-db_setup-1  Exited
+ Container metacritic-imp01-prod-caddy-1  Healthy
+ Container metacritic-imp01-prod-migrate-1  Exited
+ Container metacritic-imp01-prod-web-1  Healthy
+ Container metacritic-imp01-prod-db-1  Healthy

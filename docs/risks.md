@@ -222,7 +222,7 @@
 - **Митигация:** сначала заморозить quality oracle, затем без его изменения сравнить candidate score по genre/platform/developer как минимум с простым baseline, выбрать простейший проходящий вариант и отдельно проверить hard self/duplicate/external exclusions и UI navigation.
 - **Владелец:** `SPK-02/PLN-02`, затем `SIM-EVAL-01/IMP-06/SIM-VER-01`.
 - **Остаточный риск:** субъективность релевантности на малом synthetic set, широкие общие labels, разные словари жанров и устаревшие/отсутствующие source metadata.
-- **Текущая диспозиция:** `Open — integration/public verification`; [comparison IMP-06](../evals/similarity/comparison_report.json) выбрал genre Jaccard 1.0.0 (mean/floor 1.0, все invariants) и отверг weighted candidate из-за grade-0 результатов. [ADR-0002](decisions/0002-genre-similarity-policy.md) фиксирует метод; DB/card integration и public evidence остаются в `SIM-VER-01`.
+- **Текущая диспозиция:** `Open — monitor metadata/relevance`; [comparison IMP-06](../evals/similarity/comparison_report.json) выбрал genre Jaccard 1.0.0 (mean/floor 1.0, все invariants) и отверг weighted candidate из-за grade-0 результатов. [SIM-VER-01](requirements/sim_ver_01_review.md) подтвердил DB/card integration, ID navigation и публичные рекомендации двух реальных игр; 36 остальных пока имеют unknown genres. Субъективная релевантность, metadata coverage и ёмкость полного каталога остаются ограничениями.
 
 ## 6. Риски доказуемости, поставки и безопасности
 

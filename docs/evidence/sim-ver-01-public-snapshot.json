@@ -1,0 +1,327 @@
+{
+  "games": [
+    {
+      "genres": [
+        "action rpg"
+      ],
+      "genres_last_changed_fetch_id": 92,
+      "id": 1,
+      "similar": [
+        {
+          "id": 13,
+          "policy_id": "genre-jaccard",
+          "policy_version": "1.0.0",
+          "score": 1.0,
+          "shared_genres": [
+            "action rpg"
+          ],
+          "title": "Wo Long: Fallen Dynasty - Complete Edition"
+        }
+      ],
+      "title": "Elden Ring"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 2,
+      "similar": [],
+      "title": "NHL 27"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 3,
+      "similar": [],
+      "title": "Welcome to Elderfield"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 4,
+      "similar": [],
+      "title": "Hot Wheels Infinite Rush"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 5,
+      "similar": [],
+      "title": "Valheim"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 6,
+      "similar": [],
+      "title": "SPRAWL zero"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 7,
+      "similar": [],
+      "title": "Bus Simulator 27"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 8,
+      "similar": [],
+      "title": "Halloween: The Game"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 9,
+      "similar": [],
+      "title": "Onimusha: Way of the Sword"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 10,
+      "similar": [],
+      "title": "NBA 2K27"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 11,
+      "similar": [],
+      "title": "The Blood of Dawnwalker"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 12,
+      "similar": [],
+      "title": "BioEden"
+    },
+    {
+      "genres": [
+        "action rpg"
+      ],
+      "genres_last_changed_fetch_id": 97,
+      "id": 13,
+      "similar": [
+        {
+          "id": 1,
+          "policy_id": "genre-jaccard",
+          "policy_version": "1.0.0",
+          "score": 1.0,
+          "shared_genres": [
+            "action rpg"
+          ],
+          "title": "Elden Ring"
+        }
+      ],
+      "title": "Wo Long: Fallen Dynasty - Complete Edition"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 14,
+      "similar": [],
+      "title": "Orbitals"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 15,
+      "similar": [],
+      "title": "Marsupilami 2 - Salsa Palombia"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 16,
+      "similar": [],
+      "title": "Moonlighter 2: The Endless Vault"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 17,
+      "similar": [],
+      "title": "Crimson Moon"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 18,
+      "similar": [],
+      "title": "Serious Sam: Shatterverse"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 19,
+      "similar": [],
+      "title": "Elden Ring: Tarnished Edition"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 20,
+      "similar": [],
+      "title": "Captain Tsubasa 2: World Fighters"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 21,
+      "similar": [],
+      "title": "Brigandine Abyss"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 22,
+      "similar": [],
+      "title": "Cube Crusaders"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 23,
+      "similar": [],
+      "title": "GRID/"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 24,
+      "similar": [],
+      "title": "Idle Bookstore"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 25,
+      "similar": [],
+      "title": "Meeple Incremental"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 26,
+      "similar": [],
+      "title": "Pibcremental"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 27,
+      "similar": [],
+      "title": "How to Grow Your Sausage"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 28,
+      "similar": [],
+      "title": "Parry Survivor"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 29,
+      "similar": [],
+      "title": "Blood Lily: Killers Can't Sink a Yuri Ship"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 30,
+      "similar": [],
+      "title": "Peacemaker: Bloody Emperor"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 31,
+      "similar": [],
+      "title": "RIG Riot"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 32,
+      "similar": [],
+      "title": "Wait, Cards I Memorized?"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 33,
+      "similar": [],
+      "title": "Don't Stop Cutting The Trees!"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 34,
+      "similar": [],
+      "title": "After Dark Jigsaw"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 35,
+      "similar": [],
+      "title": "RPG System"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 36,
+      "similar": [],
+      "title": "Jumpy vs. Chompy"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 37,
+      "similar": [],
+      "title": "ClayMonsters"
+    },
+    {
+      "genres": [],
+      "genres_last_changed_fetch_id": null,
+      "id": 38,
+      "similar": [],
+      "title": "KasMind"
+    }
+  ],
+  "genre_fetches": [
+    {
+      "completed_at": "2026-09-15 04:55:16.521213+00:00",
+      "http_status": 200,
+      "id": 92,
+      "outcome": "succeeded",
+      "parser_contract_version": "1.1.0",
+      "response_sha256": "854fb117d2b8fa3d4e7b277b84b048c76e6236d76a7f0dd104efd1af877349bb",
+      "url": "https://www.metacritic.com/game/elden-ring/"
+    },
+    {
+      "completed_at": "2026-09-15 04:55:25.625818+00:00",
+      "http_status": 200,
+      "id": 97,
+      "outcome": "succeeded",
+      "parser_contract_version": "1.1.0",
+      "response_sha256": "7f2e0bc35e479c4ddaf1ccc42b3b0c427e52ab213e5d22c8add6c960cf5777d0",
+      "url": "https://www.metacritic.com/game/wo-long-fallen-dynasty-complete-edition/"
+    }
+  ],
+  "healthy": true,
+  "image_id": "sha256:d6f6e12fc9098089f70e4f4946c8e9632bfe543a6e3ea6d62ca166d86e18d914",
+  "query_id": 1,
+  "source_hashes": {
+    "app/catalog/queries.py": "b4aab8543067031ccae20b4557fb44ee95b3bb90c11bababc18bcf7442ada2d5",
+    "app/presentation/static/presentation/app.css": "245e12ad5b52152a08d956c362706a6d58306931de6c084f9afe8097ed178c70",
+    "app/presentation/templates/presentation/game_detail.html": "752e42433bce61dbad5c079d4247c9d86f3f8095e4ce7b42a86fb16a91a1e31b",
+    "app/presentation/views.py": "66374065b72d515a42e5866d5d76036d71a72c939407103b6b301cb639fab34a",
+    "app/similarity/policy.py": "c9cc696960717a5cdd48612ba5514b9993f62e6409c0598d10f3a6d6030c4821"
+  },
+  "source_sha": "408bd62bce72b2bfb6bfb53788b50bf9db618b28"
+}

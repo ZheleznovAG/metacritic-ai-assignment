@@ -32,5 +32,15 @@ source/provider calls and writes reports without access metadata. Never use the
 synthetic seed on the public database. A later changed catalog requires a new
 snapshot rather than treating historical results as permanent expectations.
 
+`public_snapshot.py` is a remote read-only script for `python3 -` over the
+existing trusted SSH connection. It runs inside the web container with the
+SELECT-only role and emits saved genres, provenance, ranking results and source
+hashes. The raw JSON is copied to the snapshot path above before the browser run.
+`refresh_genres.py` preserves the dated, explicitly scoped live ingestion of
+existing IDs 1/13 after their first genre migration. Its preconditions describe
+that historical initial state; it is not a generic repeatable backfill command.
+It uses only the scheduler role and makes no AI calls. The public execution
+occurred on 2026-09-15 after owner-authorized preview upgrade.
+
 See [the review](../../../docs/requirements/sim_ver_01_review.md) for evidence,
 limitations and the exact source/CI/public verification references.

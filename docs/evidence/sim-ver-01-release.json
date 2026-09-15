@@ -1,0 +1,669 @@
+{
+  "task": "SIM-VER-01",
+  "release": {
+    "source_sha": "408bd62bce72b2bfb6bfb53788b50bf9db618b28",
+    "image_id": "sha256:d6f6e12fc9098089f70e4f4946c8e9632bfe543a6e3ea6d62ca166d86e18d914",
+    "release-source.tar": {
+      "sha256": "1b2bc82b8e6d81a4cdbc96a1623014e2ef9557e06028b5f2df3d2a240f164503",
+      "bytes": 8796160
+    },
+    "release-config.tar.gz": {
+      "sha256": "56fa9bbc0e979c69b6832376a42028685a58e83d261cde59d26f1c483693641d",
+      "bytes": 5214
+    },
+    "release-image.tar": {
+      "sha256": "394ea835910c24422b9be3648cde4e0337f573950b53058cc2e41d5199683288",
+      "bytes": 61768704
+    }
+  },
+  "ci": {
+    "url": "https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34929125538",
+    "tested_sha": "408bd62bce72b2bfb6bfb53788b50bf9db618b28",
+    "conclusion": "success"
+  },
+  "before_refresh": {
+    "games": [
+      {
+        "canonical_locator": "/game/elden-ring/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 1,
+        "source_game_id": "1300501979",
+        "title": "Elden Ring"
+      },
+      {
+        "canonical_locator": "/game/nhl-27/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 2,
+        "source_game_id": "1300749162",
+        "title": "NHL 27"
+      },
+      {
+        "canonical_locator": "/game/welcome-to-elderfield/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 3,
+        "source_game_id": "1300652230",
+        "title": "Welcome to Elderfield"
+      },
+      {
+        "canonical_locator": "/game/hot-wheels-infinite-rush/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 4,
+        "source_game_id": "1300741493",
+        "title": "Hot Wheels Infinite Rush"
+      },
+      {
+        "canonical_locator": "/game/valheim/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 5,
+        "source_game_id": "1300491663",
+        "title": "Valheim"
+      },
+      {
+        "canonical_locator": "/game/sprawl-zero/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 6,
+        "source_game_id": "1300724573",
+        "title": "SPRAWL zero"
+      },
+      {
+        "canonical_locator": "/game/bus-simulator-27/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 7,
+        "source_game_id": "1300694412",
+        "title": "Bus Simulator 27"
+      },
+      {
+        "canonical_locator": "/game/halloween-the-game/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 8,
+        "source_game_id": "1300699336",
+        "title": "Halloween: The Game"
+      },
+      {
+        "canonical_locator": "/game/onimusha-way-of-the-sword/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 9,
+        "source_game_id": "1300662655",
+        "title": "Onimusha: Way of the Sword"
+      },
+      {
+        "canonical_locator": "/game/nba-2k27/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 10,
+        "source_game_id": "1300750077",
+        "title": "NBA 2K27"
+      },
+      {
+        "canonical_locator": "/game/the-blood-of-dawnwalker/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 11,
+        "source_game_id": "1300655618",
+        "title": "The Blood of Dawnwalker"
+      },
+      {
+        "canonical_locator": "/game/bioeden/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 12,
+        "source_game_id": "1300741685",
+        "title": "BioEden"
+      },
+      {
+        "canonical_locator": "/game/wo-long-fallen-dynasty-complete-edition/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 13,
+        "source_game_id": "1300742117",
+        "title": "Wo Long: Fallen Dynasty - Complete Edition"
+      },
+      {
+        "canonical_locator": "/game/orbitals/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 14,
+        "source_game_id": "1300714329",
+        "title": "Orbitals"
+      },
+      {
+        "canonical_locator": "/game/marsupilami-2-salsa-palombia/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 15,
+        "source_game_id": "1300737109",
+        "title": "Marsupilami 2 - Salsa Palombia"
+      },
+      {
+        "canonical_locator": "/game/moonlighter-2-the-endless-vault/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 16,
+        "source_game_id": "1300661505",
+        "title": "Moonlighter 2: The Endless Vault"
+      },
+      {
+        "canonical_locator": "/game/crimson-moon/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 17,
+        "source_game_id": "1300722594",
+        "title": "Crimson Moon"
+      },
+      {
+        "canonical_locator": "/game/serious-sam-shatterverse/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 18,
+        "source_game_id": "1300728894",
+        "title": "Serious Sam: Shatterverse"
+      },
+      {
+        "canonical_locator": "/game/elden-ring-tarnished-edition/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 19,
+        "source_game_id": "1300679031",
+        "title": "Elden Ring: Tarnished Edition"
+      },
+      {
+        "canonical_locator": "/game/captain-tsubasa-2-world-fighters/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 20,
+        "source_game_id": "1300721432",
+        "title": "Captain Tsubasa 2: World Fighters"
+      },
+      {
+        "canonical_locator": "/game/brigandine-abyss/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 21,
+        "source_game_id": "1300722469",
+        "title": "Brigandine Abyss"
+      },
+      {
+        "canonical_locator": "/game/cube-crusaders/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 22,
+        "source_game_id": "1300589370",
+        "title": "Cube Crusaders"
+      },
+      {
+        "canonical_locator": "/game/grid-/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 23,
+        "source_game_id": "1300715361",
+        "title": "GRID/"
+      },
+      {
+        "canonical_locator": "/game/idle-bookstore/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 24,
+        "source_game_id": "1300717273",
+        "title": "Idle Bookstore"
+      },
+      {
+        "canonical_locator": "/game/meeple-incremental/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 25,
+        "source_game_id": "1300727021",
+        "title": "Meeple Incremental"
+      },
+      {
+        "canonical_locator": "/game/pibcremental/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 26,
+        "source_game_id": "1300736757",
+        "title": "Pibcremental"
+      },
+      {
+        "canonical_locator": "/game/how-to-grow-your-sausage/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 27,
+        "source_game_id": "1300734118",
+        "title": "How to Grow Your Sausage"
+      },
+      {
+        "canonical_locator": "/game/parry-survivor/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 28,
+        "source_game_id": "1300739552",
+        "title": "Parry Survivor"
+      },
+      {
+        "canonical_locator": "/game/blood-lily-killers-cant-sink-a-yuri-ship/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 29,
+        "source_game_id": "1300697640",
+        "title": "Blood Lily: Killers Can't Sink a Yuri Ship"
+      },
+      {
+        "canonical_locator": "/game/peacemaker-bloody-emperor/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 30,
+        "source_game_id": "1300607991",
+        "title": "Peacemaker: Bloody Emperor"
+      },
+      {
+        "canonical_locator": "/game/rig-riot/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 31,
+        "source_game_id": "1300670555",
+        "title": "RIG Riot"
+      },
+      {
+        "canonical_locator": "/game/wait-cards-i-memorized/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 32,
+        "source_game_id": "1300761124",
+        "title": "Wait, Cards I Memorized?"
+      },
+      {
+        "canonical_locator": "/game/dont-stop-cutting-the-trees/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 33,
+        "source_game_id": "1300759970",
+        "title": "Don't Stop Cutting The Trees!"
+      },
+      {
+        "canonical_locator": "/game/after-dark-jigsaw/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 34,
+        "source_game_id": "1300760636",
+        "title": "After Dark Jigsaw"
+      },
+      {
+        "canonical_locator": "/game/rpg-system/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 35,
+        "source_game_id": "1300756361",
+        "title": "RPG System"
+      },
+      {
+        "canonical_locator": "/game/jumpy-vs-chompy/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 36,
+        "source_game_id": "1300757311",
+        "title": "Jumpy vs. Chompy"
+      },
+      {
+        "canonical_locator": "/game/claymonsters/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 37,
+        "source_game_id": "1300759225",
+        "title": "ClayMonsters"
+      },
+      {
+        "canonical_locator": "/game/kasmind/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 38,
+        "source_game_id": "1300748614",
+        "title": "KasMind"
+      }
+    ],
+    "genre_fetches": [],
+    "summary_attempt_count": 0,
+    "summary_count": 0
+  },
+  "after_refresh": {
+    "games": [
+      {
+        "canonical_locator": "/game/elden-ring/",
+        "genres": [
+          "action rpg"
+        ],
+        "genres_last_changed_fetch_id": 92,
+        "id": 1,
+        "source_game_id": "1300501979",
+        "title": "Elden Ring"
+      },
+      {
+        "canonical_locator": "/game/nhl-27/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 2,
+        "source_game_id": "1300749162",
+        "title": "NHL 27"
+      },
+      {
+        "canonical_locator": "/game/welcome-to-elderfield/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 3,
+        "source_game_id": "1300652230",
+        "title": "Welcome to Elderfield"
+      },
+      {
+        "canonical_locator": "/game/hot-wheels-infinite-rush/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 4,
+        "source_game_id": "1300741493",
+        "title": "Hot Wheels Infinite Rush"
+      },
+      {
+        "canonical_locator": "/game/valheim/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 5,
+        "source_game_id": "1300491663",
+        "title": "Valheim"
+      },
+      {
+        "canonical_locator": "/game/sprawl-zero/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 6,
+        "source_game_id": "1300724573",
+        "title": "SPRAWL zero"
+      },
+      {
+        "canonical_locator": "/game/bus-simulator-27/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 7,
+        "source_game_id": "1300694412",
+        "title": "Bus Simulator 27"
+      },
+      {
+        "canonical_locator": "/game/halloween-the-game/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 8,
+        "source_game_id": "1300699336",
+        "title": "Halloween: The Game"
+      },
+      {
+        "canonical_locator": "/game/onimusha-way-of-the-sword/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 9,
+        "source_game_id": "1300662655",
+        "title": "Onimusha: Way of the Sword"
+      },
+      {
+        "canonical_locator": "/game/nba-2k27/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 10,
+        "source_game_id": "1300750077",
+        "title": "NBA 2K27"
+      },
+      {
+        "canonical_locator": "/game/the-blood-of-dawnwalker/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 11,
+        "source_game_id": "1300655618",
+        "title": "The Blood of Dawnwalker"
+      },
+      {
+        "canonical_locator": "/game/bioeden/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 12,
+        "source_game_id": "1300741685",
+        "title": "BioEden"
+      },
+      {
+        "canonical_locator": "/game/wo-long-fallen-dynasty-complete-edition/",
+        "genres": [
+          "action rpg"
+        ],
+        "genres_last_changed_fetch_id": 97,
+        "id": 13,
+        "source_game_id": "1300742117",
+        "title": "Wo Long: Fallen Dynasty - Complete Edition"
+      },
+      {
+        "canonical_locator": "/game/orbitals/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 14,
+        "source_game_id": "1300714329",
+        "title": "Orbitals"
+      },
+      {
+        "canonical_locator": "/game/marsupilami-2-salsa-palombia/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 15,
+        "source_game_id": "1300737109",
+        "title": "Marsupilami 2 - Salsa Palombia"
+      },
+      {
+        "canonical_locator": "/game/moonlighter-2-the-endless-vault/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 16,
+        "source_game_id": "1300661505",
+        "title": "Moonlighter 2: The Endless Vault"
+      },
+      {
+        "canonical_locator": "/game/crimson-moon/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 17,
+        "source_game_id": "1300722594",
+        "title": "Crimson Moon"
+      },
+      {
+        "canonical_locator": "/game/serious-sam-shatterverse/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 18,
+        "source_game_id": "1300728894",
+        "title": "Serious Sam: Shatterverse"
+      },
+      {
+        "canonical_locator": "/game/elden-ring-tarnished-edition/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 19,
+        "source_game_id": "1300679031",
+        "title": "Elden Ring: Tarnished Edition"
+      },
+      {
+        "canonical_locator": "/game/captain-tsubasa-2-world-fighters/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 20,
+        "source_game_id": "1300721432",
+        "title": "Captain Tsubasa 2: World Fighters"
+      },
+      {
+        "canonical_locator": "/game/brigandine-abyss/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 21,
+        "source_game_id": "1300722469",
+        "title": "Brigandine Abyss"
+      },
+      {
+        "canonical_locator": "/game/cube-crusaders/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 22,
+        "source_game_id": "1300589370",
+        "title": "Cube Crusaders"
+      },
+      {
+        "canonical_locator": "/game/grid-/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 23,
+        "source_game_id": "1300715361",
+        "title": "GRID/"
+      },
+      {
+        "canonical_locator": "/game/idle-bookstore/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 24,
+        "source_game_id": "1300717273",
+        "title": "Idle Bookstore"
+      },
+      {
+        "canonical_locator": "/game/meeple-incremental/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 25,
+        "source_game_id": "1300727021",
+        "title": "Meeple Incremental"
+      },
+      {
+        "canonical_locator": "/game/pibcremental/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 26,
+        "source_game_id": "1300736757",
+        "title": "Pibcremental"
+      },
+      {
+        "canonical_locator": "/game/how-to-grow-your-sausage/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 27,
+        "source_game_id": "1300734118",
+        "title": "How to Grow Your Sausage"
+      },
+      {
+        "canonical_locator": "/game/parry-survivor/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 28,
+        "source_game_id": "1300739552",
+        "title": "Parry Survivor"
+      },
+      {
+        "canonical_locator": "/game/blood-lily-killers-cant-sink-a-yuri-ship/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 29,
+        "source_game_id": "1300697640",
+        "title": "Blood Lily: Killers Can't Sink a Yuri Ship"
+      },
+      {
+        "canonical_locator": "/game/peacemaker-bloody-emperor/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 30,
+        "source_game_id": "1300607991",
+        "title": "Peacemaker: Bloody Emperor"
+      },
+      {
+        "canonical_locator": "/game/rig-riot/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 31,
+        "source_game_id": "1300670555",
+        "title": "RIG Riot"
+      },
+      {
+        "canonical_locator": "/game/wait-cards-i-memorized/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 32,
+        "source_game_id": "1300761124",
+        "title": "Wait, Cards I Memorized?"
+      },
+      {
+        "canonical_locator": "/game/dont-stop-cutting-the-trees/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 33,
+        "source_game_id": "1300759970",
+        "title": "Don't Stop Cutting The Trees!"
+      },
+      {
+        "canonical_locator": "/game/after-dark-jigsaw/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 34,
+        "source_game_id": "1300760636",
+        "title": "After Dark Jigsaw"
+      },
+      {
+        "canonical_locator": "/game/rpg-system/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 35,
+        "source_game_id": "1300756361",
+        "title": "RPG System"
+      },
+      {
+        "canonical_locator": "/game/jumpy-vs-chompy/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 36,
+        "source_game_id": "1300757311",
+        "title": "Jumpy vs. Chompy"
+      },
+      {
+        "canonical_locator": "/game/claymonsters/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 37,
+        "source_game_id": "1300759225",
+        "title": "ClayMonsters"
+      },
+      {
+        "canonical_locator": "/game/kasmind/",
+        "genres": [],
+        "genres_last_changed_fetch_id": null,
+        "id": 38,
+        "source_game_id": "1300748614",
+        "title": "KasMind"
+      }
+    ],
+    "genre_fetches": [
+      {
+        "completed_at": "2026-09-15 04:55:16.521213+00:00",
+        "http_status": 200,
+        "id": 92,
+        "outcome": "succeeded",
+        "parser_contract_version": "1.1.0",
+        "response_sha256": "854fb117d2b8fa3d4e7b277b84b048c76e6236d76a7f0dd104efd1af877349bb",
+        "url": "https://www.metacritic.com/game/elden-ring/"
+      },
+      {
+        "completed_at": "2026-09-15 04:55:25.625818+00:00",
+        "http_status": 200,
+        "id": 97,
+        "outcome": "succeeded",
+        "parser_contract_version": "1.1.0",
+        "response_sha256": "7f2e0bc35e479c4ddaf1ccc42b3b0c427e52ab213e5d22c8add6c960cf5777d0",
+        "url": "https://www.metacritic.com/game/wo-long-fallen-dynasty-complete-edition/"
+      }
+    ],
+    "summary_attempt_count": 0,
+    "summary_count": 0
+  }
+}
