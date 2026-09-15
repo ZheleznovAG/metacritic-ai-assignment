@@ -38,6 +38,8 @@ select = ["E", "F", "I", "UP", "B", "S"]
 "scripts/ingest_game.py" = ["S603"]
 "scripts/run_scheduler.py" = ["S603"]
 "scripts/run_worker.py" = ["S603"]
+"scripts/diagnose.py" = ["S603"]
+"scripts/storage_report.py" = ["S603"]
 "scripts/tests/*" = ["S105", "S106", "S101", "S603"]
 
 [tool.mypy]

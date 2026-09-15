@@ -4,6 +4,7 @@ not be silently overridden by a request-level `timeout=` kwarg."""
 import httpx
 from django.test import SimpleTestCase
 from summaries import groq_adapter
+from summaries.groq_adapter import GroqApiError
 
 
 class RequestTimeoutTests(SimpleTestCase):
@@ -49,3 +50,43 @@ class RequestTimeoutTests(SimpleTestCase):
             (effective["connect"], effective["read"], effective["write"], effective["pool"]),
             (37.5, 37.5, 37.5, 37.5),
         )
+
+
+class ApiKeyRedactionTests(SimpleTestCase):
+    """HRD-05: `GroqApiError`'s message is stored verbatim into `SummaryAttempt`/`candidate.
+    last_error` and can reach bounded logs -- the operator's real credential must never survive
+    into either, even in the worst case where the provider's own error body echoes it back."""
+
+    def test_a_provider_error_body_that_echoes_the_api_key_is_redacted(self) -> None:
+        secret = "gsk_super_secret_credential_value"
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            return httpx.Response(
+                401,
+                json={
+                    "error": {
+                        "type": "invalid_request_error",
+                        "code": "invalid_api_key",
+                        "message": f"Incorrect API key provided: {secret}",
+                    }
+                },
+            )
+
+        client = httpx.Client(transport=httpx.MockTransport(handler))
+        try:
+            with self.assertRaises(GroqApiError) as caught:
+                groq_adapter.generate_summary(
+                    client,
+                    api_key=secret,
+                    base_url=groq_adapter.DEFAULT_BASE_URL,
+                    correlation_id="c1",
+                    audience="critic",
+                    reviews=[{"id": "r1", "text": "Great."}],
+                )
+        finally:
+            client.close()
+
+        message = str(caught.exception)
+        self.assertNotIn(secret, message)
+        self.assertIn("[REDACTED]", message)
+        self.assertIn("invalid_api_key", message)

@@ -69,3 +69,35 @@ class GameDetailViewTests(TestCase):
             source="metacritic", source_game_id="1", canonical_locator="/game/a/", title="A"
         )
         self.assertEqual(self.client.post(f"/games/{game.id}/").status_code, 405)
+
+    def test_untrusted_source_text_is_escaped_not_rendered_as_html(self) -> None:
+        """HRD-05: title/developer/description are untrusted source text (never sanitised or
+        stripped -- ASM/design.md preserve source text verbatim), so the template's own default
+        auto-escaping is the only defense. `grep -rn '|safe\\|mark_safe' app/presentation` finds
+        zero uses anywhere in this app, so this one concrete payload through the template exercises
+        the same, only, mechanism every other rendered field (claim text, genres, platform names)
+        also relies on."""
+        payload = "<script>alert(1)</script>"
+        game = Game.objects.create(
+            source="metacritic",
+            source_game_id="2",
+            canonical_locator="/game/b/",
+            title=f"Evil Game {payload}",
+            developer=payload,
+            description=payload,
+        )
+        GamePlatform.objects.create(
+            game=game,
+            source="metacritic",
+            source_platform_id="p1",
+            source_game_platform_id="r1",
+            slug="pc",
+            name="PC",
+        )
+
+        response = self.client.get(f"/games/{game.id}/")
+
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode()
+        self.assertNotIn(payload, content)
+        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", content)
