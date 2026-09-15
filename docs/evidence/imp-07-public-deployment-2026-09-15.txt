@@ -1,0 +1,65 @@
+before_table_counts {"catalog_game": "38", "catalog_gamealias": "38", "catalog_gameplatform": "74", "catalog_sourcefetch": "97", "processing_coreattempt": "40", "processing_dailycandidate": "40", "processing_dailycycle": "2", "processing_processinglease": "1", "processing_processingrun": "2", "reviews_enrichmentturn": "0", "reviews_review": "0", "reviews_reviewcollectionjob": "160", "reviews_reviewcorpus": "0", "reviews_reviewcorpushead": "0", "reviews_reviewcorpusitem": "0", "reviews_reviewobservation": "0", "summaries_reviewsummary": "0", "summaries_summaryattempt": "0", "summaries_summaryclaim": "0", "summaries_summaryjob": "0"}
+PASS backup archive readable; bytes 136748
+PASS existing environment preserved except build references
+PASS image identity: sha256:1a066e03c051b845429db8e36a2155dbc8ac80a91d40d723b47492460f67808d, build 37b44fb924b6c2e56159e38ce0b854c55d11cc3f
+ Container metacritic-imp01-prod-db-1  Running
+ Container metacritic-imp01-prod-db_setup-1  Recreate
+ Container metacritic-imp01-prod-db_setup-1  Recreated
+ Container metacritic-imp01-prod-migrate-1  Recreate
+ Container metacritic-imp01-prod-migrate-1  Recreated
+ Container metacritic-imp01-prod-web-1  Recreate
+ Container metacritic-imp01-prod-web-1  Recreated
+ Container metacritic-imp01-prod-caddy-1  Running
+ Container metacritic-imp01-prod-db-1  Waiting
+ Container metacritic-imp01-prod-db-1  Healthy
+ Container metacritic-imp01-prod-db_setup-1  Starting
+ Container metacritic-imp01-prod-db_setup-1  Started
+ Container metacritic-imp01-prod-db_setup-1  Waiting
+ Container metacritic-imp01-prod-db_setup-1  Exited
+ Container metacritic-imp01-prod-migrate-1  Starting
+ Container metacritic-imp01-prod-migrate-1  Started
+ Container metacritic-imp01-prod-migrate-1  Waiting
+ Container metacritic-imp01-prod-migrate-1  Exited
+ Container metacritic-imp01-prod-web-1  Starting
+ Container metacritic-imp01-prod-web-1  Started
+ Container metacritic-imp01-prod-web-1  Waiting
+ Container metacritic-imp01-prod-web-1  Healthy
+ Container metacritic-imp01-prod-db-1  Waiting
+ Container metacritic-imp01-prod-db_setup-1  Waiting
+ Container metacritic-imp01-prod-web-1  Waiting
+ Container metacritic-imp01-prod-caddy-1  Waiting
+ Container metacritic-imp01-prod-migrate-1  Waiting
+ Container metacritic-imp01-prod-caddy-1  Healthy
+ Container metacritic-imp01-prod-db_setup-1  Exited
+ Container metacritic-imp01-prod-db-1  Healthy
+ Container metacritic-imp01-prod-web-1  Healthy
+ Container metacritic-imp01-prod-migrate-1  Exited
+startup_elapsed_seconds 11.08
+PASS image identity: sha256:1a066e03c051b845429db8e36a2155dbc8ac80a91d40d723b47492460f67808d, build 37b44fb924b6c2e56159e38ce0b854c55d11cc3f
+PASS /: 200
+PASS /health/live/: 200
+PASS /health/ready/: 200
+PASS /.env: 404
+PASS /.env.app: 404
+PASS /admin/: 404
+PASS /unknown: 404
+PASS /static/presentation/app.07f615b636aa.css: CSS served
+Traceback (most recent call last):
+  File "/home/deploy/metacritic-ai-assignment-imp01/scripts/deploy_release.py", line 102, in <module>
+    assert volumes() == old_volumes
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+NOTE (added after manual follow-up, not part of the script's own output):
+Row-count assertion at line 90 (assert all(after_rows.get(k) == v for k, v in old_rows.items()))
+passed silently before this traceback, so pre-existing rows were confirmed preserved.
+The volumes() mismatch below was verified separately to be a script artifact, not a
+real state problem: `db` and `caddy` were never recreated in this cycle (compose printed
+"Running" for both, never "Recreate"; `docker inspect --format '{{.State.StartedAt}}'`
+showed both containers' StartedAt unchanged at 2026-09-09T03:51:2x/39Z, i.e. the exact
+same container instances before and after `up`), and a direct
+`docker volume ls --filter name=metacritic-imp01-prod` after deployment showed exactly
+the three expected named volumes (metacritic-imp01-prod_caddy_config,
+metacritic-imp01-prod_caddy_data, metacritic-imp01-prod_postgres_data), matching every
+prior deployment cycle. External smoke from a separate machine (not through the SSH
+tunnel) against http://<production-ip>:18081 also passed all 8 checks afterward.

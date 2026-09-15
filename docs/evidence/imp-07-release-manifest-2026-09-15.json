@@ -1,0 +1,10 @@
+{
+  "candidate_sha": "37b44fb924b6c2e56159e38ce0b854c55d11cc3f",
+  "image_id": "sha256:1a066e03c051b845429db8e36a2155dbc8ac80a91d40d723b47492460f67808d",
+  "hosted_ci_run": "https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34969484170",
+  "image_archive_sha256": "4a67ca81dba596c376f73cdb3430934aa7913469e38cb7ff019294ea065f1e60",
+  "config_archive_sha256": "131fe70bd00eaeab4510d739ee83e1a1598ce0acb22aaec37cd6441a88b765d9",
+  "vds_backup": "backups/before-37b44fb-20260915T124135Z",
+  "external_smoke_host": "http://<production-ip>:18081",
+  "old_web_image_id": "sha256:d6f6e12fc9098089f70e4f4946c8e9632bfe543a6e3ea6d62ca166d86e18d914"
+}

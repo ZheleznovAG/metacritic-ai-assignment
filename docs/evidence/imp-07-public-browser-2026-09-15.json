@@ -1,0 +1,16 @@
+{
+  "index_title_count": 39,
+  "card_path": "/games/21/",
+  "critics_text": "Critics\nLikes\nAddictive mix of tactical RPG combat and grand strategy with varied monsters and rewarding content\nCombines old formula with new world and features that satisfy fans of the genre\nStep forward for the franchise with improved narrative and new battlefield mechanics\nDislikes\nPoor visuals, unfair mechanics, and a monotonous campaign make it a disappointing return\nDated visuals, lack of story, and mundane repetition hinder the experience\nCumbersome interface, uneven difficulty, and slow combat weigh down the depth\n\nModel: openai/gpt-oss-20b · Generated: 2026-09-15T13:44:55Z · 10 of 25 fetched (25 reported) reviews used.",
+  "users_text": "Users\nLikes\nAmazing game for tactical fans who want to conquer the world with a personalized army of monsters\nA new entry in the Brigandine series\nDislikes\nAI gives unfair advantages every turn, making the experience extremely unfair\nStory structure fails to invest players and anime scenes are low-budget\nUnit evolution and classic units removed, AI regressed, and map is ridiculously small\n\nModel: openai/gpt-oss-20b · Generated: 2026-09-15T13:45:05Z · 5 of 5 fetched (5 reported) reviews used.",
+  "provenance_count": 2,
+  "provenance_texts": [
+    "Model: openai/gpt-oss-20b · Generated: 2026-09-15T13:44:55Z · 10 of 25 fetched (25 reported) reviews used.",
+    "Model: openai/gpt-oss-20b · Generated: 2026-09-15T13:45:05Z · 5 of 5 fetched (5 reported) reviews used."
+  ],
+  "pending_count": 0,
+  "insufficient_count": 0,
+  "similar_games_count": 0,
+  "mobile_no_horizontal_scroll": true,
+  "page_errors": []
+}

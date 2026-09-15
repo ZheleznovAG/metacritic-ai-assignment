@@ -1,0 +1,2 @@
+SCHEDULER_TICK exit 0
+run_id=3 trigger_key=scheduled:2026-09-15T12:00:00Z outcome=succeeded selected=19 processed=19 failed=0
