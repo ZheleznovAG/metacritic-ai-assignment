@@ -23,10 +23,12 @@ python3 scripts/init_env.py --production --host <public-host> --version <build-v
 cp .env.worker.example .env.worker && chmod 0600 .env.worker  # then set its real GROQ_API_KEY
 python3 scripts/verify_image.py --image metacritic-imp01:<build-version> --image-id sha256:<recorded-full-image-id> --version <build-version>
 docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml config --quiet
-docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml --profile app up -d --wait --wait-timeout 120
+docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml --profile app up -d
 python3 scripts/verify_image.py --image metacritic-imp01:<build-version> --image-id sha256:<recorded-full-image-id> --version <build-version> --container metacritic-imp01-prod-web-1
 python3 scripts/smoke.py http://127.0.0.1:18081 --version <build-version>
 ```
+
+Do not add `--wait` to that `up`: `scheduler`/`worker` disable their inherited HTTP healthcheck (it doesn't apply to a non-HTTP process), and Docker Compose 2.40 (confirmed on the VDS during `PUB-01`'s first upgrade; Compose v5 locally does not have this problem) refuses to `--wait` on a container with a disabled healthcheck at all ("has no healthcheck configured"), aborting before ever reaching the verification steps below even though the containers themselves start correctly. `verify_image.py`'s own `--container` check already waits out `web`'s real healthcheck; confirm `scheduler`/`worker` separately with `docker compose -p metacritic-imp01-prod ps` (expect `running`, no health column since none is configured) before moving on.
 
 `.env.worker` is the *only* file the `worker` service reads Groq credentials from; `.env.app` never carries them, same discipline as the operator's own `.env`. `worker` starts and runs review-collection work even without this file (its own `env_file:` entry is optional) -- summary generation stays idle ("GROQ_API_KEY not set") until it exists, so a missed step here degrades a feature silently rather than failing startup; treat it as a required step, not an optional one.
 

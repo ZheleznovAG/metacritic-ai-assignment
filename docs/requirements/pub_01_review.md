@@ -113,9 +113,75 @@ An independent `/code-review high` pass found three items, all fixed:
 `APP_IMAGE`, as the production overlay requires one explicitly). The full
 `scripts/check.py` suite (339 application tests, ruff format/lint, strict
 mypy, migration drift, static build, all offline evals/verifiers) passes
-unchanged -- this cycle touches no Python source. This closes the
-`compose.yaml`/secrets-design half of `PUB-01`; the actual VDS deployment
-(building and shipping the versioned image, creating `.env.worker` on the
-host, verifying the upgrade preserves existing data, DNS/TLS) is a
-separate, live operational action recorded in its own evidence once
-performed.
+unchanged -- this cycle touches no Python source.
+
+## Live VDS deployment
+
+Owner unblocked VDS SSH access mid-cycle. Deployed source `1fc3fda`
+(this cycle's own commit) as an upgrade of the running `37b44fb`
+preview, following `deploy/README.md`'s upgrade procedure with a
+`deploy_release.py` script matching the pattern of every prior live
+deployment (`IMP-02/05/07`, `SIM-VER-01`):
+
+- Pre-flight: confirmed no leftover manual `run_scheduler.py`/
+  `run_worker.py` processes, confirmed the running `web` image matched
+  the audit's recorded `sha256:1a066e...`, snapshotted every table's row
+  count and both named-volume sets before touching anything.
+- Backup: `configuration.tar.gz` + a real `pg_dump -Fc` (verified
+  readable via `pg_restore --list` before proceeding), saved to
+  `backups/before-1fc3fda-<timestamp>/`, joining the existing backup
+  history from every prior release.
+- Build/transfer: built `metacritic-imp01:1fc3fda...` locally
+  (`sha256:5413391...`), exported and SHA-256-verified both the image and
+  configuration archives after SCP transfer, before extraction/import.
+- `.env.worker` created directly on the VDS (mode 600) from the
+  operator's local Groq credential, via a piped SSH command whose content
+  was never printed to any log or terminal output; confirmed present
+  with the right permissions without ever reading its contents back.
+- **Found and fixed one real deploy-tooling bug during this run:**
+  `docker compose ... up -d --wait --wait-timeout 180` aborted with
+  `container ... has no healthcheck configured` for `worker` -- the VDS
+  runs Compose 2.40.3 (local dev uses v5.4.0), and that older version
+  refuses to `--wait` on a container with an explicitly disabled
+  healthcheck at all, unlike the newer one. The containers themselves had
+  already started correctly; only the wrapper script's `check=True` on
+  that one command halted before reaching the verification steps. Diagnosed
+  via `docker compose ps` showing every container `running`/`Exited (0)`
+  as expected, then completed the remaining steps manually. Fixed
+  `deploy/README.md`'s own documented command to drop `--wait` for this
+  profile and check `scheduler`/`worker` separately via `ps`, so the next
+  deploy doesn't hit the same wall.
+- Post-deploy verification, all passing: `verify_image.py --container
+  metacritic-imp01-prod-web-1` (image identity), `smoke.py` (9/9 checks:
+  `/`, both health endpoints, `.env`/`.env.app`/`/admin/`/unknown paths
+  all 404, static CSS served), every pre-existing table's row count
+  preserved (`catalog_game` 39, `reviews_review` 12409, etc. -- all present
+  and non-decreasing), both named-volume sets unchanged, and a genuinely
+  external HTTP request (not an SSH tunnel) to the public port returning
+  `200` for `/` and `/health/live/`.
+- **Real autonomous activity within minutes of startup, with zero operator
+  intervention:** the scheduler's own log shows `run_id=4
+  trigger_key=scheduled:2026-09-15T19:00:00Z outcome=succeeded
+  selected=20 processed=20 failed=0` for the live 19:00 UTC hour slot,
+  followed by correct `skipped_duplicate` on subsequent ticks within the
+  same hour (real idempotency, not simulated). The worker's log shows real
+  review-collection jobs against newly-discovered games (`review_job_id=122
+  ... state=complete page=1 fetched=1`, several correctly-terminal
+  `state=empty` routes) and correctly honest `insufficient_data` summary
+  states for games with too few reviews -- no fabrication, no crash. Table
+  counts grew during the run itself (`catalog_game` 39 -> 59,
+  `summaries_summaryjob` 2 -> 9, `summaries_reviewsummary` 2 -> 8) with
+  zero new `summaries_summaryattempt` rows, meaning zero new Groq calls
+  were spent in this verification window -- the newly-discovered games'
+  sparse review counts were correctly and cheaply resolved as
+  `insufficient_data` without ever needing a provider call.
+- Left running, supervised, in production: this is the first time in the
+  project's history that scheduler and worker keep processing without an
+  operator SSHing in for each tick.
+
+This closes `PUB-01`'s scheduler/worker supervision and versioned-deploy
+scope. Not in this cycle's scope, deferred to `PUB-02`/`PUB-03` as
+`implementation_plan.md` already specifies: TLS/DNS (still the accepted
+HTTP-only preview), host reboot persistence, two consecutive full
+application-hour windows as sustained evidence (one is shown above), and
+external unauthorized-user smoke.
