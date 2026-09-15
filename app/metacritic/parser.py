@@ -121,15 +121,26 @@ def _parse_platform(payload: list[object], record: dict[str, object]) -> GamePla
         # source_game_platform_id is a mandatory identity assertion (SPK-03), not an optional
         # field: an empty placeholder here would collide across platforms and corrupt identity.
         raise MetacriticParseError("Platform record is missing relatedGameId")
+    if "criticScoreSummary" not in record:
+        raise MetacriticParseError("Platform record has no criticScoreSummary key")
     critic_summary = _resolve(payload, record.get("criticScoreSummary"))
-    metascore: int | None = None
+    if not isinstance(critic_summary, dict):
+        # Every live-observed platform record carries this as a dict, with `score` itself null
+        # for a genuine "tbd" Metascore (research/feasibility/metacritic-contract.md). A record
+        # where the container itself is absent/malformed is degraded markup, not a natural
+        # absence, and must not be silently reported the same way as a real tbd score. The two
+        # messages are kept distinct (key absent vs. wrong shape) so `candidate.last_error` tells
+        # an on-call engineer which one actually happened.
+        raise MetacriticParseError(
+            f"Platform record's criticScoreSummary did not resolve to an object "
+            f"(got {type(critic_summary).__name__})"
+        )
+    raw_score = _resolve(payload, critic_summary.get("score"))
+    metascore = validate_metascore(raw_score)
     critic_path: str | None = None
-    if isinstance(critic_summary, dict):
-        raw_score = _resolve(payload, critic_summary.get("score"))
-        metascore = validate_metascore(raw_score)
-        raw_url = _resolve(payload, critic_summary.get("url"))
-        if isinstance(raw_url, str) and raw_url:
-            critic_path = raw_url
+    raw_url = _resolve(payload, critic_summary.get("url"))
+    if isinstance(raw_url, str) and raw_url:
+        critic_path = raw_url
     user_path = None
     if critic_path and "critic-reviews" in critic_path:
         user_path = critic_path.replace("critic-reviews", "user-reviews")
@@ -229,9 +240,14 @@ def parse_game_detail(html: str, expected_url: str) -> GameDTO:
     if not platforms:
         raise MetacriticParseError("Game has zero resolvable platforms")
 
-    lead_userscore = _extract_user_score(
-        _find_all_by_attr(soup, "data-testid", "global-score-wrapper")
-    )
+    lead_score_containers = _find_all_by_attr(soup, "data-testid", "global-score-wrapper")
+    if not lead_score_containers:
+        # Every live-observed page carries this container even for a genuine "tbd" Userscore
+        # (the widget renders with no matching "User score ... out of 10" title inside it, see
+        # LiveContractStrayUserScoreWidgetTests). Its total absence is degraded markup, not a
+        # natural absence, and must not be silently reported the same way as a real tbd score.
+        raise MetacriticParseError("Missing the lead platform's userscore widget container")
+    lead_userscore = _extract_user_score(lead_score_containers)
     if lead_userscore is not None:
         platforms = [
             p if not p.is_lead_platform else _with_userscore(p, lead_userscore) for p in platforms

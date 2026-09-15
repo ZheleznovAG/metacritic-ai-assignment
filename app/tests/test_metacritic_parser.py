@@ -1,4 +1,5 @@
 import json
+from collections.abc import Callable
 from decimal import Decimal
 from pathlib import Path
 
@@ -132,6 +133,19 @@ class LiveContractStrayUserScoreWidgetTests(SimpleTestCase):
         self.assertIsNone(result)
 
 
+def _mutate_nuxt_payload(html: str, mutate: Callable[[list[object]], None]) -> str:
+    """Round-trips the real `__NUXT_DATA__` payload embedded in `html` through a mutator, for
+    tests that need one specific corrupted field on top of an otherwise fully real, live-observed
+    page -- rather than a hand-built minimal payload that would not prove anything about how the
+    real, positionally-indexed page shape degrades."""
+    marker = 'id="__NUXT_DATA__">'
+    start = html.index(marker) + len(marker)
+    end = html.index("</script>", start)
+    payload = json.loads(html[start:end])
+    mutate(payload)
+    return html[:start] + json.dumps(payload) + html[end:]
+
+
 class ParseGameDetailFailureTests(SimpleTestCase):
     def test_structurally_corrupted_payload_raises_instead_of_returning_partial_data(self) -> None:
         with self.assertRaises(MetacriticParseError):
@@ -146,6 +160,36 @@ class ParseGameDetailFailureTests(SimpleTestCase):
         other_url = "https://www.metacritic.com/game/some-other-game/"
         with self.assertRaises(MetacriticParseError):
             parse_game_detail(_read("elden_ring_detail.min.html"), other_url)
+
+    def test_malformed_criticscoresummary_raises_instead_of_reporting_a_natural_tbd(self) -> None:
+        """HRD-01 / IMP-02's documented known limitation: every live-observed platform record
+        carries `criticScoreSummary` as a dict, with only its `score` field ever null for a
+        genuine tbd Metascore. A record where the container itself resolves to something else
+        (a future markup/schema change) must be diagnosed, not silently reported as tbd."""
+
+        def corrupt(payload: list[object]) -> None:
+            for record in payload:
+                if isinstance(record, dict) and "relatedGameId" in record and "slug" in record:
+                    record["criticScoreSummary"] = record["name"]  # points at a string, not a dict
+                    return
+            raise AssertionError("fixture has no platform record to corrupt")
+
+        html = _mutate_nuxt_payload(_read("elden_ring_detail.min.html"), corrupt)
+        with self.assertRaises(MetacriticParseError):
+            parse_game_detail(html, DETAIL_URL)
+
+    def test_missing_lead_userscore_widget_container_raises_instead_of_reporting_a_natural_tbd(
+        self,
+    ) -> None:
+        """HRD-01 / IMP-02's documented known limitation, userscore side: every live-observed
+        page carries the `global-score-wrapper` container even for a genuine tbd Userscore (see
+        `LiveContractStrayUserScoreWidgetTests`). Its total absence (a future markup change) must
+        be diagnosed, not silently reported the same way as a real tbd score."""
+        html = _read("elden_ring_detail.min.html").replace(
+            'data-testid="global-score-wrapper"', 'data-testid="global-score-wrapper-renamed"'
+        )
+        with self.assertRaises(MetacriticParseError):
+            parse_game_detail(html, DETAIL_URL)
 
 
 class FindGameRecordTests(SimpleTestCase):
