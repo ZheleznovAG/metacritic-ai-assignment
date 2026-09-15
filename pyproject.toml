@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ruff>=0.12,<1", "mypy>=1.15,<2", "django-stubs>=5.2,<5.3"]
+dev = ["ruff>=0.12,<1", "mypy>=1.15,<2", "django-stubs>=5.2,<5.3", "playwright==1.62.0"]
 
 [tool.uv]
 package = false

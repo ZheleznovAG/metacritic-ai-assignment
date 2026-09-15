@@ -56,8 +56,8 @@ def main() -> None:
             expected = "ready" if path.endswith("ready/") else "ok"
             if data != {"status": expected, "version": arguments.version}:
                 raise SystemExit(f"Smoke failed: {path}, unexpected payload")
-        if path == "/" and b"not implemented yet" not in body:
-            raise SystemExit("Smoke failed: scaffold scope label missing")
+        if path == "/" and b'class="game-list__controls"' not in body:
+            raise SystemExit("Smoke failed: game list search/filter form missing")
         if path == "/":
             stylesheets.feed(body.decode("utf-8"))
         if response.getheader("X-Content-Type-Options") != "nosniff":

@@ -1,0 +1,202 @@
+        "INV-DETERMINISM": "pass",
+        "INV-CONTENT-INDEPENDENCE": "pass",
+        "INV-NO-FABRICATION": "pass",
+        "INV-MEANINGFUL-COUNT": "pass"
+      },
+      "findings": {
+        "INV-COMPLETE": [],
+        "INV-CAP": [],
+        "INV-DEDUP": [],
+        "INV-PAGE-COVERAGE": [],
+        "INV-DETERMINISM": [],
+        "INV-CONTENT-INDEPENDENCE": [],
+        "INV-NO-FABRICATION": [],
+        "INV-MEANINGFUL-COUNT": []
+      }
+    },
+    {
+      "case_id": "incomplete_collection_must_be_rejected",
+      "invariants": {
+        "INV-COMPLETE": "pass",
+        "INV-CAP": "n/a",
+        "INV-DEDUP": "n/a",
+        "INV-PAGE-COVERAGE": "n/a",
+        "INV-DETERMINISM": "n/a",
+        "INV-CONTENT-INDEPENDENCE": "n/a",
+        "INV-NO-FABRICATION": "n/a",
+        "INV-MEANINGFUL-COUNT": "n/a"
+      },
+      "findings": {
+        "INV-COMPLETE": [],
+        "INV-CAP": [],
+        "INV-DEDUP": [],
+        "INV-PAGE-COVERAGE": [],
+        "INV-DETERMINISM": [],
+        "INV-CONTENT-INDEPENDENCE": [],
+        "INV-NO-FABRICATION": [],
+        "INV-MEANINGFUL-COUNT": []
+      }
+    },
+    {
+      "case_id": "cross_platform_duplicate_review",
+      "selected_identity_keys": [
+        "SV-C-P5-6",
+        "SV-C-XS-5",
+        "SV-C-P5-2",
+        "SV-C-XS-3",
+        "SV-C-P5-1",
+        "SV-C-XS-2",
+        "SV-C-P5-4",
+        "SV-C-XS-1",
+        "SV-C-P5-5",
+        "SV-C-XS-6"
+      ],
+      "invariants": {
+        "INV-COMPLETE": "n/a",
+        "INV-CAP": "pass",
+        "INV-DEDUP": "pass",
+        "INV-PAGE-COVERAGE": "n/a",
+        "INV-DETERMINISM": "pass",
+        "INV-CONTENT-INDEPENDENCE": "pass",
+        "INV-NO-FABRICATION": "pass",
+        "INV-MEANINGFUL-COUNT": "pass"
+      },
+      "findings": {
+        "INV-COMPLETE": [],
+        "INV-CAP": [],
+        "INV-DEDUP": [],
+        "INV-PAGE-COVERAGE": [],
+        "INV-DETERMINISM": [],
+        "INV-CONTENT-INDEPENDENCE": [],
+        "INV-NO-FABRICATION": [],
+        "INV-MEANINGFUL-COUNT": []
+      }
+    },
+    {
+      "case_id": "sentiment_skew_and_rare_topic",
+      "selected_identity_keys": [
+        "MH-U-SW-RARE",
+        "MH-U-SW-NEG1",
+        "MH-U-SW-P09",
+        "MH-U-SW-P10",
+        "MH-U-SW-P06",
+        "MH-U-SW-P01",
+        "MH-U-SW-P08",
+        "MH-U-SW-P05",
+        "MH-U-SW-P11",
+        "MH-U-SW-P13"
+      ],
+      "invariants": {
+        "INV-COMPLETE": "n/a",
+        "INV-CAP": "pass",
+        "INV-DEDUP": "pass",
+        "INV-PAGE-COVERAGE": "n/a",
+        "INV-DETERMINISM": "pass",
+        "INV-CONTENT-INDEPENDENCE": "pass",
+        "INV-NO-FABRICATION": "pass",
+        "INV-MEANINGFUL-COUNT": "pass"
+      },
+      "findings": {
+        "INV-COMPLETE": [],
+        "INV-CAP": [],
+        "INV-DEDUP": [],
+        "INV-PAGE-COVERAGE": [],
+        "INV-DETERMINISM": [],
+        "INV-CONTENT-INDEPENDENCE": [],
+        "INV-NO-FABRICATION": [],
+        "INV-MEANINGFUL-COUNT": []
+      }
+    },
+    {
+      "case_id": "long_and_multilingual_mixed",
+      "selected_identity_keys": [
+        "CA-U-PC-RU",
+        "CA-U-PC-LONG",
+        "CA-U-PC-PT",
+        "CA-U-PC-FR",
+        "CA-U-PC-EN2",
+        "CA-U-PC-JA",
+        "CA-U-PC-ES",
+        "CA-U-PC-DE"
+      ],
+      "invariants": {
+        "INV-COMPLETE": "n/a",
+        "INV-CAP": "pass",
+        "INV-DEDUP": "pass",
+        "INV-PAGE-COVERAGE": "n/a",
+        "INV-DETERMINISM": "pass",
+        "INV-CONTENT-INDEPENDENCE": "n/a",
+        "INV-NO-FABRICATION": "pass",
+        "INV-MEANINGFUL-COUNT": "pass"
+      },
+      "findings": {
+        "INV-COMPLETE": [],
+        "INV-CAP": [],
+        "INV-DEDUP": [],
+        "INV-PAGE-COVERAGE": [],
+        "INV-DETERMINISM": [],
+        "INV-CONTENT-INDEPENDENCE": [],
+        "INV-NO-FABRICATION": [],
+        "INV-MEANINGFUL-COUNT": []
+      }
+    },
+    {
+      "case_id": "content_independence_mutation",
+      "selected_identity_keys": [
+        "VS-C-PC-14",
+        "VS-C-PC-04",
+        "VS-C-PC-06",
+        "VS-C-PC-07",
+        "VS-C-PC-13",
+        "VS-C-PC-11",
+        "VS-C-PC-03",
+        "VS-C-PC-01",
+        "VS-C-PC-08",
+        "VS-C-PC-12"
+      ],
+      "invariants": {
+        "INV-COMPLETE": "n/a",
+        "INV-CAP": "pass",
+        "INV-DEDUP": "pass",
+        "INV-PAGE-COVERAGE": "n/a",
+        "INV-DETERMINISM": "pass",
+        "INV-CONTENT-INDEPENDENCE": "pass",
+        "INV-NO-FABRICATION": "pass",
+        "INV-MEANINGFUL-COUNT": "pass"
+      },
+      "findings": {
+        "INV-COMPLETE": [],
+        "INV-CAP": [],
+        "INV-DEDUP": [],
+        "INV-PAGE-COVERAGE": [],
+        "INV-DETERMINISM": [],
+        "INV-CONTENT-INDEPENDENCE": [],
+        "INV-NO-FABRICATION": [],
+        "INV-MEANINGFUL-COUNT": []
+      }
+    }
+  ],
+  "all_pass": true,
+  "failed": []
+}
+
+all_pass=True failed=[]
+PASS: the real candidate passes all 8 invariants on all applicable cases.
+CHECK: evals/similarity/score_similarity.py --verify
+PASS SIM-EVAL-01 integrity: 14 cases; version 1.0.0; owner acceptance is recorded only in action_plan.md
+CHECK: evals/similarity/compare.py
+weighted-metadata mean= 0.9985716844686247 floor= 0.9871451602176229 invariants= False accepted= False
+  action_role_playing ['INV-NONMATCH']
+  racing ['INV-NONMATCH']
+  developer_trap ['INV-NONMATCH']
+  normalized_metadata ['INV-NONMATCH']
+genre-jaccard mean= 1.0 floor= 1.0 invariants= True accepted= True
+Selected: genre-jaccard
+CHECK: -m unittest discover -s evals/similarity -p test_*.py
+..............
+----------------------------------------------------------------------
+Ran 14 tests in 0.035s
+
+OK
+
+[exited with code 0]

@@ -68,7 +68,10 @@ class SmokeTests(unittest.TestCase):
                     status = "ready" if self.path.endswith("ready/") else "ok"
                     return json.dumps({"status": status, "version": "test"}).encode()
                 if self.path == "/":
-                    return b'not implemented yet<link rel="stylesheet" href="/static/app.abc.css">'
+                    return (
+                        b'<form class="game-list__controls">'
+                        b'<link rel="stylesheet" href="/static/app.abc.css">'
+                    )
                 return b"body { color: black; }"
 
             def getheader(self, name, default=None):

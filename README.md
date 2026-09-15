@@ -14,6 +14,7 @@ From a fresh checkout in PowerShell:
 $env:UV_PROJECT_ENVIRONMENT = '.venv-app'
 python -m uv sync --locked --python 3.12
 .\.venv-app\Scripts\python.exe -c "import tiktoken; tiktoken.get_encoding('o200k_harmony')"
+.\.venv-app\Scripts\python.exe -m playwright install chromium
 .\.venv-app\Scripts\python.exe scripts/init_env.py
 docker compose --env-file .env.app up -d --wait db
 .\.venv-app\Scripts\python.exe scripts/provision_db.py
@@ -43,6 +44,24 @@ docker compose --env-file .env.app --profile app up -d --wait
 ```
 
 The first command runs format/lint/types, Django checks, migration drift, static build, PostgreSQL permission/integration tests, deployment-tool tests and offline research evidence checks. Run local/container suites sequentially: they create/drop `test_metacritic_checks`. The permission test creates and removes its own probe table in the development application's database. Never run tests against production. Formatting changes: `.\.venv-app\Scripts\python.exe -m ruff format app scripts`; lint-only: `.\.venv-app\Scripts\python.exe -m ruff check app scripts`; type-only: set `PYTHONPATH=app`, then `python -m mypy` in the application environment.
+
+The same suite includes the `IMP-07` Playwright journey in `app/tests/test_e2e.py`.
+It starts a real scheduler tick on fake external catalog data, collects paginated
+reviews, creates both summaries through the real provider adapter with a mock HTTP
+transport, then uses Chromium against a live Django server and the disposable
+PostgreSQL test database. It checks search, platform-dependent Metascore ordering,
+the full card, audience separation, summary provenance, similar-game navigation,
+return context and empty results. It never seeds ready-made summaries or calls
+Metacritic/AI. Browser requests are restricted to the local server and one supplied
+cover fixture. Playwright is pinned in the dev lock; the existing research `.venv`
+is not used or changed by these checks.
+
+On Linux hosts, install the browser and its OS dependencies with
+`.venv-app/bin/python -m playwright install --with-deps --only-shell chromium`.
+The Docker checks target performs this at build time; the runtime image excludes
+Playwright and browsers. CI executes the journey on the internal checks network.
+Set `E2E_ARTIFACT_DIR` to a local output directory to retain list/card/mobile
+screenshots from the deterministic journey.
 
 The container suite uses canonical Linux/Python 3.12 and PostgreSQL 16. Tests run on an internal network without SSH/Groq credentials; dependency and tokenizer vocabulary downloads happen at build time. Both image targets include the hash-checked tokenizer vocabulary in `TIKTOKEN_CACHE_DIR=/opt/app/tokenizer-cache`; the runtime reads it as a non-root user on a read-only filesystem. Local setup downloads the same vocabulary explicitly before checks. The checks image also includes `evals/reviews`, `evals/review_selection` and `evals/similarity`.
 

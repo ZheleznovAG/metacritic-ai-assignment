@@ -19,6 +19,8 @@ RUN .venv/bin/python -c "import tiktoken; tiktoken.get_encoding('o200k_harmony')
 FROM dependencies AS checks
 RUN uv sync --locked --no-install-project
 ENV PATH="/opt/app/.venv/bin:$PATH"
+# Browser binaries and OS libraries are fetched only while building the checks image.
+RUN python -m playwright install --with-deps --only-shell chromium
 COPY app ./app
 COPY scripts ./scripts
 COPY research/planning ./research/planning

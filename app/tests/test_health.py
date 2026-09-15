@@ -9,9 +9,8 @@ from django.test import TestCase
 
 
 class PublicScaffoldTests(TestCase):
-    def test_index_states_actual_scope(self) -> None:
+    def test_index_reports_build_without_response_caching(self) -> None:
         response = self.client.get("/")
-        self.assertContains(response, "not implemented yet")
         self.assertContains(response, settings.APP_VERSION)
         self.assertIn("no-store", response["Cache-Control"])
 
