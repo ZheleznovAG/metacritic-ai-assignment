@@ -18,7 +18,7 @@ At line:1 char:357
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: (Creating test d...tic_checks')...:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
- 
+
 
 Found 293 test(s).
 Operations to perform:
@@ -852,4 +852,3 @@ CHECK: -m unittest discover -s evals/similarity -p test_*.py
 Ran 14 tests in 0.056s
 
 OK
-
