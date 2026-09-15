@@ -10,7 +10,7 @@ from urllib.parse import urlsplit
 import httpx
 from catalog.models import Game
 from django.test import LiveServerTestCase, tag
-from playwright.sync_api import Route, expect, sync_playwright
+from playwright.sync_api import Browser, Route, expect, sync_playwright
 from processing.models import DailyCandidate
 from processing.scheduler import run_tick
 from reviews import collector
@@ -48,24 +48,12 @@ class MandatoryJourneyTests(LiveServerTestCase):
             like, dislike = LIKES_BY_AUDIENCE[audience]
             self.assertEqual(len(user["reviews"]), 3)
             self.assertIn(like, user["reviews"][0]["text"])
-            response = _ok_response(user["case_id"], audience)
-            response["choices"] = [
-                {
-                    "message": {
-                        "content": json.dumps(
-                            {
-                                "case_id": user["case_id"],
-                                "audience": audience,
-                                "status": "ok",
-                                "likes": [{"claim": like, "support": ["R01"]}],
-                                "dislikes": [{"claim": dislike, "support": ["R01"]}],
-                                "insufficient_data_reason": None,
-                            }
-                        )
-                    },
-                    "finish_reason": "stop",
-                }
-            ]
+            response = _ok_response(
+                user["case_id"],
+                audience,
+                likes=[{"claim": like, "support": ["R01"]}],
+                dislikes=[{"claim": dislike, "support": ["R01"]}],
+            )
             return httpx.Response(200, json=response)
 
         with patch("httpx.HTTPTransport.handle_request", side_effect=AssertionError("Live HTTP")):
@@ -111,110 +99,124 @@ class MandatoryJourneyTests(LiveServerTestCase):
             Path(screenshot_dir).mkdir(parents=True, exist_ok=True)
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True)
-            page = browser.new_page(viewport={"width": 1280, "height": 1000})
-            errors: list[str] = []
-            page.on("pageerror", lambda error: errors.append(str(error)))
+            try:
+                self._run_browser_journey(
+                    browser, screenshot_dir, unexpected_requests, anchor, peer
+                )
+            finally:
+                browser.close()
 
-            def route(request_route: Route) -> None:
-                url = request_route.request.url
-                if url.startswith(self.live_server_url + "/"):
-                    request_route.continue_()
-                elif url == COVER_URL:
-                    request_route.fulfill(
-                        content_type="image/svg+xml",
-                        body='<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300">'
-                        '<rect width="400" height="300" fill="#476782"/></svg>',
-                    )
-                else:
-                    unexpected_requests.append(url)
-                    request_route.abort()
+    def _run_browser_journey(
+        self,
+        browser: Browser,
+        screenshot_dir: str | None,
+        unexpected_requests: list[str],
+        anchor: Game,
+        peer: Game,
+    ) -> None:
+        page = browser.new_page(viewport={"width": 1280, "height": 1000})
+        errors: list[str] = []
+        page.on("pageerror", lambda error: errors.append(str(error)))
 
-            page.route("**/*", route)
-            page.goto(self.live_server_url)
-            expect(page.locator(".game-list__title")).to_have_text(
-                ["Alpha Quest", "BETA Quest", "Orbit Puzzler", "Unscored Quest"]
-            )
-            page.locator("#q").fill("qUeSt")
-            page.get_by_role("button", name="Filter", exact=True).click()
-            expect(page.locator(".game-list__title")).to_have_text(
-                ["Alpha Quest", "BETA Quest", "Unscored Quest"]
-            )
-            page.locator("#platform").select_option("pc")
-            page.get_by_role("button", name="Filter", exact=True).click()
-            expect(page.locator(".game-list__title")).to_have_text(
-                ["BETA Quest", "Alpha Quest", "Unscored Quest"]
-            )
-            expect(page.locator(".game-list__score")).to_have_text(["80", "70", "No score"])
-            selected_query = urlsplit(page.url).query
-            if screenshot_dir:
-                page.screenshot(
-                    path=str(Path(screenshot_dir) / "imp-07-fixture-list.png"), full_page=True
+        def route(request_route: Route) -> None:
+            url = request_route.request.url
+            if url.startswith(self.live_server_url + "/"):
+                request_route.continue_()
+            elif url == COVER_URL:
+                request_route.fulfill(
+                    content_type="image/svg+xml",
+                    body='<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300">'
+                    '<rect width="400" height="300" fill="#476782"/></svg>',
                 )
-            page.get_by_role("link").filter(has=page.get_by_text("Alpha Quest", exact=True)).click()
-            expect(page.locator("h1")).to_have_text("Alpha Quest")
-            self.assertEqual(urlsplit(page.url).path, f"/games/{anchor.id}/")
-            expect(page.locator(".game-card__facts")).to_contain_text("Example Studio")
-            expect(page.locator(".game-card__facts")).to_contain_text(
-                "A synthetic adventure with responsive combat and rewarding exploration."
+            else:
+                unexpected_requests.append(url)
+                request_route.abort()
+
+        page.route("**/*", route)
+        page.goto(self.live_server_url)
+        expect(page.locator(".game-list__title")).to_have_text(
+            ["Alpha Quest", "BETA Quest", "Orbit Puzzler", "Unscored Quest"]
+        )
+        page.locator("#q").fill("qUeSt")
+        page.get_by_role("button", name="Filter", exact=True).click()
+        expect(page.locator(".game-list__title")).to_have_text(
+            ["Alpha Quest", "BETA Quest", "Unscored Quest"]
+        )
+        page.locator("#platform").select_option("pc")
+        page.get_by_role("button", name="Filter", exact=True).click()
+        expect(page.locator(".game-list__title")).to_have_text(
+            ["BETA Quest", "Alpha Quest", "Unscored Quest"]
+        )
+        expect(page.locator(".game-list__score")).to_have_text(["80", "70", "No score"])
+        selected_query = urlsplit(page.url).query
+        if screenshot_dir:
+            page.screenshot(
+                path=str(Path(screenshot_dir) / "imp-07-fixture-list.png"), full_page=True
             )
-            expect(page.get_by_role("link", name="Watch trailer")).to_have_attribute(
-                "href", TRAILER_URL
+        page.get_by_role("link").filter(has=page.get_by_text("Alpha Quest", exact=True)).click()
+        expect(page.locator("h1")).to_have_text("Alpha Quest")
+        self.assertEqual(urlsplit(page.url).path, f"/games/{anchor.id}/")
+        expect(page.locator(".game-card__facts")).to_contain_text("Example Studio")
+        expect(page.locator(".game-card__facts")).to_contain_text(
+            "A synthetic adventure with responsive combat and rewarding exploration."
+        )
+        expect(page.get_by_role("link", name="Watch trailer")).to_have_attribute(
+            "href", TRAILER_URL
+        )
+        expect(page.locator(".game-card__cover")).to_have_js_property("complete", True)
+        self.assertGreater(page.locator(".game-card__cover").evaluate("e => e.naturalWidth"), 0)
+        platform_rows = page.locator(".game-card__platforms tbody tr")
+        expect(platform_rows).to_have_count(2)
+        expect(platform_rows.nth(0)).to_contain_text("70")
+        expect(platform_rows.nth(1)).to_contain_text("95")
+        for row in platform_rows.all():
+            expect(row).to_contain_text("8.1")
+        critics = page.locator(".game-card__summary").filter(
+            has=page.get_by_role("heading", name="Critics", exact=True)
+        )
+        users = page.locator(".game-card__summary").filter(
+            has=page.get_by_role("heading", name="Users", exact=True)
+        )
+        for claim_text in (CRITIC_LIKE, CRITIC_DISLIKE):
+            expect(critics).to_contain_text(claim_text)
+        for claim_text in (USER_LIKE, USER_DISLIKE):
+            expect(users).to_contain_text(claim_text)
+        expect(critics).not_to_contain_text(USER_LIKE)
+        expect(users).not_to_contain_text(CRITIC_LIKE)
+        provenance = page.locator(".summary-provenance")
+        expect(provenance).to_have_count(2)
+        expect(provenance.first).to_contain_text(contour.REQUESTED_MODEL)
+        expect(page.get_by_text("Pending —", exact=False)).to_have_count(0)
+        expect(page.locator(".summary-stale")).to_have_count(0)
+        for entry in provenance.all():
+            expect(entry).to_contain_text("3 of 3 fetched")
+        self.assertTrue(
+            page.locator("main").evaluate("e => getComputedStyle(e).maxWidth !== 'none'")
+        )
+        if screenshot_dir:
+            page.screenshot(
+                path=str(Path(screenshot_dir) / "imp-07-fixture-card.png"), full_page=True
             )
-            expect(page.locator(".game-card__cover")).to_have_js_property("complete", True)
-            self.assertGreater(page.locator(".game-card__cover").evaluate("e => e.naturalWidth"), 0)
-            expect(page.locator(".game-card__platforms tbody tr")).to_have_count(2)
-            expect(page.locator(".game-card__platforms tbody tr").nth(0)).to_contain_text("70")
-            expect(page.locator(".game-card__platforms tbody tr").nth(1)).to_contain_text("95")
-            for row in page.locator(".game-card__platforms tbody tr").all():
-                expect(row).to_contain_text("8.1")
-            critics = page.locator(".game-card__summary").filter(
-                has=page.get_by_role("heading", name="Critics", exact=True)
+        page.set_viewport_size({"width": 390, "height": 844})
+        self.assertTrue(page.evaluate("document.documentElement.scrollWidth <= innerWidth"))
+        if screenshot_dir:
+            page.screenshot(
+                path=str(Path(screenshot_dir) / "imp-07-fixture-mobile.png"), full_page=True
             )
-            users = page.locator(".game-card__summary").filter(
-                has=page.get_by_role("heading", name="Users", exact=True)
-            )
-            for claim_text in (CRITIC_LIKE, CRITIC_DISLIKE):
-                expect(critics).to_contain_text(claim_text)
-            for claim_text in (USER_LIKE, USER_DISLIKE):
-                expect(users).to_contain_text(claim_text)
-            expect(critics).not_to_contain_text(USER_LIKE)
-            expect(users).not_to_contain_text(CRITIC_LIKE)
-            expect(page.locator(".summary-provenance")).to_have_count(2)
-            expect(page.locator(".summary-provenance").first).to_contain_text(
-                contour.REQUESTED_MODEL
-            )
-            expect(page.get_by_text("Pending —", exact=False)).to_have_count(0)
-            expect(page.locator(".summary-stale")).to_have_count(0)
-            for provenance in page.locator(".summary-provenance").all():
-                expect(provenance).to_contain_text("3 of 3 fetched")
-            self.assertTrue(
-                page.locator("main").evaluate("e => getComputedStyle(e).maxWidth !== 'none'")
-            )
-            if screenshot_dir:
-                page.screenshot(
-                    path=str(Path(screenshot_dir) / "imp-07-fixture-card.png"), full_page=True
-                )
-            page.set_viewport_size({"width": 390, "height": 844})
-            self.assertTrue(page.evaluate("document.documentElement.scrollWidth <= innerWidth"))
-            if screenshot_dir:
-                page.screenshot(
-                    path=str(Path(screenshot_dir) / "imp-07-fixture-mobile.png"), full_page=True
-                )
-            page.locator(".similar-games a").click()
-            expect(page.locator("h1")).to_have_text("BETA Quest")
-            self.assertEqual(urlsplit(page.url).path, f"/games/{peer.id}/")
-            self.assertEqual(urlsplit(page.url).query, selected_query)
-            page.get_by_role("link", name="Back to results", exact=False).click()
-            expect(page.locator("#q")).to_have_value("qUeSt")
-            expect(page.locator("#platform")).to_have_value("pc")
-            expect(page.locator(".game-list__title")).to_have_text(
-                ["BETA Quest", "Alpha Quest", "Unscored Quest"]
-            )
-            page.locator("#q").fill("no-such-title")
-            page.get_by_role("button", name="Filter", exact=True).click()
-            expect(page.locator(".game-list__empty")).to_be_visible()
-            page.get_by_role("link", name="Reset", exact=True).click()
-            expect(page.locator(".game-list__title")).to_have_count(4)
-            self.assertEqual(unexpected_requests, [])
-            self.assertEqual(errors, [])
-            browser.close()
+        page.locator(".similar-games a").click()
+        expect(page.locator("h1")).to_have_text("BETA Quest")
+        self.assertEqual(urlsplit(page.url).path, f"/games/{peer.id}/")
+        self.assertEqual(urlsplit(page.url).query, selected_query)
+        page.get_by_role("link", name="Back to results", exact=False).click()
+        expect(page.locator("#q")).to_have_value("qUeSt")
+        expect(page.locator("#platform")).to_have_value("pc")
+        expect(page.locator(".game-list__title")).to_have_text(
+            ["BETA Quest", "Alpha Quest", "Unscored Quest"]
+        )
+        page.locator("#q").fill("no-such-title")
+        page.get_by_role("button", name="Filter", exact=True).click()
+        expect(page.locator(".game-list__empty")).to_be_visible()
+        page.get_by_role("link", name="Reset", exact=True).click()
+        expect(page.locator(".game-list__title")).to_have_count(4)
+        self.assertEqual(unexpected_requests, [])
+        self.assertEqual(errors, [])

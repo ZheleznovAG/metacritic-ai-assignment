@@ -1,9 +1,9 @@
 ﻿CHECK: -m ruff format --check app scripts
 121 files already formatted
 CHECK: -m ruff check app scripts
-All checks passed!
+[1;32mAll checks passed![0m
 CHECK: -m mypy
-Success: no issues found in 110 source files
+[1m[92mSuccess: no issues found in 110 source files[0m
 CHECK: app/manage.py check
 System check identified no issues (0 silenced).
 CHECK: app/manage.py makemigrations --check --dry-run
@@ -410,7 +410,7 @@ test_dispatch_lock_is_released_before_either_kind_of_http (tests.test_worker_fai
 ok
 
 ----------------------------------------------------------------------
-Ran 293 tests in 60.417s
+Ran 293 tests in 52.350s
 
 OK
 Destroying test database for alias 'default' ('test_metacritic_checks')...
@@ -420,7 +420,7 @@ System check identified no issues (0 silenced).
 CHECK: -m unittest discover -s scripts/tests -p test_*.py
 ......
 ----------------------------------------------------------------------
-Ran 6 tests in 0.498s
+Ran 6 tests in 0.528s
 
 OK
 CHECK: research/planning/check_plan.py
@@ -540,7 +540,7 @@ CHECK: research/planning/check_plan.py
 CHECK: -m unittest discover -s research/planning -p test_*.py
 ..................
 ----------------------------------------------------------------------
-Ran 18 tests in 0.286s
+Ran 18 tests in 0.275s
 
 OK
 CHECK: evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
@@ -548,7 +548,7 @@ Saved baseline verified: 96/98 (97.96%), no blockers; no API calls or file write
 CHECK: -m unittest discover -s evals/reviews -p test_*.py
 .......
 ----------------------------------------------------------------------
-Ran 7 tests in 0.021s
+Ran 7 tests in 0.018s
 
 OK
 CHECK: -m unittest discover -s evals/review_selection -p test_*.py
@@ -849,7 +849,7 @@ Selected: genre-jaccard
 CHECK: -m unittest discover -s evals/similarity -p test_*.py
 ..............
 ----------------------------------------------------------------------
-Ran 14 tests in 0.052s
+Ran 14 tests in 0.056s
 
 OK
 

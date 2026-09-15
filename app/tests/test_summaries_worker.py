@@ -90,7 +90,12 @@ def _make_corpus(
     return corpus
 
 
-def _ok_response(correlation_id: str, audience: str) -> dict[str, object]:
+def _ok_response(
+    correlation_id: str,
+    audience: str,
+    likes: list[dict[str, object]] | None = None,
+    dislikes: list[dict[str, object]] | None = None,
+) -> dict[str, object]:
     return {
         "id": "chatcmpl-1",
         "model": contour.REQUESTED_MODEL,
@@ -103,8 +108,10 @@ def _ok_response(correlation_id: str, audience: str) -> dict[str, object]:
                             "case_id": correlation_id,
                             "audience": audience,
                             "status": "ok",
-                            "likes": [{"claim": "Great combat.", "support": ["R01"]}],
-                            "dislikes": [],
+                            "likes": likes
+                            if likes is not None
+                            else [{"claim": "Great combat.", "support": ["R01"]}],
+                            "dislikes": dislikes if dislikes is not None else [],
                             "insufficient_data_reason": None,
                         }
                     )
