@@ -40,6 +40,8 @@
 
 Следующая зависимая задача — `PUB-01` (развёртывание release candidate: versioned image, supervised scheduler/worker, DNS/TLS, реальный публичный endpoint). Эта задача требует живого SSH-доступа к VDS, который в текущей сессии недоступен (passphrase-защищённый deploy-ключ, нет TTY для интерактивного разблокирования) — тот же блокер, что мешает push в `origin`. `PUB-01`–`PUB-03`/`G6` остаются `Planned` до разрешения этого доступа; независимых Ready-задач вне этой цепочки на данный момент нет.
 
+Владелец разблокировал VDS SSH (отдельный non-passphrase ключ) и запушил накопленные коммиты; push из этой сессии остаётся заблокирован тем же ssh-agent/named-pipe ограничением sandboxed-окружения инструмента (прямой `ssh` работает, `git push`/`git fetch`, порождающие дочерний процесс, — нет), поэтому push продолжает делать владелец напрямую. С разблокированным VDS-доступом начат `PUB-01`: единственный реальный пробел против аудита `A01` — отсутствие permanently supervised scheduler/worker Compose-сервисов — потребовал design-решения о секретах worker'а (Groq ключ не может жить в `.env.app` по уже принятому правилу); задан один конкретный вопрос владельцу, принят вариант отдельного `.env.worker`. Compose/secrets-половина реализована и проверена локально реальным стеком ([review](docs/requirements/pub_01_review.md)); реальный VDS deploy — следующий шаг того же цикла.
+
 ## Исторические циклы до аудита 2026-09-12
 
 `IMP-01` закрыт независимым adversarial review в отдельной сессии ([imp_01_independent_review.md](docs/requirements/imp_01_independent_review.md)): все заявленные exit criteria (build/tests/security posture, hosted CI run [34574112620](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/34574112620), VDS redeploy) воспроизведены заново в этой сессии с идентичным результатом; найдена и исправлена одна тривиальная документационная неточность (устаревшая строка в README.md).
@@ -117,7 +119,7 @@
 
 | ID | Зависимости | Ветка | Статус | Evidence |
 |---|---|---|---|---|
-| [PUB-01](implementation_plan.md#pub-01) | G5 | base | Planned | Ожидается: HTTPS URL, image/commit SHA и deploy log |
+| [PUB-01](implementation_plan.md#pub-01) | G5 | base | In progress | [Review](docs/requirements/pub_01_review.md): compose/secrets-половина закрыта — permanently supervised `scheduler`/`worker` Compose-сервисы (`restart: unless-stopped`, собственные ограниченные роли, `x-background-service` anchor), новый `.env.worker` для Groq-секрета worker'а (owner выбрал этот вариант вместо `.env.app`/ручного режима), локально проверено реальным стеком (реальные HTTP-вызовы к Metacritic, честная идемпотентность scheduler'а). Adversarial review закрыл 3 находки в deploy/README.md и DRY-дублирование. Реальный VDS deploy (versioned image, `.env.worker` на хосте, DNS/TLS, resource snapshot) остаётся отдельным live-действием этой же задачи. |
 | [PUB-02](implementation_plan.md#pub-02) | PUB-01 | base | Planned | Ожидается: Два окна, reboot/restore, storage/AI measurements |
 | [PUB-03](implementation_plan.md#pub-03) | PUB-02 | base | Planned | Ожидается: Внешний smoke и G6 review |
 | `G6` | PUB-03 | base | Planned | Ожидается: PUB-02/PUB-03 evidence + public gate review |

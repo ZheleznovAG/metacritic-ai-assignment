@@ -6,6 +6,23 @@ x-logging: &logging
     max-size: "5m"
     max-file: "3"
 
+x-background-service: &background-service
+  restart: unless-stopped
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  mem_limit: 256m
+  logging: *logging
+  # The runtime image bakes in an HTTP HEALTHCHECK for `web`; a long-running non-HTTP process
+  # inherits it too and Docker reports it perpetually unhealthy, unlike `db_setup`/`migrate`
+  # (also unhealthy by that same inherited check, but that never surfaces: they run once and
+  # exit before `restart: unless-stopped` would ever keep re-polling a live container).
+  healthcheck:
+    disable: true
+  # `backend` is internal-only (no outbound route); `edge` is the one non-internal network in
+  # this file, needed here for real outbound HTTP to Metacritic and/or Groq.
+  networks: [backend, edge]
+
 x-app-environment: &app-environment
   APP_ENV: ${APP_ENV:-local}
   DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Initialize .env.app first}
@@ -136,6 +153,40 @@ services:
     security_opt: [no-new-privileges:true]
     networks: [backend]
     logging: *logging
+
+  scheduler:
+    <<: *background-service
+    profiles: [app]
+    image: ${APP_IMAGE:-metacritic-imp01:local}
+    command: ["python", "app/manage.py", "run_scheduler"]
+    environment:
+      <<: *app-environment
+      DATABASE_USER: ${SCHEDULER_DB_USER:-metacritic_scheduler}
+      DATABASE_PASSWORD: ${SCHEDULER_DB_PASSWORD:?Initialize scheduler credentials}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    <<: *background-service
+    profiles: [app]
+    image: ${APP_IMAGE:-metacritic-imp01:local}
+    command: ["python", "app/manage.py", "run_worker"]
+    # GROQ_API_KEY/BASE_URL/TIMEOUT_SECONDS come only from `.env.worker` (see
+    # .env.worker.example), never from .env.app: `.env.app.example`'s own rule ("Keep SSH/Groq
+    # keys in .env, never in this file") stays intact. An unset key degrades to review-collection
+    # work only (run_worker's own "GROQ_API_KEY not set, skipping summary work" idle state), not a
+    # crash -- so this service is safe to start before that file is ever created.
+    env_file:
+      - path: .env.worker
+        required: false
+    environment:
+      <<: *app-environment
+      DATABASE_USER: ${WORKER_DB_USER:-metacritic_worker}
+      DATABASE_PASSWORD: ${WORKER_DB_PASSWORD:?Initialize worker credentials}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
 
   checks:
     profiles: [checks]

@@ -3,6 +3,7 @@
 .env.*
 !.env.example
 !.env.app.example
+!.env.worker.example
 /.secrets/
 /.eval-runs/
 /.venv/
