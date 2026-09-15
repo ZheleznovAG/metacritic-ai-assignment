@@ -1,9 +1,12 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from unittest.mock import patch
 
+from django.db import transaction
 from django.test import TestCase
 from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO, ReviewPageDTO
-from processing.models import DailyCandidate, ProcessingRun
+from processing.lease import LEASE_TTL, acquire_lease
+from processing.models import DailyCandidate, ProcessingLease, ProcessingRun
 from processing.scheduler import current_slot, run_tick, trigger_key_for_slot
 
 
@@ -168,3 +171,115 @@ class RunTickTests(TestCase):
         # candidate 2 is left mid-flight ("processing"), exactly as a real crash would leave it;
         # the next run's recovery step (PS-08) is what converts it to retryable.
         self.assertEqual(DailyCandidate.objects.get(game__source_game_id="g2").state, "processing")
+
+
+class AbandonedRunRecoveryTests(TestCase):
+    """HRD-02 / A05: a run that never reached its own final save (crashed between creating the
+    row and acquiring the lease, or crashed mid-batch after acquiring it) must not permanently
+    strand that hour's work behind `skipped_duplicate`."""
+
+    def test_a_run_abandoned_before_lease_acquisition_is_resumed_in_the_same_hour(self) -> None:
+        clock = FakeClock(datetime(2026, 9, 11, 14, 0, tzinfo=UTC))
+        slot = current_slot(clock)
+        # Exactly what the original `create()` call leaves behind if the process crashes before
+        # ever reaching `acquire_lease` — no fencing_token, no business_day, no started_at.
+        stranded = ProcessingRun.objects.create(
+            trigger_key=trigger_key_for_slot(slot), scheduled_slot=slot, status="queued"
+        )
+        gateway = FakeGateway(new_releases=[_identity(1)])
+
+        result = run_tick(gateway, clock)
+
+        self.assertEqual(result.outcome, "succeeded")
+        self.assertEqual(result.run.pk, stranded.pk)
+        self.assertEqual(result.run.processed_count, 1)
+        self.assertEqual(ProcessingRun.objects.count(), 1)
+        self.assertEqual(gateway.calls, 1)
+
+    def test_a_run_abandoned_mid_batch_is_resumed_once_its_lease_has_expired(self) -> None:
+        clock = FakeClock(datetime(2026, 9, 11, 14, 0, tzinfo=UTC))
+        slot = current_slot(clock)
+        crashed = ProcessingRun.objects.create(
+            trigger_key=trigger_key_for_slot(slot),
+            scheduled_slot=slot,
+            business_day=slot.date(),
+            status="running",
+            started_at=slot,
+        )
+        with transaction.atomic():
+            token = acquire_lease(clock, crashed)
+        crashed.fencing_token = token
+        crashed.save(update_fields=["fencing_token"])
+        # Simulate the crash: nothing calls release_lease, so the lease is left held until its
+        # TTL naturally expires. Advance past that TTL but stay in the same hour slot.
+        clock.instant = slot + LEASE_TTL + timedelta(minutes=5)
+        gateway = FakeGateway(new_releases=[_identity(1)])
+
+        result = run_tick(gateway, clock)
+
+        self.assertEqual(result.outcome, "succeeded")
+        self.assertEqual(result.run.pk, crashed.pk)
+        self.assertEqual(result.run.business_day, slot.date())  # preserved, not reset on resume
+        self.assertEqual(result.run.started_at, slot)  # preserved, not reset on resume
+        self.assertEqual(result.run.processed_count, 1)
+        self.assertEqual(ProcessingRun.objects.count(), 1)
+
+    def test_a_still_live_run_is_reported_duplicate_without_its_row_being_touched(self) -> None:
+        clock = FakeClock(datetime(2026, 9, 11, 14, 0, tzinfo=UTC))
+        slot = current_slot(clock)
+        live = ProcessingRun.objects.create(
+            trigger_key=trigger_key_for_slot(slot),
+            scheduled_slot=slot,
+            business_day=slot.date(),
+            status="running",
+            started_at=slot,
+        )
+        with transaction.atomic():
+            token = acquire_lease(clock, live)
+        live.fencing_token = token
+        live.save(update_fields=["fencing_token"])
+        # No time advance: the lease is still genuinely valid, as it would be for a real
+        # concurrently-running process, not a crashed one.
+        gateway = FakeGateway(new_releases=[_identity(1)])
+
+        result = run_tick(gateway, clock)
+
+        self.assertEqual(result.outcome, "skipped_duplicate")
+        self.assertEqual(result.run.pk, live.pk)
+        self.assertEqual(gateway.calls, 0)  # the resume attempt never touched the gateway
+        self.assertEqual(ProcessingRun.objects.count(), 1)
+        live.refresh_from_db()
+        self.assertEqual(live.status, "running")  # untouched — still owned by the "live" process
+        lease = ProcessingLease.objects.get(resource="ingestion")
+        self.assertEqual(lease.owner_run_id, live.pk)
+        self.assertEqual(lease.fencing_token, token)
+
+    def test_a_run_that_finished_between_the_lookup_and_the_resume_attempt_reports_its_real_outcome(
+        self,
+    ) -> None:
+        # A concurrent resumer can close the row for real (a genuine "succeeded" run, not a
+        # crash) in the window between this tick's initial unlocked read of `existing` and its
+        # own `_try_resume` attempt. The reported TickResult must reflect that real outcome, not
+        # the stale in-memory snapshot taken before the race.
+        clock = FakeClock(datetime(2026, 9, 11, 14, 0, tzinfo=UTC))
+        slot = current_slot(clock)
+        stranded = ProcessingRun.objects.create(
+            trigger_key=trigger_key_for_slot(slot), scheduled_slot=slot, status="queued"
+        )
+
+        def fake_try_resume(run_id: int, gateway: object, tick_clock: object) -> None:
+            # Simulate the concurrent winner: it finishes and commits a real terminal outcome
+            # with real counts, then this loser's own resume attempt correctly finds nothing
+            # left to resume (`_try_resume`'s own row-lock re-check would return None here).
+            ProcessingRun.objects.filter(pk=run_id).update(
+                status="succeeded", processed_count=3, failed_count=0, selected_count=3
+            )
+            return None
+
+        with patch("processing.scheduler._try_resume", side_effect=fake_try_resume):
+            result = run_tick(FakeGateway(new_releases=[]), clock)
+
+        self.assertEqual(result.run.pk, stranded.pk)
+        self.assertEqual(result.run.status, "succeeded")
+        self.assertEqual(result.run.processed_count, 3)
+        self.assertEqual(result.outcome, "skipped_duplicate")

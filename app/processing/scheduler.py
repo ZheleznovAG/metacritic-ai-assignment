@@ -22,6 +22,13 @@ from processing.models import CoreAttempt, DailyCandidate, ProcessingRun
 from processing.runner import MAX_AUTOMATIC_ATTEMPTS
 from processing.selector import run_batch
 
+# A run stuck in one of these states never reached its own final save — either the process
+# crashed between creating the row and acquiring the lease (`queued`), or it crashed mid-batch
+# after acquiring it (`running`). Neither is a completed outcome (`PS-INV-01` idempotency is
+# about not repeating *finished* work), so a later tick for the same hour may safely try to
+# resume it, subject to the lease's own liveness check below (HRD-02 / `A05`).
+RESUMABLE_STATUSES = ("queued", "running")
+
 
 @dataclass(frozen=True, slots=True)
 class TickResult:
@@ -43,6 +50,14 @@ def run_tick(gateway: GatewayProtocol, clock: Clock) -> TickResult:
 
     existing = ProcessingRun.objects.filter(trigger_key=trigger_key).first()
     if existing is not None:
+        if existing.status in RESUMABLE_STATUSES:
+            resumed = _try_resume(existing.pk, gateway, clock)
+            if resumed is not None:
+                return resumed
+            # Someone else (the original owner finishing late, or a concurrent resumer) closed
+            # it for real while we were waiting on the row lock; `existing` is now stale — the
+            # real outcome/counts already live in the database, not in this in-memory snapshot.
+            existing.refresh_from_db()
         return TickResult(run=existing, outcome="skipped_duplicate")
 
     try:
@@ -52,6 +67,11 @@ def run_tick(gateway: GatewayProtocol, clock: Clock) -> TickResult:
     except IntegrityError:
         # Lost a race to create the same trigger_key; the winner's row is the result.
         winner = ProcessingRun.objects.get(trigger_key=trigger_key)
+        if winner.status in RESUMABLE_STATUSES:
+            resumed = _try_resume(winner.pk, gateway, clock)
+            if resumed is not None:
+                return resumed
+            winner.refresh_from_db()
         return TickResult(run=winner, outcome="skipped_duplicate")
 
     try:
@@ -62,13 +82,41 @@ def run_tick(gateway: GatewayProtocol, clock: Clock) -> TickResult:
         run.save(update_fields=["status"])
         return TickResult(run=run, outcome="skipped_overlap")
 
+    _mark_running(run, token, clock)
+    return _execute_and_close(gateway, clock, run, token)
+
+
+def _try_resume(run_id: int, gateway: GatewayProtocol, clock: Clock) -> TickResult | None:
+    """Attempts to take over an existing, not-yet-finished run for this hour. Returns `None`
+    (leaving the row untouched) if the lease shows it is still genuinely owned by a live process,
+    so the caller falls back to reporting it as a plain duplicate rather than racing a real owner.
+    """
+    with transaction.atomic():
+        run = ProcessingRun.objects.select_for_update().get(pk=run_id)
+        if run.status not in RESUMABLE_STATUSES:
+            # Another resumer (or the original owner, finishing late) already closed it while we
+            # were waiting for this row lock.
+            return None
+        try:
+            token = acquire_lease(clock, run)
+        except LeaseOverlap:
+            return None
+        _mark_running(run, token, clock)
+    return _execute_and_close(gateway, clock, run, token)
+
+
+def _mark_running(run: ProcessingRun, token: int, clock: Clock) -> None:
     now = clock.now_utc()
     run.fencing_token = token
-    run.business_day = now.date()  # business timezone = UTC (ASM-01)
-    run.started_at = now
+    run.business_day = run.business_day or now.date()  # business timezone = UTC (ASM-01)
+    run.started_at = run.started_at or now
     run.status = "running"
     run.save(update_fields=["fencing_token", "business_day", "started_at", "status"])
 
+
+def _execute_and_close(
+    gateway: GatewayProtocol, clock: Clock, run: ProcessingRun, token: int
+) -> TickResult:
     try:
         try:
             result = run_batch(gateway, clock, run)

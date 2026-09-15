@@ -23,7 +23,6 @@ DEFAULT_BASE_URL = "https://api.groq.com/openai/v1"
 USER_AGENT = (
     "metacritic-ai-assignment-worker/1.0 (+https://github.com/ZheleznovAG/metacritic-ai-assignment)"
 )
-DEFAULT_TIMEOUT_SECONDS = 180.0
 RATE_LIMIT_HEADER_NAMES = (
     "retry-after",
     "x-ratelimit-limit-requests",
@@ -105,6 +104,9 @@ def _post(
     client: httpx.Client, url: str, api_key: str, payload: dict[str, Any]
 ) -> tuple[dict[str, Any], dict[str, str]]:
     try:
+        # No explicit per-request `timeout` here: the caller's `httpx.Client` already carries
+        # the operator-configured timeout (`GROQ_API_TIMEOUT_SECONDS`), and a request-level
+        # value would silently override it.
         response = client.post(
             url,
             content=contour.canonical_json(payload).encode("utf-8"),
@@ -114,7 +116,6 @@ def _post(
                 "Content-Type": "application/json",
                 "User-Agent": USER_AGENT,
             },
-            timeout=DEFAULT_TIMEOUT_SECONDS,
         )
     except httpx.HTTPError as error:
         raise GroqApiError(f"Groq API connection failed: {type(error).__name__}") from error

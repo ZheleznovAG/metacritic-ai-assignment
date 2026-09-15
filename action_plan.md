@@ -94,7 +94,7 @@
 | ID | Зависимости | Ветка | Статус | Evidence |
 |---|---|---|---|---|
 | [HRD-01](implementation_plan.md#hrd-01) | G4 | base | Ready | Ожидается: Parser/HTTP failure report |
-| [HRD-02](implementation_plan.md#hrd-02) | G4 | base | Ready | Ожидается: Crash/restart/state report |
+| [HRD-02](implementation_plan.md#hrd-02) | G4 | base | Verified | [Review](docs/requirements/hrd_02_review.md): независимый аудит нашёл `A05` — scheduler навсегда терял восстановление в текущем часовом слоте после сбоя до/после lease; исправлено безопасным resume того же `ProcessingRun` под `select_for_update`+existing lease machinery; adversarial review нашёл и закрыл race в самом фиксе (stale snapshot при конкурентном resume); 298 tests зелёные. Попутно закрыт `A06` (Groq client timeout игнорировался). |
 | [HRD-03](implementation_plan.md#hrd-03) | G4 | base | Ready | Ожидается: PostgreSQL concurrency report |
 | [HRD-04](implementation_plan.md#hrd-04) | G4 | base | Ready | Ожидается: Final AI/failure/capacity eval |
 | [HRD-05](implementation_plan.md#hrd-05) | G4 | base | Ready | Ожидается: Diagnostics/security/storage reports |

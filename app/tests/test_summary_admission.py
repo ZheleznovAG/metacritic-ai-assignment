@@ -92,7 +92,6 @@ class SummaryAdmissionTests(TestCase):
             )
             self.assertEqual(saved.fencing_token, claim.fencing_token)
             self.assertEqual(saved.request_sha256, hashlib.sha256(request.content).hexdigest())
-            self.assertTrue(all(value == 180 for value in request.extensions["timeout"].values()))
             user = json.loads(payload["messages"][1]["content"])
             self.assertEqual(len(user["reviews"]), 10)
             self.assertTrue(
