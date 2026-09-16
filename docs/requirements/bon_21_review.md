@@ -74,3 +74,48 @@ controlled inputs. Это также исключает запуск live ingest
 
 Проект `BON-22` остаётся отдельной задачей. Этот срез не добавляет операторов,
 sessions или команд запуска и не меняет права web на продуктовые данные.
+
+## Публичный upgrade-деплой
+
+После успешного второго CI ([35085312032](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/35085312032)
+на `f01e455`) выполнен реальный upgrade на VDS по процедуре `deploy/README.md`
+для `BON-21`: core lease (`ingestion`) был idle, ни одного `running`
+review/summary job — backup БД (pg_dump, проверен `pg_restore --list`) и
+конфигурации сняты первыми; `scheduler`/`worker` остановлены отдельно, пока
+`web`/`db`/`caddy` продолжали отвечать; новый образ (собран из `f01e455` —
+`git diff --stat 0b41b9f..f01e455` вне `docs/**`/`*.md`/`.github/**` пуст,
+код приложения побайтово тот же, что уже прошёл 356 application tests)
+загружен и подтверждён `verify_image.py` до и после старта; `docker compose
+--profile app up -d` подняло всю цепочку, аддитивная миграция `processing.0003`
+применилась автоматически как часть `migrate`. Повторно проявился уже
+задокументированный `deploy/README.md` cosmetic-баг Compose 2.40.3 (`--wait`
+отказывается ждать контейнер с отключённым healthcheck) — сами контейнеры
+стартовали штатно, что подтверждено отдельным `docker compose ps` и
+`verify_image.py --container` после отказа wrapper-флага.
+
+Все существующие table row counts сохранены побайтово (`catalog_game` 239 …
+`summaries_summaryjob` 479); аддитивные `processing_processheartbeat`/
+`processing_runcandidate` появились пустыми/с реальными heartbeat-строками.
+Именованные volumes не изменились. `smoke.py` против публичного HTTPS прошёл
+8/8 дважды — с самого VDS и с отдельной внешней машины (рабочей станции
+разработчика) без SSH-туннеля. `docker inspect` подтвердил
+`restart: unless-stopped`, non-root `65532:65532`, read-only rootfs и
+`cap_drop: ALL` для web/scheduler/worker (caddy — только `CAP_NET_BIND_SERVICE`
+поверх того же `cap_drop: ALL`); `docker stats` показал не более 125 MiB на
+контейнер, далеко ниже лимитов.
+
+Реальный публичный `/ops/status/` (проверен с внешней машины, без туннеля)
+сразу после апгрейда показал живые heartbeat от `scheduler`/`worker` на новом
+образе (`status=idle`, `progress_age_seconds` в пределах секунд-десятков). Тот
+же публичный endpoint затем зафиксировал, что супервизируемый scheduler/worker
+без вмешательства оператора автономно обработал следующее часовое окно на уже
+обновлённом образе: `run_id=20`, `scheduled_slot=11:00:00Z`, `succeeded`,
+`selected=20 processed=20 failed=0` — тот же паттерн автономности, что уже
+доказан в `PUB-01`/`PUB-02`, теперь на кандидате `BON-21`.
+
+[Полный execution evidence](../evidence/bon-21-public-deploy.json): чек-суммы
+образов/конфигурации, precondition-проверки, before/after row counts,
+`docker inspect`/`docker stats`, оба smoke-прогона и оба фрагмента
+`/ops/status/`. Hosted CI, публичные heartbeat/counters, ресурсы и deployment
+identity, ранее отмеченные как необходимые перед окончательной приёмкой,
+закрыты этим циклом.

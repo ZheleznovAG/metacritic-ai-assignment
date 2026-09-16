@@ -1,0 +1,76 @@
+{
+  "task": "BON-21",
+  "date": "2026-09-16",
+  "hosted_ci": {
+    "run": "https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/35085312032",
+    "commit": "f01e45516c9ae95d74c6cf02f0ea117a2f48b38f",
+    "status": "success"
+  },
+  "candidate": {
+    "app_code_source": "0b41b9fd8cacaa4e3172b8465e2afe3355835396",
+    "deployed_version": "f01e45516c9ae95d74c6cf02f0ea117a2f48b38f",
+    "note": "git diff --stat 0b41b9f..f01e455 outside docs/**, *.md, .github/** is empty; the image built at f01e455 is byte-identical in application layers to 0b41b9f, only the embedded APP_VERSION build-arg and OCI label differ. Built with --provenance=false --sbom=false so docker save/load preserves a plain single-manifest image ID, matching prior release images.",
+    "image_id": "sha256:d84641f71f877f4e971f5e6f3edf886ddb58a780500c934a8d280740aca9248b",
+    "local_verify_image": "PASS image identity: sha256:d84641f71f877f4e971f5e6f3edf886ddb58a780500c934a8d280740aca9248b, build f01e45516c9ae95d74c6cf02f0ea117a2f48b38f",
+    "archives": {
+      "image-f01e45516c9ae95d74c6cf02f0ea117a2f48b38f.tar": "c8d1cdb68e1d39aa7ac87dec12c195d74d3633795453b9ed336dd88f5ab1f3d9",
+      "config-f01e45516c9ae95d74c6cf02f0ea117a2f48b38f.tar.gz": "6ac8765feb42623a478d16d680e40998f74cb49d7b397b5d5ad4f2979a8c8648"
+    },
+    "checksum_verification": "sha256sum on VDS after transfer matched the local values above exactly"
+  },
+  "preconditions": {
+    "core_lease": "resource=ingestion, expires_at=NULL, owner_run_id=NULL (idle)",
+    "reviews_reviewcollectionjob_running": 0,
+    "summaries_summaryjob_running": 0
+  },
+  "upgrade_procedure": [
+    "pg_dump backup taken and confirmed readable via pg_restore --list (5075727 bytes)",
+    "configuration.tar.gz backup of prior compose/deploy/scripts files",
+    "new config archive extracted; .env.app rewritten to change only APP_IMAGE/APP_VERSION, all other keys byte-identical to before",
+    "docker compose stop scheduler worker (web/db/caddy stayed up and serving)",
+    "docker load of the new image; verify_image.py PASS before startup",
+    "docker compose --profile app up -d (migrate ran automatically as a dependency, applying processing.0003; web/scheduler/worker recreated on the new image)",
+    "known cosmetic issue reproduced again: docker compose ... up -d --wait aborts on scheduler/worker's disabled healthcheck (Compose 2.40.3 on this VDS) even though all five containers actually started and became healthy/running; deploy/README.md already documents this, so the run without --wait plus explicit docker compose ps / verify_image.py / smoke.py below is used to confirm startup instead"
+  ],
+  "post_deploy_containers": {
+    "db": {"image_id": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94", "state": "running", "restart_policy": "unless-stopped"},
+    "web": {"image_id": "sha256:d84641f71f877f4e971f5e6f3edf886ddb58a780500c934a8d280740aca9248b", "state": "running", "restart_policy": "unless-stopped", "user": "65532:65532", "readonly_rootfs": true, "cap_drop": ["ALL"], "cap_add": null},
+    "caddy": {"image_id": "sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648", "state": "running", "restart_policy": "unless-stopped", "cap_drop": ["ALL"], "cap_add": ["CAP_NET_BIND_SERVICE"]},
+    "scheduler": {"image_id": "sha256:d84641f71f877f4e971f5e6f3edf886ddb58a780500c934a8d280740aca9248b", "state": "running", "restart_policy": "unless-stopped", "user": "65532:65532", "readonly_rootfs": true, "cap_drop": ["ALL"], "cap_add": null},
+    "worker": {"image_id": "sha256:d84641f71f877f4e971f5e6f3edf886ddb58a780500c934a8d280740aca9248b", "state": "running", "restart_policy": "unless-stopped", "user": "65532:65532", "readonly_rootfs": true, "cap_drop": ["ALL"], "cap_add": null}
+  },
+  "docker_stats_no_stream": [
+    "metacritic-imp01-prod-web-1 98.16MiB / 384MiB 0.02%",
+    "metacritic-imp01-prod-db-1 100.2MiB / 512MiB 0.19%",
+    "metacritic-imp01-prod-caddy-1 12.58MiB / 96MiB 0.00%",
+    "metacritic-imp01-prod-scheduler-1 80.05MiB / 256MiB 0.15%",
+    "metacritic-imp01-prod-worker-1 125.1MiB / 256MiB 0.15%"
+  ],
+  "post_deploy_verify_image_with_container": "PASS image identity: sha256:d84641f71f877f4e971f5e6f3edf886ddb58a780500c934a8d280740aca9248b, build f01e45516c9ae95d74c6cf02f0ea117a2f48b38f",
+  "smoke": {
+    "loopback_http_18081": "301 for /, expected under DJANGO_HTTPS=true (old loopback smoke stops returning plain 200 for non-health paths once HTTPS is live, per deploy/README.md); health endpoints unaffected",
+    "https_v978670_from_vds": "8/8 PASS (/, /health/live/, /health/ready/, /.env 404, /.env.app 404, /admin/ 404, /unknown 404, CSS)",
+    "https_v978670_from_external_machine_no_ssh_tunnel": "8/8 PASS, identical checks, run directly from the developer workstation"
+  },
+  "data_preservation": {
+    "row_counts_before_after": "identical for every pre-existing table (catalog_game 239, catalog_gamealias 239, catalog_gameplatform 328, catalog_sourcefetch 2356, processing_coreattempt 379, processing_dailycandidate 379, processing_dailycycle 3, processing_processinglease 1, processing_processingrun 19, reviews_enrichmentturn 1, reviews_review 12646, reviews_reviewcollectionjob 1106, reviews_reviewcorpus 481, reviews_reviewcorpushead 478, reviews_reviewcorpusitem 404, reviews_reviewobservation 26410, summaries_reviewsummary 479, summaries_summaryattempt 42, summaries_summaryclaim 266, summaries_summaryjob 479)",
+    "new_additive_tables_after_migration": {"processing_processheartbeat": 2, "processing_runcandidate": 0},
+    "named_volumes_unchanged": ["metacritic-imp01-prod_postgres_data", "metacritic-imp01-prod_caddy_data", "metacritic-imp01-prod_caddy_config"]
+  },
+  "public_monitoring_evidence": {
+    "endpoint": "https://v978670.hosted-by-vdsina.com/ops/status/",
+    "checked_from": "developer workstation, no SSH tunnel",
+    "immediately_after_upgrade": "scheduler/worker both status=idle, stage='Waiting for work', progress_age_seconds in single digits to low tens, run_id=null (real heartbeat rows written by the new image's processes)",
+    "autonomous_hourly_tick_post_upgrade": {
+      "run_id": 20,
+      "scheduled_slot": "2026-09-16T11:00:00.000+00:00",
+      "started_at": "2026-09-16T11:00:18.060+00:00",
+      "ended_at": "2026-09-16T11:00:49.163+00:00",
+      "status": "succeeded",
+      "selected": 20,
+      "processed": 20,
+      "failed": 0,
+      "note": "supervised scheduler/worker picked up and completed the very next hourly window entirely on their own on the new image, with no operator intervention after the upgrade -- same autonomy pattern already proven in PUB-01/PUB-02"
+    }
+  }
+}
