@@ -56,5 +56,12 @@ suite в Docker прошёл с **356 application tests**, проверками 
 Hosted CI, публичные heartbeat/counters, ресурсы и deployment identity остаются
 необходимым evidence перед окончательной приёмкой; локальный suite их не заменяет.
 
+Candidate source: `0b41b9fd8cacaa4e3172b8465e2afe3355835396`. Локальный runtime
+собран; `scripts/verify_image.py` подтвердил image ID/version. [Release manifest](../evidence/bon-21-release.json)
+содержит digest образа и архивов. Конфигурационный архив не содержит `.env` или secrets.
+2026-09-16 automatic approval review отклонил push в `main`: требовалось явное
+разрешение владельца на удалённую публикацию. Запрошено согласие на push и update
+сервиса после CI; pending input нужен до `GB`. Отправка и deployment не выполнены.
+
 Проект `BON-22` остаётся отдельной задачей. Этот срез не добавляет операторов,
 sessions или команд запуска и не меняет права web на продуктовые данные.

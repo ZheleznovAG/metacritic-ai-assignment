@@ -1,0 +1,24 @@
+{
+  "task": "BON-21",
+  "version": "0b41b9fd8cacaa4e3172b8465e2afe3355835396",
+  "image": "metacritic-imp01:0b41b9fd8cacaa4e3172b8465e2afe3355835396",
+  "image_id": "sha256:a4afdad7c9061d728cde85b062a56399768af32ecc81178cee5bc40b3f046db1",
+  "files": [
+    "compose.yaml",
+    "compose.production.yaml",
+    "deploy/Caddyfile",
+    "deploy/Caddyfile.production",
+    "deploy/Caddyfile.snippets",
+    ".env.app.example",
+    ".env.worker.example",
+    "scripts/init_env.py",
+    "scripts/verify_image.py",
+    "scripts/smoke.py"
+  ],
+  "archives": {
+    "release-image.tar": "3f0797f0cb8829419a6b500f1a9f1678b282b4dc82fdd586a2cc861067e93eb4",
+    "release-config.tar.gz": "06208e23310c046dd2f58f0e91d2fa070abc98dcca9599b1e851acba3040ee69"
+  },
+  "publication": "Pending owner authorization; push rejected by automatic approval review.",
+  "local_identity_check": "PASS scripts/verify_image.py; build/version and image ID agree."
+}
