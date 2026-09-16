@@ -39,6 +39,7 @@ COPY --from=dependencies /opt/app/tokenizer-cache /opt/app/tokenizer-cache
 ENV PATH="/opt/app/.venv/bin:$PATH"
 COPY app ./app
 COPY scripts/provision_db.py ./scripts/provision_db.py
+COPY scripts/grant_manual_run_access.py ./scripts/grant_manual_run_access.py
 # Public build-only placeholders, never production credentials; no DB connection.
 RUN APP_ENV=build DJANGO_SECRET_KEY=build-only-placeholder-not-for-runtime-000000000000000000000000 \
     DJANGO_ALLOWED_HOSTS=localhost POSTGRES_DB=build DATABASE_USER=build \
