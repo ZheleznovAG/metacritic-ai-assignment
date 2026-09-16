@@ -98,9 +98,11 @@
 
 | Acceptance ID | Requirement | Given / When / Then | Оракул | Метод и будущий evidence |
 |---|---|---|---|---|
-| `AC-OPS-01` | `OPS-01` | Given run меняет состояния queued/running/partial/succeeded/failed; When открыт monitoring UI; Then показанное состояние совпадает с server-side источником истины не позднее принятой свежести | Server events и `ASM-B03` | Operational/UI E2E с timestamp comparison |
+| `AC-OPS-01` | `OPS-01` | Given run меняет состояния queued/running/partial/succeeded/failed и процессы передают heartbeat; When открыт monitoring UI; Then показанное состояние совпадает с server-side источником истины не позднее принятой свежести, а потеря heartbeat/связи явно отличима от terminal outcome | Server events и `ASM-B03` | Operational/UI E2E с timestamp comparison, long-HTTP/kill/restart/reconnect |
 | `AC-OPS-02` | `OPS-01` | Given run обрабатывает несколько игр; When меняются счётчики; Then UI показывает фактические found/processed/failed и финальные значения совпадают с run record | Run record/events | Integration + E2E |
 | `AC-OPS-03` | `OPS-02` | Given авторизованный или неавторизованный пользователь, повторный клик и возможный плановый run; When нажата кнопка; Then разрешённый запрос инициирует общий pipeline максимум один раз, конфликт безопасен, запрещённый запрос отклонён | Access policy, run IDs и expected state | Auth/integration/concurrency/E2E report |
+
+Детализация будущих проверок Bonus 2 — [кандидат контракта](../bonus2_design.md#проверки-перед-принятием): live/terminal counters и recovery, свежесть <=5 с, worker liveness, auth/CSRF/rate limits, SQL-role boundaries, crash/replay и scheduled/manual race. Эта матрица задаёт проверки до реализации; результат принимается по независимым артефактам `BON-21`/`BON-22`, не по наличию документа.
 
 ## 9. Результаты сдачи
 

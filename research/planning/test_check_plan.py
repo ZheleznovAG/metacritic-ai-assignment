@@ -79,8 +79,13 @@ class PlanAuditTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Must requirement depends on Bonus"):
             check(self.docs)
 
+    def set_scope(self, scope):
+        current = next(line for line in self.docs["action"].splitlines()
+                       if line.startswith("- Bonus scope:"))
+        self.replace("action", current, f"- Bonus scope: `{scope}`.")
+
     def completed_scope(self, scope):
-        self.replace("action", "- Bonus scope: `pending`.", f"- Bonus scope: `{scope}`.")
+        self.set_scope(scope)
         selected = {"none": set(), "bonus1": {"bonus1"},
                     "bonus2": {"bonus2"}, "both": {"bonus1", "bonus2"}}[scope]
         lines = []
@@ -115,7 +120,12 @@ class PlanAuditTests(unittest.TestCase):
             check(self.docs)
 
     def test_scope_requires_owner_decision(self):
-        self.replace("action", "- Bonus scope: `pending`.", "- Bonus scope: `none`.")
+        self.set_scope("none")
+        row = next(line for line in self.docs["action"].splitlines()
+                   if line.startswith("| [BON-00]"))
+        cells = [cell.strip() for cell in row.strip().strip("|").split("|")]
+        cells[3] = "Planned"
+        self.replace("action", row, "| " + " | ".join(cells) + " |")
         with self.assertRaisesRegex(ValueError, "verified BON-00"):
             check(self.docs)
 

@@ -10,6 +10,8 @@
 
 Документ задаёт тестируемые границы модулей, состояние PostgreSQL, транзакции и инварианты. Это логическая схема для будущих Django migrations, а не реализация.
 
+Расширение для Bonus 2 вынесено в отдельный [Candidate-контракт](bonus2_design.md): мониторинг процессов и защищённые manual requests. Его технические решения принимаются по evidence `BON-21`/`BON-22`; они не меняют этот принятый Must-контракт одним фактом планирования.
+
 Must-контур использует только уже выбранные Django, PostgreSQL и три application processes внутри Compose: `web`, `scheduler`, `worker`. `worker` последовательно выполняет два вида сохранённой enrichment-работы: получение отзывов и AI-суммаризацию. Redis, Celery, отдельный search/vector store, object storage, event bus и новый monitoring service не добавляются.
 
 ## Сквозной поток

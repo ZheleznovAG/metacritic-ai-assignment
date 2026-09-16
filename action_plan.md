@@ -1,7 +1,7 @@
 # План действий: master tracker
 
 - Baseline: **1.0**, задача `PLN-03`, 2026-09-09 (Asia/Novosibirsk).
-- Bonus scope: `pending`.
+- Bonus scope: `bonus2`.
 - [Повторный аудит `6551e42`](docs/requirements/implementation_audit_6551e42.md) выявил 19 findings и подтвердил исправления R02/R15. После [R03–R06](docs/requirements/imp_04_snapshot_correction.md) и [серии оставшихся 15 corrections](docs/requirements/implementation_corrections_batch.md) открытых findings этого аудита нет. [24 исходных probes и observations](research/reviews/6551e42/README.md) сохраняются как историческое evidence.
 - Разрешённая пользователем пачка завершена: 261 application tests и offline checks пройдены локально и в Linux/Docker; browser/CSS/mobile checks и screenshots сохранены. [Verification excerpts и source hashes](docs/evidence/audit-batch-verification.txt). Hosted/public evidence и gates этой серией не закрываются; application DB не мигрировалась.
 
@@ -23,6 +23,8 @@
 Статусы: Planned — описано; Ready — можно брать; In progress — выполняется; Changes requested — требуется исправление; Verified — критерий доказан; Blocked — внешний вход отсутствует; Dropped — исключён только необязательный scope с основанием.
 
 ## Приоритет текущего цикла
+
+2026-09-16: по запросу владельца проработан план **бонусной части 2**. `BON-00` фиксирует [выбор scope](docs/decisions/0002-bonus2-scope.md) и [review планирования](docs/requirements/bon_00_review.md); оценка/декомпозиция — в [implementation_plan.md](implementation_plan.md#bon-21), проект контракта — [Candidate](docs/bonus2_design.md). Следующий отдельный цикл — `BON-21`; реализация в этом planning-цикле не начиналась. Абзацы ниже сохраняют историю предыдущих циклов, текущая очередь определяется таблицами.
 
 [Очередь исправлений](docs/requirements/implementation_audit_6551e42.md#очередь-исправлений) закрыта локальными и Docker regressions. [Повторная проверка IMP-02](docs/requirements/imp_02_revalidation.md) завершена: Elden Ring прошла source → VDS DB → публичную карточку; retained-score provenance исправлен, 263 tests прошли локально/в hosted CI, corrected source `92c846a` развёрнут и повторно проверен. [SIM-EVAL-01](docs/requirements/sim_eval_01_review.md) закрыт: владелец принял frozen oracle 1.0.0 2026-09-14 без изменений; IMP-06 разблокирован. [Повторная проверка IMP-03](docs/requirements/imp_03_revalidation.md) завершена: реальный scheduler нашёл и закрыл живой баг (userscore-виджет искался по всей странице вместо своего контейнера, что либо падало на "null", либо подставляло чужую оценку из карточки отзыва); фикс подтверждён настоящим автоматическим тиком на границе часа. [Повторная проверка IMP-04](docs/requirements/imp_04_revalidation.md) завершена: реальный worker нашёл и закрыл живой баг (score-only отзыв с `quote:null`), затем один реальный Groq call (в рамках free tier) подтвердил весь AI/collection/queue контур end-to-end. [Повторная проверка IMP-05](docs/requirements/imp_05_revalidation.md) завершена: исправлен overflow длинного названия, 35 fixture/browser checks и 50 public checks пройдены; CI и VDS upgrade source 5a038d4 подтверждены. [IMP-06](docs/requirements/imp_06_review.md) завершён: genre Jaccard 1.0.0 прошёл frozen comparison; genre storage/provenance, 284 tests и hosted CI для source `813c5d0` подтверждены. [SIM-VER-01](docs/requirements/sim_ver_01_review.md) завершён: source `408bd62` на VDS, 292 tests, 56 fixture и 202 public browser checks; Elden Ring/Wo Long связаны по реальным сохранённым жанрам. [IMP-07](docs/requirements/imp_07_review.md) завершён: детерминированный Chromium E2E (293 tests, hosted CI 34969484170) и реальный публичный путь — source `37b44fb` развёрнут на VDS с backup, live scheduler discovery (19 processed, +1 новая игра), live worker/collector (401 tick, 12409 реальных отзывов), ровно 2 реальных Groq call (critic+user для Brigandine Abyss, оба succeeded в рамках free tier), реальный Chromium против публичного VDS подтвердил обе AI-карточки и honest-empty similar-games. `G4` закрыт. Следующий цикл — любой из `HRD-01`–`HRD-05` (независимы, доступны параллельно). Локальная application DB не мигрировалась; до её запуска нужны [миграции](README.md), затем обычный успешный collection/build для verified current heads; исторические incomplete данные не реконструируются.
 
@@ -136,11 +138,11 @@
 
 | ID | Зависимости | Ветка | Статус | Evidence |
 |---|---|---|---|---|
-| [BON-00](implementation_plan.md#bon-00) | G6 | base | Planned | Ожидается: Scope ADR: none/bonus1/bonus2/both |
-| [BON-11](implementation_plan.md#bon-11) | BON-00 | bonus1 | Planned | Ожидается: YouTube feasibility/disposition |
-| [BON-12](implementation_plan.md#bon-12) | BON-11 | bonus1 | Planned | Ожидается: Video/eval/failure/public evidence |
-| [BON-21](implementation_plan.md#bon-21) | BON-00 | bonus2 | Planned | Ожидается: Realtime UI/server consistency |
-| [BON-22](implementation_plan.md#bon-22) | BON-21 | bonus2 | Planned | Ожидается: Auth/concurrency/shared-trigger evidence |
+| [BON-00](implementation_plan.md#bon-00) | G6 | base | Verified | [ADR-0002](docs/decisions/0002-bonus2-scope.md): владелец уточнил scope «вторая часть»; [review](docs/requirements/bon_00_review.md), сверка кода и offline plan audit. Принят выбор ветки, технический контракт остаётся Candidate. |
+| [BON-11](implementation_plan.md#bon-11) | BON-00 | bonus1 | Dropped | YouTube не входит в выбранную владельцем ветку: [ADR-0002](docs/decisions/0002-bonus2-scope.md). |
+| [BON-12](implementation_plan.md#bon-12) | BON-11 | bonus1 | Dropped | YouTube не входит в выбранную владельцем ветку: [ADR-0002](docs/decisions/0002-bonus2-scope.md). |
+| [BON-21](implementation_plan.md#bon-21) | BON-00 | bonus2 | Ready | Ожидается: live counters/heartbeat, <=5 с freshness, recovery/reconnect/load, CI и public UI/server consistency по [кандидату контракта](docs/bonus2_design.md). |
+| [BON-22](implementation_plan.md#bon-22) | BON-21 | bonus2 | Planned | Ожидается: auth/DB-role, idempotency/rate/concurrency/crash evidence, публичный manual run и следующий scheduled window по [кандидату контракта](docs/bonus2_design.md). |
 | `GB` | BON-00, BON-12?, BON-22? | base | Planned | Ожидается: Scope decision + evidence выбранных ветвей |
 
 ## Комплект и сдача: G7

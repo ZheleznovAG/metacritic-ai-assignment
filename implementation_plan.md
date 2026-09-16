@@ -32,8 +32,8 @@ Baseline задачи `PLN-03`, 2026-09-09 (Asia/Novosibirsk). Здесь нах
 | [PUB-02](#pub-02) | 4 | Два окна и controlled restart/reboot — 2 ч; Storage/AI capacity и backup/restore evidence — 2 ч |
 | [PUB-03](#pub-03) | 2 | Неавторизованный пользовательский smoke — 2 ч |
 | [BON-00](#bon-00) | 1 | Scope, оставшееся время и release reserve — 1 ч |
-| [BON-21](#bon-21) | 8 | Представление реальных run/job events — 4 ч; Freshness/UI/reconnect verification — 4 ч |
-| [BON-22](#bon-22) | 6 | Operator access и shared trigger — 3 ч; Auth/repeat/concurrency/UI checks — 3 ч |
+| [BON-21](#bon-21) | 14 | Контракт counters/recovery — 2 ч; Heartbeat и live snapshot — 4 ч; Monitoring UI — 3 ч; Failure/freshness/load checks — 3 ч; Public verification и review — 2 ч |
+| [BON-22](#bon-22) | 18 | Auth, sessions и DB grants — 4 ч; Durable admission и общий dispatcher — 5 ч; Operator UI и audit — 3 ч; Auth/concurrency/crash checks — 4 ч; Upgrade/public verification и review — 2 ч |
 | [BON-11](#bon-11) | 4 | Search/popularity/transcript probe — 2 ч; Provider units/limitations и disposition — 2 ч |
 | [BON-12](#bon-12) | 16 | Замороженный eval/input/output contract — 4 ч; Получение текста и bounded pipeline — 6 ч; Quality/failure/card/E2E verification — 6 ч |
 | [REL-02](#rel-02) | 4 | README/evidence index и ограничения — 2 ч; Clean-instructions rehearsal — 2 ч |
@@ -44,7 +44,7 @@ Baseline задачи `PLN-03`, 2026-09-09 (Asia/Novosibirsk). Здесь нах
 
 Базовый сценарий без реализации Bonus: **145 часов**, включая `BON-00` для решения о scope; дополнительный резерв **37 часов** (округлённые 25%) даёт **182 часа**. Распределение резерва: 12 ч на интеграционные исправления, 10 ч на source/AI drift, 8 ч на public deployment/recovery, 7 ч на комплект сдачи и повторные проверки. Резерв не расходуется на начало Bonus.
 
-Bonus 2 добавляет оценочно 14 часов, Bonus 1 — 20 часов; оба — 34 часа, до отдельного резерва на выбранный scope. Это условные оценки: `BON-00/BON-11` подтверждают доступы, оставшийся бюджет и выполнимость до implementation. При отсутствии достаточного остатка выбирается отсутствие Bonus или исключается незавершённая ветка; Must не сокращается.
+Bonus 2 добавляет оценочно **32 часа + 8 часов отдельного резерва**, Bonus 1 — 20 часов; оба — 52 часа до резерва. Оценка Bonus 2 пересмотрена 2026-09-16 после сверки кода: нужны process heartbeat, live counters/recovery, auth/session storage, изменение DB grants и durable manual admission, отсутствующие в исходной оценке 14 ч. Это инженерные бюджеты, а не подтверждённая скорость. Доступ к публичной среде проверяется перед public verification; при дефиците времени scope пересматривается явным решением, Must не сокращается.
 
 Один исполнитель выполняет базовые 145 часов последовательно. Чистая длина самой длинной цепочки зависимостей — 103 часа при гипотетически независимом выполнении остальных ветвей; это нижняя граница графа, не ускоренный календарный план. Обе величины вычисляет [check_plan.py](research/planning/check_plan.py).
 
@@ -189,19 +189,43 @@ Bonus 2 добавляет оценочно 14 часов, Bonus 1 — 20 час
 
 Принять решение о Bonus scope. Тип: Decision.
 
-Выход и проверка: После G6 выбрать none/bonus1/bonus2/both и записать решение в ADR. По умолчанию ресурсная оценка ниже считает none; это расчётный сценарий, а не уже выбранный scope. Невыбранные задачи получают Dropped с основанием; GB закрывается записью решения, если scope пуст. Release reserve не расходуется на старт Bonus.
+Выход и проверка: После G6 выбрать none/bonus1/bonus2/both и записать решение в ADR, отделив выбор ветки от принятия её технических решений. Сверить объём с реальным кодом и оценить оставшуюся поставку/резерв; отсутствие заданного дедлайна не превращать в обещание срока. Невыбранные задачи получают Dropped с основанием; GB закрывается записью решения, если scope пуст. Release reserve не расходуется на старт Bonus. Артефакты решения этого цикла: [ADR-0002](docs/decisions/0002-bonus2-scope.md), [review](docs/requirements/bon_00_review.md); текущий выбор — только в tracker.
 
 ### BON-21
 
 Реализовать реальный мониторинг процесса. Тип: Implementation / Verification.
 
-Выход и проверка: Только при выбранном Bonus 2: UI показывает реальные server state/counters с принятой ASM-B03 свежестью, переживает refresh/reconnect; E2E сопоставляет timestamps и итоговые counters. Механизм транспорта выбирается по существующему приложению без нового обязательного сервиса.
+Результат: публичная `/ops/` с состояниями scheduler/worker, текущей работой, историей runs, живыми counters и отдельными очередями reviews/AI. Связи: `OPS-01`, `AC-OPS-01/02`, `ASM-B03`, `R-BON-OPS-01`. Проверяемое предложение — [контракт Bonus 2](docs/bonus2_design.md); решение о транспорте и схеме принимается по evidence этого среза.
+
+Внутренняя декомпозиция (один task-cycle):
+
+1. Зафиксировать definitions found/selected/processed/failed, scope run/day/queue и поведение recovery. Проверить, что сохранённая принадлежность кандидатов партии позволяет получить одинаковые live/terminal counters после повторных attempts; эта работа не сводится к показу `ProcessingRun` в шаблоне.
+2. Добавить heartbeat scheduler/worker с instance generation; отдельная DB connection продолжает heartbeat при долгом HTTP. Реализовать согласованный bounded snapshot, публичную allowlist и индексы. Существующие diagnostics переиспользовать там, где совпадает семантика; текущие CLI-ответы не объявлять готовым web API.
+3. Собрать templates/CSS/минимальный JS: polling, timestamp, stale/empty/error, reconnect/focus, активный run и история, состояния delayed/failed/unstable, desktop/mobile и доступность с клавиатуры. Подписи English, UTC явно.
+4. Проверить на disposable PostgreSQL и Chromium: каждый committed transition <=5 с, counters до финала и после recovery совпадают с независимым oracle, kill/restart и долгий HTTP различимы, refresh/reconnect/out-of-order не создают фиктивного прогресса. Измерить snapshot <=1 с на 10 вкладках и представительном накопленном объёме.
+5. Пройти обычный application suite/CI, развернуть versioned candidate, сопоставить публичный DOM с реальными run/job rows и timing log, сохранить screenshots, проверить каталог и выключение monitoring flag. Выполнить adversarial review и focused commit с честным evidence/status.
+
+Затрагиваемые области: `app/processing/` models/migrations/diagnostics/entry points, worker entry point, `app/presentation/`, routes/static assets, `app/tests/`, deployment flags и README. Новые test-файлы добавляются в обычный `scripts/check.py`/CI через существующий discovery; live-проверка остаётся отдельной.
+
+Выход: все `AC-OPS-01/02` доказаны tests, timestamp report и публичным наблюдением; API не раскрывает секреты, наблюдение не меняет ownership. Будущие evidence: `docs/requirements/bon_21_review.md`, screenshots и sanitized timing excerpts в `docs/evidence/`; до их появления ссылки не служат подтверждением.
 
 ### BON-22
 
 Реализовать защищённый принудительный запуск. Тип: Implementation / Verification.
 
-Выход и проверка: Только при Bonus 2: разрешённый оператор запускает тот же pipeline; repeated click, scheduled overlap и unauthorized request безопасны. Access policy записана до реализации; в evidence входят auth/concurrency tests и публичная демонстрация с разрешённым доступом.
+Результат: разрешённый оператор запускает одну обычную партию из `/ops/`, видит durable request/run и наблюдает её результат. Связи: `OPS-02`, `AC-OPS-03`, `ASM-B04`, `R-BON-OPS-02`; обязательные concurrency, daily selection, quota и hourly schedule сохраняются. Кандидат access/admission policy записан [до реализации](docs/bonus2_design.md#доступ-оператора-и-права-бд).
+
+Внутренняя декомпозиция (один task-cycle):
+
+1. Добавить Django auth/DB sessions, permission запуска, login/logout и provisioning оператора; отсутствие регистрации/admin UI. Реализовать CSRF, login throttling и session expiry/revocation. Заменить blanket/default grants явной матрицей: web не пишет продуктовые таблицы, background roles не меняют auth/session. Проверить clean install, повтор provisioning и upgrade существующей БД.
+2. Добавить durable manual request, idempotency key, глобальные cooldown/rate-limit и audit. Выделить общий admission/execution из scheduled entry point с прежним lease/fencing; HTTP только коммитит команду. Scheduler получает команды без ожидания следующего часа; scheduled timer продолжает работать во время manual batch. Атомарно связать request/run/lease и восстановление после crash.
+3. Добавить Run processing и результаты queued/started/busy/rate-limited/expired/failed, безопасный повтор после timeout/refresh, ссылку на run. Авторизация и ограничения проверяются сервером при каждом POST; факт скрытия/disable кнопки не считается защитой.
+4. Проверить auth/CSRF/abuse и реальные конкурентные DB connections: один/разные keys, разные вкладки/операторы, два schedulers, scheduled/manual race, переход часа/UTC-дня, crash в каждой границе commit/claim/core completion, fencing и expired request. Проверить неизменность лимита 20, review handoff и Groq quota с fakes; повтор принятого request не делает новых внешних calls.
+5. Пройти полный suite/hosted CI, upgrade/rollback rehearsal, затем публичный HTTPS operator journey с реальными данными, наблюдением из второй анонимной сессии и последующим scheduled window. Записать SHA/image identity, sanitized audit/timing и screenshots; обновить README/runbook/evidence, выполнить review и focused commit.
+
+Затрагиваемые области: `app/config/`, `app/processing/` и migrations, `app/presentation/`, management commands, `scripts/provision_db.py` и role/deployment tests, Compose/config examples, application/Chromium tests. Обновить описание layout в AGENTS.md, если появляется отдельный модуль управления.
+
+Выход: `AC-OPS-03` и отсутствие Must-regression подтверждены deterministic suite и публичной демонстрацией; `AC-OPS-01/02` повторно проходят после подключения commands. Будущие evidence: `docs/requirements/bon_22_review.md`, permission/concurrency report, public screenshots/audit и запись `GB` в tracker. Операторский пароль и рабочие credentials передаются приватно; при отсутствии доступа блокируется public verification, а не подменяется mock-демонстрацией.
 
 ### BON-11
 
