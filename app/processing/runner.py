@@ -18,6 +18,7 @@ from metacritic.errors import MetacriticParseError
 from metacritic.gateway import ALLOWED_HOST, GatewayProtocol
 
 from processing.clock import Clock
+from processing.heartbeat import report_progress
 from processing.lease import verify_fencing_token
 from processing.models import CoreAttempt, DailyCandidate, ProcessingRun
 
@@ -40,6 +41,7 @@ def process_candidate(
     if run.fencing_token is None:
         raise ValueError("run must have an acquired fencing_token before processing candidates")
     fencing_token = run.fencing_token
+    report_progress("core", run_id=run.pk, deadline_seconds=300)
 
     with transaction.atomic():
         verify_fencing_token(fencing_token, owner_run_id=run.pk, now=clock.now_utc())

@@ -34,9 +34,9 @@ def acquire_lease(clock: Clock, run: ProcessingRun) -> int:
     return new_token
 
 
-def release_lease(run: ProcessingRun) -> None:
+def release_lease(run: ProcessingRun, token: int) -> None:
     """Best-effort release; a crashed run's lease still expires on its own via `expires_at`."""
-    ProcessingLease.objects.filter(resource=RESOURCE, owner_run=run).update(
+    ProcessingLease.objects.filter(resource=RESOURCE, owner_run=run, fencing_token=token).update(
         owner_run=None, expires_at=None
     )
 

@@ -88,6 +88,7 @@ DATABASES = {
     }
 }
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+OPS_MONITORING_ENABLED = boolean("OPS_MONITORING_ENABLED", "true")
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_TZ = True

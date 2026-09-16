@@ -1,0 +1,22 @@
+{
+  "runs": 10000,
+  "jobs": 100000,
+  "observers": 10,
+  "snapshots": 30,
+  "max_seconds": 0.218,
+  "p95_seconds": 0.218,
+  "wall_seconds": 3.047,
+  "application_cpu_seconds": 0.625,
+  "summary_query_plan": [
+    "HashAggregate  (cost=4608.00..4608.02 rows=2 width=25) (actual time=38.816..38.817 rows=2 loops=1)",
+    "  Group Key: state",
+    "  Batches: 1  Memory Usage: 24kB",
+    "  Buffers: shared hit=2858",
+    "  ->  Seq Scan on summaries_summaryjob  (cost=0.00..3858.00 rows=100000 width=25) (actual time=0.006..23.556 rows=100000 loops=1)",
+    "        Buffers: shared hit=2858",
+    "Planning:",
+    "  Buffers: shared hit=59",
+    "Planning Time: 0.181 ms",
+    "Execution Time: 38.856 ms"
+  ]
+}

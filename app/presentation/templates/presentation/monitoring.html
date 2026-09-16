@@ -1,0 +1,70 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Service activity — Metacritic AI Assignment</title>
+    <link rel="stylesheet" href="{% static 'presentation/app.css' %}">
+    <script src="{% static 'presentation/monitoring.js' %}" defer></script>
+  </head>
+  <body>
+    <main class="ops" data-status-url="{% url 'monitoring-status' %}">
+      <a href="{% url 'index' %}">&larr; Game catalog</a>
+      <p class="eyebrow">Service activity</p>
+      <h1>Behind the catalog</h1>
+      <p>Follow game updates, review collection and AI summaries. All times are UTC.</p>
+      <div class="ops__connection">
+        <span id="ops-connection" role="status">{% if snapshot %}Snapshot loaded{% else %}Connection lost / data may be stale{% endif %}</span>
+        <span>Updated <time id="ops-timestamp">{{ snapshot.snapshot_at|default:"Unavailable" }}</time></span>
+        <a id="ops-refresh" href="{% url 'monitoring' %}">Refresh now</a>
+      </div>
+      <noscript><p>Automatic updates need JavaScript. Use Refresh now to load a new snapshot.</p></noscript>
+      <div id="ops-data">
+        {% if snapshot %}
+          <section aria-labelledby="process-heading">
+            <h2 id="process-heading">Processes</h2>
+            <div class="ops__grid">
+              {% for process in snapshot.processes %}
+                <article class="ops__panel">
+                  <h3>{{ process.label }}</h3>
+                  <p><strong>{{ process.status }}</strong> · {{ process.stage }}</p>
+                  <p>Last heartbeat: {{ process.last_seen_at|default:"Not received" }}</p>
+                  {% if process.overdue %}<p>Work is overdue; check the last progress time.</p>{% endif %}
+                </article>
+              {% endfor %}
+            </div>
+          </section>
+          <section aria-labelledby="today-heading">
+            <h2 id="today-heading">Today · {{ snapshot.business_day }}</h2>
+            <p>Found today: {{ snapshot.today.found }} games.</p>
+            <dl class="ops__counts">{% for state, count in snapshot.today.states.items %}<dt>{{ state }}</dt><dd>{{ count }}</dd>{% endfor %}</dl>
+          </section>
+          <section aria-labelledby="run-heading">
+            <h2 id="run-heading">Current run</h2>
+            {% if snapshot.active_run %}
+              <p>Run #{{ snapshot.active_run.id }} · {{ snapshot.active_run.status }}</p>
+              <p>{{ snapshot.active_run.processed }} processed / {{ snapshot.active_run.selected }} selected · {{ snapshot.active_run.failed }} failed</p>
+              {% if snapshot.lease_expired %}<p>Processing lease expired; awaiting recovery.</p>{% endif %}
+            {% else %}<p>No active core run. The scheduler checks each UTC hour.</p>{% endif %}
+            <p class="ops__note">Core completion saves game data. Reviews and AI summaries continue separately.</p>
+          </section>
+          <section aria-labelledby="queues-heading">
+            <h2 id="queues-heading">Enrichment queues</h2>
+            <div class="ops__grid">
+              <article class="ops__panel"><h3>Review jobs</h3><p>{{ snapshot.reviews.outstanding }} outstanding</p><dl class="ops__counts">{% for state, count in snapshot.reviews.states.items %}<dt>{{ state }}</dt><dd>{{ count }}</dd>{% endfor %}</dl></article>
+              <article class="ops__panel"><h3>AI summary jobs</h3><p>{{ snapshot.summaries.outstanding }} outstanding</p><dl class="ops__counts">{% for state, count in snapshot.summaries.states.items %}<dt>{{ state }}</dt><dd>{{ count }}</dd>{% endfor %}</dl></article>
+            </div>
+          </section>
+          <section aria-labelledby="history-heading">
+            <h2 id="history-heading">Recent runs</h2>
+            <div class="ops__table-wrap" tabindex="0" role="region" aria-label="Recent processing runs">
+              <table class="ops__table"><thead><tr><th>Run</th><th>Status</th><th>Started (UTC)</th><th>Selected</th><th>Processed</th><th>Failed</th></tr></thead><tbody>{% for run in snapshot.history %}<tr><th scope="row">#{{ run.id }}</th><td>{{ run.status }}</td><td>{{ run.started_at|default:"Queued" }}</td><td>{{ run.selected }}</td><td>{{ run.processed }}</td><td>{{ run.failed }}</td></tr>{% empty %}<tr><td colspan="6">No runs recorded yet.</td></tr>{% endfor %}</tbody></table>
+            </div>
+          </section>
+        {% else %}<p>Activity is temporarily unavailable. Updates resume when the connection returns.</p>{% endif %}
+      </div>
+      {{ snapshot|json_script:"ops-initial" }}
+    </main>
+  </body>
+</html>

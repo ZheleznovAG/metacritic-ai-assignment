@@ -28,6 +28,7 @@ x-app-environment: &app-environment
   DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Initialize .env.app first}
   DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
   DJANGO_HTTPS: ${DJANGO_HTTPS:-false}
+  OPS_MONITORING_ENABLED: ${OPS_MONITORING_ENABLED:-true}
   POSTGRES_DB: ${POSTGRES_DB:-metacritic}
   DATABASE_USER: ${WEB_DB_USER:-metacritic_web}
   DATABASE_PASSWORD: ${WEB_DB_PASSWORD:?Run init_env.py or --upgrade-scaffold}

@@ -87,6 +87,41 @@ docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-
 
 Preview: [http://127.0.0.1:18081](http://127.0.0.1:18081). `/health/live/` checks the process; `/health/ready/` executes a bounded PostgreSQL query and returns generic 503 on failure. Neither endpoint reports hostnames, credentials or exception text. Web runs non-root with a read-only filesystem, bounded temporary storage and two Gunicorn workers. **This local/CI container preview is always plain HTTP** (`deploy/Caddyfile`'s `auto_https off`, unaffected by anything below) -- see [Deployment boundary](#deployment-boundary) for the separately-deployed production instance's own, now-trusted, TLS. No login, admin or mutating endpoint exists.
 
+### Service activity (BON-21)
+
+Open `/ops/` from **Service activity** in the catalog. `/ops/status/` provides the
+same public, read-only snapshot. The page polls once a second and shows scheduler
+and review/AI worker observations, current core progress, today's unique games,
+separate enrichment queues and the last 20 runs. All times are UTC. A completed
+core run does not imply completed reviews or summaries; queue counts are jobs,
+not games. `failed`/`unstable` jobs remain visible as outstanding work.
+
+Each supervised process writes an independent heartbeat once a second, including
+while its main thread waits for external HTTP. After three seconds without a
+heartbeat it is shown as `stale`; an overdue operation and an expired processing
+lease are separate observations. Monitoring never acquires or releases work.
+Connection loss is shown after five seconds; the last snapshot stays visible,
+and polling recovers automatically. Without JavaScript, use **Refresh now**.
+
+`OPS_MONITORING_ENABLED=false` disables both endpoints, navigation and heartbeat
+after the affected processes are restarted. Scheduled processing and enrichment
+continue. The web DB role remains SELECT-only. There is no manual run button in
+this slice; its protected command path belongs to `BON-22`.
+
+Migration `processing.0003` adds heartbeat and immutable run/batch membership.
+On recovery, new runs resume their original at-most-20 candidates and count unique
+candidate outcomes, with attempts counted separately. A pre-upgrade interrupted
+run has no recorded batch membership: it closes with `legacy_batch_unavailable`
+and observed counters; remaining daily work stays available to a later run.
+Historical terminal rows are preserved without inventing missing history.
+
+The normal `scripts/check.py`/CI suite includes PostgreSQL snapshot/recovery tests,
+Chromium freshness/reconnect tests and a 10-observer load check against 10,000 runs
+and 100,000 jobs. Set `E2E_ARTIFACT_DIR` to an output directory before the checks
+to save desktop/mobile screenshots and browser/load timing reports. Tests use
+controlled inputs and the disposable checks DB. Public deployment evidence and
+the current acceptance state belong to [action_plan.md](action_plan.md).
+
 Stop only this project, preserving its data: `docker compose --env-file .env.app --profile app down`. Do not use `down -v` in deployment or remove named volumes. Existing unrelated project containers are not part of this setup.
 
 ## Deployment boundary

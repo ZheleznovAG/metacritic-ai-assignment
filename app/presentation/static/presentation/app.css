@@ -55,3 +55,22 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: .3rem; }
 .game-list__developer { font-size: .85rem; opacity: .75; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .game-list__score { font-size: .85rem; }
 .game-list__empty { opacity: .75; font-style: italic; }
+
+.ops { max-width: 64rem; margin: 3vh auto; overflow-wrap: anywhere; }
+.ops h1 { margin-bottom: .75rem; }
+.ops h2 { margin-top: 2rem; }
+.ops h3 { margin-top: 0; }
+.ops__connection { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; padding: 1rem 0; border-bottom: 1px solid currentColor; font-size: .85rem; }
+.ops__connection [data-stale="true"] { font-weight: 700; }
+.ops__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.ops__panel { border: 1px solid color-mix(in srgb, currentColor 35%, transparent); border-radius: .6rem; padding: 1.25rem; }
+.ops__panel p { font-size: .85rem; }
+.ops__state { display: inline-block; padding: .1rem .65rem; border: 1px solid currentColor; border-radius: 1rem; }
+.ops__state[data-state="stale"], .ops__state[data-state="stopped"] { border-style: dashed; }
+.ops__counts { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .2rem 1rem; max-width: 25rem; }
+.ops__counts dd { margin: 0; font-variant-numeric: tabular-nums; }
+.ops__note { opacity: .75; font-size: .85rem; }
+.ops__table-wrap { overflow-x: auto; }
+.ops__table { width: 100%; border-collapse: collapse; font-size: .85rem; font-variant-numeric: tabular-nums; }
+.ops__table th, .ops__table td { padding: .6rem .5rem; border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent); text-align: left; }
+@media (max-width: 40rem) { .ops__grid { grid-template-columns: 1fr; } }

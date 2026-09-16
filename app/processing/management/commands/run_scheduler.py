@@ -12,6 +12,8 @@ from django.core.management.base import BaseCommand, CommandParser
 from metacritic.gateway import MetacriticGateway
 
 from processing.clock import SystemClock
+from processing.heartbeat import Heartbeat, report_progress
+from processing.observed_gateway import ObservedGateway
 from processing.scheduler import TickResult, run_tick
 
 POLL_INTERVAL_SECONDS = 20
@@ -24,20 +26,23 @@ class Command(BaseCommand):
         parser.add_argument("--once", action="store_true", help="Run a single tick and exit.")
 
     def handle(self, *args: Any, **options: Any) -> None:
-        gateway = MetacriticGateway()
+        gateway = ObservedGateway()
         clock = SystemClock()
         try:
-            if options["once"]:
-                self._tick(gateway, clock)
-                return
-            while True:
-                self._tick(gateway, clock)
-                time.sleep(POLL_INTERVAL_SECONDS)
+            with Heartbeat("scheduler"):
+                if options["once"]:
+                    self._tick(gateway, clock)
+                    return
+                while True:
+                    self._tick(gateway, clock)
+                    time.sleep(POLL_INTERVAL_SECONDS)
         finally:
             gateway.close()
 
     def _tick(self, gateway: MetacriticGateway, clock: SystemClock) -> TickResult:
+        report_progress("scheduler_check", deadline_seconds=5)
         result = run_tick(gateway, clock)
+        report_progress("idle")
         run = result.run
         self.stdout.write(
             self.style.SUCCESS(

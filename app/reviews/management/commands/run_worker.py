@@ -12,8 +12,10 @@ from typing import Any
 
 import httpx
 from django.core.management.base import BaseCommand, CommandParser
-from metacritic.gateway import MetacriticGateway, ReviewGatewayProtocol
+from metacritic.gateway import ReviewGatewayProtocol
 from processing.clock import Clock, SystemClock
+from processing.heartbeat import Heartbeat, report_progress
+from processing.observed_gateway import ObservedGateway
 from summaries import groq_adapter
 from summaries import worker as summary_worker
 
@@ -31,7 +33,7 @@ class Command(BaseCommand):
 
     def handle(self, *args: Any, **options: Any) -> None:
         clock = SystemClock()
-        gateway = MetacriticGateway()
+        gateway = ObservedGateway()
         api_key = os.environ.get("GROQ_API_KEY", "").strip()
         base_url = groq_adapter.validate_base_url(
             os.environ.get("GROQ_API_BASE_URL", groq_adapter.DEFAULT_BASE_URL)
@@ -39,12 +41,14 @@ class Command(BaseCommand):
         timeout = float(os.environ.get("GROQ_API_TIMEOUT_SECONDS", "180"))
         client = httpx.Client(timeout=timeout)
         try:
-            if options["once"]:
-                self._tick(gateway, client, clock, api_key, base_url)
-                return
-            while True:
-                self._tick(gateway, client, clock, api_key, base_url)
-                time.sleep(POLL_INTERVAL_SECONDS)
+            with Heartbeat("worker"):
+                if options["once"]:
+                    self._tick(gateway, client, clock, api_key, base_url)
+                    return
+                while True:
+                    self._tick(gateway, client, clock, api_key, base_url)
+                    report_progress("idle")
+                    time.sleep(POLL_INTERVAL_SECONDS)
         finally:
             gateway.close()
             client.close()
@@ -57,8 +61,10 @@ class Command(BaseCommand):
         api_key: str,
         base_url: str,
     ) -> None:
+        report_progress("claiming", deadline_seconds=5)
         job = dispatch.claim_next(clock, summaries_enabled=bool(api_key))
         if isinstance(job, ReviewCollectionJob):
+            report_progress("reviews", job_id=job.pk, deadline_seconds=300)
             updated_review_job = collector.collect_one_page(gateway, clock, job)
             self.stdout.write(
                 self.style.SUCCESS(
@@ -76,6 +82,7 @@ class Command(BaseCommand):
             return
 
         if job is not None:
+            report_progress("summary", job_id=job.pk, deadline_seconds=300)
             updated_summary_job = summary_worker.process_job(
                 client, clock, job, api_key=api_key, base_url=base_url
             )

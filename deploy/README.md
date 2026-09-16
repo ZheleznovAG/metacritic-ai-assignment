@@ -80,6 +80,24 @@ Provisioning handles the empty original scaffold and its optional `django_migrat
 
 ## Restart, redeploy and rollback
 
+For the `BON-21` upgrade, first preserve a database/configuration backup and the
+previous image reference. Wait for an idle core lease, then stop only this
+project's scheduler/worker before applying the additive `processing.0003`
+migration. Keep web/DB/ingress available during preparation; run the normal
+migrate/up and image identity checks. Verify `/ops/`, `/ops/status/`, real
+scheduler/worker heartbeat and the existing catalog through public HTTPS.
+Never seed production runs or counters to make the monitoring demonstration pass.
+
+To disable the feature, set `OPS_MONITORING_ENABLED=false` in the existing
+`.env.app` and recreate web/scheduler/worker: both monitoring endpoints return
+404 and background work continues. Re-enabling needs no data migration. For an
+application rollback, stop background processes, restore the prior image/config
+references and recreate them while retaining the additive schema and volumes.
+Do not reverse the migration or delete batch/history rows during rollback. The
+pre-Bonus image ignores the new tables/column; preserve the same role grants.
+An interrupted pre-upgrade run without frozen membership is reported honestly
+as `legacy_batch_unavailable`, with its remaining candidates retried by a later run.
+
 Use the same Compose project, configuration and volumes. A later release needs verified archives, a deliberately updated image reference, migrate/up, image verification and external smoke. Keep a previously verified compatible image available. Rolling back to the original pre-correction image/configuration would restore the old credential contract and needs a separate decision; changing a displayed version is not rollback verification.
 
 To stop while retaining state, use the same Compose command with `--profile app down`. Never add `-v`, prune volumes, alter another project or remove the whole deploy home. Preserve the image/configuration archives used for verification and recovery. Firewall/SSH/system package changes are outside this procedure.

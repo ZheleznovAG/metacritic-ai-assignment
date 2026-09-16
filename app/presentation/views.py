@@ -42,6 +42,7 @@ def index(request: HttpRequest) -> HttpResponse:
         "query": query,
         "selected_platform": platform or "",
         "query_string": urlencode(params),
+        "monitoring_enabled": settings.OPS_MONITORING_ENABLED,
     }
     return render(request, "presentation/index.html", context)
 
@@ -58,6 +59,7 @@ def game_detail(request: HttpRequest, game_id: int) -> HttpResponse:
         "summaries": summaries,
         "similar_games": list_similar_games(game_id),
         "back_query_string": urlencode(_list_params(request)),
+        "monitoring_enabled": settings.OPS_MONITORING_ENABLED,
     }
     return render(request, "presentation/game_detail.html", context)
 

@@ -10,6 +10,7 @@
   <body>
     <main class="game-card">
       <p class="eyebrow">Game details</p>
+      {% if monitoring_enabled %}<p><a href="{% url 'monitoring' %}">Service activity &rarr;</a></p>{% endif %}
       <a class="game-card__back" href="{% url 'index' %}{% if back_query_string %}?{{ back_query_string }}{% endif %}">&larr; Back to results</a>
       <h1>{{ game.title }}</h1>
       {% if game.cover_url %}

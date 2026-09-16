@@ -32,6 +32,7 @@ class ProcessingRun(models.Model):
     failed_count = models.PositiveIntegerField(default=0)
     error_code = models.CharField(max_length=64, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    batch_frozen_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self) -> str:
         return f"{self.trigger_key}:{self.status}"
@@ -131,3 +132,44 @@ class CoreAttempt(models.Model):
 
     def __str__(self) -> str:
         return f"attempt {self.attempt_no} of candidate {self.candidate_id}"
+
+
+class RunCandidate(models.Model):
+    """BON-21: immutable batch membership, including candidates not yet attempted."""
+
+    run = models.ForeignKey(ProcessingRun, on_delete=models.PROTECT, related_name="batch")
+    candidate = models.ForeignKey(DailyCandidate, on_delete=models.PROTECT, related_name="batches")
+    position = models.PositiveSmallIntegerField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["run", "candidate"], name="uq_run_candidate"),
+            models.UniqueConstraint(fields=["run", "position"], name="uq_run_position"),
+            models.CheckConstraint(
+                condition=models.Q(position__gte=1, position__lte=20), name="run_position_limit"
+            ),
+        ]
+
+
+class ProcessHeartbeat(models.Model):
+    """Observations only: a missing heartbeat never changes processing ownership."""
+
+    role = models.CharField(
+        max_length=16, choices=[("scheduler", "scheduler"), ("worker", "worker")]
+    )
+    slot = models.CharField(max_length=32, default="main")
+    instance_id = models.UUIDField()
+    generation = models.PositiveBigIntegerField(default=1)
+    started_at = models.DateTimeField()
+    last_seen_at = models.DateTimeField()
+    last_progress_at = models.DateTimeField()
+    mode = models.CharField(max_length=16, default="idle")
+    stage = models.CharField(max_length=32, default="idle")
+    run_id = models.PositiveBigIntegerField(null=True, blank=True)
+    job_id = models.PositiveBigIntegerField(null=True, blank=True)
+    deadline_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["role", "slot"], name="uq_process_role_slot")
+        ]

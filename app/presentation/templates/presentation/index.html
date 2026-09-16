@@ -9,6 +9,7 @@
   </head>
   <body>
     <main class="game-list">
+      {% if monitoring_enabled %}<a href="{% url 'monitoring' %}">Service activity &rarr;</a>{% endif %}
       <p class="eyebrow">Game catalog</p>
       <h1>Metacritic AI Assignment</h1>
       <p>Search, filter by platform, and open a card for critic and user AI summaries and similar games from the catalog.</p>

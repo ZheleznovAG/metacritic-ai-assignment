@@ -12,7 +12,8 @@ from metacritic.gateway import GatewayProtocol
 
 from processing.clock import Clock
 from processing.lease import verify_fencing_token
-from processing.models import CoreAttempt, DailyCandidate, DailyCycle, ProcessingRun
+from processing.models import CoreAttempt, DailyCandidate, DailyCycle, ProcessingRun, RunCandidate
+from processing.progress import progress_for_runs
 from processing.runner import MAX_AUTOMATIC_ATTEMPTS, process_candidate
 
 BATCH_LIMIT = 20
@@ -111,6 +112,26 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
             business_date=run.business_day, timezone="UTC"
         )
 
+    if run.batch_frozen_at is not None:
+        batch = list(
+            DailyCandidate.objects.filter(batches__run=run)
+            .order_by("batches__position")
+            .select_related("game")
+        )
+        return _process_batch(gateway, clock, run, batch, run.error_code)
+
+    if CoreAttempt.objects.filter(run=run).exists():
+        # A pre-BON-21 crashed run has no durable list of its unattempted selections. Never
+        # invent that history or admit another twenty under its old ID after an upgrade.
+        counts = progress_for_runs([run.pk])[run.pk]
+        return BatchResult(
+            selected_count=run.selected_count,
+            processed_count=counts.processed,
+            failed_count=counts.failed,
+            status="partial" if counts.processed else "failed",
+            error_code="legacy_batch_unavailable",
+        )
+
     # Step 2/3: existing work first (retry-first), in original selection order.
     batch = list(
         DailyCandidate.objects.filter(cycle=cycle, state__in=("pending", "retryable"))
@@ -188,16 +209,40 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
                 break
 
     # Step 7: the batch is frozen here — a core failure below does not pull in a replacement.
-    run.selected_count = len(batch)
-    run.save(update_fields=["selected_count"])
-    processed_count = 0
-    failed_count = 0
+    with transaction.atomic():
+        verify_fencing_token(fencing_token, owner_run_id=run.pk, now=clock.now_utc())
+        RunCandidate.objects.bulk_create(
+            [
+                RunCandidate(run=run, candidate=candidate, position=position)
+                for position, candidate in enumerate(batch, 1)
+            ]
+        )
+        run.selected_count = len(batch)
+        run.batch_frozen_at = clock.now_utc()
+        run.error_code = discovery_error
+        run.save(update_fields=["selected_count", "batch_frozen_at", "error_code"])
+    return _process_batch(gateway, clock, run, batch, discovery_error)
+
+
+def _process_batch(
+    gateway: GatewayProtocol,
+    clock: Clock,
+    run: ProcessingRun,
+    batch: list[DailyCandidate],
+    discovery_error: str | None,
+) -> BatchResult:
     for candidate in batch:
-        candidate = process_candidate(gateway, clock, run, candidate)
-        if candidate.state == "processed":
-            processed_count += 1
-        else:
-            failed_count += 1
+        previous = (
+            CoreAttempt.objects.filter(run=run, candidate=candidate).order_by("-attempt_no").first()
+        )
+        # Resume unfinished/interrupted work, not a classified failure already counted in this
+        # batch. Such a failure may be retried in a later run, under the existing daily budget.
+        if previous and previous.outcome and previous.error_code != "interrupted":
+            continue
+        process_candidate(gateway, clock, run, candidate)
+
+    counts = progress_for_runs([run.pk])[run.pk]
+    processed_count, failed_count = counts.processed, counts.failed
 
     # Step 8: exhausted + nothing selected is still a successful run with explicit zero counters.
     # "No progress" (processing-state.md's failed row) covers both an empty batch caused by a

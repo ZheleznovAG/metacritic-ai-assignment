@@ -1,0 +1,25 @@
+[
+  {
+    "status": "queued",
+    "commit_to_dom_seconds": 0.0
+  },
+  {
+    "status": "running",
+    "commit_to_dom_seconds": 0.094
+  },
+  {
+    "status": "partial",
+    "commit_to_dom_seconds": 1.328
+  },
+  {
+    "status": "succeeded",
+    "commit_to_dom_seconds": 0.843
+  },
+  {
+    "status": "failed",
+    "commit_to_dom_seconds": 1.344
+  },
+  {
+    "reconnect_seconds": 2.359
+  }
+]
