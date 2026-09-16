@@ -61,7 +61,10 @@ jobs:
       - name: Offline verification on PostgreSQL 16
         run: docker compose -f compose.yaml -f compose.ci.yaml run --rm checks
       - name: Start the actual runtime through Caddy
-        run: docker compose -f compose.yaml -f compose.ci.yaml --profile app up -d --wait --wait-timeout 120
+        # Background processing is exercised with controlled inputs in the normal suite.
+        # Starting the whole app profile would make live source calls and --wait would
+        # reject the intentionally disabled HTTP healthcheck of scheduler/worker.
+        run: docker compose -f compose.yaml -f compose.ci.yaml --profile app up -d --wait --wait-timeout 120 web caddy
       - name: External HTTP smoke
         run: |
           python3 scripts/verify_image.py --image metacritic-imp01:local --image-id "$VERIFIED_IMAGE_ID" --version "$APP_VERSION" --container "${COMPOSE_PROJECT_NAME}-web-1"

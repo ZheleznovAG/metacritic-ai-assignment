@@ -65,5 +65,12 @@ Candidate source: `0b41b9fd8cacaa4e3172b8465e2afe3355835396`. Локальный
 `Blocked / Ask` в колонке статуса. Трекер исправлен на штатный `In progress`;
 код приложения не менялся. Обновление сервиса ожидает полного successful CI.
 
+Второй [CI run 35084784807](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/35084784807)
+прошёл весь offline suite, затем обнаружил прежний конфликт runtime smoke с
+добавленными в app profile scheduler/worker: Compose `--wait` отвергает намеренно
+отключённый HTTP healthcheck фонового процесса. Runtime smoke теперь явно поднимает
+`web caddy` и их зависимости; background processing проверяется normal suite с
+controlled inputs. Это также исключает запуск live ingestion в deterministic CI.
+
 Проект `BON-22` остаётся отдельной задачей. Этот срез не добавляет операторов,
 sessions или команд запуска и не меняет права web на продуктовые данные.
