@@ -1,0 +1,26 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Operator sign in — Metacritic AI Assignment</title>
+    <link rel="stylesheet" href="{% static 'presentation/app.css' %}">
+  </head>
+  <body>
+    <main class="ops">
+      <a href="{% url 'monitoring' %}">&larr; Service activity</a>
+      <p class="eyebrow">Operator sign in</p>
+      <h1>Sign in</h1>
+      {% if error %}<p role="alert" class="ops__note">{{ error }}</p>{% endif %}
+      <form class="ops__form" method="post" action="{% url 'operator-login' %}" autocomplete="off">
+        {% csrf_token %}
+        <p><label for="id_username">Username</label><br>
+          <input id="id_username" name="username" type="text" autocapitalize="off" required></p>
+        <p><label for="id_password">Password</label><br>
+          <input id="id_password" name="password" type="password" required></p>
+        <button type="submit">Sign in</button>
+      </form>
+    </main>
+  </body>
+</html>

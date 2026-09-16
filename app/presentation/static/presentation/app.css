@@ -74,3 +74,8 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: .3rem; }
 .ops__table { width: 100%; border-collapse: collapse; font-size: .85rem; font-variant-numeric: tabular-nums; }
 .ops__table th, .ops__table td { padding: .6rem .5rem; border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent); text-align: left; }
 @media (max-width: 40rem) { .ops__grid { grid-template-columns: 1fr; } }
+.ops__account { display: flex; align-items: center; gap: .75rem; padding: .5rem 0; font-size: .85rem; }
+.ops__account form { display: inline; }
+.ops__form input { padding: .4rem .5rem; border: 1px solid currentColor; border-radius: .3rem; background: transparent; color: inherit; }
+button { padding: .5rem 1rem; border: 1px solid currentColor; border-radius: .4rem; background: transparent; color: inherit; cursor: pointer; font: inherit; }
+button:disabled { opacity: .6; cursor: default; }

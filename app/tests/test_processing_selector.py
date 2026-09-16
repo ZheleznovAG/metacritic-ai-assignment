@@ -112,6 +112,13 @@ class FakeGateway:
         return ReviewPageDTO(items=(), reported_total=0, next_cursor=None), _evidence("review_page")
 
 
+def _slot(run: ProcessingRun) -> datetime:
+    # BON-22 made `scheduled_slot` nullable (manual runs have none); every run built by
+    # `_make_run` below always sets a real one, so this just narrows the type back for callers.
+    assert run.scheduled_slot is not None
+    return run.scheduled_slot
+
+
 def _make_run(clock: Clock, business_day: datetime, token: int) -> ProcessingRun:
     run = ProcessingRun.objects.create(
         trigger_key=f"scheduled:{business_day.isoformat()}",
@@ -175,7 +182,7 @@ class SubsequentRunTests(TestCase):
         self._seed_first_twenty(clock)
 
         run2 = _make_run(clock, datetime(2026, 9, 4, 10, 0, tzinfo=UTC), 1)
-        clock = FakeClock(run2.scheduled_slot)
+        clock = FakeClock(_slot(run2))
         _acquire(run2, clock)
         gateway = FakeGateway(
             browse_pages={
@@ -205,7 +212,7 @@ class SubsequentRunTests(TestCase):
         cycle.save(update_fields=["phase"])
 
         run2 = _make_run(clock, datetime(2026, 9, 4, 10, 0, tzinfo=UTC), 1)
-        clock = FakeClock(run2.scheduled_slot)
+        clock = FakeClock(_slot(run2))
         _acquire(run2, clock)
         gateway = FakeGateway()  # no list calls expected to matter; phase is exhausted
 
@@ -236,7 +243,7 @@ class ItemFailureTests(TestCase):
 
         cycle = _cycle_for(run1)
         run2 = _make_run(clock, datetime(2026, 9, 4, 10, 0, tzinfo=UTC), 1)
-        clock = FakeClock(run2.scheduled_slot)
+        clock = FakeClock(_slot(run2))
         _acquire(run2, clock)
         gateway2 = FakeGateway(
             browse_pages={
@@ -281,7 +288,7 @@ class NewDayTests(TestCase):
         self.assertEqual(Game.objects.filter(source_game_id="g1").count(), 1)
 
         run2 = _make_run(clock, datetime(2026, 9, 5, 0, 5, tzinfo=UTC), 1)
-        clock = FakeClock(run2.scheduled_slot)
+        clock = FakeClock(_slot(run2))
         _acquire(run2, clock)
         result = run_batch(FakeGateway(new_releases=[_identity(1), _identity(61)]), clock, run2)
 
@@ -320,7 +327,7 @@ class NextPageFailureTests(TestCase):
         run_batch(FakeGateway(new_releases=[_identity(n) for n in range(1, 21)]), clock, run1)
 
         run2 = _make_run(clock, datetime(2026, 9, 4, 10, 0, tzinfo=UTC), 1)
-        clock = FakeClock(run2.scheduled_slot)
+        clock = FakeClock(_slot(run2))
         _acquire(run2, clock)
         gateway = FakeGateway(
             browse_pages={
@@ -351,7 +358,7 @@ class RestartRecoveryTests(TestCase):
         stuck.save(update_fields=["state"])
 
         run2 = _make_run(clock, datetime(2026, 9, 4, 10, 0, tzinfo=UTC), 1)
-        clock = FakeClock(run2.scheduled_slot)
+        clock = FakeClock(_slot(run2))
         _acquire(run2, clock)
         run_batch(FakeGateway(new_releases=[]), clock, run2)
 

@@ -9,11 +9,29 @@
     <script src="{% static 'presentation/monitoring.js' %}" defer></script>
   </head>
   <body>
-    <main class="ops" data-status-url="{% url 'monitoring-status' %}">
+    <main class="ops" data-status-url="{% url 'monitoring-status' %}"
+      {% if manual_run_enabled and can_trigger_run %}data-run-url="{% url 'manual-run' %}"{% endif %}>
       <a href="{% url 'index' %}">&larr; Game catalog</a>
       <p class="eyebrow">Service activity</p>
       <h1>Behind the catalog</h1>
       <p>Follow game updates, review collection and AI summaries. All times are UTC.</p>
+      <div class="ops__account">
+        {% if request.user.is_authenticated %}
+          <span>Signed in as {{ request.user.get_username }}</span>
+          <form method="post" action="{% url 'operator-logout' %}">{% csrf_token %}<button type="submit">Log out</button></form>
+        {% else %}
+          <a href="{% url 'operator-login' %}">Operator sign in</a>
+        {% endif %}
+      </div>
+      {% if manual_run_enabled and can_trigger_run %}
+        <form id="ops-run-form" method="post" action="{% url 'manual-run' %}">
+          {% csrf_token %}
+          <input type="hidden" name="request_id" id="ops-run-request-id" value="">
+          <button type="submit" id="ops-run-button">Run processing</button>
+        </form>
+      {% endif %}
+      {% if run_error %}<p role="alert" class="ops__note">{{ run_error }}</p>{% endif %}
+      {% if run_request_id %}<p id="ops-run-status" data-request-id="{{ run_request_id }}">Request {{ run_request_id }}: checking&hellip;</p>{% endif %}
       <div class="ops__connection">
         <span id="ops-connection" role="status">{% if snapshot %}Snapshot loaded{% else %}Connection lost / data may be stale{% endif %}</span>
         <span>Updated <time id="ops-timestamp">{{ snapshot.snapshot_at|default:"Unavailable" }}</time></span>

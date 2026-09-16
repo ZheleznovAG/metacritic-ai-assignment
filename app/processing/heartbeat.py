@@ -32,13 +32,20 @@ def report_progress(
 
 
 class Heartbeat:
-    def __init__(self, role: str, *, clock: Clock | None = None, interval: float = 1.0) -> None:
+    def __init__(
+        self,
+        role: str,
+        *,
+        slot: str = "main",
+        clock: Clock | None = None,
+        interval: float = 1.0,
+    ) -> None:
         self.role = role
         self.clock = clock or SystemClock()
         self.interval = interval
         self.instance_id = uuid4()
         self.generation = 0
-        self.slot = "main"
+        self.slot = slot
         self._lock = Lock()
         self._stop = Event()
         self._thread: Thread | None = None

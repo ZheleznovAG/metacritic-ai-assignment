@@ -30,7 +30,7 @@ include = ["app/**/*.py", "scripts/**/*.py"]
 select = ["E", "F", "I", "UP", "B", "S"]
 
 [tool.ruff.lint.per-file-ignores]
-"app/tests/*" = ["S105", "S106", "S101"]
+"app/tests/*" = ["S105", "S106", "S107", "S101"]
 "app/*/migrations/*" = ["E501"]
 "scripts/check.py" = ["S603"]
 "scripts/verify_image.py" = ["S603"]

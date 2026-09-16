@@ -99,7 +99,7 @@ services:
         APP_VERSION: ${APP_VERSION:-local}
     environment: *app-environment
     depends_on:
-      migrate:
+      db_grants:
         condition: service_completed_successfully
     restart: unless-stopped
     read_only: true
@@ -149,6 +149,31 @@ services:
       DATABASE_PASSWORD: ${MIGRATE_DB_PASSWORD:?Initialize migration credentials}
     depends_on:
       db_setup:
+        condition: service_completed_successfully
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [backend]
+    logging: *logging
+
+  # BON-22: a few tables (sessions, the manual-run command, its admission lock, login-throttle
+  # audit rows, one auth_user column) need web to *write*, unlike everything provision_db.py
+  # grants before migrate runs. Those tables do not exist until migrate creates them, so this is
+  # its own step afterward, naming each grant explicitly rather than widening the blanket ones.
+  db_grants:
+    profiles: [app]
+    image: ${APP_IMAGE:-metacritic-imp01:local}
+    command: ["python", "scripts/grant_manual_run_access.py"]
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-metacritic}
+      POSTGRES_USER: ${POSTGRES_USER:-metacritic}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Initialize .env.app first}
+      WEB_DB_USER: ${WEB_DB_USER:-metacritic_web}
+    depends_on:
+      migrate:
         condition: service_completed_successfully
     read_only: true
     cap_drop: [ALL]

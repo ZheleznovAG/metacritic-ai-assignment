@@ -19,7 +19,13 @@ from processing.lease import (
     release_lease,
     verify_fencing_token,
 )
-from processing.models import CoreAttempt, DailyCandidate, ProcessingRun
+from processing.models import (
+    CoreAttempt,
+    DailyCandidate,
+    ManualRunRequest,
+    ProcessingLease,
+    ProcessingRun,
+)
 from processing.progress import progress_for_runs
 from processing.runner import MAX_AUTOMATIC_ATTEMPTS
 from processing.selector import run_batch
@@ -86,6 +92,81 @@ def run_tick(gateway: GatewayProtocol, clock: Clock) -> TickResult:
 
     _mark_running(run, token, clock)
     return _execute_and_close(gateway, clock, run, token)
+
+
+def run_manual(gateway: GatewayProtocol, clock: Clock, manual_request_id: int) -> TickResult | None:
+    """BON-22: attempts to claim and execute one specific `ManualRunRequest` (by primary key,
+    already selected by the dispatcher's own queue scan). Reuses the exact same lease/resume/
+    execute/close machinery as `run_tick`, keyed by `manual:<request_id>` instead of an hourly
+    slot -- `run_batch` itself does not care which triggered it (`ASM-15`-style reuse, not a
+    parallel implementation). Returns `None` when there is nothing to do right now: the request
+    already reached a terminal state, or a genuinely live other owner still holds this run's
+    lease (left `claimed` for a later tick to reconcile once that owner finishes).
+    """
+    with transaction.atomic():
+        try:
+            manual = ManualRunRequest.objects.select_for_update().get(pk=manual_request_id)
+        except ManualRunRequest.DoesNotExist:
+            return None
+        if manual.state not in ("queued", "claimed"):
+            return None
+        trigger_key = f"manual:{manual.request_id}"
+        run, _ = ProcessingRun.objects.get_or_create(
+            trigger_key=trigger_key,
+            defaults={"status": "queued", "trigger_kind": "manual", "scheduled_slot": None},
+        )
+        if manual.state == "queued":
+            manual.state = "claimed"
+            manual.claimed_at = clock.now_utc()
+            manual.run = run
+            manual.save(update_fields=["state", "claimed_at", "run"])
+
+    if run.status == "queued":
+        # First-ever attempt for this manual request (or a crash before the lease was ever
+        # acquired even once): unlike a resumed *running* run below, a lease loss here always
+        # means something else currently owns the shared resource right now (a scheduled slot
+        # won the race, most likely) -- design requires that be observable immediately as
+        # "conflict", never a silent delayed retry.
+        try:
+            with transaction.atomic():
+                token = acquire_lease(clock, run)
+        except LeaseOverlap:
+            current = ProcessingLease.objects.filter(resource="ingestion").first()
+            if current is not None and current.owner_run_id == run.pk:
+                # Not a real conflict: another thread of this *same* manual request's own
+                # dispatcher (two overlapping deploy-generation processes, say) just won this
+                # exact race a moment ago -- let that winner finish and close it out instead of
+                # clobbering its in-flight run with a fabricated "skipped_overlap".
+                return None
+            run.status = "skipped_overlap"
+            run.save(update_fields=["status"])
+            result = TickResult(run=run, outcome="skipped_overlap")
+        else:
+            _mark_running(run, token, clock)
+            result = _execute_and_close(gateway, clock, run, token)
+    elif run.status == "running":
+        # A genuine resume: this same manual request's own earlier attempt is what previously
+        # acquired the lease, so "still held" here means that original process may still be
+        # genuinely alive -- worth a later retry, not an immediate conflict.
+        resumed = _try_resume(run.pk, gateway, clock)
+        if resumed is None:
+            run.refresh_from_db()
+            if run.status in RESUMABLE_STATUSES:
+                return None  # a genuinely live other owner still holds this run's lease
+            result = TickResult(run=run, outcome="skipped_duplicate")
+        else:
+            result = resumed
+    else:
+        result = TickResult(run=run, outcome="skipped_duplicate")
+
+    if result.run.status not in RESUMABLE_STATUSES:
+        ManualRunRequest.objects.filter(pk=manual_request_id, state="claimed").update(
+            state="conflict" if result.run.status == "skipped_overlap" else "completed",
+            run=result.run,
+            completed_at=clock.now_utc(),
+            reason_code="busy" if result.run.status == "skipped_overlap" else None,
+        )
+    return result
 
 
 def _try_resume(run_id: int, gateway: GatewayProtocol, clock: Clock) -> TickResult | None:

@@ -92,6 +92,7 @@ def _snapshot(clock: Clock) -> dict[str, Any]:
             {
                 "id": run.pk,
                 "status": run.status,
+                "trigger_kind": run.trigger_kind,
                 "selected": run.selected_count,
                 "processed": count.processed if live else run.processed_count,
                 "failed": count.failed if live else run.failed_count,

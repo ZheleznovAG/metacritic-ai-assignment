@@ -12,6 +12,7 @@ from django.core.management.base import BaseCommand, CommandParser
 from metacritic.gateway import MetacriticGateway
 
 from processing.clock import SystemClock
+from processing.dispatcher import Dispatcher
 from processing.heartbeat import Heartbeat, report_progress
 from processing.observed_gateway import ObservedGateway
 from processing.scheduler import TickResult, run_tick
@@ -29,7 +30,9 @@ class Command(BaseCommand):
         gateway = ObservedGateway()
         clock = SystemClock()
         try:
-            with Heartbeat("scheduler"):
+            # BON-22: the manual-run dispatcher is a separate thread/connection so the hourly
+            # timer below keeps ticking even while it executes a manual batch.
+            with Heartbeat("scheduler"), Dispatcher(gateway, clock):
                 if options["once"]:
                     self._tick(gateway, clock)
                     return

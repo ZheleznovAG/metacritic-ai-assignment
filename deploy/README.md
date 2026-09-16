@@ -13,7 +13,7 @@ docker image inspect metacritic-imp01:<build-version> --format '{{.Id}}'
 
 Record the full `sha256:...` image ID, build version and source identity. The build version is embedded in a read-only file and OCI label; it is not derived from the resulting image ID and cannot be changed by runtime `APP_VERSION`.
 
-2. Export with `docker save --output <image-archive> metacritic-imp01:<build-version>`. Create a separate configuration archive containing only `compose.yaml`, `compose.production.yaml`, `deploy/Caddyfile`, `deploy/Caddyfile.production`, `.env.app.example`, `.env.worker.example`, `scripts/init_env.py`, `scripts/verify_image.py` and `scripts/smoke.py`. Record both archive SHA-256 values.
+2. Export with `docker save --output <image-archive> metacritic-imp01:<build-version>`. Create a separate configuration archive containing only `compose.yaml`, `compose.production.yaml`, `deploy/Caddyfile`, `deploy/Caddyfile.production`, `.env.app.example`, `.env.worker.example`, `scripts/init_env.py`, `scripts/verify_image.py`, `scripts/smoke.py` and `scripts/grant_manual_run_access.py`. Record both archive SHA-256 values.
 3. Verify port 18081 and the new `metacritic-ai-assignment-imp01` directory are unused. Through the already trusted SSH connection, create the directory with `umask 077` and transfer the two archives. Preserve SSH host-key verification and existing directories.
 4. Verify both archive checksums on VDS before extraction/import. Extract configuration, then run `docker load -i <image-archive>`.
 5. Generate the application/DB environment, create the worker's Groq secrets file, and verify image identity before startup:
@@ -28,11 +28,22 @@ python3 scripts/verify_image.py --image metacritic-imp01:<build-version> --image
 python3 scripts/smoke.py http://127.0.0.1:18081 --version <build-version>
 ```
 
+`compose ... up` above also runs the one-shot `db_grants` service (BON-22) automatically, between
+`migrate` and `web`: it names the exact narrow write grants web needs for its own sessions, the
+manual-run command row, the admission rate-limit lock and login-throttle audit rows, and one
+column of `auth_user` -- tables `provision_db.py` cannot yet name (it runs before `migrate`).
+`docker compose -p metacritic-imp01-prod ps db_grants` should show `Exited (0)`. Create the first
+operator account once web is up (never prints the password to any log docs read):
+
+```sh
+docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml run --rm migrate python app/manage.py create_operator <username>
+```
+
 Do not add `--wait` to that `up`: `scheduler`/`worker` disable their inherited HTTP healthcheck (it doesn't apply to a non-HTTP process), and Docker Compose 2.40 (confirmed on the VDS during `PUB-01`'s first upgrade; Compose v5 locally does not have this problem) refuses to `--wait` on a container with a disabled healthcheck at all ("has no healthcheck configured"), aborting before ever reaching the verification steps below even though the containers themselves start correctly. `verify_image.py`'s own `--container` check already waits out `web`'s real healthcheck; confirm `scheduler`/`worker` separately with `docker compose -p metacritic-imp01-prod ps` (expect `running`, no health column since none is configured) before moving on.
 
 `.env.worker` is the *only* file the `worker` service reads Groq credentials from; `.env.app` never carries them, same discipline as the operator's own `.env`. `worker` starts and runs review-collection work even without this file (its own `env_file:` entry is optional) -- summary generation stays idle ("GROQ_API_KEY not set") until it exists, so a missed step here degrades a feature silently rather than failing startup; treat it as a required step, not an optional one.
 
-The app profile enforces `db_setup -> migrate -> {web, scheduler, worker} -> caddy`: all three application processes start only after migrations complete successfully, each under its own restricted role, and restart automatically (`unless-stopped`) if they exit. Provisioning creates restricted web/scheduler/worker roles and grants current/future table SELECT to web; the production setup creates no checks database or checks role. Administrative and role-provisioning credentials stay in the one-shot setup service; web/scheduler/worker each receive only their own login. The existing migrations preserve table data. To run migrations explicitly, use `--profile app run --rm migrate` with the same project/configuration; enabling the app profile also makes `db_setup` available.
+The app profile enforces `db_setup -> migrate -> db_grants -> web -> {scheduler, worker} -> caddy`: all three application processes start only after migrations (and, for web, the BON-22 write-allowlist) complete successfully, each under its own restricted role, and restart automatically (`unless-stopped`) if they exit. `scheduler`/`worker` depend only on `migrate` (their own broad default-privilege grants already cover every table, including the new ones, with no extra step); only `web` needs `db_grants` first. Provisioning creates restricted web/scheduler/worker roles and grants current/future table SELECT to web; the production setup creates no checks database or checks role. Administrative and role-provisioning credentials stay in the one-shot setup service; web/scheduler/worker each receive only their own login. The existing migrations preserve table data. To run migrations explicitly, use `--profile app run --rm migrate` with the same project/configuration; enabling the app profile also makes `db_setup` available.
 
 6. Repeat the HTTP/CSS smoke from a separate machine against the public host without an SSH tunnel. Record the source identity, full image ID, build version, checksums, status and resources. Never publish full Compose/inspect output containing environment values.
 

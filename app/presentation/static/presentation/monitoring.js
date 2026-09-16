@@ -160,3 +160,53 @@
   setInterval(freshness, 500);
   poll();
 })();
+
+/* BON-22: idempotency key generation, double-submit guard and manual-run status polling. Both
+ * degrade safely without JS: the server pre-fills nothing, but a plain form submit with an empty
+ * `request_id` is rejected as invalid_request rather than silently admitted, and a real key is
+ * always present once this script has run. */
+(() => {
+  "use strict";
+  const form = document.getElementById("ops-run-form");
+  if (form) {
+    const field = document.getElementById("ops-run-request-id");
+    const button = document.getElementById("ops-run-button");
+    const mint = () => (window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() :
+      "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+      }));
+    field.value = mint();
+    form.addEventListener("submit", () => {
+      // The key stays the same on a genuine resubmission (browser retry); only a fresh page
+      // load mints a new one. Disabling here (not removing) keeps the value in the POST body.
+      button.disabled = true;
+      button.textContent = "Starting…";
+    });
+  }
+  const status = document.getElementById("ops-run-status");
+  if (status) {
+    const requestId = status.dataset.requestId;
+    const label = (state) => ({
+      queued: "queued, waiting for the scheduler",
+      claimed: "claimed, running now",
+      completed: "finished",
+      conflict: "could not start (a scheduled run won the race)",
+      expired: "expired before it could start",
+    }[state] || state);
+    let timer;
+    async function check() {
+      try {
+        const response = await fetch(`/ops/run/${requestId}/`, {cache: "no-store"});
+        if (!response.ok) throw new Error("unavailable");
+        const data = await response.json();
+        status.textContent = `Request ${requestId}: ${label(data.state)}` +
+          (data.run_id ? ` (run #${data.run_id})` : "");
+        if (data.state === "completed" || data.state === "conflict" || data.state === "expired") return;
+      } catch { /* transient; retry on the next tick */ }
+      timer = setTimeout(check, 1500);
+    }
+    check();
+    window.addEventListener("beforeunload", () => clearTimeout(timer));
+  }
+})();
