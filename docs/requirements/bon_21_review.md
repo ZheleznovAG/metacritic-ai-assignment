@@ -59,9 +59,11 @@ Hosted CI, публичные heartbeat/counters, ресурсы и deployment i
 Candidate source: `0b41b9fd8cacaa4e3172b8465e2afe3355835396`. Локальный runtime
 собран; `scripts/verify_image.py` подтвердил image ID/version. [Release manifest](../evidence/bon-21-release.json)
 содержит digest образа и архивов. Конфигурационный архив не содержит `.env` или secrets.
-2026-09-16 automatic approval review отклонил push в `main`: требовалось явное
-разрешение владельца на удалённую публикацию. Запрошено согласие на push и update
-сервиса после CI; pending input нужен до `GB`. Отправка и deployment не выполнены.
+2026-09-16 после отказа automatic approval review владелец явно разрешил push
+и update сервиса после успешного CI. Первый [CI run 35084338338](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/35084338338)
+на `64623f7` подтвердил 356 application tests, затем выявил недопустимую запись
+`Blocked / Ask` в колонке статуса. Трекер исправлен на штатный `In progress`;
+код приложения не менялся. Обновление сервиса ожидает полного successful CI.
 
 Проект `BON-22` остаётся отдельной задачей. Этот срез не добавляет операторов,
 sessions или команд запуска и не меняет права web на продуктовые данные.
