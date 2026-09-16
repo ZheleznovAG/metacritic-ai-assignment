@@ -83,3 +83,14 @@
 Локальный suite: **400 application tests** (44 новых для BON-22) зелёные, `ruff
 format`/`check` и `mypy --strict` чистые, `makemigrations --check --dry-run` без
 изменений, полный `scripts/check.py` пройден на изолированном Docker Compose проекте.
+
+Первый push (candidate `83a171d`) нашёл ещё один реальный дефект, который ни локальный
+`scripts/check.py`, ни офлайн-suite не ловят: runtime-стадия `Dockerfile` копирует из
+`scripts/` только `provision_db.py` (не всю директорию, в отличие от checks-стадии) —
+новый `grant_manual_run_access.py` не попадал в образ, и CI-шаг "Start the actual
+runtime through Caddy" падал (`db_grants` exit 2, "can't open file"). Исправлено
+добавлением аналогичной явной `COPY` строки; локально воспроизведено и подтверждено
+(build+up+smoke на изолированном Compose-проекте) до пуша фикса. [Hosted CI
+35131996286](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/35131996286)
+на исправленном `959c2d6` прошёл полностью, включая реальный `docker compose up`
+web/caddy/db_grants и внешний HTTP smoke.
