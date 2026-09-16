@@ -13,7 +13,7 @@ docker image inspect metacritic-imp01:<build-version> --format '{{.Id}}'
 
 Record the full `sha256:...` image ID, build version and source identity. The build version is embedded in a read-only file and OCI label; it is not derived from the resulting image ID and cannot be changed by runtime `APP_VERSION`.
 
-2. Export with `docker save --output <image-archive> metacritic-imp01:<build-version>`. Create a separate configuration archive containing only `compose.yaml`, `compose.production.yaml`, `deploy/Caddyfile`, `.env.app.example`, `.env.worker.example`, `scripts/init_env.py`, `scripts/verify_image.py` and `scripts/smoke.py`. Record both archive SHA-256 values.
+2. Export with `docker save --output <image-archive> metacritic-imp01:<build-version>`. Create a separate configuration archive containing only `compose.yaml`, `compose.production.yaml`, `deploy/Caddyfile`, `deploy/Caddyfile.production`, `.env.app.example`, `.env.worker.example`, `scripts/init_env.py`, `scripts/verify_image.py` and `scripts/smoke.py`. Record both archive SHA-256 values.
 3. Verify port 18081 and the new `metacritic-ai-assignment-imp01` directory are unused. Through the already trusted SSH connection, create the directory with `umask 077` and transfer the two archives. Preserve SSH host-key verification and existing directories.
 4. Verify both archive checksums on VDS before extraction/import. Extract configuration, then run `docker load -i <image-archive>`.
 5. Generate the application/DB environment, create the worker's Groq secrets file, and verify image identity before startup:
@@ -38,6 +38,32 @@ The app profile enforces `db_setup -> migrate -> {web, scheduler, worker} -> cad
 
 Only Caddy publishes a port. PostgreSQL uses the internal network and named volume. Web runs as UID/GID 65532, with a read-only filesystem and no source bind mount. The official Caddy binary requires `NET_BIND_SERVICE` in its capability bounding set; other capabilities remain dropped.
 
+## Enabling trusted TLS once a hostname is available
+
+The initial `compose.production.yaml` above uses `deploy/Caddyfile`, plain HTTP only on `127.0.0.1:<port>:8080` -- correct before any real hostname exists, since Let's Encrypt needs a domain that already resolves to this host. Once one does (a hoster-provided reverse-DNS hostname is enough; verify with `nslookup <hostname>` before proceeding, and confirm it resolves to this VDS's own public IP):
+
+`deploy/Caddyfile.production` already names this project's one real deployed
+hostname (`v978670.hosted-by-vdsina.com`, the hoster-provided reverse-DNS
+name -- verified with `nslookup` to resolve to this VDS's own public IP
+before it was ever used here); a genuinely different future hostname would
+need this file's site address changed accordingly (`caddy fmt --overwrite`
+afterward) and re-verified the same way. To turn it on:
+
+1. `compose.production.yaml`'s `caddy` service already publishes `80`/`443` on `0.0.0.0` and mounts `deploy/Caddyfile.production` -- no further edits needed there.
+2. Add the hostname to `.env.app`'s `DJANGO_ALLOWED_HOSTS` (append, do not replace the existing IP/`localhost` entries) and set `DJANGO_HTTPS=true`.
+3. `docker compose ... --profile app up -d` (again, no `--wait`, same reason as above) recreates `web` (new environment) and `caddy` (new config/ports/volumes). Confirm from `docker logs <project>-caddy-1` that it reaches `"certificate obtained successfully"` for the hostname -- this needs port `80` reachable from the internet for the ACME HTTP-01 challenge; a host firewall blocking it would show a timed-out or connection-refused challenge attempt instead.
+4. Verify: `curl https://<hostname>/` returns `200` with a certificate `curl` accepts by default (no `-k` needed -- that alone proves a real, trusted cert, not a self-signed one); `curl http://<hostname>/` redirects (`308`) to the same URL over HTTPS; `python3 scripts/smoke.py https://<hostname> --version <build-version>` passes all checks, run both from the VDS itself and from a separate external machine.
+
+**Once `DJANGO_HTTPS=true`, the old loopback smoke command above
+(`scripts/smoke.py http://127.0.0.1:18081 ...`) stops returning plain
+`200`/`404` for non-health paths** -- `/`, `/admin/`, etc. now `30x`-redirect
+to the real HTTPS hostname, same as any other insecure request Django's own
+`SECURE_SSL_REDIRECT` sees (`/health/live/`/`/health/ready/` stay exempt, so
+container healthchecks and `verify_image.py --container` are unaffected).
+This is expected once trusted TLS is live, not a regression; re-point any
+future on-host smoke at the real HTTPS hostname instead (works identically
+from the VDS itself, since DNS already resolves there).
+
 ## Upgrade of the original IMP-01 preview
 
 Keep the existing project name, `.env.app` and named volumes. First prepare and verify the new image/configuration archives as above. After replacing the known configuration files:
@@ -58,4 +84,4 @@ Use the same Compose project, configuration and volumes. A later release needs v
 
 To stop while retaining state, use the same Compose command with `--profile app down`. Never add `-v`, prune volumes, alter another project or remove the whole deploy home. Preserve the image/configuration archives used for verification and recovery. Firewall/SSH/system package changes are outside this procedure.
 
-TLS, DNS/80/443, host reboot, application hourly windows, backup/restore and production capacity remain later gate checks. GitHub CI never deploys. An unfinished candidate/correction may be committed locally with its actual status; repository publication still requires the owner's selected remote and authorization. Hosted run URL and tested SHA are recorded after the run, and CI also checks the evidence commit.
+Host reboot, application hourly windows, backup/restore and production capacity are `PUB-02` scope, recorded there once performed rather than duplicated here. TLS/DNS/80/443 are covered above (`PUB-01`); an *unauthorized* external smoke pass over the resulting HTTPS URL, run from outside this host, is `PUB-03`. GitHub CI never deploys. An unfinished candidate/correction may be committed locally with its actual status; repository publication still requires the owner's selected remote and authorization. Hosted run URL and tested SHA are recorded after the run, and CI also checks the evidence commit.

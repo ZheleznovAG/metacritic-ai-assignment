@@ -37,6 +37,15 @@ jobs:
           fi
           docker compose -f compose.yaml -f compose.ci.yaml config --quiet
           APP_IMAGE=metacritic-imp01:ci docker compose -f compose.yaml -f compose.production.yaml config --quiet
+      - name: Validate both deploy Caddyfiles
+        run: |
+          for f in deploy/Caddyfile deploy/Caddyfile.production; do
+            docker run --rm \
+              -v "$PWD/$f:/etc/caddy/Caddyfile:ro" \
+              -v "$PWD/deploy/Caddyfile.snippets:/etc/caddy/Caddyfile.snippets:ro" \
+              caddy:2.11.4-alpine@sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648 \
+              caddy validate --config /etc/caddy/Caddyfile
+          done
       - name: Build locked runtime and checks
         run: docker compose -f compose.yaml -f compose.ci.yaml build web checks
       - name: Record built image identity

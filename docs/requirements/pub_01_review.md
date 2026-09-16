@@ -179,9 +179,135 @@ deployment (`IMP-02/05/07`, `SIM-VER-01`):
   project's history that scheduler and worker keep processing without an
   operator SSHing in for each tick.
 
-This closes `PUB-01`'s scheduler/worker supervision and versioned-deploy
-scope. Not in this cycle's scope, deferred to `PUB-02`/`PUB-03` as
-`implementation_plan.md` already specifies: TLS/DNS (still the accepted
-HTTP-only preview), host reboot persistence, two consecutive full
-application-hour windows as sustained evidence (one is shown above), and
-external unauthorized-user smoke.
+This closed `PUB-01`'s scheduler/worker supervision and versioned-deploy
+scope at the time. `implementation_plan.md#pub-01`'s own text also
+requires "Проверены DNS/TLS/ingress" -- that half was still genuinely
+open here (no domain existed yet to get a certificate for), not correctly
+deferrable to `PUB-02`/`PUB-03` as first written. See "TLS/DNS" below for
+its closure, once a hostname became available, within this same task.
+Host reboot persistence, two consecutive full application-hour windows,
+and external unauthorized-user smoke are `PUB-02`/`PUB-03`'s own scope
+(`docs/requirements/pub_02_review.md`, `pub_03_review.md`).
+
+## TLS/DNS (follow-up within this task)
+
+`PUB-01`'s own acceptance requires DNS/TLS verified, not just the
+scheduler/worker supervision above -- deferring it to `PUB-02`/`PUB-03`
+in this doc's first version was a misattribution, corrected once the
+owner explicitly asked for it to be resolved "in the task where it should
+have been decided" and provided the hoster-provided reverse-DNS hostname
+`v978670.hosted-by-vdsina.com` (confirmed via `nslookup` to resolve to
+this VDS's own public IP, `<production-ip>`, before any of this was used).
+
+- `deploy/Caddyfile.production` (new, tracked): a real-domain site block
+  with Caddy's default `auto_https` (no more `auto_https off`), obtaining
+  and renewing a real Let's Encrypt certificate; the prior `:8080` block
+  is kept, container-internal only, for the image's own `HEALTHCHECK`
+  path and the `caddy` service's own healthcheck (both hit
+  redirect-exempt health endpoints, so unaffected by any of this).
+  Validated with `caddy validate`/`caddy fmt` locally before ever
+  touching the VDS.
+- `compose.production.yaml`: `caddy` mounts `deploy/${CADDYFILE_NAME:-Caddyfile}`
+  (defaults to the plain-HTTP preview; this deployment's own `.env.app`
+  sets `CADDYFILE_NAME=Caddyfile.production` -- see Adversarial review)
+  and publishes `80`/`443` on `0.0.0.0` (for the ACME HTTP-01 challenge
+  and real HTTPS traffic) alongside the existing `18081` on
+  `${APP_HTTP_BIND:-127.0.0.1}` (still available for on-host diagnostics).
+- VDS `.env.app`: `DJANGO_ALLOWED_HOSTS` gained the new hostname
+  (appended, the existing IP/`localhost` entries untouched) and
+  `DJANGO_HTTPS` flipped to `true`, enabling Django's own
+  `SECURE_SSL_REDIRECT`/HSTS now that trusted TLS actually exists in
+  front of it.
+- Deployed with the same care as the original upgrade: config backed up
+  first (`backups/before-tls-20260916/`), config validated
+  (`docker compose config --quiet`) before `up -d` (no `--wait`, same
+  Compose-version reason as the original deploy).
+- **Verified working, live:** Caddy's own log shows the full real ACME
+  sequence -- account registration, HTTP-01 challenge served to (and
+  validated by) Let's Encrypt's real validation servers, `"certificate
+  obtained successfully"`. `curl https://v978670.hosted-by-vdsina.com/`
+  returns `200` with a certificate `curl` accepts with no `-k` flag --
+  proof by itself that this is a genuinely trusted certificate, not
+  self-signed. `curl http://.../` redirects `308` to the same URL over
+  HTTPS. The full `scripts/smoke.py` (8/8 checks) passed against the
+  HTTPS URL, run both from the VDS itself and from a separate external
+  machine.
+- **Found one real, expected side effect, not a regression (with one
+  factual correction from adversarial review -- see below):**
+  `DJANGO_HTTPS=true` is a single setting applied to every request
+  regardless of which Caddy block routed it. The old loopback `18081`
+  path (still `:8080` internally, still sending `X-Forwarded-Proto:
+  http`) now `30x`-redirects every *non-exempt* path once trusted TLS
+  exists elsewhere, since Django correctly treats that path as insecure;
+  the redirect-exempt health endpoints (and therefore every container
+  healthcheck and `verify_image.py --container`) are unaffected.
+
+## Adversarial review
+
+An independent `/code-review high` pass on the uncommitted diff found six
+items, all fixed:
+
+- **Fixed (functional):** `compose.production.yaml` unconditionally
+  mounted `Caddyfile.production` (hardcoded to this one hostname),
+  silently breaking `deploy/README.md`'s own documented "fresh HTTP-only
+  preview for a new host" flow -- a deploy for any other host would try
+  (and fail) to obtain a certificate for the wrong domain instead of
+  serving plain HTTP. Fixed by mounting `deploy/${CADDYFILE_NAME:-Caddyfile}`
+  (defaulting to the original plain-HTTP file) and setting
+  `CADDYFILE_NAME=Caddyfile.production` only in this deployment's own
+  `.env.app`, matching how `APP_IMAGE`/`APP_VERSION` are already
+  per-environment. `.env.app.example` documents the new variable.
+- **Fixed (factual error in this doc and `deploy/Caddyfile.production`'s
+  own comment):** the claim that the old loopback path's redirect goes
+  "to the real HTTPS hostname" was wrong -- verified directly against the
+  live VDS (`curl -v http://127.0.0.1:18081/` before this fix), Django's
+  `SECURE_SSL_REDIRECT` builds the target from the *request's own* `Host`
+  header (`https://127.0.0.1:18081/`, since `DJANGO_ALLOWED_HOSTS` keeps
+  the IP/`localhost` entries), not a fixed hostname -- and nothing serves
+  HTTPS there, so it is a dead end, not a working hop. Corrected here, in
+  `deploy/Caddyfile.production`'s comment, and in
+  `deploy/README.md`, which now says explicitly to target the real
+  hostname directly for any future smoke, never this port, once
+  `DJANGO_HTTPS=true`.
+- **Fixed (documentation staleness):** `README.md` still claimed, a few
+  lines from text this same diff had just updated, that "trusted
+  TLS/hostname remain mandatory before G6" (describing the *local/CI*
+  container preview, which is correctly always plain HTTP and unaffected
+  by any of this -- the wording just didn't make that scope clear) and
+  that "TLS, DNS... remain PUB-02/PUB-03" (wrong task attribution, and now
+  also just wrong -- it is done). Both corrected.
+- **Fixed (reuse):** the container-internal `:8080` block was duplicated
+  near-verbatim between `deploy/Caddyfile` and `deploy/Caddyfile.production`.
+  Extracted into a shared `deploy/Caddyfile.snippets` (a Caddy named
+  snippet), `import`-ed by both files; mounted alongside each Caddyfile in
+  both `compose.yaml` and `compose.production.yaml` (missing the mount in
+  the local/CI `compose.yaml` would have broken every local/CI Caddy
+  startup, since `deploy/Caddyfile` now imports it too -- caught and fixed
+  before commit by actually starting the local stack, not just validating
+  syntax).
+- **Fixed (silent behavior change):** the `18081` bind address was
+  hardcoded to `127.0.0.1`, dropping the `${APP_HTTP_BIND}` interpolation
+  `.env.app.example` still documents for this exact port. Restored.
+- **Fixed (CI gap):** CI validated `compose.production.yaml`'s YAML
+  syntax but never parsed either actual Caddyfile it references. Added a
+  `caddy validate` step for both `deploy/Caddyfile` and
+  `deploy/Caddyfile.production` (with the shared snippet mounted) to
+  `.github/workflows/ci.yml`.
+
+All fixes verified: both Caddyfiles pass `caddy validate`/`caddy fmt`
+with the shared snippet; the local dev stack was actually started (not
+just config-validated) to confirm `deploy/Caddyfile`'s new `import` line
+does not break the far more commonly exercised local/CI path; the
+corrected configuration was redeployed to the live VDS (`CADDYFILE_NAME=
+Caddyfile.production` set explicitly in its `.env.app` so the redeploy
+does not silently revert it to plain HTTP), and `https://v978670.hosted-by-vdsina.com/`
+still returns `200` with the same, already-cached Let's Encrypt
+certificate (no new ACME request needed -- confirmed from the caddy
+container's own log, which shows certificate management resuming rather
+than a fresh `"obtaining certificate"` sequence) after the redeploy. The
+full `scripts/check.py` suite (339 tests, ruff, mypy, migrations, offline
+evals) passes unchanged; no application code was touched by this cycle.
+
+This closes `PUB-01`'s DNS/TLS/ingress requirement in full; combined with
+the scheduler/worker supervision above, `PUB-01` is genuinely complete
+against its own stated acceptance criteria, not partially deferred.

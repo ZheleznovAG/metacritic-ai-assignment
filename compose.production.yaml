@@ -1,4 +1,7 @@
-# IMP-01 early public HTTP only. TLS/hostname are required before G6.
+# PUB-01/G6: HTTP-only preview by default (matching the original IMP-01 scaffold, for a freshly
+# named host with no TLS decision yet); set CADDYFILE_NAME=Caddyfile.production in .env.app (and
+# add the hostname to DJANGO_ALLOWED_HOSTS/DJANGO_HTTPS=true) to switch to real Let's Encrypt TLS
+# once a hostname resolving to this host exists -- see deploy/README.md.
 services:
   db:
     ports: !reset []
@@ -13,5 +16,12 @@ services:
       APP_ENV: production
       CHECKS_DB_PASSWORD: ""
   caddy:
+    volumes: !override
+      - ./deploy/${CADDYFILE_NAME:-Caddyfile}:/etc/caddy/Caddyfile:ro
+      - ./deploy/Caddyfile.snippets:/etc/caddy/Caddyfile.snippets:ro
+      - caddy_data:/data
+      - caddy_config:/config
     ports: !override
-      - "0.0.0.0:${APP_HTTP_PORT:-18081}:8080"
+      - "${APP_HTTP_BIND:-127.0.0.1}:${APP_HTTP_PORT:-18081}:8080"
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"

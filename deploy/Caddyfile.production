@@ -1,0 +1,29 @@
+{
+	admin off
+}
+
+import Caddyfile.snippets
+
+v978670.hosted-by-vdsina.com {
+	header -Server
+	reverse_proxy web:8000 {
+		# This block is only ever reached via Caddy's own TLS termination.
+		header_up X-Forwarded-Proto https
+		transport http {
+			dial_timeout 3s
+			response_header_timeout 10s
+		}
+	}
+}
+
+# Container-internal only. The image's own HEALTHCHECK hits web:8000 directly, bypassing this
+# entirely; this block's own healthcheck (compose.yaml's caddy healthcheck) only ever calls the
+# redirect-exempt /health/live/. Once DJANGO_HTTPS=true, every *other* path here 30x-redirects,
+# but to this port's own Host header (e.g. https://127.0.0.1:18081/, per Django's
+# SECURE_SSL_REDIRECT building the target from the request's own Host, not a fixed hostname) --
+# nothing serves HTTPS there, so that redirect is a dead end, not a working hop to the real site.
+# Expected once trusted TLS exists elsewhere, not a bug; a full smoke must target the real
+# hostname directly (deploy/README.md), never this port, once DJANGO_HTTPS=true.
+:8080 {
+	import internal_diagnostics
+}

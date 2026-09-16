@@ -1,0 +1,13 @@
+# Shared between deploy/Caddyfile and deploy/Caddyfile.production via `import`, so the
+# container-internal-only block (health/on-host diagnostics, never the public TLS site) can't
+# silently drift between the two files.
+(internal_diagnostics) {
+	header -Server
+	reverse_proxy web:8000 {
+		header_up X-Forwarded-Proto http
+		transport http {
+			dial_timeout 3s
+			response_header_timeout 10s
+		}
+	}
+}

@@ -54,12 +54,12 @@ originally verified with.
 - Run evidence: two genuinely consecutive real hourly windows
   (`pub_02_review.md`), diagnostics/backlog snapshot taken live
   (`pub_02_review.md`'s `diagnose --backlog` run).
-- Limitations still open and correctly not hidden by this smoke: TLS/DNS
-  (HTTP-only preview, per `README.md`'s own stated posture), 165 review
-  jobs still draining from the fresh discovery backlog at the time of this
-  check (a healthy, visible, diagnosable in-progress state -- not a
-  blocking defect), 18 of the catalog's other games still without genre
-  data (`SIM-VER-01`'s pre-existing, honestly-disclosed limitation).
+- Limitations still open and correctly not hidden by this smoke: at the
+  time of this run, TLS/DNS was still open (see update below) and 165
+  review jobs were still draining from the fresh discovery backlog (a
+  healthy, visible, diagnosable in-progress state -- not a blocking
+  defect); 18 of the catalog's other games still without genre data
+  (`SIM-VER-01`'s pre-existing, honestly-disclosed limitation).
 
 ## Verification
 
@@ -69,8 +69,20 @@ No new application code this cycle. The smoke script itself
 prior cycles were never added to the tracked tree either) is real,
 executable evidence of a real external run, not asserted from source
 reading. This closes `PUB-03`'s own acceptance (external smoke on real
-data). It does **not** close `G6`: `G6`'s own gate condition explicitly
-requires HTTPS/external E2E, and this deployment remains the accepted
-HTTP-only preview (`README.md`'s own stated posture, unchanged) -- no
-domain/DNS/TLS setup has been arranged. `G6` stays open on that basis
-alone, independent of `PUB-01`–`PUB-03`'s now-complete evidence.
+data).
+
+**Update, same session:** at the time this smoke first ran, `G6` did not
+yet close, since its own gate condition explicitly requires HTTPS/
+external E2E and the deployment was still the HTTP-only preview. The
+owner then provided a real hoster-provided hostname and asked for TLS to
+be resolved within `PUB-01` (where `implementation_plan.md` actually
+places the DNS/TLS requirement) -- see
+`docs/requirements/pub_01_review.md`'s own "TLS/DNS" section for that
+closure. With real, trusted HTTPS live, this exact 15-check script was
+re-run against `https://v978670.hosted-by-vdsina.com` (not just asserted
+to still work): all 15 checks passed again, the similar-game match this
+time landing on a different, also organically-discovered title ("ARES:
+THE IRON VANGUARD" -- the catalog kept growing between the two runs).
+`smoke.py`'s own 8/8 HTTPS pass is recorded in `pub_01_review.md`. `G6`
+is `Verified` in `action_plan.md` on this combined, now fully-HTTPS
+basis.
