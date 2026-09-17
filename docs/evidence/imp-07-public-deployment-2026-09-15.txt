@@ -45,7 +45,7 @@ PASS /admin/: 404
 PASS /unknown: 404
 PASS /static/presentation/app.07f615b636aa.css: CSS served
 Traceback (most recent call last):
-  File "/home/deploy/metacritic-ai-assignment-imp01/scripts/deploy_release.py", line 102, in <module>
+  File "/home/<deploy-user>/metacritic-ai-assignment-imp01/scripts/deploy_release.py", line 102, in <module>
     assert volumes() == old_volumes
            ^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError
