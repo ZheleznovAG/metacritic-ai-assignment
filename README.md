@@ -2,7 +2,7 @@
 
 Take-home assignment for the AI Automation Engineer position.
 
-The application includes a read-only game catalog, platform filters and title search, hourly Metacritic discovery (`scripts/run_scheduler.py`), review collection and separate critic/user AI summaries (`scripts/run_worker.py`). Cards show up to five similar saved games using the [genre policy](docs/decisions/0002-genre-similarity-policy.md), with shared genres and links that retain the search/filter context. [Integration evidence](docs/requirements/sim_ver_01_review.md) records verification and limitations. Current task and correction status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). The [2026-09-12 audit](docs/requirements/implementation_audit_2026_09_12.md) records defects in repeated processing and summary handling; a passing local suite does not close them.
+The application includes a read-only game catalog, platform filters and title search, hourly Metacritic discovery (`scripts/run_scheduler.py`), review collection and separate critic/user AI summaries (`scripts/run_worker.py`). Cards show up to five similar saved games using the [genre policy](docs/decisions/0002-genre-similarity-policy.md), with shared genres and links that retain the search/filter context. The selected bonus scope ([ADR-0002](docs/decisions/0002-bonus2-scope.md)) adds public [operational monitoring](#service-activity-bon-21) and a [protected manual-run trigger](#manual-run-bon-22). [Integration evidence](docs/requirements/sim_ver_01_review.md) records verification and limitations. **Live public deployment and a full requirement→evidence index are in [Deployment boundary](#deployment-boundary)/[docs/evidence.md](docs/evidence.md).** Current task and correction status is tracked in [action_plan.md](action_plan.md); scope and estimates are in [implementation_plan.md](implementation_plan.md). The [2026-09-12 audit](docs/requirements/implementation_audit_2026_09_12.md) records historical defects in repeated processing and summary handling, since closed by the corrections it links; a passing local suite alone does not close a finding like that, only the corresponding fix and re-verification does.
 
 ## Local development
 
@@ -105,8 +105,7 @@ and polling recovers automatically. Without JavaScript, use **Refresh now**.
 
 `OPS_MONITORING_ENABLED=false` disables both endpoints, navigation and heartbeat
 after the affected processes are restarted. Scheduled processing and enrichment
-continue. The web DB role remains SELECT-only. There is no manual run button in
-this slice; its protected command path belongs to `BON-22`.
+continue.
 
 Migration `processing.0003` adds heartbeat and immutable run/batch membership.
 On recovery, new runs resume their original at-most-20 candidates and count unique
@@ -122,9 +121,44 @@ to save desktop/mobile screenshots and browser/load timing reports. Tests use
 controlled inputs and the disposable checks DB. Public deployment evidence and
 the current acceptance state belong to [action_plan.md](action_plan.md).
 
+### Manual run (`BON-22`)
+
+An authorized operator can force one ordinary processing batch from `/ops/` without
+waiting for the next hour, using the same lease/selector/quota machinery as the
+scheduled tick -- not a second, parallel path. There is no self-registration or admin
+UI: create a non-superuser account with the one permission this needs, once web is up,
+using the schema-owner role (never prints the password anywhere this session/log reads):
+
+```sh
+docker compose --env-file .env.app --profile app run --rm --no-deps migrate python app/manage.py create_operator <username>
+```
+
+Sign in at `/ops/login/`; a signed-in account without `processing.trigger_run` sees the
+page normally but no **Run processing** button, and a direct `POST /ops/run/` still gets
+a JSON `403` regardless of whether the button was ever shown -- authorization is checked
+on every request, not by hiding UI. A successful click returns a durable request ID and
+polls its own status (`queued` → `claimed` → `completed`/`conflict`/`expired`) without
+JS by redirecting to `/ops/?request=<id>`. Limits: one new request per 5 minutes and at
+most 6 per rolling hour service-wide; a replayed idempotency key (double submit, reload,
+retry) never spends that quota and always returns the same request. Five failed logins
+within 15 minutes lock out that username and that client IP separately for the same
+window, with one generic error message either way. Web's DB role stays otherwise
+read-only: `scripts/grant_manual_run_access.py` names the handful of exact tables/columns
+this needs (its own sessions, its own manual-run/login-throttle rows, the admission lock,
+one `auth_user` column) explicitly, as a separate step after `migrate`, rather than
+widening the existing blanket `SELECT`-only grant. [BON-22 review](docs/requirements/bon_22_review.md)
+records the implementation, adversarial findings and public verification, including a
+real manual run claimed and executed by the already-running production scheduler.
+
 Stop only this project, preserving its data: `docker compose --env-file .env.app --profile app down`. Do not use `down -v` in deployment or remove named volumes. Existing unrelated project containers are not part of this setup.
 
 ## Deployment boundary
+
+**Live public deployment: [https://v978670.hosted-by-vdsina.com/](https://v978670.hosted-by-vdsina.com/)**
+(real trusted Let's Encrypt TLS, no login needed to browse). Kept running for as long as
+the review is ongoing, with no fixed decommission date; `scheduler`/`worker` keep
+processing real hourly windows the whole time. [docs/evidence.md](docs/evidence.md) maps
+every requirement to the review/evidence document that verified it.
 
 [compose.production.yaml](compose.production.yaml) accepts a prebuilt versioned `APP_IMAGE`, publishes Caddy on `18081` (loopback) plus `80`/`443` and keeps PostgreSQL internal. A new preview environment can use `python3 scripts/init_env.py --production --host <public-host> --version <build-version>`; that alone is HTTP-only, matching the original `IMP-01` preview. Since `PUB-01`, [deploy/README.md](deploy/README.md#enabling-trusted-tls-once-a-hostname-is-available) documents turning on real Let's Encrypt TLS once a hostname resolving to the host exists (`deploy/Caddyfile.production`, `DJANGO_ALLOWED_HOSTS`/`DJANGO_HTTPS=true`) -- this project's own deployed instance runs with it enabled. Never overwrite an existing environment or reset a database password during a redeploy. Use the same project name and volumes for persistence.
 
