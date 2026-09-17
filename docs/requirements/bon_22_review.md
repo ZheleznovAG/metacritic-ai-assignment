@@ -72,13 +72,71 @@
   application/json`; клиент без этого заголовка (например, `curl` по умолчанию) получит
   HTML-редирект, а не JSON — явный выбор для no-JS формы, не описанный дословно в
   таблице `docs/bonus2_design.md`.
-- Публичный (hosted CI + VDS) прогон, upgrade/rollback repetition на реальном сервисе,
-  второй анонимный observer и следующий scheduled window после manual run — отдельный
-  срез этого же цикла, не входит в этот коммит.
+- Upgrade/rollback repetition (второй полный цикл апгрейда, явный rollback rehearsal) не
+  выполнялся в этом цикле — только один forward upgrade, уже подтверждённый выше
+  реальным manual run и следующим scheduled window; `BON-21`/`PUB-01/02` уже закрыли
+  этот паттерн для базовой архитектуры, BON-22 не меняет сам upgrade/rollback путь.
 - `docker compose ... up --wait` на VDS остаётся несовместим с отключённым healthcheck
   `scheduler`/`worker`/`db_grants` (тот же cosmetic-баг Compose 2.40.3, уже
   задокументированный в `deploy/README.md` для `BON-21`); процедура апгрейда явно не
   использует `--wait` для этого шага.
+
+## Публичная проверка на VDS
+
+Реальный upgrade-деплой (`7fd4e09` поверх работавшего `f01e455`, backup-first, той же
+процедурой, что `PUB-01`/`BON-21`): core lease был idle, backup БД проверен
+(`pg_restore --list`), `scheduler`/`worker` остановлены отдельно от web/db/caddy,
+новый образ подтверждён `verify_image.py` до и после старта, `docker compose
+--profile app up -d` подняло всю цепочку `db_setup -> migrate -> db_grants ->
+web/scheduler/worker/caddy`; `db_grants` завершился с кодом 0. Единственная
+допустимая (ожидаемая) дельта row count — `processing_processheartbeat` 2 → 3 (новый
+dispatcher-поток регистрирует собственный heartbeat-слот `manual-dispatcher`); все
+остальные таблицы побайтово сохранены. `smoke.py` (8/8) прошёл и с VDS, и с внешней
+машины.
+
+Оператор `<operator>` создан через `create_operator` с паролем, сгенерированным и
+переданным **полностью на стороне сервера** (`head -c 24 /dev/urandom | base64`,
+пайп напрямую в интерактивные `getpass`-промпты) — пароль ни разу не появился в
+выводе, который видит эта сессия; проверены только несекретные поля (`is_staff`,
+`is_superuser`, `is_active`, ровно одно permission `trigger_run`).
+
+**Реальный публичный дефект, найденный только настоящим браузером против живого
+URL.** После апгрейда `POST /ops/login/` отдавал настоящий `500`
+(`ProgrammingError`) для любых credentials — ни один Django `TestCase` не мог бы
+поймать это, поскольку тесты всегда выполняются под полноправной ролью, а не под
+ограниченной `web`. Причина: `provision_db.py` (`db_setup`) на каждом запуске
+безусловно делает `REVOKE ALL` и заново выдаёт только свой собственный blanket
+SELECT-only baseline, ничего не зная про более узкие права `db_grants`. Два
+отдельных `docker compose run --rm migrate ...` (для `create_operator`, затем для
+проверочного shell-вызова) каждый раз незаметно повторно запускали `db_setup` как
+свою зависимость, снимая write-allowlist BON-22 оба раза. Восстановлено немедленно
+`docker compose run --rm --no-deps db_grants`; подтверждено прямым psycopg-запросом
+от имени настоящей роли `metacritic_web` (INSERT в `django_session`/
+`processing_loginfailure` прошёл). `deploy/README.md` обновлён (`--no-deps` для
+любого отдельного `migrate`/`db_setup` вызова после первого деплоя) и закоммичен
+(`47de33d`) до продолжения проверки. Тот же браузерный запрос после фикса вернул
+`200` с честным generic-сообщением вместо `500`.
+
+**Реальный manual run на продовых данных.** `admission.admit()` вызван напрямую
+против настоящего объекта `User` `<operator>` (найден по username, без пароля) через
+одноразовый Django shell на VDS — `accepted`. Уже работающий production-scheduler
+(без перезапуска) claim'нул его своим dispatcher-потоком в течение секунды: run
+`id=36`, `trigger_kind=manual`, `scheduled_slot=null`, реальный прогресс наблюдался
+публично через `/ops/status/` в реальном времени (processed 3→13→16→20) до
+`succeeded 20/20`. `ManualRunRequest` дошёл до `state=completed` с верными
+`claimed_at`/`completed_at`.
+
+Настоящий Chromium (Playwright, с рабочей станции разработчика, без SSH-туннеля):
+первый анонимный observer видит ссылку "Operator sign in" и run `#36` в истории;
+**второй, полностью независимый anonymous browser context** тоже видит run `#36` —
+закрывает требование "наблюдение из второй анонимной сессии" без единого
+credential. Логин с неизвестным username вернул тот же generic-текст, без
+раскрытия информации. [Скриншот](../evidence/bon-22-public-ops.png).
+
+**Следующее scheduled-окно после апгрейда.** `run id=37`, `scheduled_slot=03:00Z`,
+запущено автоматически сразу после manual run без вмешательства оператора,
+`succeeded 20/20` — hourly timer не пострадал от dispatcher-потока, тот же паттерн,
+что уже доказан в `PUB-01`/`PUB-02`/`BON-21`. [Полный execution evidence](../evidence/bon-22-public-deploy.json).
 
 Локальный suite: **400 application tests** (44 новых для BON-22) зелёные, `ruff
 format`/`check` и `mypy --strict` чистые, `makemigrations --check --dry-run` без

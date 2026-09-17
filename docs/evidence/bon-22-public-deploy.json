@@ -1,0 +1,89 @@
+{
+  "task": "BON-22",
+  "date": "2026-09-17",
+  "hosted_ci": {
+    "run": "https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/35131996286",
+    "commit": "959c2d6",
+    "status": "success",
+    "note": "First push (83a171d) failed CI's own runtime bring-up: db_grants exited 2 (script missing from the runtime image); fixed in 959c2d6 and reproduced locally before the fix was pushed."
+  },
+  "candidate": {
+    "deployed_version": "7fd4e09cb43474607fdfc82cbaba5932df3299c5",
+    "note": "Docs-only on top of the CI-passed 959c2d6 (git diff --stat outside docs/**/*.md is empty); image built locally with --provenance=false --sbom=false for a plain single-manifest ID.",
+    "image_id": "sha256:9d3319cd14f3c41254cd56283107064c0a4f35fbeba059ca78b6193608dca6ac",
+    "archives": {
+      "image-7fd4e09....tar": "b0ba4c7cc798f6ddcf3cdf3b00ff5e24aa07de31f4f57df8448143921961e935",
+      "config-7fd4e09....tar.gz": "ebf9defb12a71674a87f00bdc5d55033eb1eb00eb58a48761bf7bb62622bde0c"
+    },
+    "checksum_verification": "sha256sum on VDS after transfer matched the local values exactly"
+  },
+  "upgrade_procedure": [
+    "core lease idle, zero running review/summary jobs before starting",
+    "pg_dump backup taken and confirmed readable via pg_restore --list",
+    "docker compose stop scheduler worker (web/db/caddy stayed up and serving)",
+    "docker load of the new image; verify_image.py PASS before and after startup",
+    "docker compose --profile app up -d (no --wait, same known Compose 2.40 cosmetic limitation as PUB-01/BON-21): db_setup -> migrate -> db_grants -> web/scheduler/worker/caddy all ran in order",
+    "db_grants exited 0 on first try (verified via docker inspect ExitCode)",
+    "row-count preservation check found one intentional delta: processing_processheartbeat 2 -> 3 (the new BON-22 dispatcher thread registers its own heartbeat slot 'manual-dispatcher'); every pre-existing table's count was byte-identical"
+  ],
+  "post_deploy_containers": {
+    "web": {"image_id": "sha256:9d3319cd14f3c41254cd56283107064c0a4f35fbeba059ca78b6193608dca6ac", "state": "running", "restart_policy": "unless-stopped", "user": "65532:65532", "readonly_rootfs": true, "cap_drop": ["ALL"]},
+    "scheduler": {"image_id": "sha256:9d3319cd14f3c41254cd56283107064c0a4f35fbeba059ca78b6193608dca6ac", "state": "running", "restart_policy": "unless-stopped", "user": "65532:65532", "readonly_rootfs": true, "cap_drop": ["ALL"]},
+    "worker": {"image_id": "sha256:9d3319cd14f3c41254cd56283107064c0a4f35fbeba059ca78b6193608dca6ac", "state": "running", "restart_policy": "unless-stopped", "user": "65532:65532", "readonly_rootfs": true, "cap_drop": ["ALL"]},
+    "db_grants": {"image_id": "sha256:9d3319cd14f3c41254cd56283107064c0a4f35fbeba059ca78b6193608dca6ac", "state": "exited", "exit_code": "0", "restart_policy": "no", "user": "65532:65532", "readonly_rootfs": true, "cap_drop": ["ALL"]}
+  },
+  "smoke": {
+    "https_v978670": "8/8 PASS immediately post-upgrade",
+    "external_from_developer_workstation": "8/8 PASS, no SSH tunnel"
+  },
+  "operator_provisioning": {
+    "method": "docker compose run --rm -T migrate python app/manage.py create_operator <operator>, password generated and piped entirely server-side (head -c 24 /dev/urandom | base64), never printed to or read by the assisting session",
+    "verification": "SELECT confirmed username=<operator>, is_staff=false, is_superuser=false, is_active=true, exactly one permission (processing.trigger_run) -- all non-secret fields, no password ever inspected"
+  },
+  "real_production_bug_found_and_fixed": {
+    "symptom": "public /ops/login/ POST returned a real 500 (ProgrammingError) for any credentials, caught only by an actual Chromium request against the live URL -- Django TestCase always runs under a full-privilege role and cannot catch a restricted-role permission gap",
+    "root_cause": "provision_db.py (db_setup) unconditionally REVOKEs ALL then re-GRANTs only its own blanket SELECT-only baseline on every run, with no knowledge of db_grants's narrower extra privileges. Two standalone 'docker compose run --rm migrate ...' invocations after the initial upgrade (create_operator, then a verification shell command) each re-triggered db_setup as an ordinary dependency, silently stripping web's BON-22 write grants both times",
+    "fix": "restored grants with 'docker compose run --rm --no-deps db_grants'; verified via direct psycopg probe as the real metacritic_web role (INSERT into django_session/processing_loginfailure succeeded); deploy/README.md now documents --no-deps for any standalone migrate/db_setup invocation post-deploy, committed as 47de33d before continuing verification",
+    "verification_after_fix": "same Chromium request against the public login page now returns 200 with the generic 'Invalid username or password.' message instead of 500"
+  },
+  "real_manual_run_on_production": {
+    "trigger": "admission.admit() called directly against the real '<operator>' User object (looked up by username only, no password needed) via a one-off Django shell on the VDS",
+    "admission_outcome": "accepted, request_id 15fe20d6-0cc4-428f-944a-a4cf4590de09",
+    "live_claim": "the already-running production scheduler's dispatcher thread claimed it within about 1 second with no restart or intervention",
+    "run": {
+      "id": 36,
+      "trigger_kind": "manual",
+      "scheduled_slot": null,
+      "status": "succeeded",
+      "selected": 20,
+      "processed": 20,
+      "failed": 0,
+      "started_at": "2026-09-17T02:46:59.054+00:00",
+      "ended_at": "2026-09-17T02:47:34.221+00:00"
+    },
+    "manual_run_request_final_state": {
+      "state": "completed",
+      "run_id": 36,
+      "claimed_at": "2026-09-17T02:46:59.048494+00:00",
+      "completed_at": "2026-09-17T02:47:34.226151+00:00"
+    },
+    "live_progress_observed_publicly": "polled https://v978670.hosted-by-vdsina.com/ops/status/ every few seconds while it ran; processed count advanced 3 -> 13 -> 16 -> 20 in real time before the run left active_run"
+  },
+  "public_browser_verification": {
+    "tool": "real Chromium (Playwright), run from the developer workstation against the public HTTPS URL, no SSH tunnel",
+    "observer_1_anonymous": "sees the 'Operator sign in' link and run #36 in the public history table",
+    "observer_2_separate_anonymous_session": "a second, wholly independent browser context also sees run #36 -- satisfies the 'second anonymous observer' requirement without needing any credentials",
+    "public_login_wrong_credentials": "generic 'Invalid username or password.' for an unknown username, no information disclosure",
+    "screenshot": "bon-22-public-ops.png (desktop, full page, anonymous view showing run #36 and the sign-in link)"
+  },
+  "next_scheduled_window_after_upgrade": {
+    "run_id": 37,
+    "trigger_kind": "scheduled",
+    "scheduled_slot": "2026-09-17T03:00:00.000+00:00",
+    "status": "succeeded",
+    "selected": 20,
+    "processed": 20,
+    "failed": 0,
+    "note": "ran automatically right after the manual run (id 36) with no operator intervention, confirming the hourly timer is unaffected by BON-22's dispatcher, same pattern as PUB-01/PUB-02/BON-21"
+  }
+}
