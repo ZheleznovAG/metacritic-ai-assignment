@@ -4,9 +4,10 @@
 to the review/evidence document that actually verified it. This index only points at
 evidence that already exists; it does not itself re-verify anything. Current task/gate
 status and the authoritative dependency graph stay in [action_plan.md](../action_plan.md) —
-if the two ever disagree, `action_plan.md` wins. `REL-01`/`REL-04` still need to run the
-final acceptance pass across all of this; until then treat `DEL-01`–`DEL-04` as expected,
-not Verified.
+if the two ever disagree, `action_plan.md` wins. `REL-01` has run the full acceptance
+pass ([review](requirements/rel_01_review.md)); `REL-04` (final links/version/archive
+check immediately before sending) still needs to run. Treat `DEL-01`–`DEL-04` below as
+expected, not independently Verified by this index.
 
 ## Periodic run and selection
 
@@ -68,7 +69,7 @@ not Verified.
 
 | ID | Requirement | Evidence |
 |---|---|---|
-| `DEL-01` | Reviewer gets a reachable link to a reproducible repository | This repository; [Local development](../README.md#local-development) reproduces from a clean checkout ([REL-01](requirements/rel_01_review.md): real `git clone` from a fresh directory, full suite green). Kept **private**, not public: the reviewer's email from the original assignment text is in git history since the first few commits, and removing it would rewrite essentially every commit hash this project's own SHA citations rely on. Accessed instead via a direct GitHub collaborator invite to the reviewer, granted by the owner. |
+| `DEL-01` | Reviewer gets a reachable link to a reproducible repository | This repository; [Local development](../README.md#local-development) reproduces from a clean checkout ([REL-01](requirements/rel_01_review.md): real `git clone` from a fresh directory, full suite green). Kept **private**, not public, by owner decision: accessed via a direct GitHub collaborator invite to the reviewer, granted by the owner. The reviewer's email (and a few other private identifiers) originally entered git history in the first few commits; rather than rely only on staying private, the owner had the history rewritten so those values no longer exist in any commit at all ([REL-01 review](requirements/rel_01_review.md#why-this-candidate-was-re-frozen)). |
 | `DEL-02` | Reviewer gets a public link to a working service | `https://v978670.hosted-by-vdsina.com/` — live, real Let's Encrypt TLS ([PUB-01](requirements/pub_01_review.md)), kept running for as long as the review is ongoing (no fixed end date). Final external public smoke belongs to `REL-01`/`REL-04`. |
 | `DEL-03` | The fullest available AI-assisted history, original order, raw JSONL acceptable | [REL-03 review](requirements/rel_03_review.md): 10 sessions, 20,328 lines, redacted and verified, one honestly-documented gap (no local session log before 2026-09-11). The archive still needs a cutoff/privacy refresh in `REL-04` to fold in the release-verification sessions that happen after this point, before it is actually sent. |
 | `DEL-04` | The reviewed package is sent to the assignment's email address | `REL-05` (not yet due) |
