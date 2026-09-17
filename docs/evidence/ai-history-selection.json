@@ -1,0 +1,1704 @@
+{
+  "task": "REL-03",
+  "since": "2026-09-01T00:00:00+07:00",
+  "policy": "Include only project development, methodology, review and delivery with explicit Git/artifact correlation. Dates and cwd alone are insufficient. Commit references are associations, not assertions of authorship.",
+  "decisions": [
+    {
+      "tool": "codex",
+      "id": "01a06595-5c7f-7950-8533-f7ba872e6328",
+      "include": false,
+      "category": "empty_dialogue",
+      "reason": "Connectivity greeting; no project output or repository operation.",
+      "commits": [],
+      "artifacts": []
+    },
+    {
+      "tool": "codex",
+      "id": "01a06633-b50d-7e11-8884-bea4dcbb8a6c",
+      "include": false,
+      "category": "interrupted_request",
+      "reason": "Assignment prompt repeated, with no assistant response or resulting artifact.",
+      "commits": [],
+      "artifacts": []
+    },
+    {
+      "tool": "codex",
+      "id": "01a06ad1-b8b9-7622-a8d3-090187d8d729",
+      "include": true,
+      "category": "methodology",
+      "reason": "35 of 36 substantive lines match the saved Codex answer; discussion later committed as research.",
+      "commits": [
+        "0fba5fcd8091941dded46ccb07551318b19fec9a"
+      ],
+      "artifacts": [
+        "research/methodology/iteration_0/result/codex_5.6_sol_xhigh.md"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a06af2-3e7e-7db1-af3a-1c4775ba9322",
+      "include": true,
+      "category": "methodology",
+      "reason": "Compared all eight saved answers against assignment.md. Intermediate best/comparison/audit drafts are not retained in Git; preserve as preparation, not as a claimed authored commit.",
+      "commits": [
+        "0fba5fcd8091941dded46ccb07551318b19fec9a"
+      ],
+      "artifacts": [
+        "research/methodology/iteration_0/prompt.md",
+        "research/methodology/iteration_0/result/codex_5.6_sol_xhigh.md"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a06b2d-c7a0-76b0-b3b4-e80c0f80dc17",
+      "include": true,
+      "category": "methodology",
+      "reason": "Generated final.md; all 112 substantive lines of the saved iteration-1 answer occur in the session.",
+      "commits": [
+        "0fba5fcd8091941dded46ccb07551318b19fec9a"
+      ],
+      "artifacts": [
+        "research/methodology/iteration_1/result/codex_5.6_sol_xhigh.md"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a06b94-f3a9-7453-bb01-a42d1fb2c6b8",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "7a1daf4ce2e994e48ebb09b6b603001a99c2aa2e",
+        "414c6106baabf79da2a897b9cd086e133cac6a9d"
+      ],
+      "artifacts": [
+        "docs/requirements/acceptance.md",
+        "docs/requirements/assumptions.md",
+        "docs/requirements/context.md",
+        "docs/requirements/g1_review.md",
+        "docs/requirements/requirements.md"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a06c22-c94d-7372-9177-15ffb779250f",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "1f6762113674cbda19b668e6a507370780a69dbb",
+        "8973892e0415c9356fffa2b86144fa6246824c4b",
+        "530f2ea06630624e39f968f5ac070e48d178d7db",
+        "e59be1114f96c4eb5a881955f3769da91ec3d37d",
+        "7f96d89ddca81f8d66cdde093839623f910c2990",
+        "975f607bee594a283096b23ae0c10beb5c94b708",
+        "61e795c6b4217863461e38bc861d0426b6bf98df",
+        "1935ba9e96433e5cce759f4eb86810d81fee21c4",
+        "56954daf0e7d92bbc2919b32f06c75acc1810ac0",
+        "e1334bd532f45ff405ccb41663e779bbd1e56b1b",
+        "d8eaa3d44205803beeca9dd211a238c49462ab9c",
+        "6479623e02336564e2a23a7cfcbff897b2a63d74",
+        "d61d20249e64ee1807789043c45a706bbae7604c",
+        "90015b596d7f400723dee9c38c51efed69e6e833"
+      ],
+      "artifacts": [
+        "docs/requirements/acceptance.md",
+        "docs/requirements/assumptions.md",
+        "docs/requirements/context.md",
+        "docs/requirements/g1_review.md",
+        "docs/requirements/g2_review.md",
+        "docs/requirements/pln_02_review.md",
+        "docs/requirements/requirements.md",
+        "evals/reviews/README.md"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a07efc-af67-7101-864d-a92ca7e90bea",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "d42de23b9c192fd2491721ae59128adf5c65ce91",
+        "359cc2322e7fcdb97605c6b01ad1616e5ec55f7c"
+      ],
+      "artifacts": [
+        "app/config/__init__.py",
+        "app/config/safe_logging.py",
+        "app/config/settings.py",
+        "app/config/urls.py",
+        "app/config/wsgi.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/presentation/__init__.py"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a08e7a-f4ea-7b83-85a8-aa00fdf1b4d8",
+      "include": true,
+      "category": "review",
+      "reason": "Reviewed and corrected the uncommitted scaffold; the corrected files were subsequently committed by another session.",
+      "commits": [
+        "ee23fd3d8f7940e58c58620f2048985a8a4c4c3d"
+      ],
+      "artifacts": [
+        "docs/requirements/imp_01_correction.md"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "2a02eaae-27da-4d5d-bd06-8145c6cf947d",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "ee23fd3d8f7940e58c58620f2048985a8a4c4c3d",
+        "5472665af153b901599e12c36fe582655f3b03d9",
+        "3fc208b1e752129e2d9b3cee8620b54b9a1c3423",
+        "3959eee0261410d239ab84153b066ba7298324fb",
+        "ba0e4cffc6ce1af2f188e0561019a2ab29aeecfe"
+      ],
+      "artifacts": [
+        "app/config/__init__.py",
+        "app/config/safe_logging.py",
+        "app/config/settings.py",
+        "app/config/urls.py",
+        "app/config/wsgi.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/presentation/__init__.py"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "31b086cf-a542-4355-9299-3e7d82643b3f",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "9faac10610313649783434729d20b89a441cb9d7"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/config/settings.py",
+        "app/config/urls.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/dto.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "f1836f58-ace9-4689-8662-85c57bee0c28",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc",
+        "cb6538f0946516a13ba0cc71fbdf91ed0bd4bb43",
+        "80eee9abd510c0ab0a7fc3541d3150e5a74d96df"
+      ],
+      "artifacts": [
+        "app/catalog/__init__.py",
+        "app/catalog/ingest.py",
+        "app/catalog/management/__init__.py",
+        "app/catalog/management/commands/__init__.py",
+        "app/catalog/management/commands/ingest_game.py",
+        "app/catalog/migrations/0001_initial.py",
+        "app/catalog/migrations/0002_remove_gameplatform_last_changed_fetch_and_more.py",
+        "app/catalog/migrations/0003_alter_sourcefetch_kind.py"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a09aeb2e4a53334cb",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc",
+        "cb6538f0946516a13ba0cc71fbdf91ed0bd4bb43"
+      ],
+      "artifacts": [
+        "app/config/__init__.py",
+        "app/config/safe_logging.py",
+        "app/config/settings.py",
+        "app/config/urls.py",
+        "app/config/wsgi.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/presentation/__init__.py"
+      ],
+      "parent": "f1836f58-ace9-4689-8662-85c57bee0c28"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a5974de3754554e22",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc",
+        "cb6538f0946516a13ba0cc71fbdf91ed0bd4bb43"
+      ],
+      "artifacts": [
+        "docs/requirements/acceptance.md",
+        "docs/requirements/assumptions.md",
+        "docs/requirements/g3_review.md"
+      ],
+      "parent": "f1836f58-ace9-4689-8662-85c57bee0c28"
+    },
+    {
+      "tool": "codex",
+      "id": "01a08fba-6a25-76b3-8713-943e6b3ed595",
+      "include": true,
+      "category": "review",
+      "reason": "Seven ingestion/parser findings independently checked and handed to the concurrent implementation session.",
+      "commits": [
+        "788220e696f603109be03eb8edaae0083ebfed66"
+      ],
+      "artifacts": [
+        "docs/requirements/imp_02_review.md"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a2c3dfeb47a2c2c87",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc",
+        "cb6538f0946516a13ba0cc71fbdf91ed0bd4bb43"
+      ],
+      "artifacts": [
+        "app/catalog/__init__.py",
+        "app/catalog/ingest.py",
+        "app/catalog/management/__init__.py",
+        "app/catalog/management/commands/__init__.py",
+        "app/catalog/management/commands/ingest_game.py",
+        "app/catalog/migrations/0001_initial.py",
+        "app/catalog/migrations/__init__.py",
+        "app/catalog/models.py"
+      ],
+      "parent": "f1836f58-ace9-4689-8662-85c57bee0c28"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a809e957cccc1e70a",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc",
+        "cb6538f0946516a13ba0cc71fbdf91ed0bd4bb43"
+      ],
+      "artifacts": [
+        "app/catalog/__init__.py",
+        "app/catalog/ingest.py",
+        "app/catalog/management/__init__.py",
+        "app/catalog/management/commands/__init__.py",
+        "app/catalog/management/commands/ingest_game.py",
+        "app/catalog/migrations/0001_initial.py",
+        "app/catalog/migrations/__init__.py",
+        "app/catalog/models.py"
+      ],
+      "parent": "f1836f58-ace9-4689-8662-85c57bee0c28"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a5a445dfbcbb463d6",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc",
+        "cb6538f0946516a13ba0cc71fbdf91ed0bd4bb43"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/catalog/models.py",
+        "app/processing/clock.py",
+        "app/processing/models.py",
+        "app/reviews/models.py",
+        "scripts/init_env.py",
+        "scripts/provision_db.py"
+      ],
+      "parent": "f1836f58-ace9-4689-8662-85c57bee0c28"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-ac93e7839a4766d29",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "1fe69c411257b4b131644a4f7200ca427bf20b24",
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/catalog/migrations/0003_alter_sourcefetch_kind.py",
+        "app/catalog/models.py",
+        "app/metacritic/dto.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py",
+        "app/processing/lease.py",
+        "app/processing/management/__init__.py"
+      ],
+      "parent": "f1836f58-ace9-4689-8662-85c57bee0c28"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-af0b1ba22aec1b1b0",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc",
+        "cb6538f0946516a13ba0cc71fbdf91ed0bd4bb43"
+      ],
+      "artifacts": [
+        "docs/requirements/imp_02_review.md",
+        "docs/requirements/imp_03_review.md",
+        "docs/requirements/rev_eval_01_review.md",
+        "scripts/check.py",
+        "scripts/run_scheduler.py"
+      ],
+      "parent": "f1836f58-ace9-4689-8662-85c57bee0c28"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a19f36ea49bcffeb7",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc",
+        "cb6538f0946516a13ba0cc71fbdf91ed0bd4bb43"
+      ],
+      "artifacts": [
+        "app/catalog/models.py",
+        "app/processing/lease.py",
+        "app/processing/models.py",
+        "app/reviews/models.py",
+        "docs/requirements/acceptance.md",
+        "docs/requirements/assumptions.md",
+        "docs/requirements/requirements.md"
+      ],
+      "parent": "f1836f58-ace9-4689-8662-85c57bee0c28"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a692964696a0768cf",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc",
+        "cb6538f0946516a13ba0cc71fbdf91ed0bd4bb43"
+      ],
+      "artifacts": [
+        "app/catalog/migrations/0004_sourcefetch_review_page_evidence.py",
+        "app/catalog/models.py",
+        "app/config/settings.py",
+        "app/manage.py",
+        "app/metacritic/dto.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py",
+        "app/presentation/summaries.py"
+      ],
+      "parent": "f1836f58-ace9-4689-8662-85c57bee0c28"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a695631b546dbae7b",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc",
+        "cb6538f0946516a13ba0cc71fbdf91ed0bd4bb43"
+      ],
+      "artifacts": [
+        "app/catalog/models.py",
+        "app/catalog/queries.py",
+        "app/config/urls.py",
+        "app/presentation/static/presentation/app.css",
+        "app/presentation/summaries.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/presentation/views.py"
+      ],
+      "parent": "f1836f58-ace9-4689-8662-85c57bee0c28"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-aafe6a8b41dcc4ecb",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "7f979323037699c81b577ef8051a88ffda815a72",
+        "788220e696f603109be03eb8edaae0083ebfed66",
+        "9c23c5e6ae6f64df253e69cbef2c4264cf77b240",
+        "9a1da902138593beffb3e271022802a01af98189",
+        "12c821118b61600c0bf88eaf25168740243bacfc"
+      ],
+      "artifacts": [
+        "app/catalog/queries.py",
+        "app/config/urls.py",
+        "app/manage.py",
+        "app/presentation/static/presentation/app.css",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/presentation/views.py",
+        "app/tests/test_catalog_queries_list.py"
+      ],
+      "parent": "f1836f58-ace9-4689-8662-85c57bee0c28"
+    },
+    {
+      "tool": "codex",
+      "id": "01a09448-5ee8-7120-98fb-82927112f5ed",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "1b9bfb71a25ebcfe56f1bd4c32034b637183bc59"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/catalog/models.py",
+        "app/catalog/queries.py",
+        "app/config/settings.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "1b633d4b-3ce9-4e4a-bfa3-d07ab50e373d",
+      "include": true,
+      "category": "planning",
+      "reason": "Assessed the next plan step against unresolved implementation findings; no own commit claimed.",
+      "commits": [
+        "1b9bfb71a25ebcfe56f1bd4c32034b637183bc59"
+      ],
+      "artifacts": [
+        "action_plan.md",
+        "docs/requirements/implementation_audit_2026_09_12.md"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a098a6-a5c4-7200-a2c0-f35f2c624a0a",
+      "include": true,
+      "category": "review",
+      "reason": "Reviewed nine preceding commits and reproduced findings; findings were preserved by the follow-up session.",
+      "commits": [
+        "1b9bfb71a25ebcfe56f1bd4c32034b637183bc59"
+      ],
+      "artifacts": [
+        "docs/requirements/implementation_audit_2026_09_13.md"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a098ef-0f9b-7680-ba61-95783bea18d8",
+      "include": true,
+      "category": "review",
+      "reason": "Received the audit findings and analysed corrections against the saved audit; no own commit claimed.",
+      "commits": [
+        "1b9bfb71a25ebcfe56f1bd4c32034b637183bc59"
+      ],
+      "artifacts": [
+        "docs/requirements/implementation_audit_2026_09_13.md"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "759927cf-a293-41c0-ba12-e0abbfa8ce04",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "5e5f2d6e320e14eadd190dfbf7ce70229a7670f3"
+      ],
+      "artifacts": [
+        "app/manage.py",
+        "app/presentation/summaries.py",
+        "app/processing/scheduler.py",
+        "app/processing/selector.py",
+        "app/reviews/collector.py",
+        "app/reviews/corpus.py",
+        "app/reviews/management/commands/run_worker.py",
+        "app/summaries/contour.py"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a09947-4b61-7bc3-8ae4-dcd2f0bdab1c",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "0d45427a17f7b200b29955bb84ce2b10d7b36246",
+        "3785f42fb0ece12d8dd0dcd79c09f4ff0fd8d47e",
+        "ce46f3831c96fc84a3f751b5a2659a1d073e4c62",
+        "9ed851837a80e234c12fee5642726625ef858117",
+        "2d19907663cb2bcb587491297114f996878c4eb0",
+        "f4f7d53f030b7926b606be864ec4fe6a3402ac06",
+        "e125687072eb41ac22be0b97358e8ca964869f36",
+        "930545325588dc044c955970b9987b4ee003554d",
+        "a23e96e785c5fe1b81d62c18ff83b4398ba82f01"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/catalog/migrations/0004_sourcefetch_review_page_evidence.py",
+        "app/catalog/migrations/0005_alter_sourcefetch_outcome.py",
+        "app/catalog/models.py",
+        "app/catalog/queries.py",
+        "app/config/settings.py",
+        "app/healthcheck.py",
+        "app/manage.py"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a09e08-3576-7780-ac62-81de01caef2f",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "dd65f08991b2307aade7a6d4beb452e0a10abafa",
+        "d4fed9971cc4b2d129220bfaf80702d2b366f807",
+        "53219ffcd1e625e197b2281e78c818ede0b1b1ed",
+        "95f0413a6fdd05fa2a59206cee1bb809b8010088",
+        "c317306b57b9c55e8d4043df50f91d76ef10099e"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/catalog/management/commands/ingest_game.py",
+        "app/catalog/models.py",
+        "app/config/settings.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "491a2662-1607-447b-b921-7a24d8644f72",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "671acaa468dd312dfa4e4afe91de2adeb1569f2d",
+        "484011a8403fe077ddd0d8a2899d099c8fe08ffb",
+        "9cf81efc4cf39f70a25272e0b6663fbae81464ef"
+      ],
+      "artifacts": [
+        "app/manage.py",
+        "app/metacritic/parser.py",
+        "app/processing/scheduler.py",
+        "app/processing/selector.py",
+        "app/tests/fixtures/metacritic/bioeden_detail_tbd_userscore.min.html",
+        "app/tests/fixtures/metacritic/elden_ring_detail.min.html",
+        "app/tests/fixtures/metacritic/elden_ring_detail_corrupted.min.html",
+        "app/tests/fixtures/metacritic/elden_ring_expected.json"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "c9109107-3776-4bed-933c-029d5ddbe349",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "671acaa468dd312dfa4e4afe91de2adeb1569f2d",
+        "484011a8403fe077ddd0d8a2899d099c8fe08ffb",
+        "9cf81efc4cf39f70a25272e0b6663fbae81464ef",
+        "23ca9c5bacd2dd48f74a15ed5a4415d6cb2e68df",
+        "6590fa8bfc4fedd4eaa35e1413b42d7f64387351",
+        "ff54884a0cb2e617d8c6a3fcecefe95db1d6cb10",
+        "22a07d8291c45078de5732e5aaf5772e41a5b2f4"
+      ],
+      "artifacts": [
+        "app/manage.py",
+        "app/metacritic/parser.py",
+        "app/processing/scheduler.py",
+        "app/processing/selector.py",
+        "app/reviews/models.py",
+        "app/tests/fixtures/metacritic/bioeden_detail_tbd_userscore.min.html",
+        "app/tests/fixtures/metacritic/elden_ring_detail.min.html",
+        "app/tests/fixtures/metacritic/elden_ring_detail_corrupted.min.html"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a09f86-57c4-7121-ae96-2348e0ca993a",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "b5c48c706b595d677b93c4ae7c0e415282b09ee7",
+        "9f2af0fd316e0e6313a25c2ad344cab839b331b5",
+        "f65dc906183ca2dc8321b928f925030957596aa5",
+        "b4c812390af5501e7acfe485f43a80c516e91116",
+        "05feb911dcb820e0a92dc3ab1fd9c232a85f8ac0",
+        "a3b2f61aeebce5da48a3c8e704d10bd9a271b8a4"
+      ],
+      "artifacts": [
+        "app/catalog/genres.py",
+        "app/catalog/ingest.py",
+        "app/catalog/migrations/0006_game_genres.py",
+        "app/catalog/models.py",
+        "app/catalog/queries.py",
+        "app/config/settings.py",
+        "app/config/urls.py",
+        "app/healthcheck.py"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a0a0ab-486d-7740-b0b9-57b0c710e5fa",
+      "include": false,
+      "category": "internal_approval",
+      "reason": "session_meta.source identifies a guardian approval worker, quoting its parent.",
+      "commits": [],
+      "artifacts": []
+    },
+    {
+      "tool": "codex",
+      "id": "01a0a2fc-27e3-7003-a0c0-a4c72318e5f3",
+      "include": false,
+      "category": "internal_approval",
+      "reason": "session_meta.source identifies a guardian approval worker, quoting its parent.",
+      "commits": [],
+      "artifacts": []
+    },
+    {
+      "tool": "claude",
+      "id": "0d349523-eeeb-4038-b932-bdd389eebbcf",
+      "include": false,
+      "category": "conversation_prefix",
+      "reason": "All 288 user/assistant records, including UUID and content, are an identical ordered prefix of 16ac777e. Other records are resume bookkeeping, not byte-identical JSONL.",
+      "commits": [],
+      "artifacts": []
+    },
+    {
+      "tool": "claude",
+      "id": "16ac777e-06c7-466e-a003-3dabbee39f19",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b",
+        "a7456ae875014d36be90139b15a030aec76d913f"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/catalog/management/commands/ingest_game.py",
+        "app/catalog/queries.py",
+        "app/manage.py",
+        "app/metacritic/dto.py",
+        "app/metacritic/errors.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "agent-aed280e9e7107cf82",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5"
+      ],
+      "artifacts": [
+        "app/catalog/models.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/dto.py",
+        "app/metacritic/parser.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/processing/models.py"
+      ],
+      "parent": "0d349523-eeeb-4038-b932-bdd389eebbcf"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a079e93ed5831d9e5",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5"
+      ],
+      "artifacts": [
+        "app/catalog/models.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/dto.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/processing/models.py",
+        "app/processing/scheduler.py"
+      ],
+      "parent": "0d349523-eeeb-4038-b932-bdd389eebbcf"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a76923bedc63c8087",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5"
+      ],
+      "artifacts": [
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/presentation/__init__.py",
+        "app/presentation/summaries.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/presentation/views.py",
+        "app/tests/e2e_scenario.py"
+      ],
+      "parent": "0d349523-eeeb-4038-b932-bdd389eebbcf"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a776d3d7952063adc",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5"
+      ],
+      "artifacts": [
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/reviews/collector.py",
+        "app/tests/e2e_scenario.py",
+        "app/tests/test_e2e.py",
+        "app/tests/test_health.py",
+        "docs/requirements/imp_04_review.md"
+      ],
+      "parent": "0d349523-eeeb-4038-b932-bdd389eebbcf"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-ae2add86130ef0801",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5"
+      ],
+      "artifacts": [
+        "app/metacritic/dto.py",
+        "app/metacritic/parser.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/tests/e2e_scenario.py",
+        "app/tests/test_catalog_ingest.py",
+        "app/tests/test_e2e.py",
+        "app/tests/test_health.py"
+      ],
+      "parent": "0d349523-eeeb-4038-b932-bdd389eebbcf"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a8871cb4b6e2212d4",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5"
+      ],
+      "artifacts": [
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/tests/e2e_scenario.py",
+        "app/tests/test_e2e.py",
+        "app/tests/test_health.py"
+      ],
+      "parent": "0d349523-eeeb-4038-b932-bdd389eebbcf"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a855a5a756391ea22",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5"
+      ],
+      "artifacts": [
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/tests/e2e_scenario.py",
+        "app/tests/test_e2e.py",
+        "app/tests/test_health.py",
+        "docs/requirements/imp_04_snapshot_correction.md"
+      ],
+      "parent": "0d349523-eeeb-4038-b932-bdd389eebbcf"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-ac02463aafeae690a",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5"
+      ],
+      "artifacts": [
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/tests/e2e_scenario.py",
+        "app/tests/test_e2e.py",
+        "app/tests/test_health.py",
+        "scripts/check.py"
+      ],
+      "parent": "0d349523-eeeb-4038-b932-bdd389eebbcf"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a3d413a0d082e702e",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5"
+      ],
+      "artifacts": [
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/tests/e2e_scenario.py",
+        "app/tests/test_e2e.py",
+        "app/tests/test_health.py",
+        "docs/requirements/acceptance.md"
+      ],
+      "parent": "0d349523-eeeb-4038-b932-bdd389eebbcf"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a021a01d0082cedbe",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/catalog/models.py",
+        "app/catalog/queries.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/dto.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-af76af6e7ca3b6e4c",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/catalog/models.py",
+        "app/catalog/queries.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/dto.py",
+        "app/metacritic/gateway.py",
+        "app/presentation/templates/presentation/game_detail.html"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a9a9bbb39e1c5bdb3",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/presentation/summaries.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/tests/e2e_scenario.py",
+        "app/tests/test_e2e.py",
+        "app/tests/test_health.py",
+        "app/tests/test_similarity_integration.py",
+        "docs/requirements/imp_01_independent_review.md"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-ad2fadbe74994e189",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/catalog/models.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/gateway.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/processing/scheduler.py"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a390ab2b852938965",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/metacritic/dto.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/tests/e2e_scenario.py",
+        "app/tests/test_e2e.py",
+        "app/tests/test_health.py"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a22ffa6d2e4783515",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/tests/e2e_scenario.py",
+        "app/tests/test_e2e.py",
+        "app/tests/test_health.py",
+        "docs/requirements/imp_01_independent_review.md",
+        "docs/requirements/imp_02_revalidation.md",
+        "docs/requirements/imp_03_revalidation.md"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a673aad87872996ee",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/tests/e2e_scenario.py",
+        "app/tests/test_e2e.py",
+        "app/tests/test_health.py",
+        "docs/requirements/imp_01_independent_review.md"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-aa6cb70d7f13705a8",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/presentation/templates/presentation/game_detail.html",
+        "app/presentation/templates/presentation/index.html",
+        "app/tests/e2e_scenario.py",
+        "app/tests/test_e2e.py",
+        "app/tests/test_health.py",
+        "app/tests/test_processing_selector.py",
+        "docs/requirements/imp_01_independent_review.md",
+        "docs/requirements/imp_02_revalidation.md"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "codex",
+      "id": "01a0a569-ed37-7f82-b0e2-f105627b30bc",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "742edf30197ca8e7bf8357456dae2cc888dec773"
+      ],
+      "artifacts": [
+        "app/catalog/models.py",
+        "app/catalog/queries.py",
+        "app/config/settings.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/gateway.py",
+        "app/presentation/summaries.py",
+        "app/presentation/views.py"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a0a569-ee06-7092-83f5-4272fc63e79a",
+      "include": false,
+      "category": "internal_approval",
+      "reason": "session_meta.source identifies a guardian approval worker, quoting its parent.",
+      "commits": [],
+      "artifacts": []
+    },
+    {
+      "tool": "claude",
+      "id": "agent-adb16c266407d6678",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/processing/scheduler.py",
+        "app/reviews/management/commands/run_worker.py",
+        "app/summaries/groq_adapter.py",
+        "app/summaries/worker.py",
+        "app/tests/test_groq_adapter.py",
+        "app/tests/test_processing_scheduler.py",
+        "app/tests/test_summary_admission.py",
+        "scripts/run_scheduler.py"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a8e1f65c73d2992a3",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/processing/scheduler.py",
+        "app/summaries/groq_adapter.py",
+        "app/tests/test_groq_adapter.py",
+        "app/tests/test_processing_scheduler.py",
+        "app/tests/test_summary_admission.py"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a2520c7006bf67ca4",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/processing/scheduler.py",
+        "app/summaries/groq_adapter.py",
+        "app/tests/test_groq_adapter.py",
+        "app/tests/test_processing_scheduler.py",
+        "app/tests/test_summary_admission.py",
+        "scripts/run_scheduler.py"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a0885fc861abc7e66",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/manage.py",
+        "app/metacritic/gateway.py",
+        "app/tests/test_metacritic_gateway.py",
+        "docs/requirements/imp_04_review.md"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a780c08c97b63b3b3",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "314a2adb08530b2a67b5e9f6892286591a148ab5",
+        "67c1abcca18212ae1837830e8a38227a3f28eb54",
+        "58755cbbf65ecdbaec96ade94c91e31726e01d30",
+        "8887623d3392e46a8f46b8a32480afff62393274",
+        "c04091821a106c704883ffdfcf04ececdcd1bb4b"
+      ],
+      "artifacts": [
+        "app/metacritic/gateway.py",
+        "app/processing/selector.py",
+        "app/tests/test_metacritic_gateway.py",
+        "docs/requirements/imp_04_review.md"
+      ],
+      "parent": "16ac777e-06c7-466e-a003-3dabbee39f19"
+    },
+    {
+      "tool": "claude",
+      "id": "aca3afc5-4c11-4327-8362-b3b44fad2725",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853",
+        "8eae69eec0adf17939738b2324865da486ea0e3e",
+        "d316f004498da15c4f3104b8e3bdc241b0470a60",
+        "fd646e65c611d2f9f08055f0387e4bca8696a366",
+        "f60779777caa43ed27525c3510b9e6b0822f27f2",
+        "b558de8ef7d6a50b62dac25094713ca9e3929a89"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/catalog/queries.py",
+        "app/config/safe_logging.py",
+        "app/config/settings.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a62748bf3f46ee06c",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853"
+      ],
+      "artifacts": [
+        "app/catalog/ingest.py",
+        "app/manage.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py",
+        "app/processing/runner.py",
+        "app/tests/test_metacritic_parser.py",
+        "docs/requirements/hrd_01_review.md",
+        "docs/requirements/imp_02_revalidation.md"
+      ],
+      "parent": "aca3afc5-4c11-4327-8362-b3b44fad2725"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a137d3993af466cac",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853"
+      ],
+      "artifacts": [
+        "app/tests/test_catalog_ingest.py",
+        "app/tests/test_processing_scheduler.py",
+        "app/tests/test_processing_selector.py",
+        "app/tests/test_reviews_collector.py",
+        "app/tests/test_summaries_observability.py",
+        "app/tests/test_summaries_worker.py",
+        "docs/requirements/hrd_03_review.md",
+        "scripts/check.py"
+      ],
+      "parent": "aca3afc5-4c11-4327-8362-b3b44fad2725"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a23206eba5dde13dd",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853"
+      ],
+      "artifacts": [
+        "app/config/settings.py",
+        "app/processing/lease.py",
+        "app/reviews/collector.py",
+        "app/summaries/worker.py",
+        "app/tests/test_catalog_ingest.py",
+        "app/tests/test_processing_scheduler.py",
+        "app/tests/test_processing_selector.py",
+        "app/tests/test_reviews_collector.py"
+      ],
+      "parent": "aca3afc5-4c11-4327-8362-b3b44fad2725"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a7987bb5ffe3c1903",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853"
+      ],
+      "artifacts": [
+        "app/config/settings.py",
+        "app/processing/lease.py",
+        "app/reviews/collector.py",
+        "app/summaries/worker.py",
+        "app/tests/test_catalog_ingest.py",
+        "app/tests/test_processing_scheduler.py",
+        "app/tests/test_processing_selector.py",
+        "app/tests/test_reviews_collector.py"
+      ],
+      "parent": "aca3afc5-4c11-4327-8362-b3b44fad2725"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-abd349dfb8b208038",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853"
+      ],
+      "artifacts": [
+        "app/processing/lease.py",
+        "app/reviews/collector.py",
+        "app/summaries/worker.py",
+        "app/tests/test_catalog_ingest.py",
+        "app/tests/test_processing_scheduler.py",
+        "app/tests/test_processing_selector.py",
+        "app/tests/test_reviews_collector.py",
+        "app/tests/test_reviews_corpus.py"
+      ],
+      "parent": "aca3afc5-4c11-4327-8362-b3b44fad2725"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-abbba4be5c7b7ac15",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853"
+      ],
+      "artifacts": [
+        "app/config/settings.py",
+        "app/tests/test_processing_scheduler.py",
+        "app/tests/test_reviews_collector.py",
+        "app/tests/test_reviews_corpus.py",
+        "app/tests/test_summaries_worker.py"
+      ],
+      "parent": "aca3afc5-4c11-4327-8362-b3b44fad2725"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-ab3adcb9e8c7b282e",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853"
+      ],
+      "artifacts": [
+        "app/config/settings.py",
+        "app/manage.py",
+        "app/summaries/contour.py",
+        "app/summaries/groq_adapter.py",
+        "app/summaries/quota.py",
+        "app/summaries/worker.py",
+        "app/tests/test_summaries_contour.py",
+        "app/tests/test_summaries_worker.py"
+      ],
+      "parent": "aca3afc5-4c11-4327-8362-b3b44fad2725"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a81c4d86b4f77cd53",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853"
+      ],
+      "artifacts": [
+        "app/manage.py",
+        "app/processing/diagnostics.py",
+        "app/processing/management/commands/diagnose.py",
+        "app/processing/management/commands/storage_report.py",
+        "app/processing/storage_report.py",
+        "app/tests/test_groq_adapter.py",
+        "app/tests/test_presentation_game_detail.py",
+        "app/tests/test_processing_diagnostics.py"
+      ],
+      "parent": "aca3afc5-4c11-4327-8362-b3b44fad2725"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-aef4b27afa12efe20",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853"
+      ],
+      "artifacts": [
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/processing/management/commands/run_scheduler.py",
+        "app/reviews/management/commands/run_worker.py",
+        "app/tests/test_worker_fairness.py",
+        "deploy/Caddyfile",
+        "deploy/README.md",
+        "docs/requirements/imp_01_revalidation.md"
+      ],
+      "parent": "aca3afc5-4c11-4327-8362-b3b44fad2725"
+    },
+    {
+      "tool": "codex",
+      "id": "01a0a7ac-e4e9-7bd1-9bb3-57026efbaee6",
+      "include": true,
+      "category": "delivery",
+      "reason": "Prepared a source archive for external review from the then-current tracked tree; not an implementation commit.",
+      "commits": [
+        "b558de8ef7d6a50b62dac25094713ca9e3929a89"
+      ],
+      "artifacts": [
+        ".gitignore",
+        "assignment.md"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a530810f9d8cbc369",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853"
+      ],
+      "artifacts": [
+        "app/config/settings.py",
+        "app/manage.py",
+        "deploy/Caddyfile",
+        "deploy/Caddyfile.production",
+        "deploy/README.md",
+        "docs/requirements/acceptance.md",
+        "docs/requirements/assumptions.md",
+        "docs/requirements/hrd_01_review.md"
+      ],
+      "parent": "aca3afc5-4c11-4327-8362-b3b44fad2725"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a86b6fa3629ca84b6",
+      "include": true,
+      "category": "review_worker",
+      "reason": "Explicit repository review/verification delegated by the linked parent; unique tool checks/findings are retained even without an authored commit.",
+      "commits": [
+        "a510a31b1b5c6a1b43c46f3699d29001df9311d6",
+        "125f8e3b89ec8100aa89682af7a81b7cc1a964cb",
+        "d4254fe8a18b0060b29a31c673eca5a1bb776fcf",
+        "b230c23ead3b1c2f3d5cccdb4c1eefa19354f939",
+        "c07235dac54ad0843abb3159bcc0347afc0d9853"
+      ],
+      "artifacts": [
+        "app/config/settings.py",
+        "app/manage.py",
+        "deploy/Caddyfile",
+        "deploy/Caddyfile.production",
+        "deploy/README.md",
+        "docs/requirements/acceptance.md",
+        "docs/requirements/g3_review.md",
+        "docs/requirements/imp_01_revalidation.md"
+      ],
+      "parent": "aca3afc5-4c11-4327-8362-b3b44fad2725"
+    },
+    {
+      "tool": "claude",
+      "id": "agent-a62645fedc1b67c96",
+      "include": false,
+      "category": "empty_worker",
+      "reason": "Placeholder-only worker; its final reply explicitly reports that no task arrived.",
+      "commits": [],
+      "artifacts": []
+    },
+    {
+      "tool": "codex",
+      "id": "01a0a983-b615-7910-b8cf-385c0c462ed0",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "96a703c594ed8853710d2388b3e298b5b0b80214",
+        "e75c488553955c043885ef1e48b303ffa02d6b3e",
+        "66999db9239a834f471a9661beca7ef86240f522",
+        "920f268041e248deb957599bfebf6abd5afefd2c",
+        "29d60296f485f8997557116714e857d5dd6290e8"
+      ],
+      "artifacts": [
+        "app/config/settings.py",
+        "app/config/urls.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py",
+        "app/presentation/monitoring.py",
+        "app/presentation/static/presentation/app.css"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a0a983-b6e6-7c30-90ac-0410d5d73914",
+      "include": false,
+      "category": "internal_approval",
+      "reason": "session_meta.source identifies a guardian approval worker, quoting its parent.",
+      "commits": [],
+      "artifacts": []
+    },
+    {
+      "tool": "claude",
+      "id": "f6209bd4-d973-4e8d-b174-eb186f2ea33f",
+      "include": true,
+      "category": "implementation_or_review",
+      "reason": "Git commit-output subjects match existing history (including rewritten SHAs); references establish association, not exclusive authorship.",
+      "commits": [
+        "3387ef5511a39b2a033c713a21e0964ddd4d19f7",
+        "887b4603f37f6bee633f9c5db39cc868675c449a",
+        "51be4750db3949266f84f4dadaef7ce75006330c",
+        "ac88346f6989e6e6d2f79aa7039528da5b5da67d",
+        "e82bfc65a175845bad7734338cf100712b711d25",
+        "a5ddac55a4406a7b323ddd7c5a1649b69b7ff502",
+        "bc3e224d0f5b6d4ed7773a801b246374057c17fb",
+        "60c314aa03f6c3efc39f5b91b3fee5a3ecdd618d",
+        "2216e76c72073324d38273923d3bb926125ef308",
+        "aec1818347cf807d0be97ec9acaf28148666b930",
+        "00fcbad89aead7bcc7c808319872ae75fb26dec6",
+        "921ae898de7f6621736b6c0d7a84e4499951eea8",
+        "1f1340a6583dead7f825a455fc88fa5e1a50895c",
+        "0cfdd8d7676cbf7977d08c6e1133a8d0c4fe8bff",
+        "b3c23609eca396c8e28eb9abf328ccc600b8c6d1",
+        "940296ccb462731af5618feed0103c20509a58fa",
+        "bd62d8c97f29370fbcb78ffddbe7d9865c015495",
+        "6ade911d9b3b2b1307af743605c7b1646e5b74d4",
+        "843571bc30abefaf601fbd4ee97b856ee2ba8241",
+        "229507d9748be5334a7010e782b4d2abaa19dbae"
+      ],
+      "artifacts": [
+        "app/config/safe_logging.py",
+        "app/config/settings.py",
+        "app/config/urls.py",
+        "app/healthcheck.py",
+        "app/manage.py",
+        "app/metacritic/gateway.py",
+        "app/metacritic/parser.py",
+        "app/presentation/__init__.py"
+      ]
+    },
+    {
+      "tool": "codex",
+      "id": "01a0ad89-6f48-7e33-9a7f-86a52c51b03a",
+      "include": true,
+      "category": "delivery",
+      "reason": "Current archive verification and scope correction; ongoing work, not attributed to a completed implementation commit.",
+      "commits": [
+        "229507d9748be5334a7010e782b4d2abaa19dbae"
+      ],
+      "artifacts": [
+        "docs/requirements/rel_03_review.md",
+        "scripts/export_ai_history.py"
+      ]
+    },
+    {
+      "tool": "claude",
+      "id": "d310683d-199f-49d6-bdc0-6ff70e5f1510",
+      "include": true,
+      "category": "delivery",
+      "reason": "Prepared the current source-review archive, directly inspecting the tracked file list; no own commit claimed.",
+      "commits": [
+        "229507d9748be5334a7010e782b4d2abaa19dbae"
+      ],
+      "artifacts": [
+        ".gitignore",
+        "assignment.md"
+      ]
+    }
+  ]
+}

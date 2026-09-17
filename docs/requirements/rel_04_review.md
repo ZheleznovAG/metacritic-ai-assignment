@@ -37,22 +37,16 @@ belongs only to [action_plan.md](../../action_plan.md).
 
 ## AI-history archive
 
-Not independently hosted anywhere external -- `assignment.md` asks for it as an emailed
-attachment alongside the repository link, not as a URL, so "external accessibility" does
-not apply to it the same way. What this task owns instead, per its own specification, is
-making sure the archive is current before it is ever attached to anything:
+The archive is a local attachment, not a hosted public URL. Its current composition,
+privacy checks, hash and per-file manifest belong to the [REL-03 review](rel_03_review.md)
+and [audit manifest](../evidence/ai-history-audit.json).
 
-- Re-ran the full export/redact/package pipeline from the live Claude Code session logs
-  (not a copy of the previous archive) immediately before this check, since session `10`
-  (this ongoing session) had grown substantially during the `REL-01` history-rewrite/
-  re-freeze cycle. Full detail, counts, and the two new redaction values added this pass
-  (local Windows path, production operator username) are in the refreshed
-  [REL-03 review](rel_03_review.md). New archive SHA-256
-  `5505e0b74e8e31c7453caf3cca7459297dcbada6a40c67ce676f4727d19b936c`, 22,276 lines across
-  11 files.
-- This is still **not** the final cutoff -- session `10` continues after this export too
-  (this very review is part of it). `REL-05` must re-run the same pipeline one more time,
-  immediately before actually attaching and sending the archive.
+The current export uses explicit Git/artifact correlation for every conversation,
+including methodology and independent review without code commits. Internal permission
+workers and empty records are not development conversations. Substantive delegated
+review logs are included. The local correction does not repeat the external checks
+recorded above or imply delivery; `REL-05` must refresh the snapshot immediately before
+sending and review any newly discovered sessions.
 
 ## Metadata consistency with REL-01
 

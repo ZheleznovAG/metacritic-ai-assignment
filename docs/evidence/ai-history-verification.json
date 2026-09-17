@@ -1,0 +1,13 @@
+{
+  "task": "REL-03",
+  "checked_at": "2026-09-17T11:17:51.396222+00:00",
+  "archive_sha256": "054a00a5f087cdabb3a29eb064ad66ea9cbbbe411190d204be50cd2a3274341f",
+  "sessions": 73,
+  "records": 43719,
+  "selection_matches": true,
+  "all_member_hashes_match": true,
+  "zip_crc_valid": true,
+  "all_records_valid_json": true,
+  "privacy_residuals": {},
+  "limitations": "Pattern/exact-value scan; not proof against every unknown secret format."
+}

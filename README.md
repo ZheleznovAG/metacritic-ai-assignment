@@ -185,6 +185,22 @@ Secrets never reach a stored error or a log line: `groq_adapter._safe_api_error`
 - [G3 planning review](docs/requirements/g3_review.md): coverage, dependency audit, workload/reserve and explicit limitations.
 - [Implementation review of `6551e42`](docs/requirements/implementation_audit_6551e42.md): findings, requirement mappings and correction exit criteria; [archived probes and observations](research/reviews/6551e42/README.md). Current correction statuses and the next cycle belong to [action_plan.md](action_plan.md).
 
+AI-history delivery (`REL-03` / `DEL-03`): [scope and privacy review](docs/requirements/rel_03_review.md),
+[session-to-Git selection](docs/evidence/ai-history-selection.json), and
+[archive manifest](docs/evidence/ai-history-audit.json). The archive stays under ignored
+`.artifacts/rel03-ai-history/`. Rebuild with the two local session stores and an ignored
+private JSON file containing `values` (credential/PII strings) and optional `usernames`:
+
+```powershell
+.\.venv-app\Scripts\python.exe -B scripts/export_ai_history.py --codex-root "$env:USERPROFILE/.codex/sessions" --claude-root "$env:USERPROFILE/.claude/projects/<project-session-directory>" --private-values .artifacts/rel03-ai-history/private-values.json --selection docs/evidence/ai-history-selection.json --output .artifacts/rel03-ai-history/ai-history.zip --report docs/evidence/ai-history-audit.json
+.\.venv-app\Scripts\python.exe -B scripts/verify_ai_history.py --archive .artifacts/rel03-ai-history/ai-history.zip --audit docs/evidence/ai-history-audit.json --selection docs/evidence/ai-history-selection.json --private-values .artifacts/rel03-ai-history/private-values.json --report docs/evidence/ai-history-verification.json
+.\.venv-app\Scripts\python.exe -B -m unittest scripts.tests.test_ai_history -v
+```
+
+Update the reviewed selection before adding new conversations. No credentials or
+account stores belong in Git or the ZIP. These fixture-only tests also run through the
+existing `scripts/check.py`/CI script-test discovery; exporting real logs is local only.
+
 Offline evidence checks from the repository root with Python 3.12 or later (standard library only; no API key or `.env` needed):
 
 ```powershell
