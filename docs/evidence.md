@@ -70,7 +70,7 @@ not Verified.
 |---|---|---|
 | `DEL-01` | Reviewer gets a reachable link to a reproducible repository | This repository; [Local development](../README.md#local-development) reproduces from a clean checkout. Final external link check belongs to `REL-01`/`REL-04`. |
 | `DEL-02` | Reviewer gets a public link to a working service | `https://v978670.hosted-by-vdsina.com/` — live, real Let's Encrypt TLS ([PUB-01](requirements/pub_01_review.md)), kept running for as long as the review is ongoing (no fixed end date). Final external public smoke belongs to `REL-01`/`REL-04`. |
-| `DEL-03` | The fullest available AI-assisted history, original order, raw JSONL acceptable | `REL-03` (archive manifest, not yet prepared) |
+| `DEL-03` | The fullest available AI-assisted history, original order, raw JSONL acceptable | [REL-03 review](requirements/rel_03_review.md): 10 sessions, 20,328 lines, redacted and verified, one honestly-documented gap (no local session log before 2026-09-11). The archive still needs a cutoff/privacy refresh in `REL-04` to fold in the release-verification sessions that happen after this point, before it is actually sent. |
 | `DEL-04` | The reviewed package is sent to the assignment's email address | `REL-05` (not yet due) |
 
 ## Derived non-functional properties
