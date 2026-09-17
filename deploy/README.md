@@ -32,11 +32,22 @@ python3 scripts/smoke.py http://127.0.0.1:18081 --version <build-version>
 `migrate` and `web`: it names the exact narrow write grants web needs for its own sessions, the
 manual-run command row, the admission rate-limit lock and login-throttle audit rows, and one
 column of `auth_user` -- tables `provision_db.py` cannot yet name (it runs before `migrate`).
-`docker compose -p metacritic-imp01-prod ps db_grants` should show `Exited (0)`. Create the first
-operator account once web is up (never prints the password to any log docs read):
+`docker compose -p metacritic-imp01-prod ps db_grants` should show `Exited (0)`.
+
+**`provision_db.py` (`db_setup`) unconditionally revokes and re-grants only its own blanket
+SELECT-only baseline on every run, with no knowledge of `db_grants`'s narrower extra
+privileges -- so *any* standalone command that re-triggers `db_setup` as a dependency (e.g.
+`docker compose ... run --rm migrate ...` without `--no-deps`, which brings up `migrate`'s own
+`db_setup` dependency again) silently strips web back to read-only and breaks login/manual-run
+with a real `ProgrammingError`/500, invisible until something actually exercises a write. Always
+add `--no-deps` to a standalone `run --rm migrate`/`db_setup` invocation once the initial deploy
+has already completed; if you ever do trigger a bare `db_setup` re-run by mistake, restore the
+grants immediately with `docker compose ... run --rm --no-deps db_grants`.**
+
+Create the first operator account once web is up (never prints the password to any log docs read):
 
 ```sh
-docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml run --rm migrate python app/manage.py create_operator <username>
+docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml run --rm --no-deps migrate python app/manage.py create_operator <username>
 ```
 
 Do not add `--wait` to that `up`: `scheduler`/`worker` disable their inherited HTTP healthcheck (it doesn't apply to a non-HTTP process), and Docker Compose 2.40 (confirmed on the VDS during `PUB-01`'s first upgrade; Compose v5 locally does not have this problem) refuses to `--wait` on a container with a disabled healthcheck at all ("has no healthcheck configured"), aborting before ever reaching the verification steps below even though the containers themselves start correctly. `verify_image.py`'s own `--container` check already waits out `web`'s real healthcheck; confirm `scheduler`/`worker` separately with `docker compose -p metacritic-imp01-prod ps` (expect `running`, no health column since none is configured) before moving on.
