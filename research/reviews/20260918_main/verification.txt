@@ -1,0 +1,35 @@
+Dated execution excerpts for MA-01/02/03 and RUN/SEL/DATA/AI/UI/SIM audit.
+Reviewed source: 4109ef17b624afbe977dae33dd13a0ecfdb3836e
+Commands and environment: README.md in this directory.
+Raw local logs are ignored artifacts; only result lines are copied below.
+
+container-checks.log
+Raw log SHA-256: d8c849441932572b2c197f0eef68eadc7abafaac7714505e4e356c953722dae2
+All checks passed!
+Success: no issues found in 139 source files
+System check identified no issues (0 silenced).
+No changes detected
+Found 400 test(s).
+System check identified no issues (0 silenced).
+Ran 400 tests in 113.087s
+OK
+Ran 22 tests in 0.606s
+OK
+Ran 18 tests in 0.147s
+OK
+Ran 7 tests in 0.014s
+OK
+Ran 9 tests in 0.006s
+OK
+PASS: the real candidate passes all 8 invariants on all applicable cases.
+PASS SIM-EVAL-01 integrity: 14 cases; version 1.0.0; owner acceptance is recorded only in action_plan.md
+Ran 14 tests in 0.030s
+OK
+
+probes.log
+Raw log SHA-256: 44ab0875b656f06aece9a5216e3495f389a8d5a631116e93d8933fe2ff11f672
+Ran 3 tests in 0.412s
+OK
+
+probe.py SHA-256: 754bad21f998f23b713739f4f1e25b3909b6f1942f750c2c29dfcc19e7881084
+observations.json SHA-256: 3d4c52f67436d39c9de26d49a0d1082e1ccd68293435bd8fb231464fdda58e69

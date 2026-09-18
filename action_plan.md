@@ -24,6 +24,16 @@
 
 ## Приоритет текущего цикла
 
+2026-09-18: По запросу владельца выполнена [сверка всей основной части с заданием](docs/requirements/main_audit_2026_09_18.md) на `4109ef1`: 400 application + 70 вспомогательных тестов, hosted CI, 28 последовательных production slots по 20/20, анонимный браузер и четыре живых source samples. Все функции присутствуют; три отдельные PostgreSQL/HTTP probes подтверждают новые findings. Код приложения и production в этом цикле не менялись. [Воспроизведение и observations](research/reviews/20260918_main/README.md).
+
+Новые corrections учитываются отдельным циклом после сдачи; статусы завершённых baseline-задач ниже фиксируют уже выполненные циклы и не означают отсутствие вновь найденных дефектов. **Повторная приёмка основной части по G4–G6: Changes requested** до закрытия этой очереди и повторной проверки `HRD-06` / публичных затронутых сценариев. Предыдущие evidence и факты deployment/сдачи сохраняются. Это не новый Verified и не разрешение начинать следующий Bonus. Следующий correction — `MA-01`, сначала расширение frozen oracle.
+
+| Correction | Текущий статус | Область / повторная приёмка | Evidence и выход |
+|---|---|---|---|
+| `MA-01` | Changes requested | `IMP-04`, `HRD-04`; `G4`–`G6` | P2: пустые отзывы вытесняют содержательные; [контрпример и критерии исправления](docs/requirements/main_audit_2026_09_18.md#ma-01-пустые-отзывы-занимают-ai-выборку). |
+| `MA-02` | Changes requested | `IMP-02`, `HRD-01`; `G4`–`G6` | P2: повреждённая platform reference молча пропускается; [контрпример и критерии исправления](docs/requirements/main_audit_2026_09_18.md#ma-02-повреждённая-платформа-молча-исчезает-из-результата-парсера). |
+| `MA-03` | Changes requested | `IMP-05`; `G4`–`G6` | P3: первая ошибка collection выглядит как Pending; [контрпример и критерии исправления](docs/requirements/main_audit_2026_09_18.md#ma-03-первая-ошибка-сбора-отзывов-выглядит-как-ожидание). |
+
 2026-09-18: По явному решению владельца репозиторий переведён в **public** (`DEL-01`), что заменяет прежнее решение private + invite. Перед публикацией проверены 112 доступных коммитов / 861 уникальный blob и логи всех 54 CI-запусков по 14 известным приватным значениям и credential-patterns. Единственный остаток — email ревьюера в старом whitespace-check log запуска `34573424815`; удалены только логи, запись о запуске сохранена. Анонимные запросы к репозиторию, актуальному успешному CI и API возвращают `200`, API подтверждает `private=false`: [execution evidence](docs/evidence/repository-public-2026-09-18.json). Владелец также подтвердил отправку по email архива переписки, ссылки на сервис и ссылки на репозиторий с информацией об инвайте; это подтверждение состава отправки не подменяет требуемые `REL-05` копию письма, timestamp и сверку фактического вложения.
 
 2026-09-17: `REL-03` scope corrected at the owner's request: session inclusion follows Git and preserved artifacts, not only dates or `cwd`. [Selection](docs/evidence/ai-history-selection.json): 29 main conversations and 44 substantive review workers, eight empty/internal/duplicate records omitted. [Review](docs/requirements/rel_03_review.md), [manifest](docs/evidence/ai-history-audit.json), [independent verification](docs/evidence/ai-history-verification.json). This is a local correction; it does not assert delivery or a new hosted verification.

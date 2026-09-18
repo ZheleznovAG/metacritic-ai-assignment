@@ -1,0 +1,588 @@
+{
+  "reviewed_head": "4109ef17b624afbe977dae33dd13a0ecfdb3836e",
+  "requirements": "RUN/SEL/DATA/AI/UI/SIM and their failure/integrity acceptance criteria",
+  "existing_suite": {
+    "environment": "isolated Docker project metacritic-main-audit-20260918, PostgreSQL 16, no live external inputs",
+    "exit_code": 0,
+    "application_tests": 400,
+    "script_tests": 22,
+    "planning_tests": 18,
+    "review_eval_integrity_tests": 7,
+    "review_selection_integrity_tests": 9,
+    "similarity_integrity_tests": 14,
+    "ruff": "pass",
+    "mypy": "pass",
+    "django_checks_and_migration_drift": "pass",
+    "offline_evals": "pass",
+    "hosted_ci_url": "https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/35329461841",
+    "hosted_ci_conclusion": "success"
+  },
+  "defect_confirming_probes": {
+    "reviewed_head": "4109ef17b624afbe977dae33dd13a0ecfdb3836e",
+    "observations": {
+      "MA-01": {
+        "collected": 23,
+        "substantive_reviews_in_complete_source": 3,
+        "selected": 10,
+        "selected_nonempty": 1,
+        "provider_requests": 1,
+        "provider_nonempty_inputs": 1,
+        "summary_state_with_prompt_compliant_fake": "insufficient_data",
+        "ui_state": "insufficient_data"
+      },
+      "MA-02": {
+        "original_platforms": 5,
+        "corrupted_platform_reference_count": 1,
+        "returned_platforms": 4,
+        "parser_rejected": false
+      },
+      "MA-03": {
+        "collection_state": "unstable",
+        "collection_reason": "collection_unstable",
+        "existing_summary": false,
+        "ui_state": "pending",
+        "ui_reason": null,
+        "http_status": 200
+      }
+    }
+  },
+  "production_read_only_snapshot": {
+    "checked_at": "2026-09-18T09:31:17.911702+00:00",
+    "games": 731,
+    "missing_fields": {
+      "developer": 0,
+      "description": 53,
+      "cover_url": 68
+    },
+    "no_video": 712,
+    "without_platforms": [],
+    "review_job_states": [
+      {
+        "state": "empty",
+        "count": 2935
+      },
+      {
+        "state": "complete",
+        "count": 503
+      },
+      {
+        "state": "unstable",
+        "count": 2
+      }
+    ],
+    "summary_job_states": [
+      {
+        "state": "insufficient_data",
+        "count": 1425
+      },
+      {
+        "state": "succeeded",
+        "count": 61
+      }
+    ],
+    "problem_collections": [
+      {
+        "id": 1676,
+        "game_platform__game_id": 39,
+        "game_platform__game__title": "Marvel's Wolverine",
+        "audience": "user",
+        "daily_candidate__cycle__business_date": "2026-09-17",
+        "state": "unstable",
+        "last_error": "total_results_changed",
+        "reported_total": 557,
+        "fetched_count": 300,
+        "unique_count": 300
+      },
+      {
+        "id": 2896,
+        "game_platform__game_id": 39,
+        "game_platform__game__title": "Marvel's Wolverine",
+        "audience": "user",
+        "daily_candidate__cycle__business_date": "2026-09-18",
+        "state": "unstable",
+        "last_error": "total_results_changed",
+        "reported_total": 1401,
+        "fetched_count": 1200,
+        "unique_count": 1200
+      }
+    ],
+    "recent_runs": [
+      {
+        "id": 67,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-18 09:00:00+00:00"
+      },
+      {
+        "id": 66,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-18 08:00:00+00:00"
+      },
+      {
+        "id": 65,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-18 07:00:00+00:00"
+      },
+      {
+        "id": 64,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-18 06:00:00+00:00"
+      },
+      {
+        "id": 63,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-18 05:00:00+00:00"
+      },
+      {
+        "id": 62,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-18 04:00:00+00:00"
+      },
+      {
+        "id": 61,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-18 03:00:00+00:00"
+      },
+      {
+        "id": 60,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-18 02:00:00+00:00"
+      },
+      {
+        "id": 59,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-18 01:00:00+00:00"
+      },
+      {
+        "id": 58,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-18 00:00:00+00:00"
+      },
+      {
+        "id": 57,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 23:00:00+00:00"
+      },
+      {
+        "id": 56,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 22:00:00+00:00"
+      },
+      {
+        "id": 55,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 21:00:00+00:00"
+      },
+      {
+        "id": 54,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 20:00:00+00:00"
+      },
+      {
+        "id": 53,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 19:00:00+00:00"
+      },
+      {
+        "id": 52,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 18:00:00+00:00"
+      },
+      {
+        "id": 51,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 17:00:00+00:00"
+      },
+      {
+        "id": 50,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 16:00:00+00:00"
+      },
+      {
+        "id": 49,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 15:00:00+00:00"
+      },
+      {
+        "id": 48,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 14:00:00+00:00"
+      },
+      {
+        "id": 47,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 13:00:00+00:00"
+      },
+      {
+        "id": 46,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 12:00:00+00:00"
+      },
+      {
+        "id": 45,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 11:00:00+00:00"
+      },
+      {
+        "id": 44,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 10:00:00+00:00"
+      },
+      {
+        "id": 43,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 09:00:00+00:00"
+      },
+      {
+        "id": 42,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 08:00:00+00:00"
+      },
+      {
+        "id": 41,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 07:00:00+00:00"
+      },
+      {
+        "id": 40,
+        "trigger_kind": "scheduled",
+        "status": "succeeded",
+        "selected_count": 20,
+        "processed_count": 20,
+        "failed_count": 0,
+        "scheduled_slot": "2026-09-17 06:00:00+00:00"
+      }
+    ],
+    "current_corpora": 1462,
+    "current_corpora_with_blank_selected": 0,
+    "current_corpora_at_least_3_items_fewer_than_3_nonempty": [],
+    "runtime_source_differences": []
+  },
+  "public_browser": {
+    "checked_at": "2026-09-18T09:37:08.047633+00:00",
+    "checks": {
+      "catalog": {
+        "http": 200,
+        "games": 731,
+        "unique_links": 731,
+        "rating_order_matches": true
+      },
+      "combined_search_filter": {
+        "query": "eLdEn",
+        "platform": "playstation-5",
+        "titles": [
+          "Elden Ring"
+        ]
+      },
+      "card": {
+        "url": "https://v978670.hosted-by-vdsina.com/games/1/?q=eLdEn&platform=playstation-5",
+        "title": "Elden Ring",
+        "platform_rows": [
+          "PC 94 7.6",
+          "PlayStation 4 No data 7.5",
+          "PlayStation 5 96 8.4",
+          "Xbox One No data 7.0",
+          "Xbox Series X 96 8.0"
+        ],
+        "audiences": [
+          "Critics",
+          "Users"
+        ],
+        "has_video_link": true
+      },
+      "similar_navigation": {
+        "target_title": "ARES: THE IRON VANGUARD",
+        "query_preserved": true
+      },
+      "back_context": true,
+      "mobile_list_overflow": false,
+      "mobile_card_overflow": false,
+      "empty_search": true,
+      "missing_game_http": 404,
+      "wolverine_user_summary": {
+        "state": "stale",
+        "reason": "The source changed during review collection.",
+        "previous_result": "insufficient_data"
+      }
+    },
+    "javascript_errors": []
+  },
+  "live_source_samples": {
+    "checked_at": "2026-09-18T09:38:17.028497+00:00",
+    "source_samples": [
+      {
+        "locator": "/game/elden-ring/",
+        "http_status": 200,
+        "outcome": "succeeded",
+        "error_code": null,
+        "raw_jsonld": {
+          "name": "Elden Ring",
+          "image": "https://www.metacritic.com/a/img/resize/86c7a59722e76cf9cb2c83bfac863f18f815bc2a/catalog/provider/6/12/6-1-824956-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+          "trailer": {
+            "embedUrl": "https://cdn.jwplayer.com/players/OXExoEAD.html",
+            "contentUrl": "https://cdn.jwplayer.com/manifests/OXExoEAD.m3u8"
+          },
+          "gamePlatform": [
+            "Xbox One",
+            "PC",
+            "PlayStation 4",
+            "Xbox Series X",
+            "PlayStation 5"
+          ],
+          "description_present": true
+        },
+        "developer_widget": "Developer: From Software",
+        "stored": {
+          "id": 1,
+          "title": "Elden Ring",
+          "locator": "/game/elden-ring/",
+          "cover_url": "https://www.metacritic.com/a/img/resize/86c7a59722e76cf9cb2c83bfac863f18f815bc2a/catalog/provider/6/12/6-1-824956-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+          "description_present": true,
+          "developer": "From Software",
+          "video": "https://cdn.jwplayer.com/players/OXExoEAD.html",
+          "platforms": [
+            {
+              "name": "Xbox One",
+              "metascore": null,
+              "userscore": "7.0"
+            },
+            {
+              "name": "PC",
+              "metascore": 94,
+              "userscore": "7.6"
+            },
+            {
+              "name": "PlayStation 4",
+              "metascore": null,
+              "userscore": "7.5"
+            },
+            {
+              "name": "Xbox Series X",
+              "metascore": 96,
+              "userscore": "8.0"
+            },
+            {
+              "name": "PlayStation 5",
+              "metascore": 96,
+              "userscore": "8.4"
+            }
+          ]
+        }
+      },
+      {
+        "locator": "/game/marvels-wolverine/",
+        "http_status": 200,
+        "outcome": "succeeded",
+        "error_code": null,
+        "raw_jsonld": {
+          "name": "Marvel's Wolverine",
+          "image": "https://www.metacritic.com/a/img/resize/af76c715bd161866b508e47ef8e4620159490e43/catalog/provider/7/2/7-1780161588.jpg?auto=webp&fit=crop&height=675&width=1200",
+          "trailer": {
+            "embedUrl": "https://cdn.jwplayer.com/players/eJfUCVgG.html",
+            "contentUrl": "https://cdn.jwplayer.com/manifests/eJfUCVgG.m3u8"
+          },
+          "gamePlatform": [
+            "PlayStation 5"
+          ],
+          "description_present": true
+        },
+        "developer_widget": "Developer: Insomniac Games",
+        "stored": {
+          "id": 39,
+          "title": "Marvel's Wolverine",
+          "locator": "/game/marvels-wolverine/",
+          "cover_url": "https://www.metacritic.com/a/img/resize/af76c715bd161866b508e47ef8e4620159490e43/catalog/provider/7/2/7-1780161588.jpg?auto=webp&fit=crop&height=675&width=1200",
+          "description_present": true,
+          "developer": "Insomniac Games",
+          "video": "https://cdn.jwplayer.com/players/eJfUCVgG.html",
+          "platforms": [
+            {
+              "name": "PlayStation 5",
+              "metascore": 77,
+              "userscore": "6.3"
+            }
+          ]
+        }
+      },
+      {
+        "locator": "/game/triple-trouble-panty-secrets/",
+        "http_status": 200,
+        "outcome": "succeeded",
+        "error_code": null,
+        "raw_jsonld": {
+          "name": "Triple Trouble: Panty Secrets",
+          "image": null,
+          "trailer": null,
+          "gamePlatform": [
+            "Nintendo Switch"
+          ],
+          "description_present": true
+        },
+        "developer_widget": "Developer: 17Studio",
+        "stored": {
+          "id": 731,
+          "title": "Triple Trouble: Panty Secrets",
+          "locator": "/game/triple-trouble-panty-secrets/",
+          "cover_url": null,
+          "description_present": true,
+          "developer": "17Studio",
+          "video": null,
+          "platforms": [
+            {
+              "name": "Nintendo Switch",
+              "metascore": null,
+              "userscore": null
+            }
+          ]
+        }
+      },
+      {
+        "locator": "/game/civics-scribble/",
+        "http_status": 200,
+        "outcome": "succeeded",
+        "error_code": null,
+        "raw_jsonld": {
+          "name": "Civics Scribble",
+          "image": "https://www.metacritic.com/a/img/resize/164e999ae6d5943a65e2fd3832141c25cccda29b/catalog/provider/6/12/6-1-1139237-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+          "trailer": null,
+          "gamePlatform": [
+            "PC"
+          ],
+          "description_present": false
+        },
+        "developer_widget": "Developer: Nebraska Public Media",
+        "stored": {
+          "id": 707,
+          "title": "Civics Scribble",
+          "locator": "/game/civics-scribble/",
+          "cover_url": "https://www.metacritic.com/a/img/resize/164e999ae6d5943a65e2fd3832141c25cccda29b/catalog/provider/6/12/6-1-1139237-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+          "description_present": false,
+          "developer": "Nebraska Public Media",
+          "video": null,
+          "platforms": [
+            {
+              "name": "PC",
+              "metascore": null,
+              "userscore": null
+            }
+          ]
+        }
+      }
+    ],
+    "transport_note": "HTTP-only probe used scheduler network; the web container has no source egress. No scheduler command or database writes were invoked."
+  },
+  "limitations": [
+    "No fresh paid AI quality run: existing frozen provider evaluation was independently verified offline.",
+    "No new production restart/redeploy/host-reboot performed during this audit.",
+    "Blank-selected-review counterexample is reproduced on controlled data; current production corpus heads had zero blank selected inputs.",
+    "A four-page live source comparison does not prove every stored missing field is naturally absent.",
+    "Developer workstation DB connection attempts failed before tests; canonical verification used the isolated Docker checks project."
+  ]
+}

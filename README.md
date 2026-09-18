@@ -184,6 +184,7 @@ Secrets never reach a stored error or a log line: `groq_adapter._safe_api_error`
 - [PLN-02 review and verification](docs/requirements/pln_02_review.md): contract corrections, PostgreSQL probe and remaining implementation limitations.
 - [G3 planning review](docs/requirements/g3_review.md): coverage, dependency audit, workload/reserve and explicit limitations.
 - [Implementation review of `6551e42`](docs/requirements/implementation_audit_6551e42.md): findings, requirement mappings and correction exit criteria; [archived probes and observations](research/reviews/6551e42/README.md). Current correction statuses and the next cycle belong to [action_plan.md](action_plan.md).
+- [Mandatory-scope audit, 2026-09-18](docs/requirements/main_audit_2026_09_18.md): assignment coverage, boundary findings, full deterministic checks and separate live observations; [reproduction commands and evidence](research/reviews/20260918_main/README.md). These historical defect-confirming probes are excluded from application tests and CI gates.
 
 AI-history delivery (`REL-03` / `DEL-03`): [scope and privacy review](docs/requirements/rel_03_review.md),
 [session-to-Git selection](docs/evidence/ai-history-selection.json), and
