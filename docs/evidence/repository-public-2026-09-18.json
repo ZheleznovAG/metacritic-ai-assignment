@@ -1,0 +1,37 @@
+{
+  "requirement": "DEL-01",
+  "checked_at": "2026-09-18T09:24:34.398079+00:00",
+  "repository_head": "f210b83597087f06fed1f2549d15a68045d7fd5f",
+  "visibility": "public",
+  "removed_log_run": 34573424815,
+  "log_removal_verified_http": 404,
+  "workflow_run_record_preserved": true,
+  "privacy_scan": {
+    "reachable_commits": 112,
+    "unique_blobs": 861,
+    "known_private_values": 14,
+    "git_known_matches": 0,
+    "workflow_runs_scanned": 54,
+    "ci_runs_with_known_match_before_removal": 1,
+    "finding": "Reviewer email in an old whitespace-check log; raw value omitted.",
+    "scope": "Known-value and credential-pattern scan; pattern candidates in Git were invented test fixtures. Not proof against unknown secret formats."
+  },
+  "anonymous_access": [
+    {
+      "url": "https://github.com/ZheleznovAG/metacritic-ai-assignment",
+      "status": 200,
+      "authenticated": false
+    },
+    {
+      "url": "https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/35218890492",
+      "status": 200,
+      "authenticated": false
+    },
+    {
+      "url": "https://api.github.com/repos/ZheleznovAG/metacritic-ai-assignment",
+      "status": 200,
+      "authenticated": false,
+      "private": false
+    }
+  ]
+}
