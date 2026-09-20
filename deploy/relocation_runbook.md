@@ -1,6 +1,6 @@
 # Runbook: экспорт, локальный запуск и перенос сервиса
 
-Пошаговая ручная процедура: снять состояние с VDS, поднять сервис локально, при необходимости развернуть на новом хосте и корректно отключить старый VDS. Команды из разделов 1, 2 и 5 выполнены и проверены 2026-09-20 на релизе `7fd4e09cb43474607fdfc82cbaba5932df3299c5` (боевой VDS Amsterdam, Ubuntu 24.04, 2 vCPU / 4 ГБ). Раздел 4 (новый хост) собран из `deploy/README.md` и не повторялся. Раздел 6 (туннель) — проект, не проверенный на практике.
+Пошаговая ручная процедура: снять состояние с VDS, поднять сервис локально, при необходимости развернуть на новом хосте и корректно отключить старый VDS. Команды из разделов 1 и 2 выполнены и проверены 2026-09-20 на релизе `7fd4e09cb43474607fdfc82cbaba5932df3299c5` (боевой VDS Amsterdam, Ubuntu 24.04, 2 vCPU / 4 ГБ). Раздел 4 (новый хост) собран из `deploy/README.md` и не повторялся.
 
 Общий принцип: **код и образ воспроизводимы, состояние — нет.** Состояние — это только то, что перечислено в разделе 0. Остальное пересобирается из репозитория.
 
@@ -33,9 +33,9 @@ DIR=metacritic-ai-assignment-imp01
 # 1. Логический дамп БД (consistent snapshot, сервис можно не останавливать)
 $S "docker exec ${P}-db-1 sh -c 'pg_dump -U \"\$POSTGRES_USER\" -d \"\$POSTGRES_DB\" -Fc'" > "$D/database.dump"
 
-# 2. Контрольные счётчики строк, чтобы сверить после восстановления
-$S "docker exec ${P}-db-1 psql -U metacritic -d metacritic -Atc \
-  'select relname, n_live_tup from pg_stat_user_tables order by 1'" > "$D/table-counts.txt"
+# 2. Точные счётчики строк по всем таблицам (n_live_tup — лишь оценка, для сверки не годится)
+Q="select tablename||'='||(xpath('/row/c/text()', query_to_xml('select count(*) as c from public.'||quote_ident(tablename), false, true, '')))[1]::text from pg_tables where schemaname='public' order by 1"
+$S "docker exec ${P}-db-1 psql -U metacritic -d metacritic -Atc \"$Q\"" > "$D/exact-counts.txt"
 
 # 3. Конфигурация и секреты (.env.app, .env.worker, compose, Caddyfile)
 $S "cd ~/$DIR && tar czf - .env.app .env.worker compose.yaml compose.production.yaml deploy" \
@@ -51,7 +51,7 @@ pg_restore --list "$D/database.dump" | wc -l    # если pg_restore устан
 
 Признак успеха: `pg_restore --list` выдаёт ~380 строк, `SHA256SUMS` сходится. Экспорт 2026-09-20: `.artifacts/vds-export-2026-09-20/`.
 
-Копию каталога экспорта храните вне ноутбука (зашифрованный облачный диск или внешний носитель): это единственная копия состояния после удаления VDS.
+Копию каталога экспорта храните вне рабочей машины (зашифрованный облачный диск или внешний носитель): это единственная копия состояния после удаления VDS.
 
 Если tar образа на VDS нет, образ всё равно можно снять с запущенного сервера: `$S "docker save metacritic-imp01:<APP_VERSION>" > "$D/image-<APP_VERSION>.tar"`.
 
@@ -96,9 +96,8 @@ docker exec -i metacritic-local-db-1 sh -c \
 #    PowerShell (нет оператора <): docker cp ..\vds-export-<дата>\database.dump metacritic-local-db-1:/tmp/database.dump
 #      docker exec metacritic-local-db-1 sh -c 'pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --exit-on-error --single-transaction /tmp/database.dump; rm /tmp/database.dump'
 
-# 5. Сверка: должно совпасть с table-counts.txt (771 игра, 15362 отзыва, 34 миграции)
-docker exec metacritic-local-db-1 sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Atc \
-  "select count(*) from catalog_game; select count(*) from reviews_review; select count(*) from django_migrations"'
+# 5. Сверка: вывод должен побайтно совпасть с exact-counts.txt из экспорта (переменная Q — из раздела 1)
+docker exec metacritic-local-db-1 psql -U metacritic -d metacritic -Atc "$Q" | diff - ../vds-export-<дата>/exact-counts.txt && echo COUNTS_IDENTICAL
 
 # 6. Приложение. up сам повторит db_setup → migrate → db_grants (права web на запись), затем web и caddy.
 $C --profile app up -d web caddy            # без scheduler/worker, если нужна «замороженная» копия
@@ -151,33 +150,16 @@ docker save --output image-<commit>.tar metacritic-imp01:<commit>
 Выполнять только после того, как новая копия (локальная или на другом хосте) прошла smoke и сверку счётчиков.
 
 1. **Финальный дамп**: повторить раздел 1 (можно остановить `scheduler`/`worker` перед дампом, чтобы после него не появилось новых данных: `docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml stop scheduler worker`).
-2. Сверить `SHA256SUMS`, сделать вторую копию экспорта вне ноутбука.
-3. Убедиться, что восстановленная копия читает те же счётчики (`table-counts.txt`).
+2. Сверить `SHA256SUMS`, сделать вторую копию экспорта вне рабочей машины.
+3. Убедиться, что восстановленная копия читает те же счётчики (`exact-counts.txt`).
 4. Остановить сервис: `... --profile app down` (без `-v`), затем удалить VDS в панели поставщика. После удаления прежний IP-адрес (`DEPLOY_SSH_HOST` из операторского `.env`) и hostname `v978670.hosted-by-vdsina.com` перестают быть вашими: любые ссылки на них в резюме/README/отчётах станут мёртвыми.
 5. Вывести из обращения: SSH-ключ `metacritic_deploy` (удалить файл и запись в `authorized_keys` на других хостах), строки `DEPLOY_SSH_*` в `.env` (или всю переменную), при необходимости перевыпустить `GROQ_API_KEY`, если секреты лежали только на VDS.
 6. Репозиторий: hostname и IP упоминаются в `deploy/Caddyfile.production`, `deploy/README.md`, `docs/evidence/*`, `docs/requirements/*`, `action_plan.md`. Это исторические доказательства для отправленного задания: **не переписывать**, а зафиксировать в `action_plan.md` отдельной записью, что публичный экземпляр отключён (дата, причина).
 
-## 6. Вариант: дешёвый VDS как публичный вход, сервис на домашнем ноутбуке
-
-Проект. Не проверялся на практике; перед использованием отрепетировать.
-
-```
-Интернет → VDS (Caddy, TLS 80/443) ──WireGuard──► ноутбук (compose: db, web, scheduler, worker)
-```
-
-- Ноутбук сам поднимает туннель к VDS (исходящее соединение, роутер настраивать не нужно), `PersistentKeepalive = 25`. Адреса туннеля, например, VDS `10.8.0.1`, ноутбук `10.8.0.2`.
-- На VDS остаётся только Caddy: сайт `<hostname> { reverse_proxy 10.8.0.2:18081 }`. Тариф 1 core / 1 ГБ достаточно. Наружу открыть 80/443 и UDP-порт WireGuard, доступ к `10.8.0.2` ограничить портом 18081.
-- На ноутбуке `APP_HTTP_BIND=10.8.0.2` (или `0.0.0.0` за файрволом), порт БД наружу не публиковать.
-- **IP клиента.** Web увидит адрес VDS. Перед запуском проверить, что Caddy передаёт `X-Forwarded-For`/`X-Forwarded-Proto`, а Django и лимиты для `/ops/run/` и логина их учитывают, иначе ломаются HTTPS-редирект и rate limiting.
-- Ноутбук: отключить сон/гибернацию (в том числе при закрытии крышки), автозапуск Docker и WireGuard, восстановление после сбоя питания. Рекомендуется Linux; в Docker Desktop/WSL2 автозапуск менее предсказуем.
-- Если ноутбук офлайн, сайт недоступен, почасовые окна пропускаются; `RunCandidate` и восстановление переживают перерыв. На VDS настроить Caddy `handle_errors` со страницей 503.
-- Ежедневный `pg_dump` с ноутбука на VDS (`scp`) — единственная копия вне дома.
-- Тариф текущего VDS нельзя понизить (ограничение поставщика): для 1 core / 1–2 ГБ нужен новый VDS, а значит, новые IP и hostname (раздел 4, шаг 5).
-
 ## Контрольный чек-лист «ничего не потеряно»
 
-- [ ] `database.dump` читается (`pg_restore --list`), сверка счётчиков после `pg_restore` совпала.
-- [ ] `SHA256SUMS` совпадает, есть копия вне ноутбука.
+- [ ] `database.dump` читается (`pg_restore --list`), сверка точных счётчиков после `pg_restore` совпала (`COUNTS_IDENTICAL`).
+- [ ] `SHA256SUMS` совпадает, есть копия вне рабочей машины.
 - [ ] `.env.app` и `.env.worker` сохранены (или готовы к перевыпуску).
 - [ ] Локальный `smoke.py` — все PASS.
 - [ ] Только после этого удалять VDS.
