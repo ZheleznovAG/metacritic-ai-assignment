@@ -1,5 +1,7 @@
 # IMP-01 early deployment
 
+Экспорт состояния, локальный запуск, перенос на другой хост и отключение VDS: [relocation_runbook.md](relocation_runbook.md).
+
 This procedure deploys the catalog preview and schema, and (since `PUB-01`) the supervised `scheduler`/`worker` services that keep it processing without an operator SSHing in for each tick. It does not certify G6. Docker/Compose and deploy-user daemon access must already work. Use the `DEPLOY_SSH_*` values from the ignored operator `.env`; never transfer that file or print it -- `.env.worker` (below) is a distinct file, safe to keep on the deploy host, and never carries `DEPLOY_SSH_*` values.
 
 ## Build and first installation

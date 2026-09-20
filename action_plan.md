@@ -4,6 +4,7 @@
 - Bonus scope: `bonus2`.
 - [Повторный аудит `6551e42`](docs/requirements/implementation_audit_6551e42.md) выявил 19 findings и подтвердил исправления R02/R15. После [R03–R06](docs/requirements/imp_04_snapshot_correction.md) и [серии оставшихся 15 corrections](docs/requirements/implementation_corrections_batch.md) открытых findings этого аудита нет. [24 исходных probes и observations](research/reviews/6551e42/README.md) сохраняются как историческое evidence.
 - Разрешённая пользователем пачка завершена: 261 application tests и offline checks пройдены локально и в Linux/Docker; browser/CSS/mobile checks и screenshots сохранены. [Verification excerpts и source hashes](docs/evidence/audit-batch-verification.txt). Hosted/public evidence и gates этой серией не закрываются; application DB не мигрировалась.
+- Эксплуатация, 2026-09-20 (вне G-ворот; задание сдано и отклонено по срокам): подготовлен перенос сервиса и отключение VDS. Состояние экспортировано вне Git (`pg_dump` -Fc, конфигурация, образ релиза `7fd4e09`; контрольные суммы), восстановление отрепетировано локально в отдельном Compose-проекте — счётчики строк совпали, `smoke.py` пройден, scheduler распознал восстановленный слот как `skipped_duplicate`. Процедура: [relocation_runbook.md](deploy/relocation_runbook.md). Публичный VDS **ещё работает**; его отключение будет отдельной записью после решения владельца. Вариант «VDS-туннель + ноутбук» — проект без проверки. Gate-статусы не менялись.
 
 ## Источники истины и правила
 
