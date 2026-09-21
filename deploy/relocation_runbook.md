@@ -30,12 +30,20 @@ S="ssh -i $KEY -o BatchMode=yes $H"
 P=metacritic-imp01-prod          # имя Compose-проекта на VDS
 DIR=metacritic-ai-assignment-imp01
 
-# 1. Логический дамп БД (consistent snapshot, сервис можно не останавливать)
+# 0. Остановить фоновую запись, иначе дамп и счётчики (шаги 1-2 — разные команды) могут разойтись:
+#    за это время scheduler/worker успеют дописать данные. Web и БД остаются доступными.
+#    Вернуть работу: то же с `start` вместо `stop`.
+$S "docker stop ${P}-scheduler-1 ${P}-worker-1"
+
+# 1. Логический дамп БД
 $S "docker exec ${P}-db-1 sh -c 'pg_dump -U \"\$POSTGRES_USER\" -d \"\$POSTGRES_DB\" -Fc'" > "$D/database.dump"
 
 # 2. Точные счётчики строк по всем таблицам (n_live_tup — лишь оценка, для сверки не годится)
-Q="select tablename||'='||(xpath('/row/c/text()', query_to_xml('select count(*) as c from public.'||quote_ident(tablename), false, true, '')))[1]::text from pg_tables where schemaname='public' order by 1"
-$S "docker exec ${P}-db-1 psql -U metacritic -d metacritic -Atc \"$Q\"" > "$D/exact-counts.txt"
+cat > "$D/exact-counts.sql" <<'SQL'
+select tablename||'='||(xpath('/row/c/text()', query_to_xml('select count(*) as c from public.'||quote_ident(tablename), false, true, '')))[1]::text
+from pg_tables where schemaname='public' order by 1;
+SQL
+$S "docker exec -i ${P}-db-1 psql -U metacritic -d metacritic -At" < "$D/exact-counts.sql" > "$D/exact-counts.txt"
 
 # 3. Конфигурация и секреты (.env.app, .env.worker, compose, Caddyfile)
 $S "cd ~/$DIR && tar czf - .env.app .env.worker compose.yaml compose.production.yaml deploy" \
@@ -60,7 +68,8 @@ pg_restore --list "$D/database.dump" | wc -l    # если pg_restore устан
 Проверено: Docker Engine 29 + Compose 5.4 на Windows. Каталог запуска повторяет раскладку сервера, поэтому не трогает рабочий `.env.app` в корне репозитория и другие локальные проекты. Имя проекта `metacritic-local` не пересекается с существующими.
 
 ```sh
-E=.artifacts/vds-export-<дата>; L=.artifacts/local-run
+E=$(pwd)/.artifacts/vds-export-<дата>    # абсолютный путь: дальше команды выполняются после `cd $L`
+L=.artifacts/local-run
 V=<APP_VERSION>                  # напр. 7fd4e09cb43474607fdfc82cbaba5932df3299c5
 
 # 1. Раскладка (то же, что переносится на VDS архивом конфигурации)
@@ -92,12 +101,15 @@ $C --profile app run --rm db_setup
 
 # 4. Восстановить данные в пустую БД (суперпользователь POSTGRES_USER, владельцы объектов сохраняются)
 docker exec -i metacritic-local-db-1 sh -c \
-  'pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --exit-on-error --single-transaction' < ../vds-export-<дата>/database.dump
+  'pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --exit-on-error --single-transaction' < "$E/database.dump"
 #    PowerShell (нет оператора <): docker cp ..\vds-export-<дата>\database.dump metacritic-local-db-1:/tmp/database.dump
 #      docker exec metacritic-local-db-1 sh -c 'pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --exit-on-error --single-transaction /tmp/database.dump; rm /tmp/database.dump'
 
-# 5. Сверка: вывод должен побайтно совпасть с exact-counts.txt из экспорта (переменная Q — из раздела 1)
-docker exec metacritic-local-db-1 psql -U metacritic -d metacritic -Atc "$Q" | diff - ../vds-export-<дата>/exact-counts.txt && echo COUNTS_IDENTICAL
+# 5. Сверка: запрос и ожидаемый результат лежат в экспорте ($E задан в шаге 1); вывод должен совпасть побайтно
+docker exec -i metacritic-local-db-1 psql -U metacritic -d metacritic -At < "$E/exact-counts.sql" \
+  | diff - "$E/exact-counts.txt" && echo COUNTS_IDENTICAL
+#    PowerShell: docker cp "$E\exact-counts.sql" metacritic-local-db-1:/tmp/c.sql, затем
+#      docker exec metacritic-local-db-1 psql -U metacritic -d metacritic -At -f /tmp/c.sql  и сравнить с exact-counts.txt
 
 # 6. Приложение. up сам повторит db_setup → migrate → db_grants (права web на запись), затем web и caddy.
 $C --profile app up -d web caddy            # без scheduler/worker, если нужна «замороженная» копия
