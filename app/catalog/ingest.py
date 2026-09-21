@@ -98,6 +98,9 @@ def _resolve_game(dto: GameDTO, now: datetime) -> tuple[Game, bool]:
             video_embed_url=dto.video_embed_url,
             video_content_url=dto.video_content_url,
             genres=list(normalize_genres(dto.genres or ())),
+            release_date=dto.release_date,
+            publishers=list(dto.publishers or ()),
+            content_rating=dto.content_rating,
         )
         GameAlias.objects.create(
             game=game,
@@ -136,6 +139,10 @@ def _resolve_game(dto: GameDTO, now: datetime) -> tuple[Game, bool]:
     game.video_content_url = _merge_field(game.video_content_url, dto.video_content_url)
     if incoming_genres := normalize_genres(dto.genres or ()):
         game.genres = list(incoming_genres)
+    game.release_date = _merge_field(game.release_date, dto.release_date)
+    if dto.publishers:
+        game.publishers = list(dto.publishers)
+    game.content_rating = _merge_field(game.content_rating, dto.content_rating)
     game.save()
     return game, False
 

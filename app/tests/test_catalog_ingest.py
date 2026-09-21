@@ -1,5 +1,5 @@
 from dataclasses import replace
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from unittest import mock
 
@@ -145,6 +145,44 @@ class IngestCreateTests(TestCase):
         self.assertFalse(result.ok)
         self.assertEqual(Game.objects.count(), 0)
         self.assertEqual(SourceFetch.objects.filter(outcome="invalid").count(), 1)
+
+
+class IngestOptionalMetadataTests(TestCase):
+    def _with_metadata(self) -> GameDTO:
+        return replace(
+            _game(),
+            release_date=date(2022, 2, 25),
+            publishers=("Bandai Namco Games", "From Software"),
+            content_rating="M",
+        )
+
+    def test_release_date_publishers_and_rating_are_saved(self) -> None:
+        ingest_game(FakeGateway(self._with_metadata()), FakeClock(), DETAIL_URL)
+
+        game = Game.objects.get()
+        self.assertEqual(game.release_date, date(2022, 2, 25))
+        self.assertEqual(game.publishers, ["Bandai Namco Games", "From Software"])
+        self.assertEqual(game.content_rating, "M")
+
+    def test_a_later_fetch_without_metadata_keeps_the_saved_values(self) -> None:
+        ingest_game(FakeGateway(self._with_metadata()), FakeClock(), DETAIL_URL)
+        ingest_game(FakeGateway(_game()), FakeClock(), DETAIL_URL)
+
+        game = Game.objects.get()
+        self.assertEqual(game.release_date, date(2022, 2, 25))
+        self.assertEqual(game.publishers, ["Bandai Namco Games", "From Software"])
+        self.assertEqual(game.content_rating, "M")
+
+    def test_a_changed_value_replaces_the_saved_one(self) -> None:
+        ingest_game(FakeGateway(self._with_metadata()), FakeClock(), DETAIL_URL)
+        changed = replace(
+            self._with_metadata(), release_date=date(2022, 3, 1), publishers=("Bandai Namco",)
+        )
+        ingest_game(FakeGateway(changed), FakeClock(), DETAIL_URL)
+
+        game = Game.objects.get()
+        self.assertEqual(game.release_date, date(2022, 3, 1))
+        self.assertEqual(game.publishers, ["Bandai Namco"])
 
 
 class IngestUpdateTests(TestCase):

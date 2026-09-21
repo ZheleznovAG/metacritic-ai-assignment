@@ -54,7 +54,7 @@ Django ORM используется прямо внутри application services
 
 | Таблица | Ключевые данные | Обязательные ограничения |
 |---|---|---|
-| `game` | `source`, `source_game_id`, current locator, title, cover URL, developer, description, video URL, `genres` (ordered normalized names), `genres_last_changed_fetch_id`, `last_changed_fetch_id`, timestamps | `UNIQUE(source, source_game_id)`; обязательны identity/title/locator; source text хранится без перевода |
+| `game` | `source`, `source_game_id`, current locator, title, cover URL, developer, description, video URL, `genres` (ordered normalized names), `release_date`, `publishers` (ordered names), `content_rating` (короткий ESRB-код), `genres_last_changed_fetch_id`, `last_changed_fetch_id`, timestamps | `UNIQUE(source, source_game_id)`; обязательны identity/title/locator; source text хранится без перевода |
 | `game_alias` | `game_id`, source locator, first/last seen UTC | `UNIQUE(source, locator)`; alias другого game вызывает conflict, не merge |
 | `game_platform` | `game_id`, `source_platform_id`, `source_game_platform_id`, slug/name, Metascore, Userscore, critic/user route, `metascore_last_changed_fetch_id`, `userscore_last_changed_fetch_id` | `UNIQUE(game_id, source_platform_id)` и `UNIQUE(source, source_game_platform_id)`; score ranges; `null` не равен нулю |
 | `source_fetch` | owning run или review job, kind, collection generation nullable, allowlisted URL, cursor/offset, page ordinal, attempt number, fencing token, reported total, item count, started/completed UTC, HTTP status, response SHA-256, parser contract version, outcome/error code | Ровно один owner; review attempt требует non-null generation/page/attempt и `attempt_no > 0`; `UNIQUE(review_job_id, collection_generation, page_ordinal, attempt_no)`; отдельная partial unique constraint на `(review_job_id, collection_generation, page_ordinal)` только для `outcome IN ('succeeded', 'empty')`; полный HTML, cookies и authorization headers не сохраняются |
@@ -238,6 +238,8 @@ browser и public evidence принадлежат [SIM-VER-01](requirements/sim_
 значения сохраняется и его отдельная provenance. Migration `catalog.0006`
 добавляет поля без реконструкции истории: прежние записи получают `[]`/null до
 обычного успешного detail ingest. Parser contract — `1.1.0`.
+
+`release_date`, `publishers` и `content_rating` читаются из JSON-LD `VideoGame` (`datePublished`, `publisher`, `contentRating`). Это необязательные метаданные: некорректное значение становится отсутствующим и не блокирует сохранение игры; слияние неразрушающее (`None`/пусто не затирает сохранённое), а непустой новый `publishers` заменяет прежний список. Существующие игры получают значения при следующем detail-fetch.
 
 ## Транзакционные инварианты
 

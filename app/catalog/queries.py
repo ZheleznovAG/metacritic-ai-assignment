@@ -1,6 +1,7 @@
 """Read-only detail query for the public card (`presentation` never writes catalog rows)."""
 
 from dataclasses import dataclass
+from datetime import date
 from decimal import Decimal
 
 from similarity.policy import SavedGame, rank
@@ -24,6 +25,10 @@ class GameDetailView:
     description: str | None
     video_url: str | None
     platforms: list[PlatformView]
+    genres: tuple[str, ...] = ()
+    release_date: date | None = None
+    publishers: tuple[str, ...] = ()
+    content_rating: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -137,4 +142,8 @@ def get_game_detail(game_id: int) -> GameDetailView | None:
         description=game.description,
         video_url=game.video_embed_url or game.video_content_url,
         platforms=platforms,
+        genres=_saved_genres(game.genres),
+        release_date=game.release_date,
+        publishers=_saved_genres(game.publishers),
+        content_rating=game.content_rating,
     )

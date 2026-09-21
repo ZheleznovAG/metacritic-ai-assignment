@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 
 
@@ -41,6 +41,9 @@ class GameDTO:
     video_content_url: str | None
     platforms: tuple[GamePlatformDTO, ...]
     genres: tuple[str, ...] | None = None
+    release_date: date | None = None
+    publishers: tuple[str, ...] | None = None
+    content_rating: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

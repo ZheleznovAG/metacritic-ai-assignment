@@ -17,8 +17,16 @@
         <img class="game-card__cover" src="{{ game.cover_url }}" alt="{{ game.title }} cover art">
       {% endif %}
       <dl class="game-card__facts">
+        <dt>Genre</dt>
+        <dd>{% if game.genres %}{{ game.genres|join:", " }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
+        <dt>Release date</dt>
+        <dd>{% if game.release_date %}{{ game.release_date|date:"j M Y" }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
         <dt>Developer</dt>
         <dd>{% if game.developer %}{{ game.developer }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
+        <dt>Publisher</dt>
+        <dd>{% if game.publishers %}{{ game.publishers|join:", " }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
+        <dt>Content rating</dt>
+        <dd>{% if game.content_rating %}{{ game.content_rating }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
         <dt>Description</dt>
         <dd>{% if game.description %}{{ game.description }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
         <dt>Trailer</dt>

@@ -1,11 +1,15 @@
 import json
 from collections.abc import Callable
+from datetime import date
 from decimal import Decimal
 from pathlib import Path
 
 from django.test import SimpleTestCase
 from metacritic.errors import MetacriticParseError
 from metacritic.parser import (
+    _extract_content_rating,
+    _extract_publishers,
+    _extract_release_date,
     _find_game_record,
     _parse_platform,
     _safe_url,
@@ -265,3 +269,31 @@ class ParsePlatformUserscoreTests(SimpleTestCase):
         # as the requested one's score.
         with self.assertRaises(MetacriticParseError):
             parse_platform_userscore(_read("elden_ring_user_pc.min.html"), _user_url("xbox-one"))
+
+
+class ParseOptionalMetadataTests(SimpleTestCase):
+    def test_the_real_fixture_yields_release_date_publishers_and_content_rating(self) -> None:
+        dto = parse_game_detail(_read("elden_ring_detail.min.html"), DETAIL_URL)
+
+        self.assertEqual(dto.release_date, date(2022, 2, 25))
+        self.assertEqual(dto.publishers, ("Bandai Namco Games", "From Software"))
+        self.assertEqual(dto.content_rating, "M")
+
+    def test_release_date_accepts_iso_dates_and_ignores_anything_else(self) -> None:
+        self.assertEqual(_extract_release_date("2026-09-19"), date(2026, 9, 19))
+        self.assertEqual(_extract_release_date("2026-09-19T00:00:00.000Z"), date(2026, 9, 19))
+        for bad in (None, 5, "", "TBD", "2026-13-40", ["2026-09-19"]):
+            self.assertIsNone(_extract_release_date(bad), bad)
+
+    def test_publishers_accept_one_or_many_organisations_and_drop_noise(self) -> None:
+        one = {"@type": "Organization", "name": "  Devolver   Digital "}
+        self.assertEqual(_extract_publishers(one), ("Devolver Digital",))
+        many = [one, {"name": "Devolver Digital"}, {"name": ""}, {"nope": 1}, "text", {"name": 7}]
+        self.assertEqual(_extract_publishers(many), ("Devolver Digital",))
+        for bad in (None, "Devolver", [], [{"name": "x" * 256}]):
+            self.assertIsNone(_extract_publishers(bad), bad)
+
+    def test_content_rating_is_a_short_string_or_absent(self) -> None:
+        self.assertEqual(_extract_content_rating(" E10+ "), "E10+")
+        for bad in (None, 3, "", "   ", "x" * 17):
+            self.assertIsNone(_extract_content_rating(bad), bad)

@@ -1,3 +1,5 @@
+from datetime import date
+
 from catalog.models import Game, GamePlatform
 from django.test import TestCase
 
@@ -13,6 +15,10 @@ class GameDetailViewTests(TestCase):
             developer="From Software",
             description="A fantasy action-RPG.",
             video_embed_url="https://example.invalid/embed",
+            genres=["action rpg"],
+            release_date=date(2022, 2, 25),
+            publishers=["Bandai Namco Games", "From Software"],
+            content_rating="M",
         )
         GamePlatform.objects.create(
             game=game,
@@ -35,6 +41,9 @@ class GameDetailViewTests(TestCase):
         self.assertContains(response, "94")
         self.assertContains(response, "7.6")
         self.assertNotContains(response, "No data")
+        self.assertContains(response, "25 Feb 2022")
+        self.assertContains(response, "Bandai Namco Games, From Software")
+        self.assertContains(response, "action rpg")
 
     def test_missing_optional_fields_show_an_explicit_no_data_state(self) -> None:
         game = Game.objects.create(
@@ -58,7 +67,8 @@ class GameDetailViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         content = response.content.decode()
-        self.assertEqual(content.count("No data"), 3)  # developer, description, trailer
+        # genre, release date, developer, publisher, content rating, description, trailer
+        self.assertEqual(content.count("No data"), 7)
 
     def test_unknown_game_id_is_404(self) -> None:
         response = self.client.get("/games/999999/")

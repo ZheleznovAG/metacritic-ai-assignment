@@ -21,6 +21,7 @@ No network access happens here. Field provenance matches
 
 import json
 import re
+from datetime import date
 from decimal import Decimal, InvalidOperation
 from urllib.parse import urlsplit
 
@@ -274,7 +275,41 @@ def parse_game_detail(html: str, expected_url: str) -> GameDTO:
         video_content_url=video_content_url,
         platforms=tuple(platforms),
         genres=_extract_genres(ld.get("genre")),
+        release_date=_extract_release_date(ld.get("datePublished")),
+        publishers=_extract_publishers(ld.get("publisher")),
+        content_rating=_extract_content_rating(ld.get("contentRating")),
     )
+
+
+def _extract_release_date(value: object) -> date | None:
+    """JSON-LD `datePublished` (`YYYY-MM-DD`). Optional metadata: anything else is absent, never an
+    error, so a malformed optional field cannot stop the game from being saved."""
+    if not isinstance(value, str):
+        return None
+    try:
+        return date.fromisoformat(value.strip()[:10])
+    except ValueError:
+        return None
+
+
+def _extract_publishers(value: object) -> tuple[str, ...] | None:
+    """JSON-LD `publisher`: one organisation or a list of them; names only, duplicates dropped."""
+    entries = value if isinstance(value, list) else [value]
+    names: list[str] = []
+    for entry in entries:
+        name = entry.get("name") if isinstance(entry, dict) else None
+        if isinstance(name, str) and (collapsed := _collapse(name)) and len(collapsed) <= 255:
+            if collapsed not in names:
+                names.append(collapsed)
+    return tuple(names) or None
+
+
+def _extract_content_rating(value: object) -> str | None:
+    """JSON-LD `contentRating` (an ESRB-style code such as `M`); optional and length-bounded."""
+    if not isinstance(value, str):
+        return None
+    collapsed = _collapse(value)
+    return collapsed if collapsed and len(collapsed) <= 16 else None
 
 
 def _extract_genres(value: object) -> tuple[str, ...] | None:
