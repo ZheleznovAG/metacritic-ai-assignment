@@ -26,6 +26,11 @@ def _list_params(request: HttpRequest) -> dict[str, str]:
     platform = request.GET.get("platform", "").strip()
     if platform:
         params["platform"] = platform
+    sort = request.GET.get("sort")
+    if sort is not None:
+        # Kept even when empty so a card's "back" link reproduces the list URL exactly; any
+        # value other than `release` means the default order.
+        params["sort"] = "release" if sort.strip() == "release" else ""
     return params
 
 
@@ -37,10 +42,11 @@ def index(request: HttpRequest) -> HttpResponse:
     platform = params.get("platform")
     context = {
         "version": settings.APP_VERSION,
-        "games": list_games(query=query, platform=platform),
+        "games": list_games(query=query, platform=platform, sort=params.get("sort", "score")),
         "platforms": list_platform_options(),
         "query": query,
         "selected_platform": platform or "",
+        "selected_sort": params.get("sort", "score"),
         "query_string": urlencode(params),
         "monitoring_enabled": settings.OPS_MONITORING_ENABLED,
     }

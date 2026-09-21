@@ -39,6 +39,7 @@ class GameListItemView:
     developer: str | None
     cover_url: str | None
     metascore: int | None
+    release_date: date | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -102,10 +103,13 @@ def list_platform_options() -> list[PlatformOption]:
     return [PlatformOption(slug=slug, name=name) for slug, name in seen.items()]
 
 
-def list_games(*, query: str = "", platform: str | None = None) -> list[GameListItemView]:
+def list_games(
+    *, query: str = "", platform: str | None = None, sort: str = "score"
+) -> list[GameListItemView]:
     """`ASM-15`: no filter -> Metascore is the max across all of a game's platforms; with a
     platform filter -> the max among only the matched platform(s); a game with no scored platform
-    sorts after every scored game; ties sort by title (casefolded)."""
+    sorts after every scored game; ties sort by title (casefolded). `sort="release"` orders by
+    release date, newest first, games without a date last, then by title."""
     games = Game.objects.all()
     if query:
         games = games.filter(title__icontains=query)
@@ -127,12 +131,26 @@ def list_games(*, query: str = "", platform: str | None = None) -> list[GameList
                 developer=game.developer,
                 cover_url=game.cover_url,
                 metascore=metascore,
+                release_date=game.release_date,
             )
         )
 
-    items.sort(
-        key=lambda item: (item.metascore is None, -(item.metascore or 0), item.title.casefold())
-    )
+    if sort == "release":
+        items.sort(
+            key=lambda item: (
+                item.release_date is None,
+                -(item.release_date.toordinal() if item.release_date else 0),
+                item.title.casefold(),
+            )
+        )
+    else:
+        items.sort(
+            key=lambda item: (
+                item.metascore is None,
+                -(item.metascore or 0),
+                item.title.casefold(),
+            )
+        )
     return items
 
 

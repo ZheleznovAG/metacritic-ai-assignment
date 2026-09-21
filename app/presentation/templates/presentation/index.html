@@ -26,6 +26,12 @@
           {% endfor %}
         </select>
 
+        <label for="sort">Sort by</label>
+        <select id="sort" name="sort">
+          <option value="" {% if selected_sort != "release" %}selected{% endif %}>Metascore</option>
+          <option value="release" {% if selected_sort == "release" %}selected{% endif %}>Release date (newest)</option>
+        </select>
+
         <button type="submit">Filter</button>
         <a class="game-list__reset" href="{% url 'index' %}">Reset</a>
       </form>
@@ -42,6 +48,7 @@
                 {% endif %}
                 <span class="game-list__title">{{ game.title }}</span>
                 <span class="game-list__developer">{% if game.developer %}{{ game.developer }}{% else %}<span class="no-data">No data</span>{% endif %}</span>
+                <span class="game-list__developer">{% if game.release_date %}{{ game.release_date|date:"j M Y" }}{% else %}<span class="no-data">No date</span>{% endif %}</span>
                 <span class="game-list__score">{% if game.metascore is not None %}{{ game.metascore }}{% else %}<span class="no-data">No score</span>{% endif %}</span>
               </a>
             </li>

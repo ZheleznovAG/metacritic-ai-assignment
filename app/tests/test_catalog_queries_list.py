@@ -1,3 +1,5 @@
+from datetime import date
+
 from catalog.models import Game, GamePlatform
 from catalog.queries import list_games, list_platform_options
 from django.test import TestCase
@@ -119,6 +121,46 @@ class SortOrderTests(TestCase):
         results = list_games()
 
         self.assertEqual(results[0].metascore, 85)
+
+
+class ReleaseDateSortTests(TestCase):
+    def test_release_sort_is_newest_first_with_undated_games_last_then_by_title(self) -> None:
+        old = _game(1, "Old")
+        old.release_date = date(2020, 1, 1)
+        old.save()
+        new = _game(2, "New")
+        new.release_date = date(2026, 9, 1)
+        new.save()
+        _game(3, "Zed undated")
+        _game(4, "Alpha undated")
+
+        titles = [item.title for item in list_games(sort="release")]
+
+        self.assertEqual(titles, ["New", "Old", "Alpha undated", "Zed undated"])
+
+    def test_the_default_sort_is_unchanged_and_items_carry_the_date(self) -> None:
+        game = _game(1, "Dated")
+        game.release_date = date(2026, 1, 2)
+        game.save()
+        _platform(game, "pc", "PC", metascore=80)
+
+        (item,) = list_games()
+
+        self.assertEqual((item.metascore, item.release_date), (80, date(2026, 1, 2)))
+
+    def test_release_sort_combines_with_search_and_platform_filter(self) -> None:
+        a = _game(1, "Quest A")
+        a.release_date = date(2025, 1, 1)
+        a.save()
+        b = _game(2, "Quest B")
+        b.release_date = date(2026, 1, 1)
+        b.save()
+        _platform(a, "pc", "PC")
+        _platform(b, "pc", "PC")
+
+        titles = [i.title for i in list_games(query="quest", platform="pc", sort="release")]
+
+        self.assertEqual(titles, ["Quest B", "Quest A"])
 
 
 class CombinedSearchAndFilterTests(TestCase):

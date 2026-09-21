@@ -1,3 +1,5 @@
+from datetime import date
+
 from catalog.models import Game, GamePlatform
 from django.test import TestCase
 
@@ -107,3 +109,39 @@ class BackToResultsRoundTripTests(TestCase):
         detail_response = self.client.get(f"/games/{game.id}/?q=elden&platform=pc")
         detail_content = detail_response.content.decode()
         self.assertIn(f"/?{expected_query}", detail_content)
+
+
+class ReleaseSortTests(TestCase):
+    def _dated(self) -> None:
+        for n, (title, released) in enumerate(
+            [("Older Game", date(2024, 5, 1)), ("Newer Game", date(2026, 8, 1))], start=1
+        ):
+            game = _game(n, title)
+            game.release_date = released
+            game.save()
+            _platform(game, "pc", "PC", metascore=90 - 30 * (n - 1))
+
+    def test_release_sort_orders_newest_first_and_shows_the_date(self) -> None:
+        self._dated()
+
+        content = self.client.get("/?sort=release").content.decode()
+
+        self.assertLess(content.index("Newer Game"), content.index("Older Game"))
+        self.assertIn("1 Aug 2026", content)
+        self.assertIn('<option value="release" selected>', content)
+
+    def test_default_order_is_still_by_score_and_unknown_sort_values_are_ignored(self) -> None:
+        self._dated()
+
+        for url in ("/", "/?sort=bogus"):
+            content = self.client.get(url).content.decode()
+            self.assertLess(content.index("Older Game"), content.index("Newer Game"), url)
+
+    def test_the_sort_survives_the_round_trip_to_a_card_and_back(self) -> None:
+        self._dated()
+        game = Game.objects.get(title="Newer Game")
+
+        content = self.client.get("/?sort=release&q=Game").content.decode()
+        self.assertIn(f"/games/{game.id}/?q=Game&amp;sort=release", content)
+        back = self.client.get(f"/games/{game.id}/?q=Game&sort=release").content.decode()
+        self.assertIn('href="/?q=Game&amp;sort=release"', back)

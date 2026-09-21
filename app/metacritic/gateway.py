@@ -2,6 +2,7 @@
 backoff on transient failures (`HRD-01`)."""
 
 import hashlib
+import re
 import time
 from collections.abc import Callable
 from dataclasses import replace
@@ -25,7 +26,9 @@ from metacritic.parser import (
 
 ALLOWED_HOST = "www.metacritic.com"
 NEW_RELEASES_URL = "https://www.metacritic.com/game/"
-BROWSE_LISTING_URL = "https://www.metacritic.com/browse/game/all/all/all-time/new/"
+BROWSE_LISTING_ROOT = "https://www.metacritic.com/browse/game/all/all/"
+BROWSE_LISTING_URL = f"{BROWSE_LISTING_ROOT}all-time/new/"
+_LISTING = re.compile(r"[a-z0-9-]{1,20}/[a-z0-9-]{1,20}")
 
 # Confirmed live during IMP-04 (see docs/requirements/imp_04_review.md): the initial backend
 # review-list URL for a route, captured from the web review page's own embedded SSR link. Every
@@ -273,8 +276,15 @@ class MetacriticGateway:
         except MetacriticParseError as error:
             return None, replace(evidence, outcome="invalid", error_code=type(error).__name__)
 
-    def iter_browse(self, page: int) -> tuple[BrowsePage | None, FetchEvidence]:
-        url = f"{BROWSE_LISTING_URL}?page={page}"
+    def iter_browse(
+        self, page: int, listing: str | None = None
+    ) -> tuple[BrowsePage | None, FetchEvidence]:
+        """`listing` is `<year>/<sort>` under `/browse/game/all/all/` (default: the newest-first
+        listing the scheduler follows); anything else is rejected before a request is made."""
+        if listing is not None and not _LISTING.fullmatch(listing):
+            raise ValueError(f"invalid browse listing {listing!r}")
+        base = BROWSE_LISTING_URL if listing is None else f"{BROWSE_LISTING_ROOT}{listing}/"
+        url = f"{base}?page={page}"
         body, evidence = self._get(url, kind="browse_page")
         if body is None:
             return None, evidence
