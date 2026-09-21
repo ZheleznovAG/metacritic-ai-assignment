@@ -212,22 +212,87 @@ class UnstableRouteTests(TestCase):
         self.assertEqual(second.state, "unstable")
         self.assertEqual(second.last_error, "repeated_page_identity")
 
-    def test_a_changed_reported_total_mid_route_is_unstable(self) -> None:
+    def _collect(self, gateway: FakeGateway, clock: FakeClock) -> ReviewCollectionJob:
+        claimed = collector.claim_next_job(clock)
+        assert claimed is not None
+        return collector.collect_one_page(gateway, clock, claimed)
+
+    def test_a_changed_reported_total_restarts_the_generation_from_the_initial_route(self) -> None:
         _make_job()
         page1 = ReviewPageDTO(items=(_item(1),), reported_total=5, next_cursor="p2")
         page2 = ReviewPageDTO(items=(_item(2),), reported_total=9, next_cursor=None)
         gateway = FakeGateway({None: page1, "p2": page2})
         clock = FakeClock(datetime(2026, 9, 12, 10, 0, tzinfo=UTC))
 
-        claimed = collector.claim_next_job(clock)
-        assert claimed is not None
-        collector.collect_one_page(gateway, clock, claimed)
-        reclaimed = collector.claim_next_job(clock)
-        assert reclaimed is not None
-        updated = collector.collect_one_page(gateway, clock, reclaimed)
+        self._collect(gateway, clock)
+        updated = self._collect(gateway, clock)
 
-        self.assertEqual(updated.state, "unstable")
+        self.assertEqual(updated.state, "pending")
+        self.assertEqual(updated.collection_generation, 1)
+        self.assertIsNone(updated.next_cursor)
+        self.assertEqual(
+            (updated.fetched_count, updated.unique_count, updated.page_count), (0, 0, 0)
+        )
         self.assertEqual(updated.last_error, "total_results_changed")
+        self.assertEqual(
+            SourceFetch.objects.filter(
+                review_job=updated, outcome="invalid", error_code="total_results_changed"
+            ).count(),
+            1,
+        )
+
+    def test_the_restarted_generation_can_reach_complete_with_a_clean_snapshot(self) -> None:
+        job = _make_job()
+        grown = ReviewPageDTO(items=(_item(2),), reported_total=9, next_cursor=None)
+        gateway = FakeGateway(
+            {
+                None: ReviewPageDTO(items=(_item(1),), reported_total=5, next_cursor="p2"),
+                "p2": grown,
+            }
+        )
+        clock = FakeClock(datetime(2026, 9, 12, 10, 0, tzinfo=UTC))
+        self._collect(gateway, clock)
+        self._collect(gateway, clock)  # total 5 -> 9: restart into generation 1
+        # The route has settled at two reviews; the restart now sees a stable total.
+        gateway.pages_by_cursor = {
+            None: ReviewPageDTO(items=(_item(1),), reported_total=2, next_cursor="p2"),
+            "p2": ReviewPageDTO(items=(_item(2),), reported_total=2, next_cursor=None),
+        }
+        self._collect(gateway, clock)
+        done = self._collect(gateway, clock)
+
+        self.assertEqual(done.state, "complete")
+        self.assertEqual(done.collection_generation, 1)
+        self.assertEqual((done.reported_total, done.unique_count, done.duplicate_count), (2, 2, 0))
+        self.assertEqual(
+            ReviewObservation.objects.filter(collection_job=job, collection_generation=1).count(),
+            2,
+        )
+
+    def test_restarts_are_bounded_and_then_the_job_is_unstable(self) -> None:
+        _make_job()
+        clock = FakeClock(datetime(2026, 9, 12, 10, 0, tzinfo=UTC))
+        totals = iter(range(10, 100, 10))
+
+        class Growing(FakeGateway):
+            def fetch_review_page(self, audience, game_slug, platform_slug, cursor):  # type: ignore[no-untyped-def]
+                page = ReviewPageDTO(
+                    items=(_item(1 if cursor is None else 2),),
+                    reported_total=next(totals),
+                    next_cursor="p2" if cursor is None else None,
+                )
+                return page, _evidence()
+
+        gateway = Growing({})
+        job = None
+        for _ in range(2 * (collector.MAX_GENERATION_RESTARTS + 1)):
+            job = self._collect(gateway, clock)
+            if job.state == "unstable":
+                break
+        assert job is not None
+        self.assertEqual(job.state, "unstable")
+        self.assertEqual(job.collection_generation, collector.MAX_GENERATION_RESTARTS)
+        self.assertEqual(job.last_error, "total_results_changed")
 
 
 class RetryableFailureTests(TestCase):

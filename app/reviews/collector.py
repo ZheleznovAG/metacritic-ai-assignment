@@ -6,9 +6,13 @@ repeated page identity or a changed `totalResults` mid-route -> `unstable`; a tr
 failure -> `retryable` (bounded attempts) or `failed`. Only `links.next.href` ever advances the
 cursor; `?page=N` is never synthesized (confirmed dead for this route in `SPK-02`).
 
-Automatic generation-restart after `unstable`/`failed` is out of scope for this cycle (documented
-in `docs/requirements/imp_04_review.md`'s known limitations) — such a job stays visible and
-diagnosable for `HRD-02`/`HRD-04`, not silently retried forever or auto-restarted.
+A changed `totalResults` is different from the other `unstable` causes: on a fast-growing route
+(a new release collecting reviews) it only means new reviews arrived while paging. It restarts the
+generation from the initial route URL, at most `MAX_GENERATION_RESTARTS` times per job, so a clean
+snapshot is usually reached the same day instead of after the next daily cycle; the strict
+`reported == unique == fetched`, no-duplicate terminal invariant is unchanged. The other
+`unstable`/`failed` causes are not auto-restarted — such a job stays visible and diagnosable
+(`docs/requirements/imp_04_review.md`'s known limitations), not silently retried forever.
 """
 
 from __future__ import annotations
@@ -31,6 +35,7 @@ from reviews.versioning import version_fingerprint
 
 LEASE_TTL = timedelta(minutes=5)
 MAX_AUTOMATIC_ATTEMPTS = 5
+MAX_GENERATION_RESTARTS = 3
 BACKOFF_STEPS = (
     timedelta(minutes=1),
     timedelta(minutes=5),
@@ -49,6 +54,21 @@ def _page_attempt_count(job: ReviewCollectionJob) -> int:
     return job.fetch_attempts.filter(
         collection_generation=job.collection_generation, page_ordinal=job.page_count
     ).count()
+
+
+def _restart_generation(job: ReviewCollectionJob) -> None:
+    """Begin a new generation from the initial route URL; earlier observations stay as history."""
+    job.collection_generation += 1
+    job.next_cursor = None
+    job.reported_total = None
+    job.fetched_count = 0
+    job.unique_count = 0
+    job.duplicate_count = 0
+    job.page_count = 0
+    job.visited_page_fingerprints = []
+    job.completed_at = None
+    job.available_at = None
+    job.state = "pending"
 
 
 def _recover_stale_leases(now: datetime) -> None:
@@ -232,10 +252,13 @@ def collect_one_page(
             job.save(update_fields=["attempt_count", "state", "last_error"])
             return job
         if job.reported_total is not None and page.reported_total != job.reported_total:
-            job.state = "unstable"
             job.last_error = "total_results_changed"
             _finish_fetch(source_fetch, now, "invalid", job.last_error)
-            job.save(update_fields=["attempt_count", "state", "last_error"])
+            if job.collection_generation < MAX_GENERATION_RESTARTS:
+                _restart_generation(job)
+            else:
+                job.state = "unstable"
+            job.save()
             return job
 
         job.reported_total = page.reported_total
