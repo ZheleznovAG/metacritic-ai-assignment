@@ -7,6 +7,7 @@ from pathlib import Path
 from django.test import SimpleTestCase
 from metacritic.errors import MetacriticParseError
 from metacritic.parser import (
+    _decode_entities,
     _extract_content_rating,
     _extract_publishers,
     _extract_release_date,
@@ -297,3 +298,10 @@ class ParseOptionalMetadataTests(SimpleTestCase):
         self.assertEqual(_extract_content_rating(" E10+ "), "E10+")
         for bad in (None, 3, "", "   ", "x" * 17):
             self.assertIsNone(_extract_content_rating(bad), bad)
+
+
+class DecodeEntitiesTests(SimpleTestCase):
+    def test_entities_are_decoded_once_and_nbsp_becomes_a_space(self) -> None:
+        self.assertEqual(_decode_entities("A&nbsp;B &bull; it&rsquo;s"), "A B • it’s")
+        self.assertEqual(_decode_entities("&amp;amp;"), "&amp;")
+        self.assertEqual(_decode_entities("plain text"), "plain text")

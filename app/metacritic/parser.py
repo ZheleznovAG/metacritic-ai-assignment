@@ -19,6 +19,7 @@ No network access happens here. Field provenance matches
   its ``/user-reviews/?platform=<slug>`` page (see ``parse_platform_userscore``).
 """
 
+import html
 import json
 import re
 from datetime import date
@@ -256,7 +257,7 @@ def parse_game_detail(html: str, expected_url: str) -> GameDTO:
 
     cover_url = _safe_url(ld.get("image"))
     raw_description = ld.get("description")
-    description = raw_description if isinstance(raw_description, str) else None
+    description = _decode_entities(raw_description) if isinstance(raw_description, str) else None
     trailer = ld.get("trailer")
     video_embed_url = None
     video_content_url = None
@@ -279,6 +280,11 @@ def parse_game_detail(html: str, expected_url: str) -> GameDTO:
         publishers=_extract_publishers(ld.get("publisher")),
         content_rating=_extract_content_rating(ld.get("contentRating")),
     )
+
+
+def _decode_entities(text: str) -> str:
+    """Some legacy listings arrive entity-encoded (`&bull;`, `&rsquo;`, `&nbsp;`); decode once."""
+    return html.unescape(text).replace(" ", " ")
 
 
 def _extract_release_date(value: object) -> date | None:
