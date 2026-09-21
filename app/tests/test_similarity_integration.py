@@ -1,111 +1,127 @@
-"""SIM-VER-01 / AC-SIM-01–03: saved catalog -> unchanged policy -> card/navigation."""
+"""SIM-VER-01 / AC-SIM-01-03: saved neighbours -> card, navigation and escaping."""
 
-import json
-from pathlib import Path
+from datetime import UTC, datetime
 from unittest.mock import patch
 from urllib.parse import urlencode
 
 from bs4 import BeautifulSoup
-from catalog.models import Game
+from catalog.models import Game, GameNeighbors
 from catalog.queries import list_similar_games
 from django.db import connection
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
+from similarity import text as policy
 
-from tests.test_catalog_queries_list import _platform
+NOW = datetime(2026, 9, 21, 12, 0, tzinfo=UTC)
 
 
-def saved(pk: int, title: str, genres: object) -> Game:
+def saved(pk: int, title: str, genres: object = None) -> Game:
     return Game.objects.create(
         id=pk,
         source_game_id=f"similar-{pk}",
         canonical_locator=f"/game/similar-{pk}/",
         title=title,
-        genres=genres,
+        genres=["Puzzle"] if genres is None else genres,
     )
 
 
-class SimilarityCatalogTests(TestCase):
-    def test_every_frozen_result_survives_the_database_adapter_and_card(self) -> None:
-        root = Path(__file__).resolve().parents[2] / "evals" / "similarity"
-        cases = json.loads((root / "cases.json").read_text(encoding="utf-8"))["cases"]
-        report = json.loads((root / "comparison_report.json").read_text(encoding="utf-8"))
-        expected = {
-            case["case_id"]: case["selected_ids"]
-            for case in report["methods"]["genre-jaccard"]["cases"]
-        }
-        for case in cases:
-            for rows in (case["catalog"], list(reversed(case["catalog"]))):
-                with self.subTest(case=case["id"], order=[row["id"] for row in rows]):
-                    Game.objects.all().delete()
-                    for row in rows:
-                        saved(row["id"], row["title"], row["genres"])
-                    first = list_similar_games(case["query_id"])
-                    self.assertEqual([item.id for item in first], expected[case["id"]])
-                    self.assertEqual(first, list_similar_games(case["query_id"]))
-                    response = self.client.get(f"/games/{case['query_id']}/")
-                    if not any(row["id"] == case["query_id"] for row in rows):
-                        self.assertEqual(response.status_code, 404)
-                        continue
-                    self.assertEqual(response.status_code, 200)
-                    soup = BeautifulSoup(response.content, "html.parser")
-                    self.assertEqual(
-                        [link.get("href") for link in soup.select(".similar-games a")],
-                        [f"/games/{pk}/" for pk in expected[case["id"]]],
-                    )
+def neighbours(pk: int, *pairs: tuple[int, float], version: str = policy.POLICY_VERSION) -> None:
+    GameNeighbors.objects.update_or_create(
+        game_id=pk,
+        defaults={
+            "policy_version": version,
+            "neighbors": [{"id": other, "score": score} for other, score in pairs],
+            "computed_at": NOW,
+        },
+    )
 
-    def test_platform_multiplicity_does_not_duplicate_or_filter_similar_games(self) -> None:
-        query = saved(1, "Query", ["Action RPG"])
-        _platform(query, "pc", "PC")
-        for pk in range(2, 9):
-            game = saved(pk, "Same title", ["Action RPG"])
-            for slug in ("pc", "ps5", "switch"):
-                _platform(game, slug, slug)
-        self.assertEqual([item.id for item in list_similar_games(1)], [2, 3, 4, 5, 6])
 
-    def test_deleted_and_unknown_candidates_cannot_be_returned(self) -> None:
-        saved(1, "Query", ["Puzzle"])
-        peer = saved(2, "Peer", ["Puzzle"])
+class SimilarGamesQueryTests(TestCase):
+    def test_saved_neighbours_are_returned_in_saved_order_with_genres_and_policy(self) -> None:
+        saved(1, "Query")
+        saved(2, "Second", ["Action RPG"])
+        saved(3, "Third", ["Puzzle"])
+        neighbours(1, (3, 6.5), (2, 4.1))
+
+        result = list_similar_games(1)
+
+        self.assertEqual([item.id for item in result], [3, 2])
+        self.assertEqual([item.score for item in result], [6.5, 4.1])
+        self.assertEqual(result[1].genres, ("Action RPG",))
+        self.assertEqual(
+            (result[0].policy_id, result[0].policy_version), ("text-hybrid", policy.POLICY_VERSION)
+        )
+
+    def test_a_row_from_another_policy_version_is_ignored(self) -> None:
+        saved(1, "Query")
+        saved(2, "Peer")
+        neighbours(1, (2, 5.0), version="1.0.0")
+
+        self.assertEqual(list_similar_games(1), [])
+
+    def test_deleted_self_and_unknown_neighbours_are_dropped(self) -> None:
+        saved(1, "Query")
+        peer = saved(2, "Peer")
+        neighbours(1, (2, 5.0), (1, 9.0), (999, 4.0))
         self.assertEqual([item.id for item in list_similar_games(1)], [2])
         peer.delete()
         self.assertEqual(list_similar_games(1), [])
         self.assertEqual(list_similar_games(999), [])
 
-    def test_read_only_snapshot_uses_no_http_or_enrichment(self) -> None:
-        saved(1, "Query", ["  PUZZLE "])
-        saved(2, "Peer", ["Puzzle", "puzzle"])
+    def test_malformed_stored_neighbours_are_unknown_rather_than_fabricated(self) -> None:
+        saved(1, "Query")
+        saved(2, "Peer")
+        for value in (
+            "2",
+            {"id": 2},
+            [None, {"id": "2", "score": 5}, {"score": 5}, {"id": 2, "score": None}],
+            [{"id": 2, "score": "high"}],
+            [],
+        ):
+            with self.subTest(value=value):
+                GameNeighbors.objects.update_or_create(
+                    game_id=1,
+                    defaults={
+                        "policy_version": policy.POLICY_VERSION,
+                        "neighbors": value,
+                        "computed_at": NOW,
+                    },
+                )
+                self.assertEqual(list_similar_games(1), [])
+
+    def test_a_request_is_two_selects_and_uses_no_http_model_or_ranking(self) -> None:
+        saved(1, "Query")
+        saved(2, "Peer")
+        neighbours(1, (2, 5.0))
         with (
             patch("httpx.Client.send", side_effect=AssertionError("Unexpected HTTP")),
+            patch("similarity.text.rank_neighbors", side_effect=AssertionError("ranked")),
             CaptureQueriesContext(connection) as queries,
         ):
             result = list_similar_games(1)
-        self.assertEqual(len(queries), 1)
-        self.assertTrue(queries[0]["sql"].lstrip().startswith("SELECT"))
-        self.assertEqual((result[0].id, result[0].score), (2, 1.0))
-        self.assertEqual(result[0].shared_genres, ("puzzle",))
-        self.assertEqual(
-            (result[0].policy_id, result[0].policy_version), ("genre-jaccard", "1.0.0")
-        )
+        self.assertEqual(len(queries), 2)
+        self.assertTrue(all(q["sql"].lstrip().startswith("SELECT") for q in queries))
+        self.assertEqual([item.id for item in result], [2])
 
-    def test_malformed_stored_json_is_unknown_rather_than_fabricated_genres(self) -> None:
-        saved(1, "Query", ["Puzzle"])
-        peer = saved(2, "Peer", ["Puzzle"])
-        for value in ("Puzzle", {"name": "Puzzle"}, ["Puzzle", None], []):
-            with self.subTest(value=value):
-                Game.objects.filter(pk=peer.pk).update(genres=value)
-                self.assertEqual(list_similar_games(1), [])
-                self.assertEqual(list_similar_games(peer.pk), [])
+    def test_same_titles_stay_distinct_saved_identities(self) -> None:
+        saved(1, "Query")
+        saved(2, "Same title")
+        saved(3, "Same title")
+        neighbours(1, (2, 5.0), (3, 4.9))
+
+        self.assertEqual([item.id for item in list_similar_games(1)], [2, 3])
 
 
 class SimilarityNavigationTests(TestCase):
     def test_same_title_links_open_each_saved_id_and_preserve_list_context(self) -> None:
-        saved(1, "Query", ["Puzzle"])
-        first = saved(2, "Twin", ["Puzzle"])
-        second = saved(3, "Twin", ["Puzzle"])
+        saved(1, "Query")
+        first = saved(2, "Twin")
+        second = saved(3, "Twin")
         first.description = "First saved identity"
         first.save(update_fields=["description"])
         second.description = "Second saved identity"
         second.save(update_fields=["description"])
+        neighbours(1, (2, 5.0), (3, 4.0))
         query = urlencode({"q": "Q & Ω", "platform": "pc"})
         response = self.client.get(f"/games/1/?{query}")
         soup = BeautifulSoup(response.content, "html.parser")
@@ -123,10 +139,10 @@ class SimilarityNavigationTests(TestCase):
             assert back is not None
             self.assertEqual(back["href"], f"/?{query}")
 
-    def test_empty_and_self_only_catalogs_have_honest_empty_state(self) -> None:
+    def test_empty_and_unindexed_games_have_an_honest_empty_state(self) -> None:
         self.assertEqual(list_similar_games(1), [])
         self.assertEqual(self.client.get("/games/1/").status_code, 404)
-        saved(1, "Only game", ["Puzzle"])
+        saved(1, "Only game")
         response = self.client.get("/games/1/")
         self.assertContains(response, "No similar games in the catalog yet.")
         self.assertNotContains(response, '<ul class="similar-games">')
@@ -135,6 +151,7 @@ class SimilarityNavigationTests(TestCase):
         genre = '<img src=x onerror="bad()">'
         saved(1, "Query", [genre])
         saved(2, "<script>bad()</script>", [genre])
+        neighbours(1, (2, 5.0))
         response = self.client.get("/games/1/")
         soup = BeautifulSoup(response.content, "html.parser")
         section = soup.select_one(".game-card__similar")

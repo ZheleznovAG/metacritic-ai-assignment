@@ -63,6 +63,14 @@ Playwright and browsers. CI executes the journey on the internal checks network.
 Set `E2E_ARTIFACT_DIR` to a local output directory to retain list/card/mobile
 screenshots from the deterministic journey.
 
+Similar games use `similarity.text` (embedding + TF-IDF, [ADR-0003](docs/decisions/0003-text-hybrid-similarity.md)).
+The worker embeds games while idle and precomputes each game's neighbours; the web only reads them.
+The ONNX model (`sentence-transformers/all-MiniLM-L6-v2`, about 90 MB) is baked into the Docker image at
+build time. Outside production, the first local run downloads it into `FASTEMBED_CACHE_PATH` (or the
+default cache); set that variable to a directory with the model to run the real-model test
+(`tests.test_similarity_index.RealModelTests`), which is skipped otherwise. The image is about 700 MB
+and the worker container is limited to 768 MB.
+
 The container suite uses canonical Linux/Python 3.12 and PostgreSQL 16. Tests run on an internal network without SSH/Groq credentials; dependency and tokenizer vocabulary downloads happen at build time. Both image targets include the hash-checked tokenizer vocabulary in `TIKTOKEN_CACHE_DIR=/opt/app/tokenizer-cache`; the runtime reads it as a non-root user on a read-only filesystem. Local setup downloads the same vocabulary explicitly before checks. The checks image also includes `evals/reviews`, `evals/review_selection` and `evals/similarity`.
 
 The [similarity oracle](evals/similarity/metric.md) has separate offline checks, also run by `scripts/check.py` and CI:

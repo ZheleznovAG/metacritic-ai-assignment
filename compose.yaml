@@ -199,6 +199,9 @@ services:
     profiles: [app]
     image: ${APP_IMAGE:-metacritic-imp01:local}
     command: ["python", "app/manage.py", "run_worker"]
+    # The idle-time similar-games upkeep loads a ~90 MB ONNX model plus numpy (about 390 MB
+    # resident, measured on the real image with 734 games), unlike scheduler's 256m.
+    mem_limit: 768m
     # GROQ_API_KEY/BASE_URL/TIMEOUT_SECONDS come only from `.env.worker` (see
     # .env.worker.example), never from .env.app: `.env.app.example`'s own rule ("Keep SSH/Groq
     # keys in .env, never in this file") stays intact. An unset key degrades to review-collection

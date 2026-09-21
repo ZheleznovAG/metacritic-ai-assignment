@@ -4,9 +4,10 @@ from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 
-from similarity.policy import SavedGame, rank
+from similarity import text as text_policy
 
-from catalog.models import Game, GamePlatform
+from catalog.labels import saved_labels
+from catalog.models import Game, GameNeighbors, GamePlatform
 
 
 @dataclass(frozen=True, slots=True)
@@ -51,36 +52,46 @@ class SimilarGameView:
     id: int
     title: str
     score: float
-    shared_genres: tuple[str, ...]
+    genres: tuple[str, ...]
     policy_id: str
     policy_version: str
 
 
 def list_similar_games(game_id: int) -> list[SimilarGameView]:
-    """SIM-VER-01: rank one saved snapshot, without enrichment or platform joins."""
-    saved = tuple(
-        SavedGame(id=pk, title=title, genres=_saved_genres(genres))
-        for pk, title, genres in Game.objects.values_list("id", "title", "genres")
+    """Read the neighbours the worker precomputed (`similarity.text`): one indexed lookup plus one
+    fetch of at most five games, with no model, ranking or enrichment on the request path."""
+    row = (
+        GameNeighbors.objects.filter(game_id=game_id, policy_version=text_policy.POLICY_VERSION)
+        .values_list("neighbors", flat=True)
+        .first()
     )
-    titles = {game.id: game.title for game in saved}
+    if not isinstance(row, list):
+        return []
+    scores: dict[int, float] = {}
+    for item in row:
+        if isinstance(item, dict) and isinstance(item.get("id"), int):
+            try:
+                scores[item["id"]] = float(item["score"])
+            except (TypeError, ValueError):
+                continue
+    games = {
+        pk: (title, genres)
+        for pk, title, genres in Game.objects.filter(pk__in=list(scores)).values_list(
+            "id", "title", "genres"
+        )
+    }
     return [
         SimilarGameView(
-            id=result.game_id,
-            title=titles[result.game_id],
-            score=result.score,
-            shared_genres=result.shared_genres,
-            policy_id=result.policy_id,
-            policy_version=result.policy_version,
+            id=pk,
+            title=games[pk][0],
+            score=score,
+            genres=saved_labels(games[pk][1]),
+            policy_id=text_policy.POLICY_ID,
+            policy_version=text_policy.POLICY_VERSION,
         )
-        for result in rank(game_id, saved)
+        for pk, score in scores.items()
+        if pk in games and pk != game_id
     ]
-
-
-def _saved_genres(value: object) -> tuple[str, ...]:
-    # Corrupt/manual JSON is unknown, never a string split into fake genre letters.
-    if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
-        return ()
-    return tuple(value)
 
 
 def list_platform_options() -> list[PlatformOption]:
@@ -142,8 +153,8 @@ def get_game_detail(game_id: int) -> GameDetailView | None:
         description=game.description,
         video_url=game.video_embed_url or game.video_content_url,
         platforms=platforms,
-        genres=_saved_genres(game.genres),
+        genres=saved_labels(game.genres),
         release_date=game.release_date,
-        publishers=_saved_genres(game.publishers),
+        publishers=saved_labels(game.publishers),
         content_rating=game.content_rating,
     )

@@ -4,6 +4,7 @@ FROM ${UV_IMAGE} AS uv
 FROM ${PYTHON_IMAGE} AS base
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TZ=UTC
 ENV TIKTOKEN_CACHE_DIR=/opt/app/tokenizer-cache
+ENV FASTEMBED_CACHE_PATH=/opt/app/embedding-cache
 WORKDIR /opt/app
 
 FROM base AS dependencies
@@ -15,6 +16,9 @@ RUN uv sync --locked --no-dev --no-install-project
 # at build time so checks and the non-root runtime can tokenize without network or writes.
 RUN .venv/bin/python -c "import tiktoken; tiktoken.get_encoding('o200k_harmony')" \
     && chmod -R a=rX /opt/app/tokenizer-cache
+# The similar-games embedding model (~90 MB ONNX) is fetched once at build time as well; the
+# runtime loads it with local_files_only=True and never downloads or writes.
+RUN .venv/bin/python -c "from fastembed import TextEmbedding; TextEmbedding('sentence-transformers/all-MiniLM-L6-v2')"     && chmod -R a=rX /opt/app/embedding-cache
 
 FROM dependencies AS checks
 RUN uv sync --locked --no-install-project
@@ -36,6 +40,7 @@ CMD ["python", "scripts/check.py"]
 FROM base AS runtime
 COPY --from=dependencies /opt/app/.venv /opt/app/.venv
 COPY --from=dependencies /opt/app/tokenizer-cache /opt/app/tokenizer-cache
+COPY --from=dependencies /opt/app/embedding-cache /opt/app/embedding-cache
 ENV PATH="/opt/app/.venv/bin:$PATH"
 COPY app ./app
 COPY scripts/provision_db.py ./scripts/provision_db.py

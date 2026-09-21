@@ -1,0 +1,412 @@
+{
+  "eval_set_version": "1.0.0",
+  "frozen_at_utc": "2026-09-21T15:00:00Z",
+  "task": "similar games from saved text (`text-hybrid`), extension of SIM-EVAL-01 for the real catalogue",
+  "grades": {
+    "2": "clearly similar gameplay or theme",
+    "1": "loosely related",
+    "0": "unrelated (every candidate not listed)"
+  },
+  "grader": "single grader (the assistant), reading each candidate's description; the listing showed which methods proposed a candidate, so the labels are not blind to method",
+  "limits": "11 queries from a seeded random sample of described games (seed 7); candidate pool = union of the top five of genre Jaccard, TF-IDF and three embedding models, so a method that returns an unlisted game is scored as if it were grade 0 (this understates hybrids that surface new games); single, non-blind grader; catalogue descriptions are third-party text, so the graded snapshot is kept outside Git and only its hash is recorded in the report",
+  "queries": [
+    {
+      "source_game_id": "1300651124",
+      "title": "Oops! You're the Hero!",
+      "grades": {
+        "1300662655": {
+          "grade": 1,
+          "title": "Onimusha: Way of the Sword"
+        },
+        "1300661505": {
+          "grade": 2,
+          "title": "Moonlighter 2: The Endless Vault"
+        },
+        "1300600743": {
+          "grade": 1,
+          "title": "Heroes Suck"
+        },
+        "1300575857": {
+          "grade": 2,
+          "title": "Secrets of Temple Isle"
+        },
+        "1300731941": {
+          "grade": 1,
+          "title": "The Bow: Ultimate weapon"
+        },
+        "1300704564": {
+          "grade": 1,
+          "title": "Alex & Arty"
+        },
+        "1300692695": {
+          "grade": 1,
+          "title": "BloomKeeper"
+        },
+        "1300743939": {
+          "grade": 1,
+          "title": "The Last Glimmer of the Martial Way"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300731941",
+      "title": "The Bow: Ultimate weapon",
+      "grades": {
+        "1300661533": {
+          "grade": 2,
+          "title": "Suqare: Hired Gun"
+        },
+        "1300751023": {
+          "grade": 2,
+          "title": "Blue Sun Saga"
+        },
+        "1300732913": {
+          "grade": 2,
+          "title": "Chronicle of Wuxia & Xianxia Survivors"
+        },
+        "1300694873": {
+          "grade": 2,
+          "title": "Cloudbreaker"
+        },
+        "1300760134": {
+          "grade": 1,
+          "title": "Embrace The Potato"
+        },
+        "1300740497": {
+          "grade": 2,
+          "title": "Friendly Fire"
+        },
+        "1300743939": {
+          "grade": 1,
+          "title": "The Last Glimmer of the Martial Way"
+        },
+        "1300759386": {
+          "grade": 0,
+          "title": "Asteroid Destroyer (ermu_cz)"
+        },
+        "1300758467": {
+          "grade": 1,
+          "title": "Clamor: Bounty Hunter Pinball"
+        },
+        "1300755740": {
+          "grade": 1,
+          "title": "Raider Pheasant"
+        },
+        "1300760766": {
+          "grade": 2,
+          "title": "Out of Range"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300759376",
+      "title": "SIDE OUT",
+      "grades": {
+        "1300760132": {
+          "grade": 2,
+          "title": "Circle Test Suite"
+        },
+        "1300759052": {
+          "grade": 2,
+          "title": "101 Cats: Lisbon"
+        },
+        "1300763404": {
+          "grade": 2,
+          "title": "99 Misses"
+        },
+        "1300762745": {
+          "grade": 2,
+          "title": "Fit Beat Combat"
+        },
+        "1300762527": {
+          "grade": 1,
+          "title": "Somebody's Tale"
+        },
+        "1300762308": {
+          "grade": 2,
+          "title": "Fund Manager: Buy Side"
+        },
+        "1300762528": {
+          "grade": 1,
+          "title": "Big Sister"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300760567",
+      "title": "Tale of Beauty",
+      "grades": {
+        "1300761302": {
+          "grade": 1,
+          "title": "Pixel Hunters: Turn Retro Consoles into your Girlfriend"
+        },
+        "1300762702": {
+          "grade": 2,
+          "title": "NEONOVA Puzzle: Blue"
+        },
+        "1300764571": {
+          "grade": 1,
+          "title": "Obby Sword Master"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300694873",
+      "title": "Cloudbreaker",
+      "grades": {
+        "1300715361": {
+          "grade": 1,
+          "title": "GRID/"
+        },
+        "1300695088": {
+          "grade": 2,
+          "title": "HELLDROP"
+        },
+        "1300731941": {
+          "grade": 2,
+          "title": "The Bow: Ultimate weapon"
+        },
+        "1300751023": {
+          "grade": 1,
+          "title": "Blue Sun Saga"
+        },
+        "1300732913": {
+          "grade": 2,
+          "title": "Chronicle of Wuxia & Xianxia Survivors"
+        },
+        "1300752048": {
+          "grade": 1,
+          "title": "Corsair Fleet: Tides of Plunder"
+        },
+        "1300752256": {
+          "grade": 2,
+          "title": "Gunmetal Orbit"
+        },
+        "1300635765": {
+          "grade": 2,
+          "title": "Two Sides of Hell"
+        },
+        "1300748241": {
+          "grade": 2,
+          "title": "Space Phantom"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300763823",
+      "title": "Cipher Monk: Cassette Equation",
+      "grades": {
+        "1300759623": {
+          "grade": 1,
+          "title": "DAKENSHI"
+        },
+        "1300759474": {
+          "grade": 1,
+          "title": "Loop 9"
+        },
+        "1300763093": {
+          "grade": 1,
+          "title": "Clear It You Can"
+        },
+        "1300758080": {
+          "grade": 1,
+          "title": "Send More Monsters"
+        },
+        "1300723374": {
+          "grade": 1,
+          "title": "20 More, Somehow Even Smaller, Mazes"
+        },
+        "1300721439": {
+          "grade": 1,
+          "title": "Sniper Dan"
+        },
+        "1300764576": {
+          "grade": 1,
+          "title": "Triple Trouble: Panty Secrets"
+        },
+        "1300764877": {
+          "grade": 1,
+          "title": "One Button Games 5-in-1 vol. 9"
+        },
+        "1300764876": {
+          "grade": 1,
+          "title": "Death Simulator"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300759375",
+      "title": "LIMINAL SORTING",
+      "grades": {
+        "1300752568": {
+          "grade": 1,
+          "title": "Are You Chicken?"
+        },
+        "1300760319": {
+          "grade": 1,
+          "title": "The Rallying Ball"
+        },
+        "1300763099": {
+          "grade": 2,
+          "title": "Roll Golf"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300751012",
+      "title": "Skate Felon",
+      "grades": {
+        "1300741493": {
+          "grade": 1,
+          "title": "Hot Wheels Infinite Rush"
+        },
+        "1300758789": {
+          "grade": 2,
+          "title": "Quiet Hour"
+        },
+        "1300643455": {
+          "grade": 1,
+          "title": "Driving Rogue"
+        },
+        "1300763097": {
+          "grade": 1,
+          "title": "Asphalt: Car Racing Game"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300760151",
+      "title": "ArmedAbyss",
+      "grades": {
+        "1300761111": {
+          "grade": 1,
+          "title": "Sort The Toys"
+        },
+        "1300760140": {
+          "grade": 1,
+          "title": "You Will Get Rich!"
+        },
+        "1300760149": {
+          "grade": 1,
+          "title": "Post Office: Tidy Up!"
+        },
+        "1300758080": {
+          "grade": 1,
+          "title": "Send More Monsters"
+        },
+        "1300760150": {
+          "grade": 2,
+          "title": "Agents! Please?"
+        },
+        "1300763089": {
+          "grade": 1,
+          "title": "WordBuzz 4"
+        },
+        "1300761582": {
+          "grade": 2,
+          "title": "Armored Career"
+        },
+        "1300761928": {
+          "grade": 1,
+          "title": "The Hobo Dev"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300747165",
+      "title": "Stall Quest",
+      "grades": {
+        "1300661505": {
+          "grade": 2,
+          "title": "Moonlighter 2: The Endless Vault"
+        },
+        "1300755940": {
+          "grade": 1,
+          "title": "Dream Draw Dungeons"
+        },
+        "1300734599": {
+          "grade": 1,
+          "title": "A Game About Flipping Cards"
+        },
+        "1300713762": {
+          "grade": 1,
+          "title": "The Plant Shop"
+        },
+        "1300732234": {
+          "grade": 1,
+          "title": "AstroDig"
+        },
+        "1300753240": {
+          "grade": 1,
+          "title": "Gambit Loop"
+        },
+        "1300747864": {
+          "grade": 1,
+          "title": "Gem Quest: Rush"
+        },
+        "1300762523": {
+          "grade": 1,
+          "title": "Snap Chess"
+        },
+        "1300683271": {
+          "grade": 2,
+          "title": "Dig & Deal"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300660402",
+      "title": "Destiny Spire",
+      "grades": {
+        "1300607991": {
+          "grade": 2,
+          "title": "Peacemaker: Bloody Emperor"
+        },
+        "1300755940": {
+          "grade": 1,
+          "title": "Dream Draw Dungeons"
+        },
+        "1300761717": {
+          "grade": 1,
+          "title": "F*** This Job"
+        },
+        "1300721440": {
+          "grade": 2,
+          "title": "Another Eden Begins"
+        },
+        "1300652738": {
+          "grade": 1,
+          "title": "Gun Of Fate : The Silver Gun Of Ylia"
+        },
+        "1300698985": {
+          "grade": 2,
+          "title": "DARKODAI"
+        },
+        "1300656573": {
+          "grade": 2,
+          "title": "Effulgence RPG"
+        },
+        "1300753240": {
+          "grade": 1,
+          "title": "Gambit Loop"
+        },
+        "1300674466": {
+          "grade": 1,
+          "title": "Forsworn"
+        },
+        "1300753653": {
+          "grade": 1,
+          "title": "Murdercartel"
+        },
+        "1300710208": {
+          "grade": 2,
+          "title": "Trails in the Sky 2nd Chapter"
+        },
+        "1300755288": {
+          "grade": 1,
+          "title": "Goddess of Fate: Waifu Strategy RPG"
+        }
+      }
+    }
+  ]
+}

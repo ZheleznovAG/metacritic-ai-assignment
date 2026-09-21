@@ -8,6 +8,7 @@ from unittest.mock import patch
 from urllib.parse import urlsplit
 
 import httpx
+from catalog import similarity_index
 from catalog.models import Game
 from django.test import LiveServerTestCase, tag
 from playwright.sync_api import Browser, Route, expect, sync_playwright
@@ -15,6 +16,7 @@ from processing.models import DailyCandidate
 from processing.scheduler import run_tick
 from reviews import collector
 from reviews.models import ReviewCollectionJob
+from similarity import text as similarity_text
 from summaries import contour, worker
 from summaries.models import ReviewSummary, SummaryAttempt
 
@@ -28,6 +30,7 @@ from tests.e2e_scenario import (
     USER_LIKE,
     ScenarioGateway,
 )
+from tests.similarity_fakes import BagOfWordsEmbedder
 from tests.test_reviews_collector import FakeClock
 from tests.test_summaries_worker import _ok_response
 from tests.test_summary_admission import process
@@ -86,6 +89,14 @@ class MandatoryJourneyTests(LiveServerTestCase):
                 clock.instant += timedelta(minutes=2)
             else:
                 self.fail("Summary queue did not terminate")
+
+        # Similar-games upkeep is real worker code; only the sentence model is replaced by a
+        # deterministic bag of words, and the score floor is lifted because four synthetic games
+        # give the z-scores no background to stand out from.
+        with patch.object(similarity_text, "MIN_FUSED_SCORE", -1e9):
+            embedder = BagOfWordsEmbedder()
+            while similarity_index.refresh(embedder, clock, limit=100).pending:
+                pass
 
         self.assertCountEqual(provider_audiences, ["critic", "user"])
         self.assertEqual(SummaryAttempt.objects.count(), 2)
@@ -203,7 +214,8 @@ class MandatoryJourneyTests(LiveServerTestCase):
             page.screenshot(
                 path=str(Path(screenshot_dir) / "imp-07-fixture-mobile.png"), full_page=True
             )
-        page.locator(".similar-games a").click()
+        expect(page.locator(".similar-games a").first).to_have_text("BETA Quest")
+        page.locator(".similar-games a", has_text="BETA Quest").click()
         expect(page.locator("h1")).to_have_text("BETA Quest")
         self.assertEqual(urlsplit(page.url).path, f"/games/{peer.id}/")
         self.assertEqual(urlsplit(page.url).query, selected_query)

@@ -206,7 +206,40 @@ claims; disabled/not-due очередь уступает второй. Поря�
 | `CatalogQuery.detail(game_id)` | internal game ID | game/platforms/current summaries/staleness/similar games либо not found |
 | `SimilarityService.rank(game_id)` | current saved catalog | до пяти versioned deterministic results с score components |
 
-## Similarity policy `genre-jaccard` 1.0.0
+## Similarity policy `text-hybrid` 2.0.0 (с 2026-09-21)
+
+[ADR-0003](decisions/0003-text-hybrid-similarity.md) заменяет в работающем сервисе
+`genre-jaccard` (ниже, сохранён как базовый метод сравнения). Причина: источник даёт
+каждой игре ровно один из ~80 узких жанров, поэтому Jaccard равен 1 или 0, а порядок
+внутри жанра определяет алфавит. На реальном каталоге nDCG@5 равен 0.19 против 0.71
+у нового метода ([text_report.json](../evals/similarity/text_report.json)).
+
+Ранжирование — чистый numpy-модуль [`similarity/text.py`](../app/similarity/text.py):
+текст игры — `title. genres. description`, до 1200 символов; игры с описанием короче
+40 символов не участвуют. Для каждой игры z-score строки косинусов эмбеддингов
+`all-MiniLM-L6-v2` (ONNX, 384 измерения) складывается с z-score TF-IDF-косинусов;
+сосед берётся при `score >= 3.5`, максимум пять, ничья решается saved ID, self
+исключён. У игры без настоящей пары результат пустой либо короче пяти.
+
+Данные и владельцы (`catalog`): `game_embedding` (`game`, `model_id`,
+`text_sha256`, little-endian float32 `vector`) и `game_neighbors` (`game`,
+`policy_version`, JSON `[{id, score}]`, `computed_at`). Их пишет только worker в
+простое (`catalog/similarity_index.py`): по 16 игр за проход эмбеддит те, у кого нет
+эмбеддинга для текущего `(model_id, text_sha256)`, затем, когда очередь пуста, одной
+транзакцией пересчитывает соседей всех игр; не чаще раза в минуту, сбой модели
+логируется и не останавливает worker. Web-роль только читает `game_neighbors`:
+`catalog.queries.list_similar_games()` — один индексированный SELECT плюс выборка
+до пяти игр, без модели, numpy и ранжирования на пути запроса; строка другой
+`policy_version` игнорируется. Модель запечена в образ при сборке
+(`FASTEMBED_CACHE_PATH`, загрузка `local_files_only=True`): runtime не скачивает и не
+пишет. Worker получает лимит памяти 768 МБ, образ вырос с 285 до ~700 МБ.
+Пересчёт O(N²) по числу описанных игр: для сотен/тысяч игр это секунды, для десятков
+тысяч потребует другого индекса.
+
+Карточка показывает жанр соседа (не «общие жанры», как у прежней политики).
+
+## Similarity policy `genre-jaccard` 1.0.0 (базовый метод, до 2026-09-21)
+
 
 [ADR-0002](decisions/0002-genre-similarity-policy.md) выбирает простой genre Jaccard
 по результатам [замороженного comparison](../evals/similarity/comparison_report.json).

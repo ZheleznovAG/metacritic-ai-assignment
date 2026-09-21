@@ -105,6 +105,25 @@ class Game(models.Model):
         return self.title
 
 
+class GameEmbedding(models.Model):
+    """Sentence embedding of a game's text, produced once per (model, text) by the worker."""
+
+    game = models.OneToOneField(Game, on_delete=models.CASCADE, related_name="embedding")
+    model_id = models.CharField(max_length=128)
+    text_sha256 = models.CharField(max_length=64)
+    vector = models.BinaryField()  # little-endian float32, L2-normalised
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class GameNeighbors(models.Model):
+    """Precomputed similar games for one game; read-only for the web role."""
+
+    game = models.OneToOneField(Game, on_delete=models.CASCADE, related_name="neighbors")
+    policy_version = models.CharField(max_length=32)
+    neighbors = models.JSONField(default=list, blank=True)  # [{"id": int, "score": float}]
+    computed_at = models.DateTimeField()
+
+
 class GameAlias(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="aliases")
     source = models.CharField(max_length=32, choices=SOURCE_CHOICES, default="metacritic")

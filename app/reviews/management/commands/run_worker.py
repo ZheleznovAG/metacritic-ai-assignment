@@ -11,6 +11,7 @@ import time
 from typing import Any
 
 import httpx
+from catalog.similarity_index import Maintainer
 from django.core.management.base import BaseCommand, CommandParser
 from metacritic.gateway import ReviewGatewayProtocol
 from processing.clock import Clock, SystemClock
@@ -40,6 +41,7 @@ class Command(BaseCommand):
         )
         timeout = float(os.environ.get("GROQ_API_TIMEOUT_SECONDS", "180"))
         client = httpx.Client(timeout=timeout)
+        self._maintainer = Maintainer()
         try:
             with Heartbeat("worker"):
                 if options["once"]:
@@ -76,6 +78,7 @@ class Command(BaseCommand):
             return
 
         if not api_key:
+            self._maintain_similar_games(clock)
             self.stdout.write(
                 "idle: no review work due (GROQ_API_KEY not set, skipping summary work)"
             )
@@ -94,4 +97,17 @@ class Command(BaseCommand):
             )
             return
 
+        self._maintain_similar_games(clock)
         self.stdout.write("idle: no review or summary work due")
+
+    def _maintain_similar_games(self, clock: Clock) -> None:
+        """Idle-time upkeep of the similar-games index; a model failure never stops the worker."""
+        report_progress("similar_games", deadline_seconds=300)
+        result = self._maintainer.run_if_due(clock)
+        if result is not None and (result.embedded or result.rebuilt):
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"similar_games embedded={result.embedded} pending={result.pending} "
+                    f"rebuilt={result.rebuilt}"
+                )
+            )

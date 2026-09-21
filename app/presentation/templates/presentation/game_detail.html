@@ -95,7 +95,7 @@
             {% for similar in similar_games %}
               <li>
                 <a href="{% url 'game-detail' similar.id %}{% if back_query_string %}?{{ back_query_string }}{% endif %}">{{ similar.title }}</a>
-                <p class="similar-games__genres">Shared genres: {{ similar.shared_genres|join:", " }}</p>
+                <p class="similar-games__genres">{% if similar.genres %}{{ similar.genres|join:", " }}{% else %}<span class="no-data">No genre</span>{% endif %}</p>
               </li>
             {% endfor %}
           </ul>
