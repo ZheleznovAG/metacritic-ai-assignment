@@ -12,6 +12,13 @@ SHA-256(policy_version + identity_key); round-robin across platforms ordered by 
 (a stable per-platform key, standing in for design.md's `source_platform_id` — this module's pool
 only carries the slug); take up to 10; each selected review's input text is capped at 450
 `o200k_harmony` tokens with token-boundary truncation, never a semantic rewrite.
+
+Policy `1.1.0-sentiment` (`REV-EVAL-01` extension `1.1.0`, `INV-SENTIMENT-COVERAGE`): the summary
+has separate Likes and Dislikes lists, and a hash sample from a heavily skewed pool can leave one
+side with no evidence at all. The first `MIN_PER_SENTIMENT_SIDE` negative and positive reviews in
+the deterministic order above are therefore reserved, and the remaining slots are filled in that
+same order. Sentiment comes only from the review's score metadata (never its text), so editing a
+review's text still cannot change which reviews are selected.
 """
 
 from __future__ import annotations
@@ -21,7 +28,8 @@ from dataclasses import dataclass
 
 import tiktoken
 
-POLICY_VERSION = "1.0.0-candidate"
+POLICY_VERSION = "1.1.0-sentiment"
+MIN_PER_SENTIMENT_SIDE = 3
 TOKENIZER_ID = "o200k_harmony"
 MAX_SELECTED_REVIEWS = 10
 MAX_REVIEW_TOKENS = 450
@@ -97,29 +105,50 @@ def _deduplicate(reviews: tuple[ReviewRecord, ...]) -> list[ReviewRecord]:
     return representatives
 
 
+def _sentiment(review: ReviewRecord, audience: str) -> str:
+    """`negative` below half of the scale, `positive` from three quarters, else `mixed`."""
+    if review.score is None:
+        return "unscored"
+    ratio = review.score / (100 if audience == "critic" else 10)
+    if ratio < 0.5:
+        return "negative"
+    return "positive" if ratio >= 0.75 else "mixed"
+
+
+def _deterministic_order(reviews: list[ReviewRecord]) -> list[ReviewRecord]:
+    """Hash-sorted within each platform, then round-robin across platforms by slug."""
+    by_platform: dict[str, list[ReviewRecord]] = {}
+    for review in reviews:
+        by_platform.setdefault(review.platform_slug, []).append(review)
+    for platform_reviews in by_platform.values():
+        platform_reviews.sort(key=lambda r: _sort_key(r.identity_key))
+    queues = [by_platform[slug] for slug in sorted(by_platform)]
+    ordered: list[ReviewRecord] = []
+    while any(queues):
+        for queue in queues:
+            if queue:
+                ordered.append(queue.pop(0))
+    return ordered
+
+
 def select_reviews(pool: SelectionPool) -> SelectionResult:
     if pool.collection_status != "complete":
         raise IncompleteCollectionError(
             f"pool for {pool.game_slug}/{pool.audience} is {pool.collection_status!r}, not complete"
         )
 
-    deduplicated = _deduplicate(pool.reviews)
-    by_platform: dict[str, list[ReviewRecord]] = {}
-    for review in deduplicated:
-        by_platform.setdefault(review.platform_slug, []).append(review)
-    for platform_reviews in by_platform.values():
-        platform_reviews.sort(key=lambda r: _sort_key(r.identity_key))
-
-    ordered_platforms = sorted(by_platform)
-    queues = [by_platform[slug] for slug in ordered_platforms]
-    chosen: list[ReviewRecord] = []
-    while len(chosen) < MAX_SELECTED_REVIEWS and any(queues):
-        for queue in queues:
-            if not queue:
-                continue
-            chosen.append(queue.pop(0))
-            if len(chosen) == MAX_SELECTED_REVIEWS:
-                break
+    ordered = _deterministic_order(_deduplicate(pool.reviews))
+    reserved: set[str] = set()
+    for side in ("negative", "positive"):
+        matching = [r for r in ordered if _sentiment(r, pool.audience) == side]
+        reserved.update(r.identity_key for r in matching[:MIN_PER_SENTIMENT_SIDE])
+    chosen = [r for r in ordered if r.identity_key in reserved]
+    for review in ordered:
+        if len(chosen) >= MAX_SELECTED_REVIEWS:
+            break
+        if review.identity_key not in reserved:
+            chosen.append(review)
+    chosen = sorted(chosen, key=ordered.index)[:MAX_SELECTED_REVIEWS]
 
     selected: list[SelectedReview] = []
     for review in chosen:

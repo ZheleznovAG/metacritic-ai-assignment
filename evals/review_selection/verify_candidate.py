@@ -16,6 +16,7 @@ import json
 
 import contract as frozen
 import score_selection
+import score_sentiment
 from reviews import selection as candidate
 
 

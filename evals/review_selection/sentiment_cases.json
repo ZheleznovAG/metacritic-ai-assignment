@@ -1,0 +1,1620 @@
+{
+  "eval_set_version": "1.1.0",
+  "frozen_at_utc": "2026-09-21T12:00:00Z",
+  "invariant": "INV-SENTIMENT-COVERAGE",
+  "bucket_rule": "ratio = score / (100 for critic, 10 for user); ratio < 0.5 negative; ratio >= 0.75 positive; otherwise mixed; score null is unscored",
+  "minimum_per_side": 3,
+  "cases": [
+    {
+      "id": "skew_positive_few_negatives",
+      "audience": "user",
+      "game_slug": "skew-positive-few-negatives",
+      "collection_status": "complete",
+      "notes": "36 positive and 4 negative user reviews: a hash sample of 10 is expected to contain about one negative review.",
+      "reviews": [
+        {
+          "identity_key": "SKE-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 1 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-02",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 2 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 3 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-04",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 4 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 5 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-06",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 6 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 7 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-08",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 8 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 9 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-10",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 10 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-11",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 11 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-12",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 12 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-13",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 13 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-14",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 14 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-15",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 15 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-16",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 16 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-17",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 17 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-18",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 18 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-19",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 19 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-20",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 20 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-21",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 21 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-22",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 22 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-23",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 23 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-24",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 24 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-25",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 25 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-26",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 26 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-27",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 27 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-28",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 28 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-29",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 29 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-30",
+          "platform_slug": "ps5",
+          "page_offset": 3,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 30 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-31",
+          "platform_slug": "pc",
+          "page_offset": 3,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 31 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-32",
+          "platform_slug": "ps5",
+          "page_offset": 3,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 32 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-33",
+          "platform_slug": "pc",
+          "page_offset": 3,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 33 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-34",
+          "platform_slug": "ps5",
+          "page_offset": 3,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 34 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-35",
+          "platform_slug": "pc",
+          "page_offset": 3,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 35 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-36",
+          "platform_slug": "ps5",
+          "page_offset": 3,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 36 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-37",
+          "platform_slug": "pc",
+          "page_offset": 3,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 37 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-38",
+          "platform_slug": "ps5",
+          "page_offset": 3,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 38 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-39",
+          "platform_slug": "pc",
+          "page_offset": 3,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Poor review number 39 about the skew positive few negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-40",
+          "platform_slug": "ps5",
+          "page_offset": 4,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 40 about the skew positive few negatives scenario, written in plain words."
+        }
+      ]
+    },
+    {
+      "id": "skew_negative_few_positives",
+      "audience": "user",
+      "game_slug": "skew-negative-few-positives",
+      "collection_status": "complete",
+      "notes": "Mirror image: 27 negative and 3 positive user reviews.",
+      "reviews": [
+        {
+          "identity_key": "SKE-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 0,
+          "meaningful": true,
+          "text": "Poor review number 1 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-02",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 2 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 3 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-04",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Poor review number 4 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 0,
+          "meaningful": true,
+          "text": "Poor review number 5 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-06",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 6 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 7 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-08",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Poor review number 8 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 0,
+          "meaningful": true,
+          "text": "Poor review number 9 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-10",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 10 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-11",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 11 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-12",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Poor review number 12 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-13",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 0,
+          "meaningful": true,
+          "text": "Poor review number 13 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-14",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 14 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-15",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 15 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-16",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Poor review number 16 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-17",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 0,
+          "meaningful": true,
+          "text": "Poor review number 17 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-18",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 18 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-19",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 19 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-20",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Poor review number 20 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-21",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 0,
+          "meaningful": true,
+          "text": "Poor review number 21 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-22",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 22 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-23",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 23 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-24",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Poor review number 24 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-25",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 0,
+          "meaningful": true,
+          "text": "Poor review number 25 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-26",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 26 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-27",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 27 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-28",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 28 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-29",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 29 about the skew negative few positives scenario, written in plain words."
+        },
+        {
+          "identity_key": "SKE-30",
+          "platform_slug": "pc",
+          "page_offset": 3,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 30 about the skew negative few positives scenario, written in plain words."
+        }
+      ]
+    },
+    {
+      "id": "critic_scale_zero_to_hundred",
+      "audience": "critic",
+      "game_slug": "critic-scale-zero-to-hundred",
+      "collection_status": "complete",
+      "notes": "Critic scores are 0-100; only two negative reviews exist, so at least two must be selected.",
+      "reviews": [
+        {
+          "identity_key": "CRI-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 80,
+          "meaningful": true,
+          "text": "Strong review number 1 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-02",
+          "platform_slug": "xbox",
+          "page_offset": 0,
+          "language": "en",
+          "score": 85,
+          "meaningful": true,
+          "text": "Strong review number 2 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 90,
+          "meaningful": true,
+          "text": "Strong review number 3 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-04",
+          "platform_slug": "xbox",
+          "page_offset": 0,
+          "language": "en",
+          "score": 95,
+          "meaningful": true,
+          "text": "Strong review number 4 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 80,
+          "meaningful": true,
+          "text": "Strong review number 5 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-06",
+          "platform_slug": "xbox",
+          "page_offset": 0,
+          "language": "en",
+          "score": 85,
+          "meaningful": true,
+          "text": "Strong review number 6 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 90,
+          "meaningful": true,
+          "text": "Strong review number 7 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-08",
+          "platform_slug": "xbox",
+          "page_offset": 0,
+          "language": "en",
+          "score": 95,
+          "meaningful": true,
+          "text": "Strong review number 8 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 80,
+          "meaningful": true,
+          "text": "Strong review number 9 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-10",
+          "platform_slug": "xbox",
+          "page_offset": 1,
+          "language": "en",
+          "score": 85,
+          "meaningful": true,
+          "text": "Strong review number 10 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-11",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 90,
+          "meaningful": true,
+          "text": "Strong review number 11 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-12",
+          "platform_slug": "xbox",
+          "page_offset": 1,
+          "language": "en",
+          "score": 95,
+          "meaningful": true,
+          "text": "Strong review number 12 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-13",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 80,
+          "meaningful": true,
+          "text": "Strong review number 13 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-14",
+          "platform_slug": "xbox",
+          "page_offset": 1,
+          "language": "en",
+          "score": 85,
+          "meaningful": true,
+          "text": "Strong review number 14 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-15",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 90,
+          "meaningful": true,
+          "text": "Strong review number 15 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-16",
+          "platform_slug": "xbox",
+          "page_offset": 1,
+          "language": "en",
+          "score": 95,
+          "meaningful": true,
+          "text": "Strong review number 16 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-17",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 80,
+          "meaningful": true,
+          "text": "Strong review number 17 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-18",
+          "platform_slug": "xbox",
+          "page_offset": 1,
+          "language": "en",
+          "score": 85,
+          "meaningful": true,
+          "text": "Strong review number 18 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-19",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 90,
+          "meaningful": true,
+          "text": "Strong review number 19 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-20",
+          "platform_slug": "xbox",
+          "page_offset": 2,
+          "language": "en",
+          "score": 95,
+          "meaningful": true,
+          "text": "Strong review number 20 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-21",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 60,
+          "meaningful": true,
+          "text": "Uneven review number 21 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-22",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 65,
+          "meaningful": true,
+          "text": "Uneven review number 22 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-23",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 70,
+          "meaningful": true,
+          "text": "Uneven review number 23 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-24",
+          "platform_slug": "xbox",
+          "page_offset": 2,
+          "language": "en",
+          "score": 30,
+          "meaningful": true,
+          "text": "Weak review number 24 about the critic scale zero to hundred scenario, written in plain words."
+        },
+        {
+          "identity_key": "CRI-25",
+          "platform_slug": "xbox",
+          "page_offset": 2,
+          "language": "en",
+          "score": 40,
+          "meaningful": true,
+          "text": "Weak review number 25 about the critic scale zero to hundred scenario, written in plain words."
+        }
+      ]
+    },
+    {
+      "id": "balanced_pool",
+      "audience": "user",
+      "game_slug": "balanced-pool",
+      "collection_status": "complete",
+      "notes": "Already balanced pool.",
+      "reviews": [
+        {
+          "identity_key": "BAL-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 1 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-02",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 2 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 3 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-04",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 4 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 5 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-06",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 6 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 7 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-08",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 8 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 9 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-10",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 10 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-11",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 11 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-12",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 12 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-13",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 13 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-14",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 14 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-15",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Poor review number 15 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-16",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 16 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-17",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 17 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-18",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Poor review number 18 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-19",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 19 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-20",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 20 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-21",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Poor review number 21 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-22",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 22 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-23",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 23 about the balanced pool scenario, written in plain words."
+        },
+        {
+          "identity_key": "BAL-24",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Poor review number 24 about the balanced pool scenario, written in plain words."
+        }
+      ]
+    },
+    {
+      "id": "mostly_unscored",
+      "audience": "user",
+      "game_slug": "mostly-unscored",
+      "collection_status": "complete",
+      "notes": "Unscored reviews dominate; scored extremes must still be represented.",
+      "reviews": [
+        {
+          "identity_key": "MOS-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 1 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-02",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 2 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 3 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-04",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 4 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 5 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-06",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 6 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 7 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-08",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 8 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 9 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-10",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 10 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-11",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 11 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-12",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 12 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-13",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 13 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-14",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 14 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-15",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 15 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-16",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 16 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-17",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 17 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-18",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 18 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-19",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 19 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-20",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 20 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-21",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 21 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-22",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 22 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-23",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 23 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-24",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": null,
+          "meaningful": true,
+          "text": "Neutral review number 24 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-25",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 25 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-26",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 26 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-27",
+          "platform_slug": "pc",
+          "page_offset": 2,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 27 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-28",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 28 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-29",
+          "platform_slug": "ps5",
+          "page_offset": 2,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 29 about the mostly unscored scenario, written in plain words."
+        },
+        {
+          "identity_key": "MOS-30",
+          "platform_slug": "ps5",
+          "page_offset": 3,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 30 about the mostly unscored scenario, written in plain words."
+        }
+      ]
+    },
+    {
+      "id": "all_positive_no_negatives",
+      "audience": "user",
+      "game_slug": "all-positive-no-negatives",
+      "collection_status": "complete",
+      "notes": "No negative review exists, so only the positive minimum applies.",
+      "reviews": [
+        {
+          "identity_key": "ALL-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 1 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-02",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 2 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 3 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-04",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 4 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 5 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-06",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 6 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 7 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-08",
+          "platform_slug": "ps5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 8 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 9 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-10",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 10 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-11",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 11 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-12",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 12 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-13",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Great review number 13 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-14",
+          "platform_slug": "ps5",
+          "page_offset": 1,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 14 about the all positive no negatives scenario, written in plain words."
+        },
+        {
+          "identity_key": "ALL-15",
+          "platform_slug": "pc",
+          "page_offset": 1,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 15 about the all positive no negatives scenario, written in plain words."
+        }
+      ]
+    },
+    {
+      "id": "small_pool_no_exclusion",
+      "audience": "user",
+      "game_slug": "small-pool-no-exclusion",
+      "collection_status": "complete",
+      "notes": "Eight reviews: everything is selected.",
+      "reviews": [
+        {
+          "identity_key": "SMA-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 1 about the small pool no exclusion scenario, written in plain words."
+        },
+        {
+          "identity_key": "SMA-02",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 2 about the small pool no exclusion scenario, written in plain words."
+        },
+        {
+          "identity_key": "SMA-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 3 about the small pool no exclusion scenario, written in plain words."
+        },
+        {
+          "identity_key": "SMA-04",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 10,
+          "meaningful": true,
+          "text": "Great review number 4 about the small pool no exclusion scenario, written in plain words."
+        },
+        {
+          "identity_key": "SMA-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Great review number 5 about the small pool no exclusion scenario, written in plain words."
+        },
+        {
+          "identity_key": "SMA-06",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 6 about the small pool no exclusion scenario, written in plain words."
+        },
+        {
+          "identity_key": "SMA-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 2,
+          "meaningful": true,
+          "text": "Poor review number 7 about the small pool no exclusion scenario, written in plain words."
+        },
+        {
+          "identity_key": "SMA-08",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 1,
+          "meaningful": true,
+          "text": "Poor review number 8 about the small pool no exclusion scenario, written in plain words."
+        }
+      ]
+    }
+  ]
+}

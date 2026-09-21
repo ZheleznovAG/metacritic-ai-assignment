@@ -38,3 +38,23 @@ To evaluate any other candidate, implement `(SelectionPool) -> SelectionResult` 
 ```powershell
 ..\..\.venv\Scripts\python.exe score_selection.py --selector some.module:select_reviews
 ```
+
+## Extension 1.1.0: sentiment coverage
+
+`metric.md` lists sentiment awareness as a non-goal of `1.0.0`. The Likes/Dislikes summary makes it
+matter: with 36 positive and 4 negative reviews the `1.0.0-candidate` hash sample selected **0**
+negative reviews. The additive extension ([`sentiment_cases.json`](sentiment_cases.json),
+[`score_sentiment.py`](score_sentiment.py), `INV-SENTIMENT-COVERAGE`) freezes seven skewed pools and
+one hard invariant: at least `min(3, available)` negative and positive reviews are selected. The
+`1.0.0` files are untouched and the production selector still passes them.
+
+| Case | available neg/pos | `1.0.0-candidate` selected neg/pos | `1.1.0-sentiment` |
+|---|---|---|---|
+| skew_positive_few_negatives | 4 / 36 | 0 / 10 (fail) | 3 / 7 |
+| skew_negative_few_positives | 27 / 3 | 9 / 1 (fail) | 7 / 3 |
+| critic_scale_zero_to_hundred | 2 / 20 | 1 / 7 (fail) | 2 / 6 |
+| mostly_unscored | 3 / 3 | 2 / 2 (fail) | 3 / 3 |
+| balanced_pool, all_positive_no_negatives, small_pool_no_exclusion | - | pass | pass |
+
+`verify_candidate.py` runs both oracles; `test_score_sentiment.py` proves the scorer rejects a
+sentiment-blind selector and accepts a balanced reference.
