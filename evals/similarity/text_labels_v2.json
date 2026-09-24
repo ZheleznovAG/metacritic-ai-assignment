@@ -1,0 +1,1344 @@
+{
+  "eval_set_version": "2.0.0",
+  "frozen_at_utc": "2026-09-24T00:00:00Z",
+  "task": "similar games from saved text, second real-catalogue set (text-hybrid 2.x vs 3.x)",
+  "grades": {
+    "2": "clearly similar gameplay or theme; needs a description that matches its title and genre",
+    "1": "loosely related, or the same specific genre when either side's description is missing or does not match its title/genre",
+    "0": "unrelated (every pooled candidate not listed)"
+  },
+  "identity_rule": "a game is its title and genre; its description counts only when it agrees with them (Metacritic carries legacy app descriptions that belong to other games). A broad genre alone (action, adventure, puzzle, strategy, simulation, rpg, party) earns no grade.",
+  "grader": "single grader (the assistant); candidates were listed shuffled with title, genre and a description excerpt, without method names or scores",
+  "sampling": "24 games drawn with random.Random(20260924) from the 1196-game snapshot (including games without a description), excluding the eval_set 1.0.0 queries",
+  "pool": "union of the top five of: text-hybrid 2.0.0, genre Jaccard 1.0.0, title+genre embedding, description embedding, text-hybrid plus a genre bonus, and a description-consistency gate; returned games outside the pool are reported as unjudged",
+  "queries": [
+    {
+      "source_game_id": "1300761124",
+      "title": "Wait, Cards I Memorized?",
+      "identity": "reliable",
+      "pool": [
+        "1300605254",
+        "1300733262",
+        "1300736339",
+        "1300754094",
+        "1300758796",
+        "1300759406",
+        "1300759844",
+        "1300759869",
+        "1300759905",
+        "1300761832",
+        "1300761977",
+        "1300762746",
+        "1300763083",
+        "1300763095",
+        "1300763640",
+        "1300764867",
+        "1300764870"
+      ],
+      "grades": {
+        "1300736339": {
+          "grade": 1,
+          "title": "Lumiric Stage"
+        },
+        "1300759869": {
+          "grade": 1,
+          "title": "Mom, I'm Really Learning English"
+        },
+        "1300761977": {
+          "grade": 1,
+          "title": "Emo Lisa"
+        },
+        "1300763083": {
+          "grade": 1,
+          "title": "Math Pals - Monster Mania"
+        },
+        "1300763095": {
+          "grade": 1,
+          "title": "Kpop idol Dress Up"
+        },
+        "1300764867": {
+          "grade": 1,
+          "title": "Smart Math: Matching Game"
+        },
+        "1300764870": {
+          "grade": 2,
+          "title": "What Was Here? 1-Minute Memory Quiz!!"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300758784",
+      "title": "STILLTRACE",
+      "identity": "junk: title+genre",
+      "pool": [
+        "1300586608",
+        "1300656486",
+        "1300692490",
+        "1300694873",
+        "1300706143",
+        "1300716415",
+        "1300721599",
+        "1300731941",
+        "1300740497",
+        "1300749266",
+        "1300751023",
+        "1300757126",
+        "1300758806",
+        "1300759153",
+        "1300759386",
+        "1300760131",
+        "1300760133",
+        "1300760157",
+        "1300760766",
+        "1300761471",
+        "1300761875",
+        "1300762303"
+      ],
+      "grades": {
+        "1300694873": {
+          "grade": 2,
+          "title": "Cloudbreaker"
+        },
+        "1300716415": {
+          "grade": 2,
+          "title": "EON Survivor"
+        },
+        "1300721599": {
+          "grade": 1,
+          "title": "Gunclone Arena"
+        },
+        "1300731941": {
+          "grade": 2,
+          "title": "The Bow: Ultimate weapon"
+        },
+        "1300740497": {
+          "grade": 2,
+          "title": "Friendly Fire"
+        },
+        "1300749266": {
+          "grade": 2,
+          "title": "Ashrun Survivors"
+        },
+        "1300751023": {
+          "grade": 2,
+          "title": "Blue Sun Saga"
+        },
+        "1300759386": {
+          "grade": 1,
+          "title": "Asteroid Destroyer (ermu_cz)"
+        },
+        "1300760131": {
+          "grade": 1,
+          "title": "HITLESS"
+        },
+        "1300760157": {
+          "grade": 1,
+          "title": "Arcanefall : Darklands"
+        },
+        "1300760766": {
+          "grade": 2,
+          "title": "Out of Range"
+        },
+        "1300761471": {
+          "grade": 1,
+          "title": "GunfireFantasy"
+        },
+        "1300761875": {
+          "grade": 1,
+          "title": "Zombie X"
+        },
+        "1300762303": {
+          "grade": 1,
+          "title": "BlockScavenger"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300749480",
+      "title": "My Fishing World 2",
+      "identity": "reliable",
+      "pool": [
+        "1300628724",
+        "1300712878",
+        "1300719229",
+        "1300747453",
+        "1300748029",
+        "1300753058",
+        "1300755928",
+        "1300756046",
+        "1300759493",
+        "1300761838",
+        "1300763258",
+        "1300763261"
+      ],
+      "grades": {
+        "1300712878": {
+          "grade": 1,
+          "title": "TINY CAT FISHING"
+        },
+        "1300719229": {
+          "grade": 1,
+          "title": "Fish Lab"
+        },
+        "1300747453": {
+          "grade": 2,
+          "title": "Le Fishe"
+        },
+        "1300748029": {
+          "grade": 1,
+          "title": "Meow Squad: Incremental Fishing"
+        },
+        "1300753058": {
+          "grade": 1,
+          "title": "Perfect Place"
+        },
+        "1300761838": {
+          "grade": 1,
+          "title": "SCREENSIDE FISHER"
+        },
+        "1300763261": {
+          "grade": 2,
+          "title": "Cat Fishing"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300763366",
+      "title": "No Fly Zone",
+      "identity": "junk: title+genre",
+      "pool": [
+        "1300656350",
+        "1300673780",
+        "1300727274",
+        "1300748241",
+        "1300752859",
+        "1300757108",
+        "1300757246",
+        "1300758783",
+        "1300759153",
+        "1300761707",
+        "1300763263",
+        "1300764567",
+        "1300764584",
+        "1300764872",
+        "1300764877"
+      ],
+      "grades": {
+        "1300656350": {
+          "grade": 1,
+          "title": "Mad Metal"
+        },
+        "1300748241": {
+          "grade": 1,
+          "title": "Space Phantom"
+        },
+        "1300757108": {
+          "grade": 1,
+          "title": "Tank Battle Classic"
+        },
+        "1300757246": {
+          "grade": 1,
+          "title": "SSS-FPV"
+        },
+        "1300764567": {
+          "grade": 1,
+          "title": "Chopper Strike 2"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300761726",
+      "title": "Veridus The Walking Nightmare",
+      "identity": "junk: title+genre",
+      "pool": [
+        "1300577301",
+        "1300613828",
+        "1300695088",
+        "1300721599",
+        "1300737066",
+        "1300740497",
+        "1300749266",
+        "1300751023",
+        "1300753234",
+        "1300758241",
+        "1300759239",
+        "1300759386",
+        "1300760131",
+        "1300760154",
+        "1300760157",
+        "1300760766",
+        "1300761471",
+        "1300761875",
+        "1300762303",
+        "1300762951",
+        "1300763096",
+        "1300763098",
+        "1300763271"
+      ],
+      "grades": {
+        "1300577301": {
+          "grade": 2,
+          "title": "Sektori"
+        },
+        "1300613828": {
+          "grade": 1,
+          "title": "Reflection Witch"
+        },
+        "1300695088": {
+          "grade": 1,
+          "title": "HELLDROP"
+        },
+        "1300721599": {
+          "grade": 1,
+          "title": "Gunclone Arena"
+        },
+        "1300740497": {
+          "grade": 2,
+          "title": "Friendly Fire"
+        },
+        "1300749266": {
+          "grade": 2,
+          "title": "Ashrun Survivors"
+        },
+        "1300751023": {
+          "grade": 2,
+          "title": "Blue Sun Saga"
+        },
+        "1300753234": {
+          "grade": 1,
+          "title": "The Walking Dead: Streets of Survival - Arcade Apocalypse Pack"
+        },
+        "1300759386": {
+          "grade": 1,
+          "title": "Asteroid Destroyer (ermu_cz)"
+        },
+        "1300760131": {
+          "grade": 1,
+          "title": "HITLESS"
+        },
+        "1300760157": {
+          "grade": 1,
+          "title": "Arcanefall : Darklands"
+        },
+        "1300760766": {
+          "grade": 2,
+          "title": "Out of Range"
+        },
+        "1300761471": {
+          "grade": 1,
+          "title": "GunfireFantasy"
+        },
+        "1300761875": {
+          "grade": 1,
+          "title": "Zombie X"
+        },
+        "1300762303": {
+          "grade": 1,
+          "title": "BlockScavenger"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300760056",
+      "title": "Yiling Restaurant",
+      "identity": "junk: title+genre, no relevant candidate",
+      "pool": [
+        "1300584370",
+        "1300654654",
+        "1300709346",
+        "1300720764",
+        "1300731941",
+        "1300733858",
+        "1300736510",
+        "1300736714",
+        "1300741950",
+        "1300753443",
+        "1300757051",
+        "1300757095",
+        "1300759037",
+        "1300759474",
+        "1300759844",
+        "1300760736",
+        "1300761129",
+        "1300761727",
+        "1300762387",
+        "1300763398",
+        "1300764591"
+      ],
+      "grades": {}
+    },
+    {
+      "source_game_id": "1300762127",
+      "title": "Jupiter & Mars: Definitive Edition",
+      "identity": "junk: title+genre+known title (underwater dolphin exploration)",
+      "pool": [
+        "1300527324",
+        "1300641792",
+        "1300648057",
+        "1300701247",
+        "1300704564",
+        "1300714329",
+        "1300722594",
+        "1300728513",
+        "1300749783",
+        "1300755781",
+        "1300757095",
+        "1300759700",
+        "1300759916",
+        "1300760319",
+        "1300761707",
+        "1300762305",
+        "1300764536",
+        "1300764584",
+        "1300765098"
+      ],
+      "grades": {
+        "1300704564": {
+          "grade": 2,
+          "title": "Alex & Arty"
+        },
+        "1300714329": {
+          "grade": 1,
+          "title": "Orbitals"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300206228",
+      "title": "Deep Dungeon II: Yuushi no Monshou",
+      "identity": "reliable",
+      "pool": [
+        "1300563984",
+        "1300661505",
+        "1300673170",
+        "1300676605",
+        "1300721440",
+        "1300731371",
+        "1300739908",
+        "1300742117",
+        "1300755940",
+        "1300757010",
+        "1300761517",
+        "1300762206",
+        "1300762546"
+      ],
+      "grades": {
+        "1300563984": {
+          "grade": 1,
+          "title": "Sunken Realms"
+        },
+        "1300661505": {
+          "grade": 1,
+          "title": "Moonlighter 2: The Endless Vault"
+        },
+        "1300673170": {
+          "grade": 1,
+          "title": "Fusty Dungeon"
+        },
+        "1300721440": {
+          "grade": 1,
+          "title": "Another Eden Begins"
+        },
+        "1300755940": {
+          "grade": 1,
+          "title": "Dream Draw Dungeons"
+        },
+        "1300757010": {
+          "grade": 1,
+          "title": "Dungeons & Death"
+        },
+        "1300762546": {
+          "grade": 1,
+          "title": "Dragon Quest Heroes: Torneko's Mystery Dungeon -Classic HD-"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300761108",
+      "title": "AIGENROBO",
+      "identity": "junk: title+genre, no relevant candidate",
+      "pool": [
+        "1300587900",
+        "1300656837",
+        "1300701247",
+        "1300711453",
+        "1300726568",
+        "1300729267",
+        "1300734868",
+        "1300735155",
+        "1300757091",
+        "1300758622",
+        "1300760154",
+        "1300761107",
+        "1300761302",
+        "1300761317",
+        "1300761833",
+        "1300762015",
+        "1300763278",
+        "1300763282",
+        "1300763404",
+        "1300764571",
+        "1300764572",
+        "1300764873"
+      ],
+      "grades": {}
+    },
+    {
+      "source_game_id": "1300759844",
+      "title": "Cards Everywhere!",
+      "identity": "junk: title+genre",
+      "pool": [
+        "1300566873",
+        "1300641792",
+        "1300728430",
+        "1300744736",
+        "1300750231",
+        "1300754094",
+        "1300755666",
+        "1300756914",
+        "1300758772",
+        "1300758782",
+        "1300759406",
+        "1300759474",
+        "1300759711",
+        "1300759839",
+        "1300760150",
+        "1300760317",
+        "1300761357",
+        "1300762006",
+        "1300763370",
+        "1300763826",
+        "1300764239",
+        "1300764869"
+      ],
+      "grades": {
+        "1300641792": {
+          "grade": 1,
+          "title": "TCG Card Shop Simulator"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300760766",
+      "title": "Out of Range",
+      "identity": "reliable",
+      "pool": [
+        "1300577301",
+        "1300613828",
+        "1300661533",
+        "1300716415",
+        "1300721599",
+        "1300731941",
+        "1300740253",
+        "1300740497",
+        "1300748241",
+        "1300749266",
+        "1300751009",
+        "1300751023",
+        "1300753113",
+        "1300758784",
+        "1300759386",
+        "1300760131",
+        "1300760157",
+        "1300761471",
+        "1300761875",
+        "1300762303",
+        "1300763263"
+      ],
+      "grades": {
+        "1300577301": {
+          "grade": 2,
+          "title": "Sektori"
+        },
+        "1300613828": {
+          "grade": 1,
+          "title": "Reflection Witch"
+        },
+        "1300661533": {
+          "grade": 2,
+          "title": "Suqare: Hired Gun"
+        },
+        "1300716415": {
+          "grade": 2,
+          "title": "EON Survivor"
+        },
+        "1300721599": {
+          "grade": 1,
+          "title": "Gunclone Arena"
+        },
+        "1300731941": {
+          "grade": 2,
+          "title": "The Bow: Ultimate weapon"
+        },
+        "1300740253": {
+          "grade": 1,
+          "title": "Nullbreak Protocol"
+        },
+        "1300740497": {
+          "grade": 2,
+          "title": "Friendly Fire"
+        },
+        "1300748241": {
+          "grade": 2,
+          "title": "Space Phantom"
+        },
+        "1300749266": {
+          "grade": 2,
+          "title": "Ashrun Survivors"
+        },
+        "1300751023": {
+          "grade": 1,
+          "title": "Blue Sun Saga"
+        },
+        "1300753113": {
+          "grade": 1,
+          "title": "BABU - Blow All Blocks Up!"
+        },
+        "1300758784": {
+          "grade": 1,
+          "title": "STILLTRACE"
+        },
+        "1300759386": {
+          "grade": 1,
+          "title": "Asteroid Destroyer (ermu_cz)"
+        },
+        "1300760131": {
+          "grade": 1,
+          "title": "HITLESS"
+        },
+        "1300760157": {
+          "grade": 1,
+          "title": "Arcanefall : Darklands"
+        },
+        "1300761471": {
+          "grade": 1,
+          "title": "GunfireFantasy"
+        },
+        "1300761875": {
+          "grade": 1,
+          "title": "Zombie X"
+        },
+        "1300762303": {
+          "grade": 1,
+          "title": "BlockScavenger"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300756946",
+      "title": "Mosaique Neko Waifus 6",
+      "identity": "reliable",
+      "pool": [
+        "1300607795",
+        "1300696214",
+        "1300709210",
+        "1300723374",
+        "1300751508",
+        "1300753443",
+        "1300755225",
+        "1300755288",
+        "1300756568",
+        "1300757205",
+        "1300758782",
+        "1300759623",
+        "1300759764",
+        "1300760636",
+        "1300760800",
+        "1300761372",
+        "1300762506",
+        "1300762704",
+        "1300763090",
+        "1300763258",
+        "1300763539",
+        "1300764552",
+        "1300764591",
+        "1300764875"
+      ],
+      "grades": {
+        "1300607795": {
+          "grade": 1,
+          "title": "Woodo"
+        },
+        "1300709210": {
+          "grade": 1,
+          "title": "100 Tavern Cats"
+        },
+        "1300751508": {
+          "grade": 1,
+          "title": "Korean GIRLS: Naughty at Home"
+        },
+        "1300755288": {
+          "grade": 1,
+          "title": "Goddess of Fate: Waifu Strategy RPG"
+        },
+        "1300760636": {
+          "grade": 1,
+          "title": "After Dark Jigsaw"
+        },
+        "1300763090": {
+          "grade": 1,
+          "title": "Solitaire Companions - Cats"
+        },
+        "1300763258": {
+          "grade": 1,
+          "title": "lemon cat"
+        },
+        "1300763539": {
+          "grade": 1,
+          "title": "Sakura Branch: Blossom Puzzle"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300764571",
+      "title": "Obby Sword Master",
+      "identity": "junk: title+genre",
+      "pool": [
+        "1300619210",
+        "1300711453",
+        "1300725334",
+        "1300726568",
+        "1300729267",
+        "1300734868",
+        "1300756909",
+        "1300757091",
+        "1300758554",
+        "1300760138",
+        "1300760304",
+        "1300761108",
+        "1300761118",
+        "1300761312",
+        "1300763097",
+        "1300763267",
+        "1300763282",
+        "1300763370",
+        "1300763397",
+        "1300763404",
+        "1300764553",
+        "1300764873",
+        "1300765557"
+      ],
+      "grades": {
+        "1300756909": {
+          "grade": 2,
+          "title": "Space Parkour Obby"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300761980",
+      "title": "Pirouette & Smile",
+      "identity": "reliable",
+      "pool": [
+        "1300723374",
+        "1300727274",
+        "1300745315",
+        "1300752857",
+        "1300753443",
+        "1300753608",
+        "1300755225",
+        "1300756914",
+        "1300759064",
+        "1300759711",
+        "1300760142",
+        "1300760636",
+        "1300761372",
+        "1300762206",
+        "1300762524",
+        "1300764552"
+      ],
+      "grades": {
+        "1300745315": {
+          "grade": 1,
+          "title": "Jigsaw Diorama: The Alchemist and the Eclipse"
+        },
+        "1300752857": {
+          "grade": 1,
+          "title": "Hearthpiece"
+        },
+        "1300756914": {
+          "grade": 1,
+          "title": "Jigsaw Puzzle: Fun Shapes"
+        },
+        "1300760636": {
+          "grade": 1,
+          "title": "After Dark Jigsaw"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300710398",
+      "title": "Dear Journey...",
+      "identity": "reliable",
+      "pool": [
+        "1300596336",
+        "1300619101",
+        "1300654146",
+        "1300656790",
+        "1300677554",
+        "1300712878",
+        "1300717515",
+        "1300731750",
+        "1300733858",
+        "1300749497",
+        "1300751066",
+        "1300753650",
+        "1300754243",
+        "1300755058",
+        "1300760784",
+        "1300760793",
+        "1300762688"
+      ],
+      "grades": {
+        "1300596336": {
+          "grade": 1,
+          "title": "Welcome To Mars 9"
+        },
+        "1300654146": {
+          "grade": 1,
+          "title": "lily's world XD"
+        },
+        "1300677554": {
+          "grade": 1,
+          "title": "Monitor State"
+        },
+        "1300717515": {
+          "grade": 2,
+          "title": "Food for Frog"
+        },
+        "1300749497": {
+          "grade": 1,
+          "title": "Cube Boy"
+        },
+        "1300751066": {
+          "grade": 1,
+          "title": "Escape From Lab"
+        },
+        "1300754243": {
+          "grade": 1,
+          "title": "Questfarers of the Stone"
+        },
+        "1300755058": {
+          "grade": 1,
+          "title": "Leaving school story"
+        },
+        "1300760784": {
+          "grade": 1,
+          "title": "Sicarios"
+        },
+        "1300760793": {
+          "grade": 1,
+          "title": "Escape! House of Bonds"
+        },
+        "1300762688": {
+          "grade": 1,
+          "title": "Catson Files: Wizard Town"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300762506",
+      "title": "Hover Idle: Grid Master",
+      "identity": "junk: title+genre",
+      "pool": [
+        "1300715361",
+        "1300732234",
+        "1300734599",
+        "1300734868",
+        "1300741196",
+        "1300745028",
+        "1300755781",
+        "1300756946",
+        "1300758562",
+        "1300758806",
+        "1300759698",
+        "1300759764",
+        "1300761302",
+        "1300761582",
+        "1300761704",
+        "1300762081",
+        "1300762546",
+        "1300762961",
+        "1300764588"
+      ],
+      "grades": {
+        "1300734599": {
+          "grade": 1,
+          "title": "A Game About Flipping Cards"
+        },
+        "1300734868": {
+          "grade": 1,
+          "title": "Imberite Idle"
+        },
+        "1300741196": {
+          "grade": 1,
+          "title": "Lamp Clicker"
+        },
+        "1300758806": {
+          "grade": 1,
+          "title": "Last Haven: Idle Survival"
+        },
+        "1300761704": {
+          "grade": 1,
+          "title": "GridEnergy"
+        },
+        "1300762081": {
+          "grade": 1,
+          "title": "Partyforge Idle"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300740253",
+      "title": "Nullbreak Protocol",
+      "identity": "reliable",
+      "pool": [
+        "1300600743",
+        "1300635765",
+        "1300646317",
+        "1300695088",
+        "1300711453",
+        "1300712926",
+        "1300729267",
+        "1300735419",
+        "1300736171",
+        "1300749266",
+        "1300752369",
+        "1300753234",
+        "1300757604",
+        "1300760155",
+        "1300761108",
+        "1300761317",
+        "1300761941",
+        "1300762379",
+        "1300763404",
+        "1300763558",
+        "1300764873"
+      ],
+      "grades": {
+        "1300635765": {
+          "grade": 1,
+          "title": "Two Sides of Hell"
+        },
+        "1300695088": {
+          "grade": 1,
+          "title": "HELLDROP"
+        },
+        "1300712926": {
+          "grade": 1,
+          "title": "WomboCombo"
+        },
+        "1300735419": {
+          "grade": 1,
+          "title": "Bullet Train"
+        },
+        "1300736171": {
+          "grade": 1,
+          "title": "Black Plague"
+        },
+        "1300749266": {
+          "grade": 1,
+          "title": "Ashrun Survivors"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300750734",
+      "title": "Slayer Queen",
+      "identity": "reliable",
+      "pool": [
+        "1300527324",
+        "1300635765",
+        "1300655618",
+        "1300694873",
+        "1300695088",
+        "1300701247",
+        "1300704564",
+        "1300705716",
+        "1300722594",
+        "1300735419",
+        "1300736171",
+        "1300741708",
+        "1300749266",
+        "1300756558",
+        "1300759629",
+        "1300759916",
+        "1300760304",
+        "1300764536"
+      ],
+      "grades": {
+        "1300635765": {
+          "grade": 1,
+          "title": "Two Sides of Hell"
+        },
+        "1300694873": {
+          "grade": 2,
+          "title": "Cloudbreaker"
+        },
+        "1300695088": {
+          "grade": 1,
+          "title": "HELLDROP"
+        },
+        "1300735419": {
+          "grade": 1,
+          "title": "Bullet Train"
+        },
+        "1300736171": {
+          "grade": 2,
+          "title": "Black Plague"
+        },
+        "1300741708": {
+          "grade": 1,
+          "title": "DOOM: The Dark Ages - Revelations"
+        },
+        "1300749266": {
+          "grade": 2,
+          "title": "Ashrun Survivors"
+        },
+        "1300756558": {
+          "grade": 1,
+          "title": "Miss Killer: Dream Rhythm Island"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300731240",
+      "title": "Warm",
+      "identity": "empty: title+genre",
+      "pool": [
+        "1300479359",
+        "1300578939",
+        "1300654351",
+        "1300701977",
+        "1300709529",
+        "1300715071",
+        "1300732260",
+        "1300742025",
+        "1300751087",
+        "1300756258",
+        "1300757401",
+        "1300759678",
+        "1300760299",
+        "1300760905",
+        "1300760909",
+        "1300761129",
+        "1300761710",
+        "1300762074",
+        "1300765378"
+      ],
+      "grades": {
+        "1300578939": {
+          "grade": 1,
+          "title": "SO BELOW"
+        },
+        "1300654351": {
+          "grade": 1,
+          "title": "Escape Toon Kingdom"
+        },
+        "1300701977": {
+          "grade": 1,
+          "title": "Deep Sheol"
+        },
+        "1300709529": {
+          "grade": 1,
+          "title": "Fright Train"
+        },
+        "1300732260": {
+          "grade": 1,
+          "title": "Animaly Bar: NO HUMANITY!"
+        },
+        "1300742025": {
+          "grade": 1,
+          "title": "SHOCKFACE"
+        },
+        "1300756258": {
+          "grade": 1,
+          "title": "SHH!"
+        },
+        "1300757401": {
+          "grade": 1,
+          "title": "Dead Margin"
+        },
+        "1300759678": {
+          "grade": 1,
+          "title": "Clipped Reality"
+        },
+        "1300760299": {
+          "grade": 1,
+          "title": "Appointment"
+        },
+        "1300760905": {
+          "grade": 1,
+          "title": "ShutterOut"
+        },
+        "1300762074": {
+          "grade": 1,
+          "title": "LOOK / DON'T"
+        },
+        "1300765378": {
+          "grade": 1,
+          "title": "Unnerving Nightmare"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300703549",
+      "title": "All Roads Connected",
+      "identity": "empty: title+genre",
+      "pool": [
+        "1300667223",
+        "1300668840",
+        "1300732260",
+        "1300739180",
+        "1300741685",
+        "1300751087",
+        "1300755441",
+        "1300759698",
+        "1300760909",
+        "1300760976",
+        "1300761129",
+        "1300761710",
+        "1300761875"
+      ],
+      "grades": {
+        "1300667223": {
+          "grade": 1,
+          "title": "Brave New Wonders"
+        },
+        "1300739180": {
+          "grade": 1,
+          "title": "Road Connect"
+        },
+        "1300741685": {
+          "grade": 1,
+          "title": "BioEden"
+        },
+        "1300755441": {
+          "grade": 1,
+          "title": "Emperor of Mahjong: Match Mahjong Tiles, Build Your City!"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300621550",
+      "title": "Roguewake",
+      "identity": "reliable",
+      "pool": [
+        "1300643455",
+        "1300646317",
+        "1300656573",
+        "1300689572",
+        "1300714107",
+        "1300714464",
+        "1300728204",
+        "1300729833",
+        "1300736904",
+        "1300737066",
+        "1300745443",
+        "1300748029",
+        "1300750735",
+        "1300752048",
+        "1300753650",
+        "1300756231",
+        "1300758132",
+        "1300760912",
+        "1300761103"
+      ],
+      "grades": {
+        "1300646317": {
+          "grade": 1,
+          "title": "Sigilfarer: A Dice-Rolling Roguelite"
+        },
+        "1300656573": {
+          "grade": 1,
+          "title": "Effulgence RPG"
+        },
+        "1300689572": {
+          "grade": 1,
+          "title": "Depth of Mind"
+        },
+        "1300714107": {
+          "grade": 1,
+          "title": "Astralis : Dawnblades"
+        },
+        "1300714464": {
+          "grade": 1,
+          "title": "Deified"
+        },
+        "1300728204": {
+          "grade": 2,
+          "title": "Dicebinder"
+        },
+        "1300729833": {
+          "grade": 1,
+          "title": "Batomon Showdown"
+        },
+        "1300736904": {
+          "grade": 1,
+          "title": "Galaxy Hunter"
+        },
+        "1300745443": {
+          "grade": 2,
+          "title": "Revolith"
+        },
+        "1300750735": {
+          "grade": 1,
+          "title": "Groober"
+        },
+        "1300752048": {
+          "grade": 2,
+          "title": "Corsair Fleet: Tides of Plunder"
+        },
+        "1300753650": {
+          "grade": 1,
+          "title": "No Quarter"
+        },
+        "1300756231": {
+          "grade": 1,
+          "title": "Joker Master"
+        },
+        "1300758132": {
+          "grade": 1,
+          "title": "DEPTH STRIKE"
+        },
+        "1300760912": {
+          "grade": 1,
+          "title": "Duty Guvnor"
+        },
+        "1300761103": {
+          "grade": 1,
+          "title": "ChessTan"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300761706",
+      "title": "Triple Track",
+      "identity": "junk: title+genre, no relevant candidate",
+      "pool": [
+        "1300566873",
+        "1300659011",
+        "1300687901",
+        "1300723374",
+        "1300728204",
+        "1300745139",
+        "1300749266",
+        "1300754028",
+        "1300755225",
+        "1300756574",
+        "1300756814",
+        "1300759066",
+        "1300759741",
+        "1300760134",
+        "1300760636",
+        "1300761125",
+        "1300761372",
+        "1300761588",
+        "1300761717",
+        "1300762350",
+        "1300764552",
+        "1300764576"
+      ],
+      "grades": {}
+    },
+    {
+      "source_game_id": "1300763290",
+      "title": "Demon Queen's Domain",
+      "identity": "junk: title+genre",
+      "pool": [
+        "1300479359",
+        "1300590791",
+        "1300605254",
+        "1300668480",
+        "1300742025",
+        "1300749402",
+        "1300755781",
+        "1300756814",
+        "1300758909",
+        "1300759225",
+        "1300759846",
+        "1300760567",
+        "1300760680",
+        "1300761595",
+        "1300761705",
+        "1300762206",
+        "1300763262",
+        "1300763366",
+        "1300765393"
+      ],
+      "grades": {
+        "1300479359": {
+          "grade": 1,
+          "title": "Spirit Animal Survival"
+        },
+        "1300668480": {
+          "grade": 1,
+          "title": "Bait Soul"
+        },
+        "1300756814": {
+          "grade": 2,
+          "title": "Bloodthrone: Eternal Reign"
+        },
+        "1300759225": {
+          "grade": 1,
+          "title": "ClayMonsters"
+        },
+        "1300759846": {
+          "grade": 1,
+          "title": "Black Hole Grow Forever"
+        },
+        "1300760680": {
+          "grade": 1,
+          "title": "Desert Vein"
+        },
+        "1300761705": {
+          "grade": 1,
+          "title": "Platform Chess"
+        },
+        "1300763262": {
+          "grade": 1,
+          "title": "Old Times"
+        }
+      }
+    },
+    {
+      "source_game_id": "1300619210",
+      "title": "Dragon Shelter",
+      "identity": "empty: title+genre",
+      "pool": [
+        "1300641792",
+        "1300678483",
+        "1300711453",
+        "1300723802",
+        "1300729267",
+        "1300732260",
+        "1300732638",
+        "1300751087",
+        "1300752431",
+        "1300759281",
+        "1300760822",
+        "1300760909",
+        "1300761108",
+        "1300761129",
+        "1300761312",
+        "1300761710",
+        "1300762952",
+        "1300763398",
+        "1300763404",
+        "1300764574",
+        "1300764575",
+        "1300764873"
+      ],
+      "grades": {
+        "1300678483": {
+          "grade": 1,
+          "title": "RuneScape: Dragonwilds"
+        },
+        "1300760822": {
+          "grade": 1,
+          "title": "Dragon Hunter RPG"
+        }
+      }
+    }
+  ]
+}
