@@ -35,4 +35,23 @@ A new policy replaces `text-hybrid` 2.0.0 only if, on the same snapshot, all of 
 
 ## Results
 
-Recorded in `text_report_v2.json` once a candidate is chosen.
+[`text_report_v2.json`](text_report_v2.json), 1196-game snapshot, real model:
+
+| Method | set 2.0.0 nDCG@5 | precision | set 1.0.0 nDCG@5 | coverage |
+|---|---|---|---|---|
+| `genre-jaccard` 1.0.0 | 0.382 | 0.472 | 0.150 | - |
+| `text-hybrid` 2.0.0 | 0.318 | 0.343 | 0.605 | 1046 |
+| `text-hybrid` 3.0.0 | 0.570 | 0.508 | 0.378 | 1196 |
+
+Criteria 1, 2, 4 and 5 hold; **criterion 3 does not**: set 1.0.0 drops by 0.227. The drop comes
+from four set-1.0.0 queries whose own descriptions are foreign and were graded by that text; on the
+other seven it is 0.628 → 0.594. The owner accepted 3.0.0 with this disclosed; the analysis, the
+tuning done after the freeze and the remaining limits are in
+[ADR-0004](../../docs/decisions/0004-foreign-description-gate.md).
+
+Reproduce (the snapshot export is in [`text_comparison.md`](text_comparison.md)):
+
+```powershell
+$env:PYTHONPATH = "app"
+.\.venv-app\Scripts\python.exe evals/similarity/score_text.py --snapshot snapshot.json --write evals/similarity/text_report_v2.json
+```

@@ -3,6 +3,8 @@
 - **Status:** Implemented for the personal service, 2026-09-21. Not a formal re-run of the
   `IMP-06`/`SIM-VER-01` gates; owner acceptance is recorded only in
   [action_plan.md](../../action_plan.md).
+- **Amended by:** [ADR-0004](0004-foreign-description-gate.md) (`text-hybrid` 3.0.0, 2026-09-24):
+  games with a foreign or missing description are ranked by title and genre.
 - **Supersedes:** [ADR-0002](0002-genre-similarity-policy.md) and `ASM-21` for the running service.
   The delivered baseline (`genre-jaccard` 1.0.0, its frozen synthetic oracle and comparison) is kept
   unchanged as evidence and as the comparison baseline.

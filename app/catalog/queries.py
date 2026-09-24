@@ -56,6 +56,21 @@ class SimilarGameView:
     genres: tuple[str, ...]
     policy_id: str
     policy_version: str
+    shared_genre: bool = False
+    shared_terms: tuple[str, ...] = ()
+    by_title: bool = False
+
+
+def _explanation(item: dict[str, object]) -> tuple[bool, tuple[str, ...], bool]:
+    """The saved reasons of one neighbour; anything malformed reads as "no reason given"."""
+    terms = item.get("terms")
+    return (
+        item.get("genre") is True,
+        tuple(t for t in terms if isinstance(t, str))[: text_policy.MAX_SHARED_TERMS]
+        if isinstance(terms, list)
+        else (),
+        item.get("basis") == text_policy.BASIS_TITLE,
+    )
 
 
 def list_similar_games(game_id: int) -> list[SimilarGameView]:
@@ -69,12 +84,14 @@ def list_similar_games(game_id: int) -> list[SimilarGameView]:
     if not isinstance(row, list):
         return []
     scores: dict[int, float] = {}
+    reasons: dict[int, tuple[bool, tuple[str, ...], bool]] = {}
     for item in row:
         if isinstance(item, dict) and isinstance(item.get("id"), int):
             try:
                 scores[item["id"]] = float(item["score"])
             except (TypeError, ValueError):
                 continue
+            reasons[item["id"]] = _explanation(item)
     games = {
         pk: (title, genres)
         for pk, title, genres in Game.objects.filter(pk__in=list(scores)).values_list(
@@ -89,6 +106,9 @@ def list_similar_games(game_id: int) -> list[SimilarGameView]:
             genres=saved_labels(games[pk][1]),
             policy_id=text_policy.POLICY_ID,
             policy_version=text_policy.POLICY_VERSION,
+            shared_genre=reasons[pk][0],
+            shared_terms=reasons[pk][1],
+            by_title=reasons[pk][2],
         )
         for pk, score in scores.items()
         if pk in games and pk != game_id

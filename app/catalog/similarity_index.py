@@ -1,8 +1,9 @@
 """Worker-side upkeep of the similar-games index (`similarity.text`, policy `text-hybrid`).
 
-Two persisted steps, both idempotent and bounded: (1) embed games whose text has no current
-embedding, a small batch per call; (2) once nothing is pending, recompute every game's neighbours
-in one transaction. The web role only reads `GameNeighbors`; it never loads the model or numpy.
+Two persisted steps, both idempotent and bounded: (1) embed game texts that have no current
+embedding - every game's label (title and genre) and each usable description - a small batch per
+call; (2) once nothing is pending, recompute every game's neighbours in one transaction. The web
+role only reads `GameNeighbors`; it never loads the model or numpy.
 """
 
 from __future__ import annotations
@@ -15,7 +16,7 @@ from dataclasses import dataclass
 
 import numpy as np
 from django.db import transaction
-from django.db.models import Count, Max, Min
+from django.db.models import Count, Max
 from processing.clock import Clock
 from similarity import text as policy
 from similarity.embedder import Embedder, FastEmbedder
@@ -25,7 +26,7 @@ from catalog.models import Game, GameEmbedding, GameNeighbors
 
 logger = logging.getLogger(__name__)
 
-EMBED_BATCH = 16
+EMBED_BATCH = 64  # short label texts: a policy upgrade re-embeds every game within minutes
 MAINTENANCE_INTERVAL_SECONDS = 60
 FULL_CHECK_SECONDS = 3600
 
@@ -37,118 +38,143 @@ class Refresh:
     rebuilt: int
 
 
-def game_text(game: Game) -> str | None:
-    """The comparison text, or `None` when the game has too little description to compare."""
-    if game.description is None or not policy.has_signal(game.description):
-        return None
-    return policy.game_text(game.title, saved_labels(game.genres), game.description)
+LABEL = "label"
+DESCRIPTION = "description"
+
+
+def game_texts(game: Game) -> dict[str, str]:
+    """The texts to embed for a game: always its label, and its description when usable."""
+    genres = saved_labels(game.genres)
+    texts = {LABEL: policy.label_text(game.title, genres)}
+    if policy.description_problem(game.title, game.description) is None:
+        texts[DESCRIPTION] = policy.game_text(game.title, genres, game.description or "")
+    return texts
 
 
 def _digest(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def _current_texts() -> dict[int, str]:
-    texts: dict[int, str] = {}
+@dataclass(frozen=True, slots=True)
+class _Catalogue:
+    texts: dict[int, dict[str, str]]
+    genres: dict[int, tuple[str, ...]]
+
+    def fingerprint(self, game_id: int) -> str:
+        """Changes with the model or whenever the game's label or usable description changes."""
+        texts = self.texts[game_id]
+        return _digest("\n".join((policy.MODEL_ID, texts[LABEL], texts.get(DESCRIPTION, ""))))
+
+
+def _current_texts() -> _Catalogue:
+    texts: dict[int, dict[str, str]] = {}
+    genres: dict[int, tuple[str, ...]] = {}
     for game in Game.objects.only("id", "title", "genres", "description").order_by("id"):
-        if (text := game_text(game)) is not None:
-            texts[game.id] = text
-    return texts
+        texts[game.id] = game_texts(game)
+        genres[game.id] = saved_labels(game.genres)
+    return _Catalogue(texts=texts, genres=genres)
 
 
-def _saved_embeddings() -> dict[int, tuple[str, str]]:
+def _saved_embeddings() -> dict[tuple[int, str], tuple[str, str]]:
     return {
-        game_id: (model_id, digest)
-        for game_id, model_id, digest in GameEmbedding.objects.values_list(
-            "game_id", "model_id", "text_sha256"
+        (game_id, kind): (model_id, digest)
+        for game_id, kind, model_id, digest in GameEmbedding.objects.values_list(
+            "game_id", "kind", "model_id", "text_sha256"
         )
     }
 
 
-def _pending(texts: dict[int, str]) -> list[int]:
+def _pending(catalogue: _Catalogue) -> list[tuple[int, str]]:
     saved = _saved_embeddings()
     return [
-        game_id
-        for game_id, text in texts.items()
-        if saved.get(game_id) != (policy.MODEL_ID, _digest(text))
+        (game_id, kind)
+        for game_id, texts in catalogue.texts.items()
+        for kind, text in sorted(texts.items())
+        if saved.get((game_id, kind)) != (policy.MODEL_ID, _digest(text))
     ]
 
 
-def embed_pending(embedder: Embedder, texts: dict[int, str], limit: int = EMBED_BATCH) -> int:
-    """Embed up to `limit` games whose saved embedding is missing or was made from other text."""
-    todo = _pending(texts)[:limit]
+def embed_pending(embedder: Embedder, catalogue: _Catalogue, limit: int = EMBED_BATCH) -> int:
+    """Embed up to `limit` texts whose saved embedding is missing or was made from other text."""
+    todo = _pending(catalogue)[:limit]
     if not todo:
         return 0
-    vectors = embedder.embed([texts[game_id] for game_id in todo])
+    vectors = embedder.embed([catalogue.texts[game_id][kind] for game_id, kind in todo])
     with transaction.atomic():
-        for game_id, vector in zip(todo, vectors, strict=True):
+        for (game_id, kind), vector in zip(todo, vectors, strict=True):
             GameEmbedding.objects.update_or_create(
                 game_id=game_id,
+                kind=kind,
                 defaults={
                     "model_id": policy.MODEL_ID,
-                    "text_sha256": _digest(texts[game_id]),
+                    "text_sha256": _digest(catalogue.texts[game_id][kind]),
                     "vector": np.asarray(vector, dtype="<f4").tobytes(),
                 },
             )
     return len(todo)
 
 
-def neighbors_stale(texts: dict[int, str]) -> bool:
+def neighbors_stale(catalogue: _Catalogue) -> bool:
     """True when the precomputed neighbours do not reflect the current embeddings."""
     current = GameNeighbors.objects.filter(policy_version=policy.POLICY_VERSION)
-    expected = list(texts)
-    if set(expected) - set(current.values_list("game_id", flat=True)):
-        return True
-    # A game that lost its text keeps its row (the worker cannot DELETE) but must not keep showing
-    # old neighbours; once emptied it no longer counts as stale.
-    if current.exclude(game_id__in=expected).exclude(neighbors=[]).exists():
-        return True
-    if not expected:
-        return False
-    newest_embedding = GameEmbedding.objects.aggregate(latest=Max("updated_at"))["latest"]
-    oldest_neighbors = current.filter(game_id__in=expected).aggregate(oldest=Min("computed_at"))[
-        "oldest"
-    ]
-    return bool(newest_embedding and oldest_neighbors and newest_embedding > oldest_neighbors)
+    expected = list(catalogue.texts)
+    # A missing row, or a game whose texts or model changed (a description that became unusable
+    # changes no embedding, yet moves the game to title-and-genre matching), needs a rebuild. No
+    # wall-clock comparison: the fingerprints alone say whether the saved neighbours are current.
+    saved = dict(current.values_list("game_id", "inputs_sha256"))
+    return any(saved.get(game_id) != catalogue.fingerprint(game_id) for game_id in expected)
+
+
+def _saved_item(game_id: int, catalogue: _Catalogue, vectors: dict[str, np.ndarray]) -> policy.Item:
+    texts = catalogue.texts[game_id]
+    return policy.Item(
+        game_id=game_id,
+        genres=catalogue.genres[game_id],
+        label_text=texts[LABEL],
+        label_vector=vectors[LABEL],
+        text=texts.get(DESCRIPTION),
+        vector=vectors.get(DESCRIPTION),
+    )
+
+
+def _neighbor_json(neighbor: policy.Neighbor) -> dict[str, object]:
+    return {
+        "id": neighbor.game_id,
+        "score": neighbor.score,
+        "genre": neighbor.shared_genre,
+        "terms": list(neighbor.shared_terms),
+        "basis": neighbor.basis,
+    }
 
 
 UPSERT_BATCH = 500
 
 
-def rebuild_neighbors(texts: dict[int, str], clock: Clock) -> int:
-    """Recompute and save the neighbours of every game that has a current embedding."""
-    vectors_by_game = {
-        game_id: np.frombuffer(bytes(vector), dtype="<f4")
-        for game_id, vector, model_id, digest in GameEmbedding.objects.filter(
-            game_id__in=list(texts)
-        ).values_list("game_id", "vector", "model_id", "text_sha256")
-        if (model_id, digest) == (policy.MODEL_ID, _digest(texts[game_id]))
-    }
-    game_ids = sorted(vectors_by_game)
-    ranked: dict[int, tuple[policy.Neighbor, ...]] = {}
-    if game_ids:
-        ranked = policy.rank_neighbors(
-            game_ids,
-            [texts[game_id] for game_id in game_ids],
-            np.stack([vectors_by_game[game_id] for game_id in game_ids]).astype(np.float32),
-        )
+def rebuild_neighbors(catalogue: _Catalogue, clock: Clock) -> int:
+    """Recompute and save the neighbours of every game whose texts all have current embeddings."""
+    vectors: dict[int, dict[str, np.ndarray]] = {}
+    for game_id, kind, vector, model_id, digest in GameEmbedding.objects.filter(
+        game_id__in=list(catalogue.texts)
+    ).values_list("game_id", "kind", "vector", "model_id", "text_sha256"):
+        text = catalogue.texts[game_id].get(kind)
+        if text is not None and (model_id, digest) == (policy.MODEL_ID, _digest(text)):
+            vectors.setdefault(game_id, {})[kind] = np.frombuffer(bytes(vector), dtype="<f4")
+    ready = [
+        game_id
+        for game_id in sorted(catalogue.texts)
+        if set(catalogue.texts[game_id]) <= set(vectors.get(game_id, {}))
+    ]
+    ranked = policy.rank([_saved_item(game_id, catalogue, vectors[game_id]) for game_id in ready])
     now = clock.now_utc()
     rows = [
         GameNeighbors(
             game_id=game_id,
             policy_version=policy.POLICY_VERSION,
-            neighbors=[{"id": n.game_id, "score": n.score} for n in neighbors],
+            neighbors=[_neighbor_json(n) for n in neighbors],
+            inputs_sha256=catalogue.fingerprint(game_id),
             computed_at=now,
         )
         for game_id, neighbors in ranked.items()
-    ]
-    # Games that dropped out (no description any more) get an empty, current row.
-    leftovers = set(GameNeighbors.objects.values_list("game_id", flat=True)) - set(ranked)
-    rows += [
-        GameNeighbors(
-            game_id=game_id, policy_version=policy.POLICY_VERSION, neighbors=[], computed_at=now
-        )
-        for game_id in sorted(leftovers)
     ]
     with transaction.atomic():
         for start in range(0, len(rows), UPSERT_BATCH):
@@ -156,18 +182,18 @@ def rebuild_neighbors(texts: dict[int, str], clock: Clock) -> int:
                 rows[start : start + UPSERT_BATCH],
                 update_conflicts=True,
                 unique_fields=["game"],
-                update_fields=["policy_version", "neighbors", "computed_at"],
+                update_fields=["policy_version", "neighbors", "inputs_sha256", "computed_at"],
             )
     return len(ranked)
 
 
 def refresh(embedder: Embedder, clock: Clock, limit: int = EMBED_BATCH) -> Refresh:
-    texts = _current_texts()
-    embedded = embed_pending(embedder, texts, limit)
-    pending = len(_pending(texts)) if embedded else 0
+    catalogue = _current_texts()
+    embedded = embed_pending(embedder, catalogue, limit)
+    pending = len(_pending(catalogue)) if embedded else 0
     rebuilt = 0
-    if pending == 0 and (embedded or neighbors_stale(texts)):
-        rebuilt = rebuild_neighbors(texts, clock)
+    if pending == 0 and (embedded or neighbors_stale(catalogue)):
+        rebuilt = rebuild_neighbors(catalogue, clock)
     return Refresh(embedded=embedded, pending=pending, rebuilt=rebuilt)
 
 

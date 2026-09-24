@@ -11,6 +11,7 @@ from catalog.models import Game, GameEmbedding, GameNeighbors
 from django.db import connection
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
+from django.utils.timezone import now as django_now
 from similarity import text as policy
 from similarity.embedder import FastEmbedder
 
@@ -57,20 +58,24 @@ def _seed() -> None:
 
 
 class EmbedPendingTests(TestCase):
-    def test_games_without_enough_description_take_no_part(self) -> None:
+    def test_every_game_gets_a_label_and_only_usable_descriptions_are_embedded(self) -> None:
         _game(1, "Empty", None)
         _game(2, "Short", "tiny")
         _game(3, "Real", "a long enough description of a real game about knights " * 2)
+        _game(4, "Foreign", "Download this app for your iPhone today and enjoy it with family!")
 
         embedder = BagOfWordsEmbedder()
         result = similarity_index.refresh(embedder, Clock())
 
-        self.assertEqual(result.embedded, 1)
-        self.assertEqual(list(GameEmbedding.objects.values_list("game_id", flat=True)), [3])
+        self.assertEqual(result.embedded, 5)
+        self.assertEqual(
+            sorted(GameEmbedding.objects.values_list("game_id", "kind")),
+            [(1, "label"), (2, "label"), (3, "description"), (3, "label"), (4, "label")],
+        )
 
     def test_work_is_bounded_per_call_and_resumes_until_nothing_is_pending(self) -> None:
         _seed()
-        total = Game.objects.count()
+        total = 2 * Game.objects.count()  # a label and a usable description per seeded game
         embedder = BagOfWordsEmbedder()
         clock = Clock()
 
@@ -88,7 +93,7 @@ class EmbedPendingTests(TestCase):
             self.assertLess(rounds, 10)
         self.assertGreater(step.rebuilt, 0)
         self.assertEqual(GameEmbedding.objects.count(), total)
-        self.assertEqual(GameNeighbors.objects.count(), total)
+        self.assertEqual(GameNeighbors.objects.count(), Game.objects.count())
 
     def test_unchanged_text_is_not_embedded_again_but_changed_text_is(self) -> None:
         _seed()
@@ -118,7 +123,7 @@ class EmbedPendingTests(TestCase):
 
         result = similarity_index.refresh(embedder, Clock(), limit=100)
 
-        self.assertEqual(result.embedded, Game.objects.count())
+        self.assertEqual(result.embedded, 2 * Game.objects.count())
         self.assertEqual(GameEmbedding.objects.exclude(model_id=policy.MODEL_ID).count(), 0)
 
 
@@ -141,12 +146,17 @@ class NeighbourRebuildTests(TestCase):
         ids = [item["id"] for item in row.neighbors]
         self.assertTrue(ids)
         self.assertLessEqual(set(ids), {11, 12, 13})
-        self.assertTrue(all(item["score"] >= policy.MIN_FUSED_SCORE for item in row.neighbors))
+        for item in row.neighbors:
+            self.assertGreaterEqual(item["score"], policy.MIN_FUSED_SCORE)
+            self.assertEqual((item["genre"], item["basis"]), (True, policy.BASIS_DESCRIPTION))
+            self.assertIsInstance(item["terms"], list)
 
     def test_vectors_round_trip_as_little_endian_float32(self) -> None:
         self._build()
 
-        vector = np.frombuffer(bytes(GameEmbedding.objects.get(game_id=10).vector), dtype="<f4")
+        vector = np.frombuffer(
+            bytes(GameEmbedding.objects.get(game_id=10, kind="description").vector), dtype="<f4"
+        )
 
         self.assertEqual(vector.shape, (64,))
         self.assertAlmostEqual(float(np.linalg.norm(vector)), 1.0, places=5)
@@ -161,7 +171,7 @@ class NeighbourRebuildTests(TestCase):
 
         _game(500, "Newcomer", "dragon sword castle knight quest magic tower " * 2)
         rebuilt = similarity_index.refresh(embedder, clock)
-        self.assertEqual((rebuilt.embedded, rebuilt.pending), (1, 0))
+        self.assertEqual((rebuilt.embedded, rebuilt.pending), (2, 0))
         self.assertEqual(GameNeighbors.objects.count(), Game.objects.count())
 
     def test_no_http_is_used_and_the_web_side_needs_no_ranking(self) -> None:
@@ -178,29 +188,37 @@ class DroppedGameTests(TestCase):
             pass
         return clock, embedder
 
-    def test_a_game_that_loses_its_text_is_emptied_once_and_never_rebuilds_forever(self) -> None:
+    def test_a_game_that_loses_its_text_moves_to_title_matching_once(self) -> None:
         clock, embedder = self._build()
-        self.assertTrue(GameNeighbors.objects.get(game_id=11).neighbors)
+        self.assertEqual(
+            {n["basis"] for n in GameNeighbors.objects.get(game_id=11).neighbors},
+            {policy.BASIS_DESCRIPTION},
+        )
 
-        Game.objects.filter(pk=11).update(description="gone")
+        Game.objects.filter(pk=11).update(description="gone")  # changes no embedding
         clock.instant += timedelta(minutes=5)
         rebuilt = similarity_index.refresh(embedder, clock)
 
+        self.assertEqual(rebuilt.embedded, 0)
         self.assertGreater(rebuilt.rebuilt, 0)
-        self.assertEqual(GameNeighbors.objects.get(game_id=11).neighbors, [])
-        others = GameNeighbors.objects.exclude(game_id=11)
-        self.assertFalse(any(11 == n["id"] for row in others for n in row.neighbors))
+        self.assertEqual(
+            {n["basis"] for n in GameNeighbors.objects.get(game_id=11).neighbors},
+            {policy.BASIS_TITLE},
+        )
+        described = GameNeighbors.objects.exclude(game_id=11).filter(game_id__lt=100)
+        self.assertFalse(any(11 == n["id"] for row in described for n in row.neighbors))
         settled = similarity_index.refresh(embedder, clock)
         self.assertEqual((settled.embedded, settled.rebuilt), (0, 0))
 
-    def test_an_empty_catalogue_with_leftover_rows_does_not_crash_and_clears_them(self) -> None:
+    def test_a_catalogue_without_descriptions_is_ranked_by_labels_and_settles(self) -> None:
         clock, embedder = self._build()
         Game.objects.update(description="")
 
         result = similarity_index.refresh(embedder, clock)
 
-        self.assertEqual(result.rebuilt, 0)
-        self.assertFalse(GameNeighbors.objects.exclude(neighbors=[]).exists())
+        self.assertGreater(result.rebuilt, 0)
+        bases = {n["basis"] for row in GameNeighbors.objects.all() for n in row.neighbors}
+        self.assertLessEqual(bases, {policy.BASIS_TITLE})
         self.assertEqual(similarity_index.refresh(embedder, clock).rebuilt, 0)
 
     def test_rows_are_upserted_in_batches_not_one_query_pair_per_game(self) -> None:
@@ -235,7 +253,7 @@ class MaintainerTests(TestCase):
             self.assertIsNone(maintainer.run_if_due(clock))
         self.assertLessEqual(len(queries), 2)  # only the two change-detecting aggregates
 
-        Game.objects.filter(pk=10).update(updated_at=NOW + timedelta(days=1))
+        Game.objects.filter(pk=10).update(updated_at=django_now() + timedelta(days=1))
         now[0] += 100
         self.assertIsNotNone(maintainer.run_if_due(clock))  # a saved game wakes it at once
         now[0] += 4000

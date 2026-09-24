@@ -95,7 +95,7 @@ class SimilarGamesQueryTests(TestCase):
         neighbours(1, (2, 5.0))
         with (
             patch("httpx.Client.send", side_effect=AssertionError("Unexpected HTTP")),
-            patch("similarity.text.rank_neighbors", side_effect=AssertionError("ranked")),
+            patch("similarity.text.rank", side_effect=AssertionError("ranked")),
             CaptureQueriesContext(connection) as queries,
         ):
             result = list_similar_games(1)
@@ -160,3 +160,78 @@ class SimilarityNavigationTests(TestCase):
         self.assertIsNone(section.find("img"))
         self.assertIn("<script>bad()</script>", section.get_text())
         self.assertIn(genre, section.get_text())
+
+
+class MatchExplanationTests(TestCase):
+    def _row(self, *items: object) -> None:
+        GameNeighbors.objects.update_or_create(
+            game_id=1,
+            defaults={
+                "policy_version": policy.POLICY_VERSION,
+                "neighbors": list(items),
+                "computed_at": NOW,
+            },
+        )
+
+    def test_saved_reasons_are_read_and_malformed_ones_mean_no_reason(self) -> None:
+        saved(1, "Query")
+        saved(2, "Genre and words")
+        saved(3, "Nothing usable")
+        self._row(
+            {"id": 2, "score": 6.0, "genre": True, "terms": ["drift", "lap"], "basis": "title"},
+            {"id": 3, "score": 5.0, "genre": "yes", "terms": ["ok", 7, None, "x", "y", "z"]},
+        )
+
+        first, second = list_similar_games(1)
+
+        self.assertEqual(
+            (first.shared_genre, first.shared_terms, first.by_title), (True, ("drift", "lap"), True)
+        )
+        self.assertEqual((second.shared_genre, second.by_title), (False, False))
+        self.assertEqual(second.shared_terms, ("ok", "x", "y"))  # strings only, at most three
+
+    def test_the_card_says_why_each_game_is_similar(self) -> None:
+        saved(1, "Query")
+        saved(2, "Both")
+        saved(3, "Words")
+        saved(4, "Plain")
+        self._row(
+            {"id": 2, "score": 7.0, "genre": True, "terms": ["drift"], "basis": "description"},
+            {"id": 3, "score": 6.0, "genre": False, "terms": ["drift", "lap"]},
+            {"id": 4, "score": 5.0},
+        )
+
+        soup = BeautifulSoup(self.client.get("/games/1/").content, "html.parser")
+
+        reasons = [p.get_text() for p in soup.select(".similar-games__why")]
+        self.assertEqual(
+            reasons,
+            ["Same genre · Both mention drift", "Both mention drift, lap", "Similar description"],
+        )
+        self.assertIsNone(soup.select_one(".similar-games__note"))
+
+    def test_title_based_matches_are_disclosed_once(self) -> None:
+        saved(1, "Query")
+        saved(2, "Peer")
+        self._row({"id": 2, "score": 5.0, "genre": False, "terms": [], "basis": "title"})
+
+        soup = BeautifulSoup(self.client.get("/games/1/").content, "html.parser")
+
+        notes = soup.select(".similar-games__note")
+        self.assertEqual(len(notes), 1)
+        self.assertIn("only its title and genre", notes[0].get_text())
+        self.assertEqual(
+            [p.get_text() for p in soup.select(".similar-games__why")], ["Similar title"]
+        )
+
+    def test_saved_words_are_escaped(self) -> None:
+        saved(1, "Query")
+        saved(2, "Peer")
+        self._row({"id": 2, "score": 5.0, "terms": ["<script>bad()</script>"]})
+
+        section = BeautifulSoup(self.client.get("/games/1/").content, "html.parser").select_one(
+            ".game-card__similar"
+        )
+        assert section is not None
+        self.assertIsNone(section.find("script"))
+        self.assertIn("<script>bad()</script>", section.get_text())

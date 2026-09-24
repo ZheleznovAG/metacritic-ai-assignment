@@ -75,7 +75,7 @@ class ScoreMethodTests(unittest.TestCase):
 
 
 class RankAllTests(unittest.TestCase):
-    def test_both_methods_are_ranked_for_labelled_queries_from_a_snapshot(self) -> None:
+    def test_every_method_is_ranked_from_a_snapshot(self) -> None:
         snapshot = [
             {
                 "source_game_id": f"g{i}",
@@ -87,16 +87,18 @@ class RankAllTests(unittest.TestCase):
             }
             for i in range(1, 41)
         ]
-        original = score_text.load_labels
-        score_text.load_labels = lambda: {"queries": [{"source_game_id": "g1", "grades": {}}]}  # type: ignore[assignment]
-        try:
-            rankings = score_text.rank_all(snapshot, BagEmbedder())
-        finally:
-            score_text.load_labels = original  # type: ignore[assignment]
+        snapshot.append(
+            {"source_game_id": "g99", "title": "Game 99", "genres": ["Puzzle"], "description": None}
+        )
 
-        self.assertEqual(set(rankings), {"genre-jaccard", "text-hybrid"})
+        rankings = score_text.rank_all(snapshot, BagEmbedder(), {"g1"})
+
+        self.assertEqual(set(rankings), set(score_text.METHODS))
         self.assertTrue(rankings["genre-jaccard"]["g1"])
-        self.assertTrue(all(int(g[1:]) % 2 == 1 for g in rankings["text-hybrid"]["g1"]))
+        for method in ("text-hybrid@2.0.0", "text-hybrid@3.0.0"):
+            self.assertTrue(all(int(g[1:]) % 2 == 1 for g in rankings[method]["g1"]), method)
+        self.assertNotIn("g99", rankings["text-hybrid@2.0.0"])  # no description: not ranked
+        self.assertIn("g99", rankings["text-hybrid@3.0.0"])  # ranked by title and genre
 
 
 class CommittedReportTests(unittest.TestCase):
@@ -126,6 +128,43 @@ class CommittedReportTests(unittest.TestCase):
             for entry in query["grades"].values():
                 self.assertIn(entry["grade"], (0, 1, 2))
             self.assertNotIn(query["source_game_id"], query["grades"])
+
+
+class CommittedReportV2Tests(unittest.TestCase):
+    """The frozen bar of `text_comparison_v2.md`; its criterion 3 (set 1.0.0) is recorded as not
+    met in ADR-0003 and is therefore not asserted here."""
+
+    def setUp(self) -> None:
+        self.report = json.loads((HERE / "text_report_v2.json").read_text(encoding="utf-8"))
+
+    def test_the_report_was_made_from_the_committed_label_sets(self) -> None:
+        for version, path in score_text.LABEL_SETS.items():
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            self.assertEqual(self.report["sets"][version]["labels_sha256"], digest)
+
+    def test_every_labelled_query_is_scored_for_every_method(self) -> None:
+        for version, path in score_text.LABEL_SETS.items():
+            queries = {q["source_game_id"] for q in score_text.load_labels(path)["queries"]}
+            for method in score_text.METHODS:
+                scored = self.report["sets"][version]["methods"][method]["per_query_ndcg"]
+                self.assertEqual(set(scored), queries, (version, method))
+
+    def test_the_current_policy_meets_the_frozen_bar_on_set_two(self) -> None:
+        methods = self.report["sets"]["2.0.0"]["methods"]
+        old, new = methods["text-hybrid@2.0.0"], methods["text-hybrid@3.0.0"]
+        self.assertGreaterEqual(new["mean_ndcg_at_5"], old["mean_ndcg_at_5"] + 0.05)
+        self.assertGreaterEqual(new["precision"], old["precision"])
+        coverage = self.report["coverage"]
+        self.assertGreaterEqual(coverage["text-hybrid@3.0.0"], coverage["text-hybrid@2.0.0"])
+
+    def test_set_two_labels_are_well_formed(self) -> None:
+        labels = score_text.load_labels(score_text.LABEL_SETS["2.0.0"])
+        self.assertEqual(len(labels["queries"]), 24)
+        for query in labels["queries"]:
+            self.assertNotIn(query["source_game_id"], query["pool"])
+            self.assertLessEqual(set(query["grades"]), set(query["pool"]))
+            for entry in query["grades"].values():
+                self.assertIn(entry["grade"], (1, 2))
 
 
 if __name__ == "__main__":

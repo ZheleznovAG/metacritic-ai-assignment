@@ -91,11 +91,15 @@
       <section class="game-card__similar" aria-labelledby="similar-games-heading">
         <h2 id="similar-games-heading">Similar games</h2>
         {% if similar_games %}
+          {% if similar_games.0.by_title %}
+            <p class="similar-games__note">This game has no usable description, so these matches use only its title and genre.</p>
+          {% endif %}
           <ul class="similar-games">
             {% for similar in similar_games %}
               <li>
                 <a href="{% url 'game-detail' similar.id %}{% if back_query_string %}?{{ back_query_string }}{% endif %}">{{ similar.title }}</a>
                 <p class="similar-games__genres">{% if similar.genres %}{{ similar.genres|join:", " }}{% else %}<span class="no-data">No genre</span>{% endif %}</p>
+                <p class="similar-games__why">{% if similar.shared_genre %}Same genre{% endif %}{% if similar.shared_genre and similar.shared_terms %} · {% endif %}{% if similar.shared_terms %}Both mention {{ similar.shared_terms|join:", " }}{% endif %}{% if not similar.shared_genre and not similar.shared_terms %}Similar {% if similar.by_title %}title{% else %}description{% endif %}{% endif %}</p>
               </li>
             {% endfor %}
           </ul>

@@ -106,13 +106,23 @@ class Game(models.Model):
 
 
 class GameEmbedding(models.Model):
-    """Sentence embedding of a game's text, produced once per (model, text) by the worker."""
+    """Sentence embedding of one of a game's texts, produced once per (model, text) by the worker.
 
-    game = models.OneToOneField(Game, on_delete=models.CASCADE, related_name="embedding")
+    `kind` is `label` (title and genre, every game) or `description` (title, genre and a usable
+    description; see `similarity.text.description_problem`).
+    """
+
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="embeddings")
+    kind = models.CharField(max_length=16, default="description")
     model_id = models.CharField(max_length=128)
     text_sha256 = models.CharField(max_length=64)
     vector = models.BinaryField()  # little-endian float32, L2-normalised
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["game", "kind"], name="catalog_embedding_game_kind")
+        ]
 
 
 class GameNeighbors(models.Model):
@@ -120,7 +130,10 @@ class GameNeighbors(models.Model):
 
     game = models.OneToOneField(Game, on_delete=models.CASCADE, related_name="neighbors")
     policy_version = models.CharField(max_length=32)
-    neighbors = models.JSONField(default=list, blank=True)  # [{"id": int, "score": float}]
+    neighbors = models.JSONField(
+        default=list, blank=True
+    )  # [{"id", "score", "genre", "terms", "basis"}]
+    inputs_sha256 = models.CharField(max_length=64, default="")  # the game's own ranking texts
     computed_at = models.DateTimeField()
 
 

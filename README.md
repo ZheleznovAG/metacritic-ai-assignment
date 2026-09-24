@@ -63,8 +63,9 @@ Playwright and browsers. CI executes the journey on the internal checks network.
 Set `E2E_ARTIFACT_DIR` to a local output directory to retain list/card/mobile
 screenshots from the deterministic journey.
 
-Similar games use `similarity.text` (embedding + TF-IDF, [ADR-0003](docs/decisions/0003-text-hybrid-similarity.md)).
-The worker embeds games while idle and precomputes each game's neighbours; the web only reads them.
+Similar games use `similarity.text` (embedding + TF-IDF, [ADR-0003](docs/decisions/0003-text-hybrid-similarity.md);
+games with a foreign or missing description are matched by title and genre, [ADR-0004](docs/decisions/0004-foreign-description-gate.md)).
+The worker embeds games while idle and precomputes each game's neighbours with the reasons shown on the card; the web only reads them.
 The ONNX model (`sentence-transformers/all-MiniLM-L6-v2`, about 90 MB) is baked into the Docker image at
 build time. Outside production, the first local run downloads it into `FASTEMBED_CACHE_PATH` (or the
 default cache); set that variable to a directory with the model to run the real-model test

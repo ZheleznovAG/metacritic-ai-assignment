@@ -206,7 +206,24 @@ claims; disabled/not-due очередь уступает второй. Поря�
 | `CatalogQuery.detail(game_id)` | internal game ID | game/platforms/current summaries/staleness/similar games либо not found |
 | `SimilarityService.rank(game_id)` | current saved catalog | до пяти versioned deterministic results с score components |
 
-## Similarity policy `text-hybrid` 2.0.0 (с 2026-09-21)
+## Similarity policy `text-hybrid` 3.0.0 (с 2026-09-24)
+
+[ADR-0004](decisions/0004-foreign-description-gate.md) дополняет 2.0.0 (ниже). Около
+четверти описаний в каталоге — тексты старых мобильных приложений, относящиеся к другим
+играм. `similarity.text.description_problem` отбрасывает описание с app-store-шаблонами,
+`?` на месте эмодзи или чужим названием в начале. Игра с пригодным описанием сравнивается
+только с такими же играми, как в 2.0.0; любая другая игра (описание чужое, короткое или
+отсутствует) сравнивается со всеми по `title. genre.` той же fusion. Общий жанр даёт `+1.0`.
+Каждый сосед хранит причины `{id, score, genre, terms, basis}`; карточка показывает
+«Same genre · Both mention …» и один раз пишет, что сравнение шло только по названию и жанру.
+
+Worker эмбеддит два текста на игру (`game_embedding.kind` = `label` | `description`,
+уникально по `(game, kind)`) и пишет в `game_neighbors.inputs_sha256` отпечаток текстов
+игры: описание, ставшее непригодным, не меняет эмбеддингов, но вызывает пересчёт
+(`catalog.0010`). Теперь соседи есть у всех игр каталога, а не только у описанных.
+Замер: [text_report_v2.json](../evals/similarity/text_report_v2.json).
+
+## Similarity policy `text-hybrid` 2.0.0 (2026-09-21 — 2026-09-24)
 
 [ADR-0003](decisions/0003-text-hybrid-similarity.md) заменяет в работающем сервисе
 `genre-jaccard` (ниже, сохранён как базовый метод сравнения). Причина: источник даёт
@@ -224,7 +241,7 @@ claims; disabled/not-due очередь уступает второй. Поря�
 Данные и владельцы (`catalog`): `game_embedding` (`game`, `model_id`,
 `text_sha256`, little-endian float32 `vector`) и `game_neighbors` (`game`,
 `policy_version`, JSON `[{id, score}]`, `computed_at`). Их пишет только worker в
-простое (`catalog/similarity_index.py`): по 16 игр за проход эмбеддит те, у кого нет
+простое (`catalog/similarity_index.py`): по 64 текста за проход (с 3.0.0) эмбеддит те, у кого нет
 эмбеддинга для текущего `(model_id, text_sha256)`, затем, когда очередь пуста, одной
 транзакцией пересчитывает соседей всех игр; не чаще раза в минуту, сбой модели
 логируется и не останавливает worker. Web-роль только читает `game_neighbors`:
