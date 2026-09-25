@@ -19,13 +19,20 @@ from processing.clock import Clock
 from processing.lease import LeaseOverlap, acquire_lease, current_fencing_token
 from processing.models import DailyCandidate, DailyCycle, ProcessingRun
 from processing.scheduler import run_tick
-from processing.selector import BATCH_LIMIT, run_batch
+from processing.selector import BATCH_LIMIT, EXCLUDED_LOCATORS, run_batch
 from reviews.models import ReviewCollectionJob
 
 
 def _identity(n: int) -> GameIdentityDTO:
     return GameIdentityDTO(
         source_game_id=f"g{n}", canonical_locator=f"/game/g{n}/", title=f"Game {n}"
+    )
+
+
+def _excluded_identity() -> GameIdentityDTO:
+    (locator,) = EXCLUDED_LOCATORS
+    return GameIdentityDTO(
+        source_game_id="excluded-source-id", canonical_locator=locator, title="Excluded Game"
     )
 
 
@@ -167,6 +174,62 @@ class FirstRunTests(TestCase):
             ),
             {f"g{n}" for n in range(1, 21)},
         )
+
+
+class ExcludedLocatorTests(TestCase):
+    """A locator on `EXCLUDED_LOCATORS` (a known listing/detail identity mismatch at the source)
+    is never turned into a new candidate, in either discovery phase."""
+
+    def test_an_excluded_locator_in_new_releases_is_skipped_but_others_still_fill_the_batch(
+        self,
+    ) -> None:
+        clock = FakeClock(datetime(2026, 9, 4, 9, 0, tzinfo=UTC))
+        run = _make_run(clock, datetime(2026, 9, 4, 9, 0, tzinfo=UTC), 0)
+        _acquire(run, clock)
+        identities = [_excluded_identity(), *[_identity(n) for n in range(1, 21)]]
+        gateway = FakeGateway(new_releases=identities)
+
+        result = run_batch(gateway, clock, run)
+
+        self.assertEqual(result.selected_count, BATCH_LIMIT)
+        cycle = _cycle_for(run)
+        source_ids = set(
+            DailyCandidate.objects.filter(cycle=cycle).values_list(
+                "game__source_game_id", flat=True
+            )
+        )
+        self.assertEqual(source_ids, {f"g{n}" for n in range(1, 21)})
+        self.assertNotIn("excluded-source-id", source_ids)
+        self.assertFalse(Game.objects.filter(source_game_id="excluded-source-id").exists())
+
+    def test_an_excluded_locator_in_browse_is_skipped(self) -> None:
+        clock = FakeClock(datetime(2026, 9, 4, 9, 0, tzinfo=UTC))
+        run1 = _make_run(clock, datetime(2026, 9, 4, 9, 0, tzinfo=UTC), 0)
+        _acquire(run1, clock)
+        run_batch(FakeGateway(new_releases=[_identity(n) for n in range(1, 21)]), clock, run1)
+
+        run2 = _make_run(clock, datetime(2026, 9, 4, 10, 0, tzinfo=UTC), 1)
+        clock = FakeClock(_slot(run2))
+        _acquire(run2, clock)
+        gateway = FakeGateway(
+            browse_pages={
+                1: BrowsePage(
+                    games=(_excluded_identity(), *[_identity(n) for n in range(21, 25)]),
+                    has_next_page=False,
+                )
+            }
+        )
+
+        result = run_batch(gateway, clock, run2)
+
+        self.assertEqual(result.selected_count, 4)
+        source_ids = set(
+            DailyCandidate.objects.filter(source_order__gt=20).values_list(
+                "game__source_game_id", flat=True
+            )
+        )
+        self.assertEqual(source_ids, {f"g{n}" for n in range(21, 25)})
+        self.assertFalse(Game.objects.filter(source_game_id="excluded-source-id").exists())
 
 
 class SubsequentRunTests(TestCase):

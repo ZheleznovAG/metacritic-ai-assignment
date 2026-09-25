@@ -27,6 +27,15 @@ BATCH_LIMIT = 20
 BROWSE_PAGE_LIMIT = 100
 BROWSE_TIME_LIMIT_SECONDS = 60.0
 
+# Locators where Metacritic's own New Releases listing and its detail page for the same URL
+# disagree on the game's identity (see action_plan.md's 2026-09-25 finding for
+# /game/xevious-3d-g/: the listing reports one source_game_id, the detail page another).
+# Re-discovering such a locator only spends its automatic-attempt budget on a guaranteed
+# IdentityConflict every time it resurfaces, never on real progress, so it is never turned
+# into a new candidate. Removing an entry is a deliberate owner decision, not automatic
+# recovery -- nothing here re-checks whether the source has since become consistent.
+EXCLUDED_LOCATORS: frozenset[str] = frozenset({"/game/xevious-3d-g/"})
+
 
 @dataclass(frozen=True, slots=True)
 class BatchResult:
@@ -154,6 +163,8 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
                 known = _existing_source_game_ids(cycle)
                 unique_games = []
                 for game in games:
+                    if game.canonical_locator in EXCLUDED_LOCATORS:
+                        continue
                     if game.source_game_id not in known:
                         unique_games.append(game)
                         known.add(game.source_game_id)
@@ -194,6 +205,8 @@ def run_batch(gateway: GatewayProtocol, clock: Clock, run: ProcessingRun) -> Bat
                 known = _existing_source_game_ids(cycle)
                 new_identities = []
                 for game in page.games:
+                    if game.canonical_locator in EXCLUDED_LOCATORS:
+                        continue
                     if game.source_game_id not in known:
                         new_identities.append(game)
                         known.add(game.source_game_id)
