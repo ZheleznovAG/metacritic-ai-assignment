@@ -10,11 +10,11 @@ from datetime import timedelta
 from threading import Event, Thread
 from types import TracebackType
 
+from core.clock import Clock
 from django.db import DatabaseError, connections
 from metacritic.gateway import GatewayProtocol
 
 from processing.admission import expire_stale
-from processing.clock import Clock
 from processing.heartbeat import Heartbeat, report_progress
 from processing.models import ManualRunRequest
 from processing.scheduler import run_manual

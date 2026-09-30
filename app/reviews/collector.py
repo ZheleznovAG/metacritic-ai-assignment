@@ -22,12 +22,12 @@ import html
 from datetime import datetime, timedelta
 
 from catalog.models import Game, SourceFetch
+from core.clock import Clock
 from django.db import transaction
 from django.db.models import Q
 from metacritic.dto import ReviewRecordDTO
 from metacritic.gateway import ReviewGatewayProtocol, review_page_url
 from metacritic.parser import PARSER_CONTRACT_VERSION
-from processing.clock import Clock
 
 from reviews import corpus as corpus_module
 from reviews.models import Review, ReviewCollectionJob, ReviewObservation

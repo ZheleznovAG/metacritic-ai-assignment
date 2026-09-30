@@ -13,11 +13,11 @@ from catalog.ingest import (
     ensure_jobs,
     fetch_and_prepare,
 )
+from core.clock import Clock
 from django.db import transaction
 from metacritic.errors import MetacriticParseError
 from metacritic.gateway import ALLOWED_HOST, GatewayProtocol
 
-from processing.clock import Clock
 from processing.heartbeat import report_progress
 from processing.lease import verify_fencing_token
 from processing.models import CoreAttempt, DailyCandidate, ProcessingRun

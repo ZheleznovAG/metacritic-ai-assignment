@@ -10,12 +10,12 @@ from datetime import datetime
 from typing import Any
 
 from catalog.models import Game
+from core.clock import Clock
 from django.db.models import Count
 from reviews.models import ReviewCollectionJob
 from summaries import observability
 from summaries.models import SummaryJob
 
-from processing.clock import Clock
 from processing.models import DailyCandidate, ProcessingRun
 
 

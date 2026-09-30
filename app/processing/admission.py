@@ -11,11 +11,11 @@ import uuid
 from dataclasses import dataclass
 from datetime import timedelta
 
+from core.clock import Clock
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import transaction
 
-from processing.clock import Clock
 from processing.models import ManualRunRequest, ProcessingLease, TriggerAdmission
 
 RESOURCE = "manual_trigger"

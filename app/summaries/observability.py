@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from processing.clock import Clock
+from core.clock import Clock
 
 from summaries.models import SummaryJob
 

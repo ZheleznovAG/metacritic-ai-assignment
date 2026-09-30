@@ -15,9 +15,9 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 import numpy as np
+from core.clock import Clock
 from django.db import transaction
 from django.db.models import Count, Max
-from processing.clock import Clock
 from similarity import text as policy
 from similarity.embedder import Embedder, FastEmbedder
 

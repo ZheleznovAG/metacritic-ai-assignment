@@ -1,7 +1,7 @@
 """R14: persist alternation of due review and summary claims across workers/restarts."""
 
+from core.clock import Clock
 from django.db import transaction
-from processing.clock import Clock
 from summaries import worker as summary_worker
 from summaries.models import SummaryJob
 

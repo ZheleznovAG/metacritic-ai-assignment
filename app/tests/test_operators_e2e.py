@@ -9,12 +9,12 @@ from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from core.clock import SystemClock
 from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
 from django.db import connections
 from django.test import LiveServerTestCase, tag
 from playwright.sync_api import expect, sync_playwright
-from processing.clock import SystemClock
 from processing.models import ManualRunRequest, TriggerAdmission
 from processing.scheduler import run_manual
 

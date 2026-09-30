@@ -12,10 +12,10 @@ from datetime import UTC, datetime
 from decimal import Decimal
 
 from catalog.models import Game
+from core.clock import Clock
 from django.db import transaction
 from django.test import TestCase
 from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO, ReviewPageDTO
-from processing.clock import Clock
 from processing.lease import LeaseOverlap, acquire_lease, current_fencing_token
 from processing.models import DailyCandidate, DailyCycle, ProcessingRun
 from processing.scheduler import run_tick

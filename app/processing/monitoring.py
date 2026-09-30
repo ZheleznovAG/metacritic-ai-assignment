@@ -3,12 +3,12 @@
 from datetime import datetime
 from typing import Any
 
+from core.clock import Clock, SystemClock
 from django.db import connection, transaction
 from django.db.models import Count, Min, QuerySet
 from reviews.models import ReviewCollectionJob
 from summaries.models import SummaryJob
 
-from processing.clock import Clock, SystemClock
 from processing.heartbeat import process_state
 from processing.models import DailyCandidate, ProcessHeartbeat, ProcessingLease, ProcessingRun
 from processing.progress import progress_for_runs

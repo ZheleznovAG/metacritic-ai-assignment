@@ -7,10 +7,10 @@ here is idempotent per hour via `trigger_key` (`PS-INV-01`).
 from dataclasses import dataclass
 from datetime import datetime
 
+from core.clock import Clock
 from django.db import IntegrityError, transaction
 from metacritic.gateway import GatewayProtocol
 
-from processing.clock import Clock
 from processing.heartbeat import report_progress
 from processing.lease import (
     LeaseOverlap,

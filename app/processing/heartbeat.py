@@ -8,10 +8,10 @@ from types import TracebackType
 from typing import Any
 from uuid import uuid4
 
+from core.clock import Clock, SystemClock
 from django.conf import settings
 from django.db import DatabaseError, connections, transaction
 
-from processing.clock import Clock, SystemClock
 from processing.models import ProcessHeartbeat
 
 logger = logging.getLogger(__name__)

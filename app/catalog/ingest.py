@@ -11,13 +11,13 @@ from dataclasses import dataclass, replace
 from datetime import datetime
 from urllib.parse import urlsplit, urlunsplit
 
+from core.clock import Clock
 from django.db import transaction
 from metacritic.dto import FetchEvidence, GameDTO, GameIdentityDTO, GamePlatformDTO
 from metacritic.errors import MetacriticParseError
 from metacritic.gateway import GatewayProtocol
 from metacritic.validation import userscore as validate_userscore
 from metacritic.validation import validate_game
-from processing.clock import Clock
 from processing.models import DailyCandidate, DailyCycle
 from reviews.models import ReviewCollectionJob
 

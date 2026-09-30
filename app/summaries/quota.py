@@ -4,8 +4,8 @@ import math
 import re
 from datetime import datetime, timedelta
 
+from core.clock import Clock
 from django.db import connection
-from processing.clock import Clock
 
 from summaries.models import SummaryAttempt
 

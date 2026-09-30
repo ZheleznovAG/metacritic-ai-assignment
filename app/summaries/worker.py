@@ -6,9 +6,9 @@ import hashlib
 from datetime import datetime, timedelta
 
 import httpx
+from core.clock import Clock
 from django.db import transaction
 from django.db.models import Q
-from processing.clock import Clock
 from reviews.models import ReviewCorpus
 
 from summaries import contour, groq_adapter, preflight, quota

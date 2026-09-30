@@ -9,8 +9,9 @@ it with `ALLOWED` in both directions:
 - a removed edge fails until it is deleted here, so the list only ever shrinks when the code does.
 
 `ALLOWED` records the graph as found on 2026-09-30, including cycles (for example
-`catalog <-> processing`) that are known debt, not a target. Pure packages additionally must not
-import Django or network clients.
+`catalog <-> processing`) that are known debt, not a target. `core` is the foundation: every
+package may import it and it imports no other first-party package. Pure packages additionally must
+not import Django or network clients.
 """
 
 import ast
@@ -23,6 +24,7 @@ PACKAGES = frozenset(
     {
         "catalog",
         "config",
+        "core",
         "metacritic",
         "presentation",
         "processing",
@@ -51,10 +53,10 @@ ALLOWED = frozenset(
         ("reviews", "processing"),
         ("reviews", "summaries"),
         ("similarity", "catalog"),
-        ("summaries", "processing"),
         ("summaries", "reviews"),
     }
 )
+FOUNDATION = "core"
 # Packages that must stay free of the ORM, HTTP and provider clients (`docs/design.md`).
 PURE = {"similarity": frozenset({"django", "httpx", "groq"})}
 
@@ -82,7 +84,7 @@ def dependency_graph() -> dict[tuple[str, str], list[str]]:
     edges: dict[tuple[str, str], list[str]] = {}
     for package in sorted(PACKAGES):
         for path in _production_files(package):
-            for target in _imported_roots(path) & PACKAGES - {package}:
+            for target in _imported_roots(path) & PACKAGES - {package, FOUNDATION}:
                 edges.setdefault((package, target), []).append(path.relative_to(APP).as_posix())
     return edges
 
@@ -95,6 +97,11 @@ class ModuleDependencyTests(SimpleTestCase):
     def test_removed_dependencies_are_removed_from_the_allowlist(self) -> None:
         stale = ALLOWED - dependency_graph().keys()
         self.assertEqual(stale, set(), "dependency no longer exists; delete it from ALLOWED")
+
+    def test_the_foundation_imports_no_other_first_party_package(self) -> None:
+        for path in _production_files(FOUNDATION):
+            with self.subTest(path=path.relative_to(APP).as_posix()):
+                self.assertEqual(_imported_roots(path) & PACKAGES - {FOUNDATION}, set())
 
     def test_pure_packages_import_no_framework_or_network_client(self) -> None:
         for package, forbidden in PURE.items():

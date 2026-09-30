@@ -8,10 +8,10 @@ for a single scripted invocation, e.g. from an external cron as an alternative t
 import time
 from typing import Any
 
+from core.clock import SystemClock
 from django.core.management.base import BaseCommand, CommandParser
 from metacritic.gateway import MetacriticGateway
 
-from processing.clock import SystemClock
 from processing.dispatcher import Dispatcher
 from processing.heartbeat import Heartbeat, report_progress
 from processing.observed_gateway import ObservedGateway

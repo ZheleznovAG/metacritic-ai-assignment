@@ -35,6 +35,7 @@ Core commit не ждёт отзывов или модели. Ошибка revie
 
 | Модуль | Ответственность | Не делает |
 |---|---|---|
+| `core` | Общие для всей программы основания: `Clock` | Не импортирует ни один другой пакет приложения |
 | `catalog` | Identity игры/платформ, non-destructive upsert, source fields и aliases | Не решает порядок дня и не вызывает AI |
 | `processing` | UTC slots, daily cycle, batch до 20, lease/fencing, attempts и run counters | Не разбирает HTML и не содержит UI rules |
 | `metacritic` | HTTP/parse adapter, typed DTO, `SourceFetch` evidence и классифицированные ошибки | Не пишет domain rows напрямую и не исправляет source semantics |

@@ -12,9 +12,9 @@ games already in the catalogue are skipped, so it never repeats work.
 import time
 from typing import Any
 
+from core.clock import Clock, SystemClock
 from django.core.management.base import BaseCommand, CommandParser
 from metacritic.gateway import ALLOWED_HOST, MetacriticGateway
-from processing.clock import Clock, SystemClock
 
 from catalog.ingest import ingest_game
 from catalog.models import Game

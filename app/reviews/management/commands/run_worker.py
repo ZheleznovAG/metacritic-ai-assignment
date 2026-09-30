@@ -12,9 +12,9 @@ from typing import Any
 
 import httpx
 from catalog.similarity_index import Maintainer
+from core.clock import Clock, SystemClock
 from django.core.management.base import BaseCommand, CommandParser
 from metacritic.gateway import ReviewGatewayProtocol
-from processing.clock import Clock, SystemClock
 from processing.heartbeat import Heartbeat, report_progress
 from processing.observed_gateway import ObservedGateway
 from summaries import groq_adapter

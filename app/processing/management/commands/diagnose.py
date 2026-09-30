@@ -6,10 +6,10 @@ prints one JSON object per invocation for scripting/piping, no interactive UI re
 import json
 from typing import Any
 
+from core.clock import SystemClock
 from django.core.management.base import BaseCommand, CommandError, CommandParser
 
 from processing import diagnostics
-from processing.clock import SystemClock
 
 
 class Command(BaseCommand):

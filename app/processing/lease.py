@@ -2,7 +2,8 @@
 
 from datetime import datetime, timedelta
 
-from processing.clock import Clock
+from core.clock import Clock
+
 from processing.models import ProcessingLease, ProcessingRun
 
 LEASE_TTL = timedelta(minutes=45)

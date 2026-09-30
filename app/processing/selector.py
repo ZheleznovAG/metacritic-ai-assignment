@@ -6,11 +6,11 @@ from dataclasses import dataclass
 from time import monotonic
 
 from catalog.ingest import resolve_game_identity, save_fetch_evidence
+from core.clock import Clock
 from django.db import transaction
 from metacritic.dto import GameIdentityDTO
 from metacritic.gateway import GatewayProtocol
 
-from processing.clock import Clock
 from processing.lease import verify_fencing_token
 from processing.models import CoreAttempt, DailyCandidate, DailyCycle, ProcessingRun, RunCandidate
 from processing.progress import progress_for_runs

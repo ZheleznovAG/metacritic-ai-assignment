@@ -4,9 +4,9 @@ the required database role). This is not the future scheduler/worker entry point
 
 from typing import Any
 
+from core.clock import SystemClock
 from django.core.management.base import BaseCommand, CommandParser
 from metacritic.gateway import MetacriticGateway
-from processing.clock import SystemClock
 
 from catalog.ingest import ingest_game
 

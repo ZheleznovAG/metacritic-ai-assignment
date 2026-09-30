@@ -6,6 +6,7 @@ accounts/permissions/sessions, this module only adds the login throttle and admi
 import uuid
 from datetime import timedelta
 
+from core.clock import SystemClock
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
@@ -16,7 +17,6 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods, require_POST
 from processing import admission
 from processing.admission import AdmissionConflict
-from processing.clock import SystemClock
 from processing.models import LoginFailure
 
 
