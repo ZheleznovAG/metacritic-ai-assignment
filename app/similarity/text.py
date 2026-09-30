@@ -34,19 +34,31 @@ from dataclasses import dataclass
 
 import numpy as np
 
-POLICY_ID = "text-hybrid"
-POLICY_VERSION = "3.0.0"
+from similarity.contract import (
+    BASIS_DESCRIPTION as BASIS_DESCRIPTION,
+)
+from similarity.contract import (
+    BASIS_TITLE as BASIS_TITLE,
+)
+from similarity.contract import (
+    MAX_RESULTS as MAX_RESULTS,
+)
+from similarity.contract import (
+    MAX_SHARED_TERMS as MAX_SHARED_TERMS,
+)
+from similarity.contract import (
+    POLICY_ID as POLICY_ID,
+)
+from similarity.contract import (
+    POLICY_VERSION as POLICY_VERSION,
+)
+
 MODEL_ID = "sentence-transformers/all-MiniLM-L6-v2"
-MAX_RESULTS = 5
 MAX_TEXT_CHARS = 1200
 MIN_DESCRIPTION_CHARS = 40
 TFIDF_WEIGHT = 1.0
 GENRE_BONUS = 1.0
 MIN_FUSED_SCORE = 3.5
-MAX_SHARED_TERMS = 3
-
-BASIS_DESCRIPTION = "description"
-BASIS_TITLE = "title"
 
 _TOKEN = re.compile(r"[a-z0-9']{3,}")
 _STOPWORDS = frozenset(

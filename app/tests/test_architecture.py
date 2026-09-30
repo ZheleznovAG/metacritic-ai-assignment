@@ -15,6 +15,9 @@ not import Django or network clients.
 """
 
 import ast
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 from django.test import SimpleTestCase
@@ -106,6 +109,22 @@ class ModuleDependencyTests(SimpleTestCase):
             for path in _production_files(package):
                 with self.subTest(path=path.relative_to(APP).as_posix()):
                     self.assertEqual(_imported_roots(path) & forbidden, set())
+
+    def test_the_web_request_path_does_not_load_the_ranking_mathematics(self) -> None:
+        # The web only reads precomputed neighbours (`docs/design.md`); a fresh interpreter shows
+        # what importing every route actually loads.
+        code = (
+            "import sys, django; django.setup(); import config.urls; print('numpy' in sys.modules)"
+        )
+        loaded = subprocess.run(
+            [sys.executable, "-c", code],
+            cwd=APP,
+            env=os.environ.copy(),
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+        self.assertEqual(loaded, "False")
 
     def test_the_graph_is_derived_from_real_files(self) -> None:
         # Guards the scanner itself: a known edge and its source file must be found.

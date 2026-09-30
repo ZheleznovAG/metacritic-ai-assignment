@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 
-from similarity import text as text_policy
+from similarity import contract as text_policy
 
 from catalog.labels import saved_labels
 from catalog.models import Game, GameNeighbors, GamePlatform

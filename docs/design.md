@@ -45,7 +45,7 @@ Core commit не ждёт отзывов или модели. Ошибка revie
 | `presentation` | Read-only list/detail queries и Django templates | Не запускает ingestion/enrichment через публичный Must UI |
 | `observability` | Structured events и представление persistent run/job state | Не является отдельным storage/monitoring service |
 
-Django ORM используется прямо внутри application services; универсальный repository layer не вводится. Протоколами изолируются только изменяемые границы: время, Metacritic и AI provider.
+Фактический граф импортов между пакетами проверяется тестом [`test_architecture.py`](../app/tests/test_architecture.py): новая связь или исчезнувшая, но оставшаяся в списке, роняют проверку. Список фиксирует и известный долг — циклы `processing ↔ reviews ↔ summaries` и `similarity → catalog` (устаревшая жанровая политика закреплена SHA-256 в замороженном отчёте сравнения); веб при загрузке маршрутов не импортирует `numpy`. Django ORM используется прямо внутри application services; универсальный repository layer не вводится. Протоколами изолируются только изменяемые границы: время, Metacritic и AI provider.
 
 ## Логическая модель PostgreSQL
 
