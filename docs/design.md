@@ -38,7 +38,7 @@ Core commit не ждёт отзывов или модели. Ошибка revie
 | `core` | Общие для всей программы основания: `Clock` | Не импортирует ни один другой пакет приложения |
 | `catalog` | Identity игры/платформ, non-destructive upsert, source fields и aliases | Не решает порядок дня, не создаёт daily candidates и review jobs, не вызывает AI |
 | `processing` | UTC slots, daily cycle, batch до 20, lease/fencing, attempts и run counters; после upsert записывает игру в дневной цикл и создаёт review jobs (`enrollment`, ручной путь `manual_ingest`) | Не разбирает HTML и не содержит UI rules |
-| `metacritic` | HTTP/parse adapter, typed DTO, `SourceFetch` evidence и классифицированные ошибки | Не пишет domain rows напрямую и не исправляет source semantics |
+| `metacritic` | HTTP/parse adapter (парсеры разделены по типу страницы источника), typed DTO, `SourceFetch` evidence и классифицированные ошибки | Не пишет domain rows напрямую и не исправляет source semantics |
 | `reviews` | Сохраняет скачанные review records/observations, строит audience corpus | Не переводит, не пересказывает и не удаляет историю при partial fetch |
 | `summaries` | Persistent jobs, provider adapter, attempts, canonical validation и claims | Не смешивает аудитории и не знает HTML/UI |
 | `similarity` | Версионированный объяснимый ranking по сохранённым признакам | Не вызывает внешнюю модель и не требует vector DB |

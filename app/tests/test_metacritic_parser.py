@@ -5,18 +5,17 @@ from decimal import Decimal
 from pathlib import Path
 
 from django.test import SimpleTestCase
-from metacritic.errors import MetacriticParseError
-from metacritic.parser import (
+from metacritic.detail_parser import (
     _decode_entities,
     _extract_content_rating,
     _extract_publishers,
     _extract_release_date,
     _find_game_record,
     _parse_platform,
-    _safe_url,
-    parse_game_detail,
-    parse_platform_userscore,
 )
+from metacritic.errors import MetacriticParseError
+from metacritic.page import safe_url
+from metacritic.parser import parse_game_detail, parse_platform_userscore
 
 FIXTURES = Path(__file__).parent / "fixtures" / "metacritic"
 DETAIL_URL = "https://www.metacritic.com/game/elden-ring/"
@@ -264,18 +263,16 @@ class ParsePlatformFieldTests(SimpleTestCase):
 
 class SafeUrlTests(SimpleTestCase):
     def test_javascript_scheme_is_rejected(self) -> None:
-        self.assertIsNone(_safe_url("javascript:alert(1)"))
+        self.assertIsNone(safe_url("javascript:alert(1)"))
 
     def test_data_scheme_is_rejected(self) -> None:
-        self.assertIsNone(_safe_url("data:text/html,<script>alert(1)</script>"))
+        self.assertIsNone(safe_url("data:text/html,<script>alert(1)</script>"))
 
     def test_https_is_accepted(self) -> None:
-        self.assertEqual(
-            _safe_url("https://example.invalid/x.jpg"), "https://example.invalid/x.jpg"
-        )
+        self.assertEqual(safe_url("https://example.invalid/x.jpg"), "https://example.invalid/x.jpg")
 
     def test_non_string_is_rejected(self) -> None:
-        self.assertIsNone(_safe_url(123))
+        self.assertIsNone(safe_url(123))
 
 
 class ParsePlatformUserscoreTests(SimpleTestCase):
