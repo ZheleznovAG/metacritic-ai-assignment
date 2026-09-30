@@ -19,6 +19,13 @@ side with no evidence at all. The first `MIN_PER_SENTIMENT_SIDE` negative and po
 the deterministic order above are therefore reserved, and the remaining slots are filled in that
 same order. Sentiment comes only from the review's score metadata (never its text), so editing a
 review's text still cannot change which reviews are selected.
+
+Policy `1.2.0-meaningful` (`REV-EVAL-01` extension `1.2.0`, `INV-MEANINGFUL-ELIGIBILITY`, audit
+finding `MA-01`): only meaningful reviews are eligible. A blank review gives the model nothing to
+summarise, yet it used to take a slot, including a reserved sentiment slot, and a game with three
+usable reviews could be reported as `insufficient_data`. Eligibility is applied before
+deduplication, ordering and reservation, so a canonical group is represented by a meaningful member.
+The only text property that affects the selected set is therefore whether a review is blank.
 """
 
 from __future__ import annotations
@@ -28,7 +35,7 @@ from dataclasses import dataclass
 
 import tiktoken
 
-POLICY_VERSION = "1.1.0-sentiment"
+POLICY_VERSION = "1.2.0-meaningful"
 MIN_PER_SENTIMENT_SIDE = 3
 TOKENIZER_ID = "o200k_harmony"
 MAX_SELECTED_REVIEWS = 10
@@ -137,7 +144,8 @@ def select_reviews(pool: SelectionPool) -> SelectionResult:
             f"pool for {pool.game_slug}/{pool.audience} is {pool.collection_status!r}, not complete"
         )
 
-    ordered = _deterministic_order(_deduplicate(pool.reviews))
+    eligible = tuple(review for review in pool.reviews if review.meaningful)
+    ordered = _deterministic_order(_deduplicate(eligible))
     reserved: set[str] = set()
     for side in ("negative", "positive"):
         matching = [r for r in ordered if _sentiment(r, pool.audience) == side]

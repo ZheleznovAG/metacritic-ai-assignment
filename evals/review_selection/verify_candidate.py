@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 
 import contract as frozen
+import score_meaningful
 import score_selection
 import score_sentiment
 from reviews import selection as candidate
@@ -85,7 +86,7 @@ def main() -> int:
         if newly_failed:
             print(f"New failures not seen even in the naive baseline: {newly_failed}")
     passed = report["all_pass"]
-    for extension in (score_sentiment,):
+    for extension in (score_sentiment, score_meaningful):
         extension_report = extension.score(select_reviews)
         name = f"{extension_report['invariant']} {extension_report['eval_set_version']}"
         if extension_report["all_pass"]:

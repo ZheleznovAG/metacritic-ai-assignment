@@ -175,3 +175,67 @@ class SentimentCoverageTests(SimpleTestCase):
         edited = [replace(r, text="completely different words") for r in reviews]
 
         self.assertEqual(self._select("user", reviews), self._select("user", edited))
+
+
+def _blank(key: str, score: float | None = 7, text: str = "", platform: str = "pc") -> ReviewRecord:
+    return ReviewRecord(
+        identity_key=key,
+        platform_slug=platform,
+        page_offset=0,
+        language="en",
+        score=score,
+        text=text,
+        meaningful=False,
+    )
+
+
+class MeaningfulEligibilityTests(SimpleTestCase):
+    """`MA-01`: a blank review must never take a slot a meaningful one could have."""
+
+    def _select(self, reviews: list[ReviewRecord], audience: str = "user") -> list[str]:
+        pool = SelectionPool(
+            audience=audience, game_slug="g", collection_status="complete", reviews=tuple(reviews)
+        )
+        return [item.identity_key for item in select_reviews(pool).selected]
+
+    def test_the_audit_counterexample_keeps_all_three_meaningful_reviews(self) -> None:
+        reviews = [_blank(f"blank-{i:02d}") for i in range(20)]
+        reviews += [_scored(f"text-{i}", 8) for i in range(3)]
+
+        self.assertEqual(sorted(self._select(reviews)), ["text-0", "text-1", "text-2"])
+
+    def test_blank_negatives_do_not_consume_the_sentiment_reservation(self) -> None:
+        reviews = [_blank(f"blank-{i}", score=1) for i in range(6)]
+        reviews += [_scored(f"neg-{i}", 2) for i in range(2)]
+        reviews += [_scored(f"pos-{i:02d}", 9) for i in range(12)]
+
+        selected = self._select(reviews)
+
+        self.assertEqual(len(selected), 10)
+        self.assertFalse(any(key.startswith("blank-") for key in selected))
+        self.assertEqual(sum(key.startswith("neg-") for key in selected), 2)
+
+    def test_whitespace_only_blank_on_a_whole_platform_is_skipped(self) -> None:
+        reviews = [_blank(f"blank-{i}", text=" \n", platform="xbox") for i in range(8)]
+        reviews += [_scored(f"text-{i}", 8) for i in range(7)]
+
+        self.assertEqual(len(self._select(reviews)), 7)
+
+    def test_a_pool_of_only_blank_reviews_selects_nothing_and_counts_stay_honest(self) -> None:
+        reviews = tuple(_blank(f"blank-{i:02d}") for i in range(12))
+        pool = SelectionPool(
+            audience="user", game_slug="g", collection_status="complete", reviews=reviews
+        )
+
+        result = select_reviews(pool)
+
+        self.assertEqual(result.selected, ())
+        self.assertEqual((result.meaningful_pool_count, result.total_pool_count), (0, 12))
+
+    def test_a_duplicate_group_is_represented_by_its_meaningful_member(self) -> None:
+        reviews = [
+            _blank("a-blank"),
+            replace(_scored("b-text", 8), duplicate_of="a-blank"),
+        ]
+
+        self.assertEqual(self._select(reviews), ["b-text"])
