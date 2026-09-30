@@ -6,7 +6,7 @@ from decimal import Decimal
 from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
-from catalog.ingest import ingest_game, resolve_game_identity
+from catalog.ingest import resolve_game_identity
 from catalog.models import Game, SourceFetch
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
@@ -14,6 +14,7 @@ from django.test import SimpleTestCase, TestCase, TransactionTestCase
 from metacritic.dto import GameDTO, GameIdentityDTO
 from metacritic.errors import MetacriticParseError
 from metacritic.parser import parse_game_detail
+from processing.manual_ingest import ingest_game
 
 from tests.test_catalog_ingest import DETAIL_URL, FakeClock, FakeGateway, _game
 from tests.test_metacritic_parser import FIXTURES

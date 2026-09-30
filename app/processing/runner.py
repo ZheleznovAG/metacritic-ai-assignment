@@ -2,15 +2,14 @@
 
 Reuses `catalog.ingest`'s `fetch_and_prepare`/`apply_game_dto` (the same upsert core `IMP-02`
 built and tested), but owns the `DailyCandidate`/`CoreAttempt` lifecycle itself instead of
-`catalog.ingest.ingest_game`'s own simplified stand-in (that function stays as the manual
-one-off proof tool; see its module docstring).
+`processing.manual_ingest.ingest_game`'s simplified stand-in (the manual one-off proof tool; see
+its module docstring).
 """
 
 from catalog.ingest import (
     IdentityConflict,
     PlatformIdentityConflict,
     apply_game_dto,
-    ensure_jobs,
     fetch_and_prepare,
 )
 from core.clock import Clock
@@ -18,6 +17,7 @@ from django.db import transaction
 from metacritic.errors import MetacriticParseError
 from metacritic.gateway import ALLOWED_HOST, GatewayProtocol
 
+from processing.enrollment import ensure_jobs
 from processing.heartbeat import report_progress
 from processing.lease import verify_fencing_token
 from processing.models import CoreAttempt, DailyCandidate, ProcessingRun

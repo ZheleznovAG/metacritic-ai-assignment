@@ -9,7 +9,7 @@ it with `ALLOWED` in both directions:
 - a removed edge fails until it is deleted here, so the list only ever shrinks when the code does.
 
 `ALLOWED` records the graph as found on 2026-09-30, including cycles (for example
-`catalog <-> processing`) that are known debt, not a target. `core` is the foundation: every
+`processing <-> reviews`) that are known debt, not a target. `core` is the foundation: every
 package may import it and it imports no other first-party package. Pure packages additionally must
 not import Django or network clients.
 """
@@ -36,8 +36,6 @@ PACKAGES = frozenset(
 ALLOWED = frozenset(
     {
         ("catalog", "metacritic"),
-        ("catalog", "processing"),
-        ("catalog", "reviews"),
         ("catalog", "similarity"),
         ("config", "presentation"),
         ("presentation", "catalog"),

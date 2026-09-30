@@ -4,20 +4,20 @@ The hourly scheduler only follows the New Releases and "newest first" listings, 
 entirely unrated games (93% of the catalogue had no reviews at all). This command walks a Metacritic
 browse listing that is sorted by score instead (default `current-year/metascore`, the best games of
 the year) and ingests up to `--limit` games that are not saved yet, through the same
-`catalog.ingest.ingest_game` path as `ingest_game`. The worker then collects their reviews and
-writes summaries as usual, within the free Groq quota. Run it again whenever more games are wanted;
-games already in the catalogue are skipped, so it never repeats work.
+`processing.manual_ingest.ingest_game` path as `ingest_game`. The worker then collects their
+reviews and writes summaries as usual, within the free Groq quota. Run it again whenever more
+games are wanted; games already in the catalogue are skipped, so it never repeats work.
 """
 
 import time
 from typing import Any
 
+from catalog.models import Game
 from core.clock import Clock, SystemClock
 from django.core.management.base import BaseCommand, CommandParser
 from metacritic.gateway import ALLOWED_HOST, MetacriticGateway
 
-from catalog.ingest import ingest_game
-from catalog.models import Game
+from processing.manual_ingest import ingest_game
 
 DEFAULT_LISTING = "current-year/metascore"
 

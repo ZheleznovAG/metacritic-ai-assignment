@@ -6,12 +6,12 @@ from unittest.mock import patch
 from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
-from catalog.ingest import ingest_game
 from catalog.models import Game, SourceFetch
 from django.test import TestCase
 from metacritic.dto import FetchEvidence, GameDTO
 from metacritic.errors import MetacriticParseError
 from metacritic.parser import _extract_user_score, _parse_platform
+from processing.manual_ingest import ingest_game
 from processing.models import DailyCandidate, ProcessingLease, ProcessingRun
 from processing.scheduler import run_tick
 

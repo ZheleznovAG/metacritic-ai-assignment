@@ -8,7 +8,7 @@ from core.clock import SystemClock
 from django.core.management.base import BaseCommand, CommandParser
 from metacritic.gateway import MetacriticGateway
 
-from catalog.ingest import ingest_game
+from processing.manual_ingest import ingest_game
 
 
 class Command(BaseCommand):

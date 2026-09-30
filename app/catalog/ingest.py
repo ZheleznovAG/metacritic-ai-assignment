@@ -1,25 +1,21 @@
 """Non-destructive identity-first upsert per `research/feasibility/game-identity.md` (`SPK-03`).
 
-`fetch_and_prepare`/`apply_game_dto` are the reusable core: `ingest_game` below is the `IMP-02`
-one-off manual-proof entry point (still used by `scripts/ingest_game.py`), while `processing`
-(`IMP-03`) calls the same two functions directly so it can own the `DailyCandidate`/`CoreAttempt`
-lifecycle itself instead of `ingest_game`'s own simplified `_ensure_candidate`. Fetch evidence
-(`SourceFetch`) is always saved, even on failure, independent of the upsert transaction.
+`fetch_and_prepare`/`apply_game_dto` are the catalogue's whole contribution: they fetch, validate
+and merge a game and its platforms. Deciding what happens next (daily candidates, review jobs)
+belongs to `processing`, which calls these two functions from the scheduled runner and from the
+manual one-off path in `processing.manual_ingest`. Fetch evidence (`SourceFetch`) is always saved,
+even on failure, independent of the upsert transaction.
 """
 
 from dataclasses import dataclass, replace
 from datetime import datetime
 from urllib.parse import urlsplit, urlunsplit
 
-from core.clock import Clock
-from django.db import transaction
 from metacritic.dto import FetchEvidence, GameDTO, GameIdentityDTO, GamePlatformDTO
 from metacritic.errors import MetacriticParseError
 from metacritic.gateway import GatewayProtocol
 from metacritic.validation import userscore as validate_userscore
 from metacritic.validation import validate_game
-from processing.models import DailyCandidate, DailyCycle
-from reviews.models import ReviewCollectionJob
 
 from catalog.genres import normalize_genres
 from catalog.models import Game, GameAlias, GamePlatform, SourceFetch
@@ -31,19 +27,6 @@ class IdentityConflict(Exception):
 
 class PlatformIdentityConflict(Exception):
     """A `source_game_platform_id` assertion already points at a different game/platform pair."""
-
-
-@dataclass(frozen=True, slots=True)
-class IngestResult:
-    ok: bool
-    game_id: int | None
-    game_created: bool
-    platforms_created: int
-    platforms_updated: int
-    jobs_created: int
-    candidate_state: str | None
-    fetch_outcome: str
-    error: str | None
 
 
 @dataclass(frozen=True, slots=True)
@@ -224,48 +207,6 @@ def _upsert_platform(game: Game, dto: GamePlatformDTO) -> tuple[GamePlatform, bo
     return platform, False
 
 
-def _ensure_candidate(game: Game, clock: Clock) -> DailyCandidate:
-    business_date = clock.now_utc().date()
-    cycle, _ = DailyCycle.objects.get_or_create(business_date=business_date, timezone="UTC")
-    # Locked for the rest of this transaction: serialises concurrent candidates within one cycle
-    # so two ingests racing on next `source_order` cannot both insert the same value. This manual
-    # one-off path never goes through the real Selector/lease (`processing.selector`) — it is not
-    # the periodic production path.
-    cycle = DailyCycle.objects.select_for_update().get(pk=cycle.pk)
-    candidate = DailyCandidate.objects.filter(cycle=cycle, game=game).first()
-    if candidate is None:
-        next_order = (
-            DailyCandidate.objects.filter(cycle=cycle)
-            .order_by("-source_order")
-            .values_list("source_order", flat=True)
-            .first()
-            or 0
-        ) + 1
-        candidate = DailyCandidate.objects.create(
-            cycle=cycle, game=game, source_order=next_order, state="processed"
-        )
-    elif candidate.state != "processed":
-        candidate.state = "processed"
-        candidate.save(update_fields=["state"])
-    return candidate
-
-
-def ensure_jobs(candidate: DailyCandidate, platforms: list[GamePlatform]) -> int:
-    created_count = 0
-    for platform in platforms:
-        for audience, path in (
-            ("critic", platform.critic_reviews_path),
-            ("user", platform.user_reviews_path),
-        ):
-            if not path:
-                continue
-            _, created = ReviewCollectionJob.objects.get_or_create(
-                daily_candidate=candidate, game_platform=platform, audience=audience
-            )
-            created_count += int(created)
-    return created_count
-
-
 def _absolute_url(detail_url: str, path: str) -> str:
     parts = urlsplit(detail_url)
     return urlunsplit((parts.scheme, parts.netloc, path, "", ""))
@@ -366,51 +307,4 @@ def apply_game_dto(
         platforms=platforms,
         platforms_created=platforms_created,
         platforms_updated=platforms_updated,
-    )
-
-
-def ingest_game(gateway: GatewayProtocol, clock: Clock, detail_url: str) -> IngestResult:
-    game_dto, fetch, platform_userscore_fetch = fetch_and_prepare(gateway, detail_url)
-    if game_dto is None:
-        return IngestResult(
-            ok=False,
-            game_id=None,
-            game_created=False,
-            platforms_created=0,
-            platforms_updated=0,
-            jobs_created=0,
-            candidate_state=None,
-            fetch_outcome=fetch.outcome,
-            error=fetch.error_code,
-        )
-
-    now = clock.now_utc()
-    try:
-        with transaction.atomic():
-            applied = apply_game_dto(game_dto, fetch, platform_userscore_fetch, now)
-            candidate = _ensure_candidate(applied.game, clock)
-            jobs_created = ensure_jobs(candidate, applied.platforms)
-    except (IdentityConflict, PlatformIdentityConflict) as error:
-        return IngestResult(
-            ok=False,
-            game_id=None,
-            game_created=False,
-            platforms_created=0,
-            platforms_updated=0,
-            jobs_created=0,
-            candidate_state=None,
-            fetch_outcome=fetch.outcome,
-            error=str(error),
-        )
-
-    return IngestResult(
-        ok=True,
-        game_id=applied.game.id,
-        game_created=applied.game_created,
-        platforms_created=applied.platforms_created,
-        platforms_updated=applied.platforms_updated,
-        jobs_created=jobs_created,
-        candidate_state=candidate.state,
-        fetch_outcome=fetch.outcome,
-        error=None,
     )

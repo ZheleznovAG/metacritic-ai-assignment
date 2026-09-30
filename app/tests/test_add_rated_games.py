@@ -1,11 +1,11 @@
 """`add_rated_games`: score-sorted listing -> only unknown games are ingested, bounded."""
 
 import httpx
-from catalog.management.commands.add_rated_games import collect
 from catalog.models import Game
 from django.test import SimpleTestCase, TestCase
 from metacritic.dto import BrowsePage, FetchEvidence, GameDTO, GameIdentityDTO
 from metacritic.gateway import MetacriticGateway
+from processing.management.commands.add_rated_games import collect
 
 from tests.test_catalog_ingest import FakeClock, _evidence, _game, _platform
 
