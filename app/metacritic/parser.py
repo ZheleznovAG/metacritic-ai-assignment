@@ -234,13 +234,15 @@ def parse_game_detail(html: str, expected_url: str) -> GameDTO:
     platform_indices = _resolve(payload, platform_list_index)
     if not isinstance(platform_indices, list) or not platform_indices:
         raise MetacriticParseError("Game has zero platforms")
-    platforms = [
-        _parse_platform(payload, record)
-        for record in (_resolve(payload, i) for i in platform_indices)
-        if isinstance(record, dict)
-    ]
-    if not platforms:
-        raise MetacriticParseError("Game has zero resolvable platforms")
+    # `MA-02`: the list states how many platforms the game has. One unresolvable entry is
+    # corruption, not a platform that disappeared, so the whole response is rejected rather
+    # than stored as a seemingly complete shorter list.
+    platforms = []
+    for index in platform_indices:
+        record = _resolve(payload, index)
+        if not isinstance(record, dict):
+            raise MetacriticParseError("Game platform list has an unresolvable entry")
+        platforms.append(_parse_platform(payload, record))
 
     lead_score_containers = _find_all_by_attr(soup, "data-testid", "global-score-wrapper")
     if not lead_score_containers:

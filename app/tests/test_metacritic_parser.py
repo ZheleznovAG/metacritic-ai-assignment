@@ -196,6 +196,35 @@ class ParseGameDetailFailureTests(SimpleTestCase):
         with self.assertRaises(MetacriticParseError):
             parse_game_detail(html, DETAIL_URL)
 
+    def test_one_unresolvable_platform_reference_rejects_the_whole_response(self) -> None:
+        """`MA-02`: the real five-platform fixture with one dangling reference must not parse
+        as a seemingly complete four-platform game."""
+
+        def corrupt(payload: list[object]) -> None:
+            record = _find_game_record(payload, "elden-ring")
+            list_index = record["platforms"]
+            assert isinstance(list_index, int)
+            platform_indices = payload[list_index]
+            assert isinstance(platform_indices, list) and len(platform_indices) == 5
+            platform_indices[-1] = len(payload) + 100
+
+        html = _mutate_nuxt_payload(_read("elden_ring_detail.min.html"), corrupt)
+        with self.assertRaisesRegex(MetacriticParseError, "unresolvable entry"):
+            parse_game_detail(html, DETAIL_URL)
+
+    def test_a_platform_reference_to_a_non_object_rejects_the_whole_response(self) -> None:
+        def corrupt(payload: list[object]) -> None:
+            record = _find_game_record(payload, "elden-ring")
+            list_index = record["platforms"]
+            assert isinstance(list_index, int)
+            platform_indices = payload[list_index]
+            assert isinstance(platform_indices, list)
+            platform_indices[0] = record["slug"]  # resolves to a string
+
+        html = _mutate_nuxt_payload(_read("elden_ring_detail.min.html"), corrupt)
+        with self.assertRaisesRegex(MetacriticParseError, "unresolvable entry"):
+            parse_game_detail(html, DETAIL_URL)
+
 
 class FindGameRecordTests(SimpleTestCase):
     def test_picks_the_record_matching_the_requested_slug_not_the_first_one(self) -> None:

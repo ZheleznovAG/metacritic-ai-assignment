@@ -186,6 +186,23 @@ class IngestOptionalMetadataTests(TestCase):
 
 
 class IngestUpdateTests(TestCase):
+    def test_an_invalid_refetch_leaves_every_saved_platform_untouched(self) -> None:
+        """`MA-02`: a detail page the parser rejects (for example one dangling platform
+        reference) is not a complete update, so a saved game keeps all of its platforms."""
+        second = _platform("p2", "r2", slug="ps5", name="PlayStation 5", metascore=96)
+        second = replace(second, is_lead_platform=False, user_reviews_path=None)
+        ingest_game(FakeGateway(_game(platforms=(_platform(), second))), FakeClock(), DETAIL_URL)
+        fields = ("source_platform_id", "metascore", "userscore", "updated_at")
+        before = list(GamePlatform.objects.order_by("source_platform_id").values_list(*fields))
+
+        invalid = _evidence(outcome="invalid", error_code="MetacriticParseError")
+        result = ingest_game(FakeGateway(None, evidence=invalid), FakeClock(), DETAIL_URL)
+
+        self.assertFalse(result.ok)
+        after = list(GamePlatform.objects.order_by("source_platform_id").values_list(*fields))
+        self.assertEqual(after, before)
+        self.assertEqual(len(after), 2)
+
     def test_repeat_ingest_of_the_same_identity_updates_not_duplicates(self) -> None:
         gateway = FakeGateway(_game())
         first = ingest_game(gateway, FakeClock(), DETAIL_URL)
