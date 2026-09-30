@@ -1,0 +1,1089 @@
+{
+  "eval_set_version": "1.2.0",
+  "frozen_at_utc": "2026-09-30T00:00:00Z",
+  "invariant": "INV-MEANINGFUL-ELIGIBILITY",
+  "rule": "The selection contains exactly min(10, M) meaningful reviews, where M is the number of distinct meaningful canonical groups (duplicate_of or own identity) in the pool. The ground truth is each review's authored `meaningful` field.",
+  "maximum_selected": 10,
+  "cases": [
+    {
+      "id": "audit_blank_flood",
+      "audience": "user",
+      "game_slug": "audit-blank-flood",
+      "collection_status": "complete",
+      "notes": "The 2026-09-18 audit counterexample (MA-01): 20 blank and 3 meaningful user reviews. All three meaningful reviews must be selected.",
+      "reviews": [
+        {
+          "identity_key": "BLANK-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-02",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-04",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 5,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-06",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-08",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-10",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 5,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-11",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-12",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-13",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-14",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-15",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 5,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-16",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-17",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-18",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-19",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-20",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 5,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "TEXT-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 1 about the audit counterexample: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-02",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Review 2 about the audit counterexample: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": true,
+          "text": "Review 3 about the audit counterexample: the combat feels responsive, but the menus hide too much behind extra clicks."
+        }
+      ]
+    },
+    {
+      "id": "blank_negatives_crowd_reservation",
+      "audience": "user",
+      "game_slug": "blank-negatives-crowd-reservation",
+      "collection_status": "complete",
+      "notes": "Six blank reviews carry negative scores; only two negative reviews have text. Sentiment reservation must not spend slots on blank negatives.",
+      "reviews": [
+        {
+          "identity_key": "BLANK-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 2,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-02",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 2,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 2,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-04",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 2,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 2,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-06",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 2,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "TEXT-N1",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Review 1 about negative experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-N2",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 3,
+          "meaningful": true,
+          "text": "Review 2 about negative experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-P01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 1 about positive experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-P02",
+          "platform_slug": "switch",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 2 about positive experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-P03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 3 about positive experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-P04",
+          "platform_slug": "switch",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 4 about positive experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-P05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 5 about positive experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-P06",
+          "platform_slug": "switch",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 6 about positive experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-P07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 7 about positive experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-P08",
+          "platform_slug": "switch",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 8 about positive experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-P09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 9 about positive experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-P10",
+          "platform_slug": "switch",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 10 about positive experiences: the combat feels responsive, but the menus hide too much behind extra clicks."
+        }
+      ]
+    },
+    {
+      "id": "one_platform_all_blank",
+      "audience": "user",
+      "game_slug": "one-platform-all-blank",
+      "collection_status": "complete",
+      "notes": "Every Xbox review is blank; platform round-robin must not alternate into blank reviews while PC reviews with text remain.",
+      "reviews": [
+        {
+          "identity_key": "BLANK-01",
+          "platform_slug": "xbox-series-x",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-02",
+          "platform_slug": "xbox-series-x",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-03",
+          "platform_slug": "xbox-series-x",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-04",
+          "platform_slug": "xbox-series-x",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-05",
+          "platform_slug": "xbox-series-x",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-06",
+          "platform_slug": "xbox-series-x",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-07",
+          "platform_slug": "xbox-series-x",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-08",
+          "platform_slug": "xbox-series-x",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "TEXT-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Review 1 about one platform with text: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-02",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Review 2 about one platform with text: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Review 3 about one platform with text: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-04",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Review 4 about one platform with text: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Review 5 about one platform with text: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-06",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Review 6 about one platform with text: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Review 7 about one platform with text: the combat feels responsive, but the menus hide too much behind extra clicks."
+        }
+      ]
+    },
+    {
+      "id": "critic_scale_blanks",
+      "audience": "critic",
+      "game_slug": "critic-scale-blanks",
+      "collection_status": "complete",
+      "notes": "Critic audience on the 0-100 scale: 12 blank and 5 meaningful reviews.",
+      "reviews": [
+        {
+          "identity_key": "BLANK-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 45,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-02",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 50,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 55,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-04",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 60,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 65,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-06",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 70,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 75,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-08",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 80,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 85,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-10",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 90,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-11",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 95,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-12",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 100,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "TEXT-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 20,
+          "meaningful": true,
+          "text": "Review 1 about critic scale: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-02",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 55,
+          "meaningful": true,
+          "text": "Review 2 about critic scale: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 70,
+          "meaningful": true,
+          "text": "Review 3 about critic scale: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-04",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 85,
+          "meaningful": true,
+          "text": "Review 4 about critic scale: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 95,
+          "meaningful": true,
+          "text": "Review 5 about critic scale: the combat feels responsive, but the menus hide too much behind extra clicks."
+        }
+      ]
+    },
+    {
+      "id": "whitespace_only_texts",
+      "audience": "user",
+      "game_slug": "whitespace-only-texts",
+      "collection_status": "complete",
+      "notes": "Whitespace-only texts are not meaningful: 10 of them and 4 meaningful reviews.",
+      "reviews": [
+        {
+          "identity_key": "BLANK-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": "\n"
+        },
+        {
+          "identity_key": "BLANK-02",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": "\t "
+        },
+        {
+          "identity_key": "BLANK-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": " \n\n "
+        },
+        {
+          "identity_key": "BLANK-04",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": "   "
+        },
+        {
+          "identity_key": "BLANK-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": "\n"
+        },
+        {
+          "identity_key": "BLANK-06",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": "\t "
+        },
+        {
+          "identity_key": "BLANK-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": " \n\n "
+        },
+        {
+          "identity_key": "BLANK-08",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": "   "
+        },
+        {
+          "identity_key": "BLANK-09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": "\n"
+        },
+        {
+          "identity_key": "BLANK-10",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": "\t "
+        },
+        {
+          "identity_key": "TEXT-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": true,
+          "text": "Review 1 about whitespace: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-02",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": true,
+          "text": "Review 2 about whitespace: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": true,
+          "text": "Review 3 about whitespace: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-04",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": true,
+          "text": "Review 4 about whitespace: the combat feels responsive, but the menus hide too much behind extra clicks."
+        }
+      ]
+    },
+    {
+      "id": "all_blank",
+      "audience": "user",
+      "game_slug": "all-blank",
+      "collection_status": "complete",
+      "notes": "No meaningful review at all: zero meaningful reviews can be selected, and the selector must not fail.",
+      "reviews": [
+        {
+          "identity_key": "BLANK-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-02",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-04",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-06",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-08",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-10",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-11",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        },
+        {
+          "identity_key": "BLANK-12",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": false,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "id": "no_blank_control",
+      "audience": "user",
+      "game_slug": "no-blank-control",
+      "collection_status": "complete",
+      "notes": "Control: 14 meaningful reviews and no blank ones; the cap of 10 is filled.",
+      "reviews": [
+        {
+          "identity_key": "TEXT-01",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 5,
+          "meaningful": true,
+          "text": "Review 1 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-02",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": true,
+          "text": "Review 2 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-03",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": true,
+          "text": "Review 3 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-04",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Review 4 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-05",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 5 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-06",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 4,
+          "meaningful": true,
+          "text": "Review 6 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-07",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 5,
+          "meaningful": true,
+          "text": "Review 7 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-08",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": true,
+          "text": "Review 8 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-09",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 7,
+          "meaningful": true,
+          "text": "Review 9 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-10",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 8,
+          "meaningful": true,
+          "text": "Review 10 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-11",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 9,
+          "meaningful": true,
+          "text": "Review 11 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-12",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 4,
+          "meaningful": true,
+          "text": "Review 12 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-13",
+          "platform_slug": "pc",
+          "page_offset": 0,
+          "language": "en",
+          "score": 5,
+          "meaningful": true,
+          "text": "Review 13 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        },
+        {
+          "identity_key": "TEXT-14",
+          "platform_slug": "playstation-5",
+          "page_offset": 0,
+          "language": "en",
+          "score": 6,
+          "meaningful": true,
+          "text": "Review 14 about control: the combat feels responsive, but the menus hide too much behind extra clicks."
+        }
+      ]
+    }
+  ]
+}

@@ -84,7 +84,19 @@ def main() -> int:
         print(f"FAIL: candidate does not pass the oracle. Failures: {report['failed']}")
         if newly_failed:
             print(f"New failures not seen even in the naive baseline: {newly_failed}")
-    return 0 if report["all_pass"] else 1
+    passed = report["all_pass"]
+    for extension in (score_sentiment,):
+        extension_report = extension.score(select_reviews)
+        name = f"{extension_report['invariant']} {extension_report['eval_set_version']}"
+        if extension_report["all_pass"]:
+            print(f"PASS: {name} on all {len(extension_report['assessments'])} cases.")
+        else:
+            print(f"FAIL: {name}: {extension_report['failed']}")
+            for assessment in extension_report["assessments"]:
+                if assessment["findings"]:
+                    print(f"  {assessment['case_id']}: {assessment['findings']}")
+        passed = passed and extension_report["all_pass"]
+    return 0 if passed else 1
 
 
 if __name__ == "__main__":

@@ -56,5 +56,28 @@ one hard invariant: at least `min(3, available)` negative and positive reviews a
 | mostly_unscored | 3 / 3 | 2 / 2 (fail) | 3 / 3 |
 | balanced_pool, all_positive_no_negatives, small_pool_no_exclusion | - | pass | pass |
 
-`verify_candidate.py` runs both oracles; `test_score_sentiment.py` proves the scorer rejects a
+`verify_candidate.py` runs the `1.0.0` oracle and every extension; `test_score_sentiment.py` proves the scorer rejects a
 sentiment-blind selector and accepts a balanced reference.
+
+## Extension 1.2.0: meaningful eligibility
+
+The [2026-09-18 audit](../../docs/requirements/main_audit_2026_09_18.md#ma-01-пустые-отзывы-занимают-ai-выборку)
+(`MA-01`) showed blank reviews occupying the bounded sample: with 20 blank and 3 meaningful user
+reviews only one meaningful review reached the model. The additive extension
+([`meaningful_cases.json`](meaningful_cases.json), [`score_meaningful.py`](score_meaningful.py),
+`INV-MEANINGFUL-ELIGIBILITY`) freezes seven pools and one hard invariant: the selection holds exactly
+`min(10, M)` meaningful reviews, `M` being the pool's distinct meaningful canonical groups. Ground
+truth is the authored `meaningful` field. Earlier files are untouched.
+
+| Case | meaningful available | `1.1.0-sentiment` selected |
+|---|---|---|
+| audit_blank_flood | 3 | 2 (fail) |
+| blank_negatives_crowd_reservation | 12 | 8 (fail) |
+| one_platform_all_blank | 7 | 5 (fail) |
+| critic_scale_blanks | 5 | 3 (fail) |
+| whitespace_only_texts | 4 | 3 (fail) |
+| all_blank, no_blank_control | 0, 14 | pass |
+
+`test_score_meaningful.py` proves the scorer rejects a blank-blind selector and the naive baseline
+and accepts a meaningful-first reference. Before this extension `verify_candidate.py` imported the
+`1.1.0` scorer without running it; it now runs every extension against the real candidate.
