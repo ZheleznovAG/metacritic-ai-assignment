@@ -1,6 +1,8 @@
-"""Read-only summary view for the public card: honest pending/stale/insufficient states, per
-`docs/design.md` ("Card показывает последний валидный summary; если current input/config... уже
-имеет pending/error job, старый результат помечается stale с причиной"). Never shows raw reviews.
+"""Read-only summary view for the public card: honest pending/unavailable/stale/insufficient
+states, per `docs/design.md` ("Card показывает последний валидный summary; если current
+input/config... уже имеет pending/error job, старый результат помечается stale с причиной").
+Without any earlier summary the reason is still shown (`MA-03`): a terminal collection or summary
+failure is `unavailable`, not `pending`. Never shows raw reviews.
 """
 
 from dataclasses import dataclass
@@ -12,6 +14,8 @@ from summaries.contour import contour_fingerprint
 from summaries.models import ReviewSummary, SummaryJob
 
 AUDIENCES = ("critic", "user")
+# Reasons that no amount of waiting resolves within the current business day.
+TERMINAL_REASONS = frozenset({"collection_failed", "collection_unstable", "failed"})
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,7 +26,7 @@ class ClaimView:
 @dataclass(frozen=True, slots=True)
 class SummaryView:
     audience: str
-    state: str  # "ok" | "insufficient_data" | "pending" | "stale"
+    state: str  # "ok" | "insufficient_data" | "pending" | "unavailable" | "stale"
     likes: list[ClaimView]
     dislikes: list[ClaimView]
     model_id: str | None
@@ -30,11 +34,11 @@ class SummaryView:
     selected_count: int | None
     fetched_count: int | None
     reported_count: int | None
-    stale_reason: str | None
+    reason: str | None
     insufficient_data: bool = False
 
     @property
-    def stale_message(self) -> str:
+    def reason_message(self) -> str:
         return {
             "collection_in_progress": "New reviews are being collected.",
             "collection_retryable": "Review collection is waiting for a retry.",
@@ -47,13 +51,13 @@ class SummaryView:
             "retryable": "The summary update is waiting for a retry.",
             "delayed_capacity": "The summary update is waiting for provider capacity.",
             "failed": "The latest summary update failed.",
-        }.get(self.stale_reason or "", "An updated summary is not ready yet.")
+        }.get(self.reason or "", "An updated summary is not ready yet.")
 
 
-def _empty(audience: str) -> SummaryView:
+def _without_summary(audience: str, reason: str | None) -> SummaryView:
     return SummaryView(
         audience=audience,
-        state="pending",
+        state="unavailable" if reason in TERMINAL_REASONS else "pending",
         likes=[],
         dislikes=[],
         model_id=None,
@@ -61,7 +65,7 @@ def _empty(audience: str) -> SummaryView:
         selected_count=None,
         fetched_count=None,
         reported_count=None,
-        stale_reason=None,
+        reason=reason,
     )
 
 
@@ -71,7 +75,7 @@ def _view_from_summary(
     audience: str,
     *,
     state: str,
-    stale_reason: str | None,
+    reason: str | None,
 ) -> SummaryView:
     likes = [
         ClaimView(text=claim.claim)
@@ -92,7 +96,7 @@ def _view_from_summary(
         selected_count=corpus.selected_count,
         fetched_count=corpus.fetched_count,
         reported_count=corpus.reported_count,
-        stale_reason=stale_reason,
+        reason=reason,
         insufficient_data=summary.status == "insufficient_data",
     )
 
@@ -121,7 +125,7 @@ def _summary_view(game: Game, audience: str) -> SummaryView:
             if current_summary is not None:
                 state = "ok" if current_summary.status == "ok" else "insufficient_data"
                 return _view_from_summary(
-                    current_summary, latest_corpus, audience, state=state, stale_reason=None
+                    current_summary, latest_corpus, audience, state=state, reason=None
                 )
         reason = current_job.state if current_job else "contour_changed"
 
@@ -132,9 +136,9 @@ def _summary_view(game: Game, audience: str) -> SummaryView:
         .first()
     )
     if stale_summary is None:
-        return _empty(audience)
+        return _without_summary(audience, reason)
     return _view_from_summary(
-        stale_summary, stale_summary.job.source_corpus, audience, state="stale", stale_reason=reason
+        stale_summary, stale_summary.job.source_corpus, audience, state="stale", reason=reason
     )
 
 

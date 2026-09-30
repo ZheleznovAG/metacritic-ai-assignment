@@ -51,7 +51,7 @@ class SummaryFreshnessTests(TestCase):
         self.publish()
         next_job(self.initial, 13)
         self.assertEqual(self.view().state, "stale")
-        self.assertEqual(self.view().stale_reason, "collection_in_progress")
+        self.assertEqual(self.view().reason, "collection_in_progress")
         self.assertEqual(self.view().likes[0].text, "Great combat.")
 
     def test_failed_or_unstable_collection_keeps_last_summary_with_a_reason(self) -> None:
@@ -62,7 +62,7 @@ class SummaryFreshnessTests(TestCase):
             with self.subTest(state=state):
                 ReviewCollectionJob.objects.filter(pk=newer.pk).update(state=state)
                 self.assertEqual(self.view().state, "stale")
-                self.assertEqual(self.view().stale_reason, f"collection_{state}")
+                self.assertEqual(self.view().reason, f"collection_{state}")
 
     def test_unsampled_deletion_reuses_summary_and_shows_current_coverage(self) -> None:
         original = self.collect(12, tuple(range(1, 13)))
@@ -100,7 +100,7 @@ class SummaryFreshnessTests(TestCase):
         self.collect(13, suffix="changed")
         ReviewCorpus.objects.update(created_at=NOW)
         self.assertEqual(self.view().state, "stale")
-        self.assertEqual(self.view().stale_reason, "pending")
+        self.assertEqual(self.view().reason, "pending")
 
     def test_equal_summary_timestamps_use_id_for_last_valid_fallback(self) -> None:
         self.collect(12)
@@ -118,7 +118,7 @@ class SummaryFreshnessTests(TestCase):
         self.publish()
         with patch("summaries.contour.ADAPTER_VERSION", "future"):
             self.assertEqual(self.view().state, "stale")
-            self.assertEqual(self.view().stale_reason, "contour_changed")
+            self.assertEqual(self.view().reason, "contour_changed")
 
     def test_generation_restart_and_new_platform_invalidate_freshness(self) -> None:
         self.collect(12)
@@ -155,7 +155,7 @@ class SummaryFreshnessTests(TestCase):
         ReviewCorpusHead.objects.all().delete()
         with CaptureQueriesContext(connection) as queries:
             view = self.view()
-        self.assertEqual((view.state, view.stale_reason), ("stale", "collection_unverified"))
+        self.assertEqual((view.state, view.reason), ("stale", "collection_unverified"))
         self.assertTrue(all(query["sql"].lstrip().startswith("SELECT") for query in queries))
         self.assertFalse(ReviewCorpusHead.objects.exists())
 
@@ -177,3 +177,42 @@ class SummaryFreshnessTests(TestCase):
         response = self.client.get(f"/games/{self.game.pk}/")
         self.assertContains(response, 'href="https://example.com/embed"')
         self.assertNotContains(response, 'href="https://example.com/trailer.mp4"')
+
+
+class FirstFailureWithoutSummaryTests(TestCase):
+    """`MA-03`: with no earlier summary a known failure is shown, not a generic Pending."""
+
+    def setUp(self) -> None:
+        self.initial = _make_job()
+        self.game = self.initial.game_platform.game
+        self.clock = FakeClock(NOW)
+
+    def view(self) -> SummaryView:
+        return next(value for value in get_summaries(self.game) if value.audience == "critic")
+
+    def test_terminal_collection_failures_are_unavailable_with_their_reason(self) -> None:
+        for state in ("failed", "unstable"):
+            with self.subTest(state=state):
+                ReviewCollectionJob.objects.filter(pk=self.initial.pk).update(state=state)
+                view = self.view()
+                self.assertEqual((view.state, view.reason), ("unavailable", f"collection_{state}"))
+
+    def test_a_retryable_collection_is_still_pending_but_says_why(self) -> None:
+        ReviewCollectionJob.objects.filter(pk=self.initial.pk).update(state="retryable")
+        view = self.view()
+        self.assertEqual((view.state, view.reason), ("pending", "collection_retryable"))
+        self.assertEqual(view.reason_message, "Review collection is waiting for a retry.")
+
+    def test_a_failed_first_summary_job_is_unavailable(self) -> None:
+        claim = collector.claim_next_job(self.clock)
+        assert claim is not None
+        collector.collect_one_page(FakeGateway({None: page(1, 2, 3)}), self.clock, claim)
+        self.assertEqual(self.view().state, "pending")
+        SummaryJob.objects.update(state="failed")
+        view = self.view()
+        self.assertEqual((view.state, view.reason), ("unavailable", "failed"))
+
+    def test_the_card_renders_the_known_reason_instead_of_pending(self) -> None:
+        ReviewCollectionJob.objects.filter(pk=self.initial.pk).update(state="unstable")
+        response = self.client.get(f"/games/{self.game.id}/")
+        self.assertContains(response, "Unavailable — The source changed during review collection.")

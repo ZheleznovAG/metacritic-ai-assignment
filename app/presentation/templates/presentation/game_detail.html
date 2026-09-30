@@ -59,10 +59,12 @@
         <section class="game-card__summary">
           <h3>{{ summary.audience|title }}s</h3>
           {% if summary.state == "stale" %}
-            <p class="summary-stale">Stale — showing the last valid summary. {{ summary.stale_message }}</p>
+            <p class="summary-stale">Stale — showing the last valid summary. {{ summary.reason_message }}</p>
           {% endif %}
           {% if summary.state == "pending" %}
-            <p class="no-data">Pending — review collection or summarisation has not completed yet.</p>
+            <p class="no-data">Pending — {% if summary.reason %}{{ summary.reason_message }}{% else %}review collection or summarisation has not completed yet.{% endif %}</p>
+          {% elif summary.state == "unavailable" %}
+            <p class="no-data">Unavailable — {{ summary.reason_message }}</p>
           {% elif summary.insufficient_data %}
             <p class="no-data">Not enough meaningful reviews yet to summarise.</p>
           {% else %}

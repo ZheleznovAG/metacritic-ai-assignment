@@ -208,4 +208,4 @@ class StaleStateTests(TestCase):
 
         views = {v.audience: v for v in get_summaries(game)}
         self.assertEqual(views["critic"].state, "stale")
-        self.assertEqual(views["critic"].stale_reason, "retryable")
+        self.assertEqual(views["critic"].reason, "retryable")
