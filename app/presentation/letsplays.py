@@ -8,10 +8,10 @@ from dataclasses import dataclass, replace
 from datetime import datetime
 
 from catalog.models import Game
+from django.db.models import Q
 from letsplays.models import LetsPlay, LetsPlayConclusion
 
 WAITING_REASONS = {
-    "youtube_quota": "The daily YouTube search budget is used up; the search continues tomorrow.",
     "youtube_quota_exceeded": "YouTube refused more searches today; the search continues later.",
     "whisper_budget": "Speech recognition is at its hourly limit; listening continues later.",
     "video_budget": "Videos are checked slowly to stay within YouTube's limits.",
@@ -113,6 +113,8 @@ def get_letsplay(game: Game) -> LetsPlayView:
     if job.state == "failed":
         reason = FAILURE_REASONS.get(job.last_error or "", "The let's-play step kept failing.")
         return replace(base, state="failed", message=reason)
+    if job.state == "searching" and job.last_error == "youtube_quota":
+        return replace(base, state="pending", message=_queue_message(job))
     waiting = WAITING_REASONS.get(job.last_error or "")
     if job.state == "concluding":
         return replace(
@@ -124,6 +126,27 @@ def get_letsplay(game: Game) -> LetsPlayView:
         base,
         state="pending",
         message=waiting or "Looking for the most popular English let's play on YouTube.",
+    )
+
+
+# YouTube's per-day search limit allows about this many games a day (two searches each).
+GAMES_SEARCHED_PER_DAY = "40-50"
+
+
+def _queue_message(job: LetsPlay) -> str:
+    """Games wait for the search budget one after another, in the order they were queued."""
+    if job.available_at is None:
+        return f"Queued for a let's-play search; about {GAMES_SEARCHED_PER_DAY} games a day."
+    ahead = (
+        LetsPlay.objects.filter(state="searching", last_error="youtube_quota")
+        .filter(
+            Q(available_at__lt=job.available_at) | Q(available_at=job.available_at, id__lt=job.id)
+        )
+        .count()
+    )
+    return (
+        f"Queued for a let's-play search: {ahead} games ahead, and about "
+        f"{GAMES_SEARCHED_PER_DAY} games are searched per day."
     )
 
 

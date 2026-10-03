@@ -115,6 +115,25 @@ class LetsPlayCardTests(TestCase):
         chosen(game, state="concluding", last_error="chat_budget")
         self.assertIn("waiting for model capacity", self.page(game))
 
+    def test_a_queued_game_shows_its_place_not_a_promise_of_tomorrow(self) -> None:
+        games = [
+            Game.objects.create(
+                source_game_id=f"q{n}", canonical_locator=f"/game/q{n}/", title=f"Q{n}"
+            )
+            for n in range(3)
+        ]
+        for game in games:
+            LetsPlay.objects.create(
+                game=game,
+                policy_version="1.0.0",
+                state="searching",
+                last_error="youtube_quota",
+                available_at=AT,
+            )
+        html = self.page(games[2])
+        self.assertIn("Queued for a let&#x27;s-play search: 2 games ahead", html)
+        self.assertNotIn("tomorrow", html)
+
     def test_the_rest_of_the_card_does_not_depend_on_let_s_plays(self) -> None:
         game = make_game()
         html = self.page(game)
