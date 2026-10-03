@@ -102,6 +102,25 @@ Upgrading a pre-`PUB-01` deployment: `init_env.py --upgrade-scaffold` does not c
 
 Provisioning handles the empty original scaffold and its optional `django_migrations` table, transferring that table to the migration owner without deleting rows. Unknown tables owned by the old administrator cause a refusal before ownership changes; product data requires a separately reviewed migration. Repeated provisioning preserves existing tables and removes excess direct web grants. The upgrade does not remove the administrative role.
 
+## Building on the host
+
+Uploading a ~280 MB image archive through a slow link can take far longer than building on the
+host. To build there, send a `git archive` of the release commit (compare its SHA-256 on both
+sides), extract it with `umask 022`, and run the same `docker build --target runtime` command.
+Two traps met in `YTP-04` (2026-10-03):
+
+- The host's classic Docker builder keeps file modes from the extracted tree. Files extracted
+  under `umask 077` are unreadable to the runtime user (UID 65532): `db_setup` failed with
+  `provision_db.py: Permission denied` and web stayed down until rollback. Before stopping
+  anything, check the new image as that user:
+  `docker run --rm --user 65532:65532 --read-only <image> sh -c 'test -r scripts/provision_db.py'`.
+- The classic builder also builds the `checks` stage on the way to `runtime`, so every directory
+  the Dockerfile copies must be allowed in `.dockerignore`, unlike a local BuildKit build that
+  skips unused stages.
+
+Copy only the configuration files a release changes: the host's `deploy/Caddyfile.production`
+carries that host's own domain and must not be replaced by the repository copy.
+
 ## Restart, redeploy and rollback
 
 For the `BON-21` upgrade, first preserve a database/configuration backup and the
