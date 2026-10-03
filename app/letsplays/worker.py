@@ -23,6 +23,7 @@ from letsplays import budget, conclusion, selection
 from letsplays.groq import ChatResult
 from letsplays.models import LetsPlay, LetsPlayConclusion, LetsPlayTranscript
 from letsplays.youtube import (
+    BLOCKED,
     NETWORK_CODES,
     Found,
     Heard,
@@ -76,6 +77,12 @@ def claim(clock: Clock) -> LetsPlay | None:
             .first()
         )
         if due is None:
+            # One game in flight: while a step waits for budget, nothing new is enrolled (in
+            # YTP-04 each tick enrolled another game and 582 piled up behind the search quota).
+            if LetsPlay.objects.filter(state__in=WORKING).exists():
+                return None
+            if budget.blocked_until("youtube_api", search_units(50), now) is not None:
+                return None
             game = _next_game()
             if game is None:
                 return None
@@ -197,7 +204,23 @@ def _hear(
 
     Returns (speech or None, source, a reason to wait instead).
     """
-    facts = providers.facts(video_id)
+    now = clock.now_utc()
+    with transaction.atomic():
+        page = budget.admit("video", 1, now, letsplay_id=job.pk, video_id=video_id)
+    if page is None:
+        return None, "whisper", "video_budget"
+    try:
+        facts = providers.facts(video_id)
+    except YouTubeError as error:
+        with transaction.atomic():
+            blocked = error.code == BLOCKED
+            outcome = "refused" if blocked else "failed"
+            budget.finish(page, clock.now_utc(), outcome, error_code=error.code)
+        if blocked:
+            return None, "whisper", BLOCKED
+        raise
+    with transaction.atomic():
+        budget.finish(page, clock.now_utc(), "ok")
     now = clock.now_utc()
     with transaction.atomic():
         call = budget.admit("captions", 1, now, letsplay_id=job.pk, video_id=video_id)
@@ -291,8 +314,9 @@ def _listen(clock: Clock, providers: Providers, job: LetsPlay) -> str:
         if wait is not None:
             if wait == "whisper_error":
                 return _error(current, now, wait)
-            until = budget.blocked_until("whisper", 320, now) or now + timedelta(minutes=10)
-            return _later(current, now, until, wait)
+            kind = "video" if wait in ("video_budget", BLOCKED) else "whisper"
+            until = budget.blocked_until(kind, 320 if kind == "whisper" else 1, now)
+            return _later(current, now, until or now + timedelta(minutes=10), wait)
         speech = selection.Speech(heard.language, heard.text, heard.seconds) if heard else None
         choice = selection.choose(current.game.title, [candidate], lambda item: speech)
         check = choice.checks[0]

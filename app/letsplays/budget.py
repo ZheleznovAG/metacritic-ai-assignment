@@ -32,6 +32,9 @@ LIMITS: dict[str, tuple[Window, ...]] = {
     "youtube_api": (Window(timedelta(days=1), units=9000),),
     # Captions are unofficial and the service host was blocked after ~25 quick reads.
     "captions": (Window(timedelta(minutes=2), calls=1), Window(timedelta(days=1), calls=30)),
+    # yt-dlp video pages: the service host met YouTube's bot check after ~25-30 in one hour
+    # (YTP-04), so the pace is one every ten minutes.
+    "video": (Window(timedelta(minutes=10), calls=1), Window(timedelta(days=1), calls=100)),
     # Audio downloads carry no published limit; they follow the Whisper calls they feed.
     "audio": (Window(timedelta(hours=1), calls=18), Window(timedelta(days=1), calls=80)),
     # Groq Whisper free tier: 20/min, 2 000/day, 7 200 audio s/hour, 28 800/day.
@@ -49,6 +52,7 @@ LIMITS: dict[str, tuple[Window, ...]] = {
 REFUSAL_PAUSE = {
     "captions": timedelta(hours=24),
     "youtube_api": timedelta(hours=24),
+    "video": timedelta(hours=12),
 }
 DEFAULT_RETRY = timedelta(minutes=10)
 

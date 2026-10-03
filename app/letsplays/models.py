@@ -105,13 +105,15 @@ class LetsPlayConclusion(models.Model):
 class ProviderCall(models.Model):
     """Every external call the let's-play contour makes, in the provider's own units.
 
-    Admission reads this ledger before each call: YouTube API units per day, caption reads per
-    two minutes and per day, Whisper requests and audio seconds per hour and day, chat tokens per
-    minute and day (`evals/letsplays/metric.md`). A provider refusal is stored with its headers.
+    Admission reads this ledger before each call: YouTube API units per day, yt-dlp video
+    pages per ten minutes and per day, caption reads per two minutes and per day, Whisper
+    requests and audio seconds per hour and day, chat tokens per minute and day
+    (`evals/letsplays/metric.md`). A provider refusal is stored with its headers.
     """
 
     KIND_CHOICES = [
         ("youtube_api", "youtube_api"),
+        ("video", "video"),
         ("captions", "captions"),
         ("audio", "audio"),
         ("whisper", "whisper"),

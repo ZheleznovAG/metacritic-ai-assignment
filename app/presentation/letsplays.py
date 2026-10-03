@@ -14,6 +14,8 @@ WAITING_REASONS = {
     "youtube_quota": "The daily YouTube search budget is used up; the search continues tomorrow.",
     "youtube_quota_exceeded": "YouTube refused more searches today; the search continues later.",
     "whisper_budget": "Speech recognition is at its hourly limit; listening continues later.",
+    "video_budget": "Videos are checked slowly to stay within YouTube's limits.",
+    "youtube_blocked": "YouTube is temporarily refusing this server; listening resumes later.",
     "whisper_refused": "The speech-recognition provider asked to wait; listening continues later.",
     "chat_budget": "The conclusion is waiting for model capacity.",
     "chat_refused": "The model provider asked to wait; the conclusion follows later.",

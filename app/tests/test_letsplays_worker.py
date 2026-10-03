@@ -128,8 +128,9 @@ class HappyPathTests(TestCase):
         self.assertEqual(job.refresh_at, START + worker.REFRESH_AFTER)
         kinds = list(ProviderCall.objects.order_by("id").values_list("kind", "units", "outcome"))
         self.assertEqual(kinds[0], ("youtube_api", 201, "ok"))
-        self.assertEqual(kinds[1], ("captions", 1, "ok"))
-        self.assertEqual(kinds[2][0::2], ("chat", "ok"))
+        self.assertEqual(kinds[1], ("video", 1, "ok"))
+        self.assertEqual(kinds[2], ("captions", 1, "ok"))
+        self.assertEqual(kinds[3][0::2], ("chat", "ok"))
         self.assertIsNone(worker.advance(clock, providers))
 
     def test_games_with_a_metascore_go_first(self) -> None:
@@ -164,7 +165,7 @@ class NotFoundTests(TestCase):
         outcomes = []
         for _ in range(4):
             outcomes.append(worker.advance(clock, providers))
-            clock.advance(minutes=3)  # one caption read per two minutes
+            clock.advance(minutes=11)  # one video page per ten minutes
         job = LetsPlay.objects.get()
         self.assertEqual(job.state, "not_found")
         self.assertEqual([check["video_id"] for check in job.checks], ["v0", "v1", "v2"])
@@ -225,17 +226,47 @@ class CaptionAndAudioTests(TestCase):
         self.assertEqual((job.checks, job.attempt_count), ([], 1))
         self.assertEqual(job.available_at, START + worker.BACKOFF[0])
 
-    def test_yt_dlp_errors_are_split_into_network_and_video_problems(self) -> None:
+    def test_yt_dlp_errors_are_split_into_blocks_network_and_video_problems(self) -> None:
         from letsplays import youtube
 
-        for message, network in (
-            ("Unable to download API page: Failed to resolve 'www.youtube.com'", True),
-            ("HTTP Error 429: Too Many Requests", True),
-            ("Sign in to confirm you're not a bot", True),
-            ("Video unavailable. This video is private", False),
-            ("Sign in to confirm your age", False),
+        for message, expected in (
+            ("Unable to download API page: Failed to resolve 'www.youtube.com'", "network"),
+            ("HTTP Error 503: Service Unavailable", "network"),
+            ("HTTP Error 429: Too Many Requests", "blocked"),
+            ("Sign in to confirm you're not a bot", "blocked"),
+            ("Video unavailable. This video is private", "video"),
+            ("Sign in to confirm your age", "video"),
         ):
-            self.assertEqual(bool(youtube.NETWORK_SIGNS.search(message)), network, message)
+            found = (
+                "blocked"
+                if youtube.BLOCK_SIGNS.search(message)
+                else "network"
+                if youtube.NETWORK_SIGNS.search(message)
+                else "video"
+            )
+            self.assertEqual(found, expected, message)
+
+    def test_a_bot_check_pauses_every_video_page_without_using_a_listen(self) -> None:
+        make_game(1)
+        clock, providers = FakeClock(), FakeProviders()
+        run(clock, providers, 1)
+
+        def blocked(video_id: str) -> VideoFacts:
+            raise YouTubeError("youtube_blocked", "Sign in to confirm you're not a bot")
+
+        providers.facts = blocked  # type: ignore[method-assign]
+        self.assertEqual(worker.advance(clock, providers), "listening: waiting (youtube_blocked)")
+        job = LetsPlay.objects.get()
+        self.assertEqual((job.checks, job.attempt_count), ([], 0))
+        self.assertEqual(job.available_at, START + timedelta(hours=12))
+        self.assertIsNone(worker.advance(clock, providers))
+
+    def test_video_pages_are_read_at_most_once_per_ten_minutes(self) -> None:
+        ProviderCall.objects.create(kind="video", units=1, started_at=START)
+        self.assertEqual(
+            budget.blocked_until("video", 1, START + timedelta(minutes=3)),
+            START + timedelta(minutes=10),
+        )
 
     def test_whisper_budget_is_counted_in_audio_seconds(self) -> None:
         for _ in range(18):
@@ -245,8 +276,9 @@ class CaptionAndAudioTests(TestCase):
 
 class BudgetAndFailureTests(TestCase):
     def test_spent_youtube_units_stop_the_search_before_any_call(self) -> None:
-        make_game(1)
+        game = make_game(1)
         clock, providers = FakeClock(), FakeProviders()
+        LetsPlay.objects.create(game=game, policy_version="1.0.0")  # enrolled before it ran out
         ProviderCall.objects.create(kind="youtube_api", units=8900, started_at=START)
         self.assertEqual(worker.advance(clock, providers), "searching: waiting (youtube_quota)")
         self.assertEqual(providers.calls, [])
@@ -311,6 +343,48 @@ class BudgetAndFailureTests(TestCase):
         run(clock, providers, 3)
         self.assertEqual(LetsPlayConclusion.objects.get().status, "insufficient")
         self.assertEqual(LetsPlay.objects.get().state, "done")
+
+
+class EnrolmentTests(TestCase):
+    def test_no_new_game_is_enrolled_while_one_waits(self) -> None:
+        make_game(1)
+        make_game(2)
+        clock, providers = FakeClock(), FakeProviders()
+        providers.captions_error = YouTubeError("captions_blocked")
+        providers.whisper_error = GroqApiError("429", status=429, retry_after=900)
+        run(clock, providers, 2)  # the first game now waits for Whisper capacity
+        self.assertEqual(LetsPlay.objects.get().last_error, "whisper_refused")
+        for _ in range(5):
+            self.assertIsNone(worker.advance(clock, providers))
+        self.assertEqual(LetsPlay.objects.count(), 1)
+
+    def test_nothing_is_enrolled_when_the_search_budget_is_spent(self) -> None:
+        make_game(1)
+        ProviderCall.objects.create(kind="youtube_api", units=8900, started_at=START)
+        self.assertIsNone(worker.claim(FakeClock()))
+        self.assertFalse(LetsPlay.objects.exists())
+
+    def test_a_google_rate_limit_counts_as_a_spent_quota(self) -> None:
+        import json
+
+        import httpx
+        from letsplays import youtube
+
+        body = json.dumps(
+            {
+                "error": {
+                    "code": 429,
+                    "message": "Quota exceeded for quota metric 'Search Queries'",
+                    "errors": [{"reason": "rateLimitExceeded"}],
+                }
+            }
+        )
+        client = httpx.Client(
+            transport=httpx.MockTransport(lambda request: httpx.Response(429, text=body))
+        )
+        with self.assertRaises(YouTubeError) as raised:
+            youtube.search(client, "key", "Star Courier")
+        self.assertEqual(raised.exception.code, "youtube_quota_exceeded")
 
 
 class LeaseTests(TestCase):

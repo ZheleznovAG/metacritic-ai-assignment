@@ -36,9 +36,13 @@ UNREACHABLE = "youtube_unreachable"
 NETWORK_CODES = frozenset({UNREACHABLE, "audio_unreachable"})
 NETWORK_SIGNS = re.compile(
     r"TransportError|Failed to resolve|timed out|Connection|Unable to download API page|"
-    r"HTTP Error (?:429|5\d\d)|not a bot",
+    r"HTTP Error 5\d\d",
     re.IGNORECASE,
 )
+# YouTube refusing this address (bot check, rate limit): every video fails alike, so the whole
+# kind pauses instead of each game retrying (met on the service host in YTP-04).
+BLOCKED = "youtube_blocked"
+BLOCK_SIGNS = re.compile(r"not a bot|HTTP Error 429|Too Many Requests", re.IGNORECASE)
 
 
 class YouTubeError(Exception):
@@ -90,8 +94,11 @@ def _api(client: httpx.Client, path: str, key: str, params: dict[str, str]) -> d
         response = client.get(f"{API}/{path}", params={**params, "key": key})
     except httpx.HTTPError as error:
         raise YouTubeError("youtube_api_unreachable", type(error).__name__) from error
-    if response.status_code == 403 and "quota" in response.text.lower():
-        raise YouTubeError("youtube_quota_exceeded")
+    text = response.text.lower()
+    # 403 quotaExceeded (daily units) and 429 rateLimitExceeded ("Search Queries per day", a
+    # separate per-method limit met in YTP-04) both mean: no more searches today.
+    if response.status_code in (403, 429) and ("quota" in text or "ratelimitexceeded" in text):
+        raise YouTubeError("youtube_quota_exceeded", f"HTTP {response.status_code}")
     if response.status_code != 200:
         raise YouTubeError("youtube_api_error", f"HTTP {response.status_code}")
     document = response.json()
@@ -159,7 +166,13 @@ def facts(video_id: str) -> VideoFacts:
         with yt_dlp.YoutubeDL(options) as ydl:
             info = ydl.extract_info(f"https://www.youtube.com/watch?v={video_id}", download=False)
     except yt_dlp.utils.DownloadError as error:
-        code = UNREACHABLE if NETWORK_SIGNS.search(str(error)) else "video_unavailable"
+        message = str(error)
+        if BLOCK_SIGNS.search(message):
+            code = BLOCKED
+        elif NETWORK_SIGNS.search(message):
+            code = UNREACHABLE
+        else:
+            code = "video_unavailable"
         raise YouTubeError(code, str(error)[:120]) from error
     if not isinstance(info, dict):
         raise YouTubeError("video_unavailable", "no information")
