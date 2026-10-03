@@ -78,6 +78,7 @@ class LetsPlayCardTests(TestCase):
         self.assertIn("I love the ship", html)
         self.assertIn("From speech recognition of the first 5 min", html)
         self.assertIn("No complaints in the part heard.", html)
+        self.assertIn("it can mistake a reaction for an opinion", html)
         self.assertNotIn("sponsored", html)
 
     def test_sponsorship_is_stated(self) -> None:

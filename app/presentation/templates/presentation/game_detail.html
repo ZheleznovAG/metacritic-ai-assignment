@@ -117,7 +117,7 @@
           </div>
           <p class="letsplay__provenance">
             From {{ letsplay.source }} of the first {{ letsplay.minutes }} min · Model: {{ letsplay.model_id|default:"unknown" }} · Generated: {{ letsplay.generated_on }}.
-            Quotes are machine transcriptions.
+            An AI reading of the first minutes: it can mistake a reaction for an opinion. Each quote is the transcript itself, a machine transcription.
           </p>
         {% elif letsplay.state == "insufficient" %}
           <p class="no-data">{{ letsplay.message }}</p>
