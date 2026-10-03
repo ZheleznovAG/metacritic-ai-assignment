@@ -28,6 +28,7 @@ PACKAGES = frozenset(
         "catalog",
         "config",
         "core",
+        "letsplays",
         "metacritic",
         "presentation",
         "processing",

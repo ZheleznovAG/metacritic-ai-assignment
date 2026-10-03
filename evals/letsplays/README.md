@@ -13,6 +13,8 @@
 | [`test_score_selection.py`](test_score_selection.py) | Контрпримеры для скоринга |
 | [`collect.py`](collect.py), [`build_labels.py`](build_labels.py), [`freeze_inputs.py`](freeze_inputs.py) | Как собраны пул, метки и входы заключения |
 | [`host_captions.sh`](host_captions.sh), [`check_speech.py`](check_speech.py) | Проверка речи и языка по субтитрам (с сервера) и по аудио (Whisper) |
+| [`run_selector.py`](run_selector.py), [`selector_report.json`](selector_report.json), [`selection_results.md`](selection_results.md) | Прогон политики сервиса `letsplay-select` на наборе и его результат (`YTP-03`) |
+| [`release_dates.py`](release_dates.py), [`release_dates.json`](release_dates.json) | Даты выхода игр набора с Metacritic (проверка правила по дате) |
 
 Тексты роликов — сторонний материал, хранятся вне Git в `.artifacts/ytp02/`. Это исследовательский
 инструментарий, а не тесты приложения; живые вызовы YouTube и Groq в CI не выполняются.
