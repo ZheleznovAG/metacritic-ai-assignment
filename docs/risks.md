@@ -322,7 +322,7 @@
 - **Митигация:** явные query/filter rules; при непройденном gate — `Drop bonus`.
 - **Владелец:** `BON-11`.
 - **Остаточный риск:** выдача и view count изменяются со временем.
-- **Текущая диспозиция:** `Deferred bonus`.
+- **Текущая диспозиция:** `Open — mitigate` после сдачи ([ADR-0005](decisions/0005-bonus1-after-submission.md)); выдача проверена в [`YTP-01`](../research/feasibility/youtube.md), правила отбора замораживаются в `YTP-02`.
 
 ### `R-BON-YT-02` Текст произвольного видео недоступен или непригоден
 
@@ -334,7 +334,7 @@
 - **Митигация:** честное unavailable state; при отсутствии устойчивого допустимого пути — `Drop bonus`.
 - **Владелец:** `BON-11`, затем `BON-12`.
 - **Остаточный риск:** доступность текста различается для каждой игры.
-- **Текущая диспозиция:** `Deferred bonus`.
+- **Текущая диспозиция:** `Open — mitigate` после сдачи ([ADR-0005](decisions/0005-bonus1-after-submission.md)): в [`YTP-01`](../research/feasibility/youtube.md) с рабочего сервера доступны субтитры и аудио, с другого адреса субтитры блокировались; аудио + Whisper — резервный путь.
 
 ### `R-BON-OPS-01` Monitoring показывает несогласованное или фиктивное состояние
 
@@ -370,7 +370,7 @@
 | Runtime LLM | `R-AI-01–R-AI-02` | `SPK-05`, затем `IMP-04/HRD-04` | `SPK-05: Proceed with limitation`; качество пройдено, Free TPD и extractive policy назначены на митигацию |
 | Публичный hosting/storage/scheduler | `R-DEP-01–R-DEP-02`, `R-OPS-01` | `SPK-06`, затем `HRD-05/PUB-02/REL-04` | `SPK-06: Proceed with limitation`; capability подтверждена, production checks назначены |
 | Git repository / AI archive | `R-DEP-02`, `R-DEL-01`, `R-REP-01` | непрерывно, `REL-01–REL-04` | Покрыто задачами поставки |
-| YouTube | `R-BON-YT-01–R-BON-YT-02` | `BON-11` | Изолировано до выбора Bonus 1 |
+| YouTube | `R-BON-YT-01–R-BON-YT-02` | `BON-11`; после сдачи `YTP-01`–`YTP-04` | Bonus 1 взят после сдачи (ADR-0005); разведка пройдена с ограничениями |
 
 ### Критические инварианты
 
