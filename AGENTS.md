@@ -16,6 +16,7 @@ This repository has established its implementation baseline through `PLN-03` / `
 - `evals/reviews/baseline/` contains the published sanitised AI run and original scorecard; its offline verifier and integrity tests are research tooling, not application tests.
 - `evals/review_selection/` contains the frozen review-selection oracle, baseline and production-candidate verifier.
 - `evals/similarity/` contains the similarity golden set, metric, frozen contract and evaluator integrity tests; owner acceptance belongs to `action_plan.md`.
+- `evals/letsplays/` contains the frozen Bonus 1 let's-play pool, labels, selection scorer and its negative controls, the conclusion cases (transcript hashes only; texts stay in `.artifacts/ytp02/`) and the provider budgets ([metric](evals/letsplays/metric.md)); post-submission work per [ADR-0005](docs/decisions/0005-bonus1-after-submission.md).
 - `research/methodology/` preserves prompts and exploration; it is evidence, not a requirements source.
 - `research/planning/` contains the offline baseline audit and its negative-control tests; these are planning evidence, not application tests.
 - `research/reviews/` preserves dated implementation-audit probes, observations and verification excerpts; defect-confirming probes are historical evidence, not application acceptance tests or CI gates.

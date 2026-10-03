@@ -1,0 +1,609 @@
+{
+ "version": "1.0.0",
+ "candidates_sha256": "8acec36bf28041bd4f73cfbaef987ff460bf569f503d1a777a9d37ee35f0bea3",
+ "games": [
+  {
+   "title": "Elden Ring",
+   "stratum": "known",
+   "expected": "GWomHd7hlFk",
+   "labels": [
+    {
+     "video_id": "E3Huy2cdih0",
+     "label": "trailer",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "JldMvQMO_5U",
+     "label": "trailer",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "GWomHd7hlFk",
+     "label": "letsplay",
+     "evidence": "captions"
+    }
+   ]
+  },
+  {
+   "title": "Resident Evil Requiem",
+   "stratum": "known",
+   "expected": "dn5_p5jaJn0",
+   "labels": [
+    {
+     "video_id": "5CLYiAc8SHg",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "dn5_p5jaJn0",
+     "label": "letsplay",
+     "evidence": "whisper"
+    }
+   ]
+  },
+  {
+   "title": "Silent Hill: Townfall",
+   "stratum": "known",
+   "expected": "5RE1GwL_XIQ",
+   "labels": [
+    {
+     "video_id": "5RE1GwL_XIQ",
+     "label": "letsplay",
+     "evidence": "captions"
+    }
+   ]
+  },
+  {
+   "title": "Pokemon Pokopia",
+   "stratum": "known",
+   "expected": "ekxWBkP6ULU",
+   "labels": [
+    {
+     "video_id": "qaGrShDlH48",
+     "label": "letsplay-other-language",
+     "evidence": "captions"
+    },
+    {
+     "video_id": "bILGvd0lNiA",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "0q7J6rp3lMs",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "ekxWBkP6ULU",
+     "label": "letsplay",
+     "evidence": "captions"
+    }
+   ]
+  },
+  {
+   "title": "Final Fantasy VII Remake Intergrade",
+   "stratum": "known",
+   "expected": "i9vo2SZwhMY",
+   "labels": [
+    {
+     "video_id": "s1CmEhz9-o4",
+     "label": "review",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "VW1ZJuoTHn4",
+     "label": "guide",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "AnDPvHCujmI",
+     "label": "silent",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "AXwl4-JacKU",
+     "label": "review",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "43Jt-GG1PFA",
+     "label": "silent",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "QQtW8Nashh0",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "yhMpmF9csH4",
+     "label": "guide",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "az2zXT6o7KM",
+     "label": "silent",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "ZHRIwxJhSks",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "i9vo2SZwhMY",
+     "label": "letsplay",
+     "evidence": "captions"
+    }
+   ]
+  },
+  {
+   "title": "DOOM: The Dark Ages - Revelations",
+   "stratum": "known",
+   "expected": "TZ6Sex25Fro",
+   "labels": [
+    {
+     "video_id": "r14Qm8lxJr8",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "iKyXn73EDs8",
+     "label": "silent",
+     "evidence": "whisper"
+    },
+    {
+     "video_id": "IUBg6kpuB-M",
+     "label": "letsplay-other-language",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "TZ6Sex25Fro",
+     "label": "letsplay",
+     "evidence": "whisper"
+    }
+   ]
+  },
+  {
+   "title": "Mina the Hollower",
+   "stratum": "known",
+   "expected": "HsPQyKS8vG0",
+   "labels": [
+    {
+     "video_id": "XMWG4Nvb2Z0",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "HsPQyKS8vG0",
+     "label": "letsplay",
+     "evidence": "captions"
+    }
+   ]
+  },
+  {
+   "title": "Graveyard Keeper 2",
+   "stratum": "known",
+   "expected": "N84q1nzOuUw",
+   "labels": [
+    {
+     "video_id": "N84q1nzOuUw",
+     "label": "letsplay",
+     "evidence": "captions"
+    }
+   ]
+  },
+  {
+   "title": "Rogue Racer",
+   "stratum": "random",
+   "expected": null,
+   "labels": [
+    {
+     "video_id": "NVHr_-5nzeE",
+     "label": "wrong-game",
+     "evidence": "captions"
+    },
+    {
+     "video_id": "wIVCCv9Gzfw",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "yN8Z26N_qDE",
+     "label": "wrong-game",
+     "evidence": "captions"
+    },
+    {
+     "video_id": "9Kl5q2afAAQ",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "a1c65Ab_Smo",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "UBC59a-Nn4Q",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "kVDNWor60ug",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "qLRpnHY8mzo",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "XrWqMzRYNkQ",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "-ronWlLrmdU",
+     "label": "silent",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "QA7CELP3s2M",
+     "label": "silent",
+     "evidence": "whisper"
+    },
+    {
+     "video_id": "viSA7XZhaFA",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "fIq6kGe94PM",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "Nh3ph9qGac4",
+     "label": "multi-game",
+     "evidence": "captions"
+    },
+    {
+     "video_id": "0TMoAAhATGI",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "nZhtL22UfjI",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "k481uCOAuWc",
+     "label": "wrong-game",
+     "evidence": "whisper"
+    },
+    {
+     "video_id": "h3e-Z7OXqR0",
+     "label": "wrong-game",
+     "evidence": "whisper"
+    }
+   ]
+  },
+  {
+   "title": "SiN: Reloaded",
+   "stratum": "random",
+   "expected": "YQnC7ky6d24",
+   "labels": [
+    {
+     "video_id": "nv3PxdX3w2s",
+     "label": "review",
+     "evidence": "captions"
+    },
+    {
+     "video_id": "Tw5DMMTfk5o",
+     "label": "trailer",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "25bIqY6X740",
+     "label": "trailer",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "TDQOhOzgYj0",
+     "label": "trailer",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "IYOzXE2mbIU",
+     "label": "review",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "YQnC7ky6d24",
+     "label": "letsplay",
+     "evidence": "whisper"
+    }
+   ]
+  },
+  {
+   "title": "Taskbar Colony",
+   "stratum": "random",
+   "expected": null,
+   "labels": []
+  },
+  {
+   "title": "WilderDash",
+   "stratum": "random",
+   "expected": "EAHi7-atB2U",
+   "labels": [
+    {
+     "video_id": "hfcUpgSIAwQ",
+     "label": "letsplay-other-language",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "H7_MpPNLzh8",
+     "label": "letsplay-other-language",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "3AnXOOvxoeg",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "lY7PYnBhSMM",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "CyAt91PWFIg",
+     "label": "roundup",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "UlewJ3wip_s",
+     "label": "roundup",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "xPzCySLumCw",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "MigshEcPhqo",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "HtdXy9Px6ns",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "3n3dmaWB34s",
+     "label": "roundup",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "IhQbWbvNm6Y",
+     "label": "trailer",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "7sPjU1peNBk",
+     "label": "roundup",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "EAHi7-atB2U",
+     "label": "letsplay",
+     "evidence": "captions"
+    }
+   ]
+  },
+  {
+   "title": "Sakura: The Eternal Night",
+   "stratum": "random",
+   "expected": null,
+   "labels": [
+    {
+     "video_id": "w1IVHqtm9mg",
+     "label": "roundup",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "IEfQX66JLFE",
+     "label": "short",
+     "evidence": "metadata"
+    }
+   ]
+  },
+  {
+   "title": "Murdercartel",
+   "stratum": "random",
+   "expected": null,
+   "labels": [
+    {
+     "video_id": "MShPvG87XBE",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "JRHw-i02ldE",
+     "label": "roundup",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "BCJceZmVjvA",
+     "label": "trailer",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "qxC4zytzFlk",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "oIki8AztSuY",
+     "label": "roundup",
+     "evidence": "metadata"
+    }
+   ]
+  },
+  {
+   "title": "SuperSharket",
+   "stratum": "random",
+   "expected": null,
+   "labels": []
+  },
+  {
+   "title": "Panic Files: Buried Sanity",
+   "stratum": "random",
+   "expected": "4wPvpOOaXOU",
+   "labels": [
+    {
+     "video_id": "GvkHybmubjQ",
+     "label": "letsplay-other-language",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "60RMbymNSlM",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "nKwVkyU6nx8",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "D8M0hNSLlv8",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "LVYLocMGnws",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "qtYAjK4igt0",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "fie9UO81UBE",
+     "label": "roundup",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "4wPvpOOaXOU",
+     "label": "letsplay",
+     "evidence": "captions"
+    }
+   ]
+  },
+  {
+   "title": "Clipped Reality",
+   "stratum": "random",
+   "expected": null,
+   "labels": [
+    {
+     "video_id": "a_E8OGLlwc8",
+     "label": "multi-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "sDjlKgabU2E",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "a7t-L9-W5fc",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "KOWwZql72u4",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "yzaRM4q69nE",
+     "label": "roundup",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "C7y7KZp4oO4",
+     "label": "short",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "qguZahH8AwI",
+     "label": "unconfirmed-game",
+     "evidence": "whisper"
+    },
+    {
+     "video_id": "CF4QWt5Ed8k",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    }
+   ]
+  },
+  {
+   "title": "Chronime Puzzle: Birds",
+   "stratum": "random",
+   "expected": null,
+   "labels": [
+    {
+     "video_id": "HnZSJzdrrLA",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "08OToEH4bSQ",
+     "label": "wrong-game",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "MM5UH5vSzqM",
+     "label": "roundup",
+     "evidence": "metadata"
+    },
+    {
+     "video_id": "sskTc_tJtFI",
+     "label": "short",
+     "evidence": "metadata"
+    }
+   ]
+  },
+  {
+   "title": "Kamenkik and Friends",
+   "stratum": "random",
+   "expected": null,
+   "labels": [
+    {
+     "video_id": "6l4AU155vKw",
+     "label": "roundup",
+     "evidence": "metadata"
+    }
+   ]
+  },
+  {
+   "title": "Active Matter",
+   "stratum": "random",
+   "expected": "_bvkLBN8HyU",
+   "labels": [
+    {
+     "video_id": "_bvkLBN8HyU",
+     "label": "letsplay",
+     "evidence": "whisper"
+    }
+   ]
+  }
+ ]
+}

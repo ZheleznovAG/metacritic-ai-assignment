@@ -1,0 +1,160 @@
+{
+ "version": "1.0.0",
+ "inputs": ".artifacts/ytp02/conclusion_inputs.jsonl",
+ "cases": [
+  {
+   "case_id": "LP-01",
+   "game": "Elden Ring",
+   "video_id": "GWomHd7hlFk",
+   "source": "captions",
+   "words": 1974,
+   "text_sha256": "a9e64375a4b473eed1e28821d57811d4972b1b71791a100149103a6ee23ceca9",
+   "expected_status": "sufficient",
+   "sponsored": false,
+   "note": null
+  },
+  {
+   "case_id": "LP-02",
+   "game": "Resident Evil Requiem",
+   "video_id": "dn5_p5jaJn0",
+   "source": "captions",
+   "words": 2031,
+   "text_sha256": "f2218049c0c2a8c8f491b6fabc3f074e4df2b623e54ec440e212a816cd909fdf",
+   "expected_status": "sufficient",
+   "sponsored": false,
+   "note": null
+  },
+  {
+   "case_id": "LP-03",
+   "game": "Silent Hill: Townfall",
+   "video_id": "5RE1GwL_XIQ",
+   "source": "captions",
+   "words": 1808,
+   "text_sha256": "edf0ddc724a33451f0db214bf5d0f919892a6230552ed4ae2eb9feb91f2812e4",
+   "expected_status": "sufficient",
+   "sponsored": false,
+   "note": null
+  },
+  {
+   "case_id": "LP-04",
+   "game": "Pokemon Pokopia",
+   "video_id": "ekxWBkP6ULU",
+   "source": "captions",
+   "words": 2217,
+   "text_sha256": "4c8cf46bdf0cd9232a1a7646be849e18d42d831e012fdff8c36e7bc91544bc2f",
+   "expected_status": "sufficient",
+   "sponsored": false,
+   "note": null
+  },
+  {
+   "case_id": "LP-05",
+   "game": "Final Fantasy VII Remake Intergrade",
+   "video_id": "i9vo2SZwhMY",
+   "source": "captions",
+   "words": 911,
+   "text_sha256": "593c6bfa43363080ac4d5dfe2b5a440d77c2bf2ef091044c889384eb4c76ab7b",
+   "expected_status": "sufficient",
+   "sponsored": false,
+   "note": null
+  },
+  {
+   "case_id": "LP-06",
+   "game": "DOOM: The Dark Ages - Revelations",
+   "video_id": "TZ6Sex25Fro",
+   "source": "whisper",
+   "words": 272,
+   "text_sha256": "c60b0910e5dda172ec7bb05a5a0c218051a9e40ba67ec681915410ac06ae07c1",
+   "expected_status": "sufficient",
+   "sponsored": false,
+   "note": null
+  },
+  {
+   "case_id": "LP-07",
+   "game": "Mina the Hollower",
+   "video_id": "HsPQyKS8vG0",
+   "source": "captions",
+   "words": 2482,
+   "text_sha256": "935f8bd4e72a15cde4afa385675d2124630ee9e694c22a3669c24ebe5df0534d",
+   "expected_status": "sufficient",
+   "sponsored": false,
+   "note": null
+  },
+  {
+   "case_id": "LP-08",
+   "game": "Graveyard Keeper 2",
+   "video_id": "N84q1nzOuUw",
+   "source": "captions",
+   "words": 3585,
+   "text_sha256": "874bb244cb1937b2395d00cb39d9181eb4c59ea5f6aaaf843fdac3eacf088dcc",
+   "expected_status": "sufficient",
+   "sponsored": false,
+   "note": null
+  },
+  {
+   "case_id": "LP-09",
+   "game": "SiN: Reloaded",
+   "video_id": "YQnC7ky6d24",
+   "source": "whisper",
+   "words": 441,
+   "text_sha256": "5142ddf0c36de5d6aa73060e9a4c8e0ead43e7ff8698c5ebe595a92084b248db",
+   "expected_status": "sufficient",
+   "sponsored": true,
+   "note": null
+  },
+  {
+   "case_id": "LP-10",
+   "game": "WilderDash",
+   "video_id": "EAHi7-atB2U",
+   "source": "captions",
+   "words": 654,
+   "text_sha256": "11c93645b0d945c6825a23ce3789ba61c5b1ae4a8c0ad3b22773f1fe4d08ca0d",
+   "expected_status": "sufficient",
+   "sponsored": false,
+   "note": null
+  },
+  {
+   "case_id": "LP-11",
+   "game": "Panic Files: Buried Sanity",
+   "video_id": "4wPvpOOaXOU",
+   "source": "captions",
+   "words": 1409,
+   "text_sha256": "5cc0c07d9991b1cc0ebcfb4b3d9d48a95b5b0597ab65486013b712e9ef4e0a29",
+   "expected_status": "sufficient",
+   "sponsored": false,
+   "note": null
+  },
+  {
+   "case_id": "LP-12",
+   "game": "Active Matter",
+   "video_id": "_bvkLBN8HyU",
+   "source": "whisper",
+   "words": 510,
+   "text_sha256": "25d471d860b2e025d1b1f6ed8086927c219cfb2b484ec894d5b5ed37e5f847a4",
+   "expected_status": "sufficient",
+   "sponsored": false,
+   "note": null
+  },
+  {
+   "case_id": "LP-13",
+   "game": "Rogue Racer",
+   "video_id": "QA7CELP3s2M",
+   "source": "whisper",
+   "words": 22,
+   "text_sha256": "11a3fcdb5c5808eb26aa43eb6b32e22f21aa951b88d8de053a3ac4336b3cb476",
+   "expected_status": "insufficient",
+   "sponsored": false,
+   "note": "silence: Whisper returns filler only"
+  },
+  {
+   "case_id": "LP-14",
+   "game": "DOOM: The Dark Ages - Revelations",
+   "video_id": "iKyXn73EDs8",
+   "source": "whisper",
+   "words": 172,
+   "text_sha256": "214a0bee3e382053f11a8472df7a4a062aab8a0dbff8f6990bcc1d3606f02c96",
+   "expected_status": "insufficient",
+   "sponsored": false,
+   "note": "cutscene dialogue only"
+  }
+ ]
+}

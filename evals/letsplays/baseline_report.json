@@ -1,0 +1,315 @@
+{
+ "labels_version": "1.0.0",
+ "baselines": {
+  "max-views": {
+   "accurate": 4,
+   "games": 20,
+   "false_positives": 7,
+   "violations": [
+    "INV-LANGUAGE Pokemon Pokopia: qaGrShDlH48",
+    "INV-GAME Rogue Racer: NVHr_-5nzeE is wrong-game",
+    "INV-LANGUAGE WilderDash: hfcUpgSIAwQ",
+    "INV-LANGUAGE Panic Files: Buried Sanity: GvkHybmubjQ",
+    "INV-GAME Clipped Reality: a_E8OGLlwc8 is multi-game",
+    "INV-GAME Chronime Puzzle: Birds: HnZSJzdrrLA is wrong-game"
+   ],
+   "passed": false,
+   "rows": [
+    {
+     "title": "Elden Ring",
+     "expected": "GWomHd7hlFk",
+     "chosen": "E3Huy2cdih0",
+     "chosen_label": "trailer",
+     "hit": false
+    },
+    {
+     "title": "Resident Evil Requiem",
+     "expected": "dn5_p5jaJn0",
+     "chosen": "5CLYiAc8SHg",
+     "chosen_label": "short",
+     "hit": false
+    },
+    {
+     "title": "Silent Hill: Townfall",
+     "expected": "5RE1GwL_XIQ",
+     "chosen": "5RE1GwL_XIQ",
+     "chosen_label": "letsplay",
+     "hit": true
+    },
+    {
+     "title": "Pokemon Pokopia",
+     "expected": "ekxWBkP6ULU",
+     "chosen": "qaGrShDlH48",
+     "chosen_label": "letsplay-other-language",
+     "hit": false
+    },
+    {
+     "title": "Final Fantasy VII Remake Intergrade",
+     "expected": "i9vo2SZwhMY",
+     "chosen": "s1CmEhz9-o4",
+     "chosen_label": "review",
+     "hit": false
+    },
+    {
+     "title": "DOOM: The Dark Ages - Revelations",
+     "expected": "TZ6Sex25Fro",
+     "chosen": "r14Qm8lxJr8",
+     "chosen_label": "short",
+     "hit": false
+    },
+    {
+     "title": "Mina the Hollower",
+     "expected": "HsPQyKS8vG0",
+     "chosen": "XMWG4Nvb2Z0",
+     "chosen_label": "short",
+     "hit": false
+    },
+    {
+     "title": "Graveyard Keeper 2",
+     "expected": "N84q1nzOuUw",
+     "chosen": "N84q1nzOuUw",
+     "chosen_label": "letsplay",
+     "hit": true
+    },
+    {
+     "title": "Rogue Racer",
+     "expected": null,
+     "chosen": "NVHr_-5nzeE",
+     "chosen_label": "wrong-game",
+     "hit": false
+    },
+    {
+     "title": "SiN: Reloaded",
+     "expected": "YQnC7ky6d24",
+     "chosen": "nv3PxdX3w2s",
+     "chosen_label": "review",
+     "hit": false
+    },
+    {
+     "title": "Taskbar Colony",
+     "expected": null,
+     "chosen": "xvQP3nXxrNQ",
+     "chosen_label": "unjudged",
+     "hit": false
+    },
+    {
+     "title": "WilderDash",
+     "expected": "EAHi7-atB2U",
+     "chosen": "hfcUpgSIAwQ",
+     "chosen_label": "letsplay-other-language",
+     "hit": false
+    },
+    {
+     "title": "Sakura: The Eternal Night",
+     "expected": null,
+     "chosen": "w1IVHqtm9mg",
+     "chosen_label": "roundup",
+     "hit": false
+    },
+    {
+     "title": "Murdercartel",
+     "expected": null,
+     "chosen": "MShPvG87XBE",
+     "chosen_label": "short",
+     "hit": false
+    },
+    {
+     "title": "SuperSharket",
+     "expected": null,
+     "chosen": null,
+     "chosen_label": null,
+     "hit": true
+    },
+    {
+     "title": "Panic Files: Buried Sanity",
+     "expected": "4wPvpOOaXOU",
+     "chosen": "GvkHybmubjQ",
+     "chosen_label": "letsplay-other-language",
+     "hit": false
+    },
+    {
+     "title": "Clipped Reality",
+     "expected": null,
+     "chosen": "a_E8OGLlwc8",
+     "chosen_label": "multi-game",
+     "hit": false
+    },
+    {
+     "title": "Chronime Puzzle: Birds",
+     "expected": null,
+     "chosen": "HnZSJzdrrLA",
+     "chosen_label": "wrong-game",
+     "hit": false
+    },
+    {
+     "title": "Kamenkik and Friends",
+     "expected": null,
+     "chosen": "6l4AU155vKw",
+     "chosen_label": "roundup",
+     "hit": false
+    },
+    {
+     "title": "Active Matter",
+     "expected": "_bvkLBN8HyU",
+     "chosen": "_bvkLBN8HyU",
+     "chosen_label": "letsplay",
+     "hit": true
+    }
+   ]
+  },
+  "ytp01-rule": {
+   "accurate": 12,
+   "games": 20,
+   "false_positives": 2,
+   "violations": [
+    "INV-LANGUAGE DOOM: The Dark Ages - Revelations: IUBg6kpuB-M",
+    "INV-GAME Rogue Racer: 9Kl5q2afAAQ is wrong-game",
+    "INV-LANGUAGE WilderDash: H7_MpPNLzh8",
+    "INV-GAME Clipped Reality: a7t-L9-W5fc is wrong-game"
+   ],
+   "passed": false,
+   "rows": [
+    {
+     "title": "Elden Ring",
+     "expected": "GWomHd7hlFk",
+     "chosen": "JldMvQMO_5U",
+     "chosen_label": "trailer",
+     "hit": false
+    },
+    {
+     "title": "Resident Evil Requiem",
+     "expected": "dn5_p5jaJn0",
+     "chosen": "7H9oZSbxWrk",
+     "chosen_label": "unjudged",
+     "hit": false
+    },
+    {
+     "title": "Silent Hill: Townfall",
+     "expected": "5RE1GwL_XIQ",
+     "chosen": "5RE1GwL_XIQ",
+     "chosen_label": "letsplay",
+     "hit": true
+    },
+    {
+     "title": "Pokemon Pokopia",
+     "expected": "ekxWBkP6ULU",
+     "chosen": "ekxWBkP6ULU",
+     "chosen_label": "letsplay",
+     "hit": true
+    },
+    {
+     "title": "Final Fantasy VII Remake Intergrade",
+     "expected": "i9vo2SZwhMY",
+     "chosen": "-ouKoOYhcZ4",
+     "chosen_label": "unjudged",
+     "hit": false
+    },
+    {
+     "title": "DOOM: The Dark Ages - Revelations",
+     "expected": "TZ6Sex25Fro",
+     "chosen": "IUBg6kpuB-M",
+     "chosen_label": "letsplay-other-language",
+     "hit": false
+    },
+    {
+     "title": "Mina the Hollower",
+     "expected": "HsPQyKS8vG0",
+     "chosen": "HsPQyKS8vG0",
+     "chosen_label": "letsplay",
+     "hit": true
+    },
+    {
+     "title": "Graveyard Keeper 2",
+     "expected": "N84q1nzOuUw",
+     "chosen": "N84q1nzOuUw",
+     "chosen_label": "letsplay",
+     "hit": true
+    },
+    {
+     "title": "Rogue Racer",
+     "expected": null,
+     "chosen": "9Kl5q2afAAQ",
+     "chosen_label": "wrong-game",
+     "hit": false
+    },
+    {
+     "title": "SiN: Reloaded",
+     "expected": "YQnC7ky6d24",
+     "chosen": "YQnC7ky6d24",
+     "chosen_label": "letsplay",
+     "hit": true
+    },
+    {
+     "title": "Taskbar Colony",
+     "expected": null,
+     "chosen": null,
+     "chosen_label": null,
+     "hit": true
+    },
+    {
+     "title": "WilderDash",
+     "expected": "EAHi7-atB2U",
+     "chosen": "H7_MpPNLzh8",
+     "chosen_label": "letsplay-other-language",
+     "hit": false
+    },
+    {
+     "title": "Sakura: The Eternal Night",
+     "expected": null,
+     "chosen": null,
+     "chosen_label": null,
+     "hit": true
+    },
+    {
+     "title": "Murdercartel",
+     "expected": null,
+     "chosen": null,
+     "chosen_label": null,
+     "hit": true
+    },
+    {
+     "title": "SuperSharket",
+     "expected": null,
+     "chosen": null,
+     "chosen_label": null,
+     "hit": true
+    },
+    {
+     "title": "Panic Files: Buried Sanity",
+     "expected": "4wPvpOOaXOU",
+     "chosen": "WxiqIJVOiaw",
+     "chosen_label": "unjudged",
+     "hit": false
+    },
+    {
+     "title": "Clipped Reality",
+     "expected": null,
+     "chosen": "a7t-L9-W5fc",
+     "chosen_label": "wrong-game",
+     "hit": false
+    },
+    {
+     "title": "Chronime Puzzle: Birds",
+     "expected": null,
+     "chosen": null,
+     "chosen_label": null,
+     "hit": true
+    },
+    {
+     "title": "Kamenkik and Friends",
+     "expected": null,
+     "chosen": null,
+     "chosen_label": null,
+     "hit": true
+    },
+    {
+     "title": "Active Matter",
+     "expected": "_bvkLBN8HyU",
+     "chosen": "_bvkLBN8HyU",
+     "chosen_label": "letsplay",
+     "hit": true
+    }
+   ]
+  }
+ }
+}
