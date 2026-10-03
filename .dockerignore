@@ -8,6 +8,7 @@
 !evals/reviews/**
 !evals/review_selection/**
 !evals/similarity/**
+!evals/letsplays/**
 !docs/**
 !action_plan.md
 !implementation_plan.md
