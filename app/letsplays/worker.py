@@ -22,7 +22,14 @@ from summaries.groq_adapter import GroqApiError
 from letsplays import budget, conclusion, selection
 from letsplays.groq import ChatResult
 from letsplays.models import LetsPlay, LetsPlayConclusion, LetsPlayTranscript
-from letsplays.youtube import Found, Heard, VideoFacts, YouTubeError, search_units
+from letsplays.youtube import (
+    NETWORK_CODES,
+    Found,
+    Heard,
+    VideoFacts,
+    YouTubeError,
+    search_units,
+)
 
 LEASE = timedelta(minutes=10)
 REFRESH_AFTER = timedelta(days=30)
@@ -198,8 +205,10 @@ def _hear(
         try:
             heard = providers.captions(video_id, facts.language, facts.seconds)
         except YouTubeError as error:
+            blocked = error.code == "captions_blocked"
             with transaction.atomic():
-                budget.finish(call, clock.now_utc(), "refused", error_code=error.code)
+                outcome = "refused" if blocked else "failed"
+                budget.finish(call, clock.now_utc(), outcome, error_code=error.code)
             heard = None
         else:
             with transaction.atomic():
@@ -228,6 +237,8 @@ def _hear(
             now = clock.now_utc()
             budget.finish(audio, now, "failed", error_code=error.code)
             budget.finish(whisper, now, "skipped", error_code=error.code)
+        if error.code in NETWORK_CODES:
+            raise  # nothing learned about the video: retry the step, keep the listen
         return None, "whisper", None
     except GroqApiError as error:
         with transaction.atomic():
@@ -264,6 +275,12 @@ def _listen(clock: Clock, providers: Providers, job: LetsPlay) -> str:
     try:
         heard, source, wait = _hear(clock, providers, job, candidate.video_id)
     except YouTubeError as error:
+        if error.code in NETWORK_CODES:
+            with transaction.atomic():
+                current = _owned(job, lease)
+                if current is None:
+                    return "listening: lease lost"
+                return _error(current, clock.now_utc(), error.code)
         heard, source, wait = None, "whisper", None
         unavailable = error.code
     now = clock.now_utc()

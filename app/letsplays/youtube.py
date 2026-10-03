@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import httpx
+import requests
 
 API = "https://www.googleapis.com/youtube/v3"
 # Both queries were in the evaluated pool; either alone scores below the bar (selection_results).
@@ -30,6 +31,14 @@ CAPTION_WINDOW_SECONDS = 15 * 60
 FRAGMENT_SECONDS = 320
 FRAGMENT_BYTES = 2_200_000  # ~6 minutes at YouTube's ~48 kbit/s audio-only m4a
 DURATION = re.compile(r"P(?:(\d+)D)?T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?")
+# Failures that say nothing about the video: the network, DNS or YouTube refusing this address.
+UNREACHABLE = "youtube_unreachable"
+NETWORK_CODES = frozenset({UNREACHABLE, "audio_unreachable"})
+NETWORK_SIGNS = re.compile(
+    r"TransportError|Failed to resolve|timed out|Connection|Unable to download API page|"
+    r"HTTP Error (?:429|5\d\d)|not a bot",
+    re.IGNORECASE,
+)
 
 
 class YouTubeError(Exception):
@@ -150,7 +159,8 @@ def facts(video_id: str) -> VideoFacts:
         with yt_dlp.YoutubeDL(options) as ydl:
             info = ydl.extract_info(f"https://www.youtube.com/watch?v={video_id}", download=False)
     except yt_dlp.utils.DownloadError as error:
-        raise YouTubeError("video_unavailable", str(error)[:120]) from error
+        code = UNREACHABLE if NETWORK_SIGNS.search(str(error)) else "video_unavailable"
+        raise YouTubeError(code, str(error)[:120]) from error
     if not isinstance(info, dict):
         raise YouTubeError("video_unavailable", "no information")
     streams = [
@@ -202,6 +212,8 @@ def captions(video_id: str, language: str | None, video_seconds: int) -> Heard |
         raise YouTubeError("captions_blocked") from error
     except CouldNotRetrieveTranscript:
         return None
+    except requests.RequestException as error:
+        raise YouTubeError(UNREACHABLE, type(error).__name__) from error
     covered = min(CAPTION_WINDOW_SECONDS, video_seconds) if video_seconds else 0
     return Heard(pick.language_code, " ".join(part.text for part in parts), float(covered))
 

@@ -211,6 +211,32 @@ class CaptionAndAudioTests(TestCase):
         self.assertEqual(job.available_at, START + timedelta(seconds=900))
         self.assertIsNone(worker.advance(clock, providers))
 
+    def test_a_network_failure_retries_the_step_without_using_a_listen(self) -> None:
+        make_game(1)
+        clock, providers = FakeClock(), FakeProviders()
+        run(clock, providers, 1)
+
+        def offline(video_id: str) -> VideoFacts:
+            raise YouTubeError("youtube_unreachable", "Failed to resolve 'www.youtube.com'")
+
+        providers.facts = offline  # type: ignore[method-assign]
+        self.assertEqual(worker.advance(clock, providers), "listening: youtube_unreachable")
+        job = LetsPlay.objects.get()
+        self.assertEqual((job.checks, job.attempt_count), ([], 1))
+        self.assertEqual(job.available_at, START + worker.BACKOFF[0])
+
+    def test_yt_dlp_errors_are_split_into_network_and_video_problems(self) -> None:
+        from letsplays import youtube
+
+        for message, network in (
+            ("Unable to download API page: Failed to resolve 'www.youtube.com'", True),
+            ("HTTP Error 429: Too Many Requests", True),
+            ("Sign in to confirm you're not a bot", True),
+            ("Video unavailable. This video is private", False),
+            ("Sign in to confirm your age", False),
+        ):
+            self.assertEqual(bool(youtube.NETWORK_SIGNS.search(message)), network, message)
+
     def test_whisper_budget_is_counted_in_audio_seconds(self) -> None:
         for _ in range(18):
             ProviderCall.objects.create(kind="whisper", units=320, started_at=START)

@@ -16,6 +16,8 @@ dependencies = [
     "numpy>=2,<3",
     "psycopg[binary]>=3.2,<4",
     "python-dotenv>=1,<2",
+    # Caption reads raise requests' errors; they are classified as network failures.
+    "requests>=2.32,<3",
     "tiktoken==0.14.0",
     "whitenoise>=6,<7",
     "youtube-transcript-api==1.2.4",
