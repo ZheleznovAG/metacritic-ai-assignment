@@ -15,6 +15,7 @@ from django.shortcuts import render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_safe
 
+from presentation.letsplays import get_letsplay
 from presentation.summaries import get_summaries
 
 
@@ -59,10 +60,11 @@ def game_detail(request: HttpRequest, game_id: int) -> HttpResponse:
     detail = get_game_detail(game_id)
     if detail is None:
         raise Http404("Game not found")
-    summaries = get_summaries(Game.objects.get(pk=game_id))
+    game = Game.objects.get(pk=game_id)
     context = {
         "game": detail,
-        "summaries": summaries,
+        "summaries": get_summaries(game),
+        "letsplay": get_letsplay(game),
         "similar_games": list_similar_games(game_id),
         "back_query_string": urlencode(_list_params(request)),
         "monitoring_enabled": settings.OPS_MONITORING_ENABLED,

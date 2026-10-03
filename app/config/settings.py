@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "processing",
     "reviews",
     "summaries",
+    "letsplays",
     "presentation",
 ]
 MIDDLEWARE = [

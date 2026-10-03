@@ -1,5 +1,8 @@
 {
- "version": "1.0.0",
+ "version": "1.0.1",
+ "corrections": [
+  "1.0.1: LP-08 sponsored false -> true; the transcript states the sponsorship"
+ ],
  "inputs": ".artifacts/ytp02/conclusion_inputs.jsonl",
  "cases": [
   {
@@ -87,7 +90,7 @@
    "words": 3585,
    "text_sha256": "874bb244cb1937b2395d00cb39d9181eb4c59ea5f6aaaf843fdac3eacf088dcc",
    "expected_status": "sufficient",
-   "sponsored": false,
+   "sponsored": true,
    "note": null
   },
   {

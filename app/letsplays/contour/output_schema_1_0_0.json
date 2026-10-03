@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "letsplay-conclusion-1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["case_id", "status", "verdict", "sponsored", "likes", "dislikes"],
+  "properties": {
+    "case_id": {"type": "string"},
+    "status": {"type": "string", "enum": ["sufficient", "insufficient"]},
+    "verdict": {"type": "string", "maxLength": 300},
+    "sponsored": {"type": "boolean"},
+    "likes": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {"$ref": "#/$defs/opinion"}
+    },
+    "dislikes": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {"$ref": "#/$defs/opinion"}
+    }
+  },
+  "$defs": {
+    "opinion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["point", "quote"],
+      "properties": {
+        "point": {"type": "string", "minLength": 1, "maxLength": 160},
+        "quote": {"type": "string", "minLength": 1, "maxLength": 200}
+      }
+    }
+  }
+}

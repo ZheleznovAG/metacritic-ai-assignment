@@ -45,6 +45,7 @@ def main() -> None:
         ["evals/similarity/score_similarity.py", "--verify"],
         ["evals/similarity/compare.py"],
         ["-m", "unittest", "discover", "-s", "evals/similarity", "-p", "test_*.py"],
+        ["-m", "unittest", "discover", "-s", "evals/letsplays", "-p", "test_*.py"],
     ]
     for arguments in commands:
         print("CHECK:", " ".join(arguments), flush=True)

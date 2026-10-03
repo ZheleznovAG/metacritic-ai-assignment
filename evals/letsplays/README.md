@@ -15,6 +15,8 @@
 | [`host_captions.sh`](host_captions.sh), [`check_speech.py`](check_speech.py) | Проверка речи и языка по субтитрам (с сервера) и по аудио (Whisper) |
 | [`run_selector.py`](run_selector.py), [`selector_report.json`](selector_report.json), [`selection_results.md`](selection_results.md) | Прогон политики сервиса `letsplay-select` на наборе и его результат (`YTP-03`) |
 | [`release_dates.py`](release_dates.py), [`release_dates.json`](release_dates.json) | Даты выхода игр набора с Metacritic (проверка правила по дате) |
+| [`run_conclusions.py`](run_conclusions.py), `conclusion_run_<версия>.json` | Прогоны контура заключения на 14 случаях (без текста роликов) |
+| [`conclusion_grades.json`](conclusion_grades.json), [`score_conclusions.py`](score_conclusions.py), [`conclusion_results.md`](conclusion_results.md) | Оценки по рубрике, применение планки и итог: планка заключения не пройдена |
 
 Тексты роликов — сторонний материал, хранятся вне Git в `.artifacts/ytp02/`. Это исследовательский
 инструментарий, а не тесты приложения; живые вызовы YouTube и Groq в CI не выполняются.

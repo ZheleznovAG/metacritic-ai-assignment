@@ -90,6 +90,46 @@
           {% endif %}
         </section>
       {% endfor %}
+      <section class="game-card__letsplay" aria-labelledby="letsplay-heading">
+        <h2 id="letsplay-heading">Let's play</h2>
+        {% if letsplay.video_url %}
+          <p class="letsplay__video">
+            <a href="{{ letsplay.video_url }}" rel="noopener noreferrer" target="_blank">{{ letsplay.video_title }}</a>
+            · {{ letsplay.channel }}{% if letsplay.views is not None %} · {{ letsplay.views }} views on {{ letsplay.checked_on }}{% endif %}
+          </p>
+        {% endif %}
+        {% if letsplay.state == "ok" %}
+          {% if letsplay.sponsored %}<p class="letsplay__sponsored">The creator says this video is sponsored.</p>{% endif %}
+          <p class="letsplay__verdict">{{ letsplay.verdict }}</p>
+          <div class="game-card__summary-claims">
+            <div>
+              <h4>Likes</h4>
+              <ul>
+                {% for opinion in letsplay.likes %}<li>{{ opinion.point }}<q class="letsplay__quote">{{ opinion.quote }}</q></li>{% empty %}<li class="no-data">No praise in the part heard.</li>{% endfor %}
+              </ul>
+            </div>
+            <div>
+              <h4>Dislikes</h4>
+              <ul>
+                {% for opinion in letsplay.dislikes %}<li>{{ opinion.point }}<q class="letsplay__quote">{{ opinion.quote }}</q></li>{% empty %}<li class="no-data">No complaints in the part heard.</li>{% endfor %}
+              </ul>
+            </div>
+          </div>
+          <p class="letsplay__provenance">
+            From {{ letsplay.source }} of the first {{ letsplay.minutes }} min · Model: {{ letsplay.model_id|default:"unknown" }} · Generated: {{ letsplay.generated_on }}.
+            Quotes are machine transcriptions.
+          </p>
+        {% elif letsplay.state == "insufficient" %}
+          <p class="no-data">{{ letsplay.message }}</p>
+          <p class="letsplay__provenance">Heard: {{ letsplay.source }} of the first {{ letsplay.minutes }} min.</p>
+        {% elif letsplay.state == "not_found" %}
+          <p class="no-data">{{ letsplay.message }}{% if letsplay.checked_on %} Checked on {{ letsplay.checked_on }}.{% endif %}</p>
+        {% elif letsplay.state == "failed" %}
+          <p class="no-data">Not available — {{ letsplay.message }}</p>
+        {% else %}
+          <p class="no-data">In progress — {{ letsplay.message }}</p>
+        {% endif %}
+      </section>
       <section class="game-card__similar" aria-labelledby="similar-games-heading">
         <h2 id="similar-games-heading">Similar games</h2>
         {% if similar_games %}

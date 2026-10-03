@@ -23,6 +23,12 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: .3rem; }
 .game-card__summary-claims ul { margin: .25rem 0; padding-left: 1.2rem; }
 .summary-stale { opacity: .75; font-style: italic; }
 .summary-provenance { opacity: .65; font-size: .85rem; }
+.game-card__letsplay { margin-top: 2rem; border-top: 1px solid currentColor; }
+.letsplay__video { overflow-wrap: anywhere; }
+.letsplay__verdict { font-weight: 500; }
+.letsplay__sponsored { font-size: .85rem; font-weight: 600; }
+.letsplay__provenance { opacity: .65; font-size: .85rem; }
+.letsplay__quote { display: block; margin: .2rem 0 .5rem; font-size: .85rem; font-style: italic; opacity: .75; overflow-wrap: anywhere; }
 .game-card__similar { margin-top: 2rem; border-top: 1px solid currentColor; }
 .similar-games { padding-left: 1.25rem; }
 .similar-games li { margin: .75rem 0; }

@@ -14,6 +14,8 @@ import httpx
 from catalog.similarity_index import Maintainer
 from core.clock import Clock, SystemClock
 from django.core.management.base import BaseCommand, CommandParser
+from letsplays import worker as letsplay_worker
+from letsplays.providers import LiveProviders
 from metacritic.gateway import ReviewGatewayProtocol
 from processing.heartbeat import Heartbeat, report_progress
 from processing.observed_gateway import ObservedGateway
@@ -42,6 +44,16 @@ class Command(BaseCommand):
         timeout = float(os.environ.get("GROQ_API_TIMEOUT_SECONDS", "180"))
         client = httpx.Client(timeout=timeout)
         self._maintainer = Maintainer()
+        youtube_key = os.environ.get("YOUTUBE_API_KEY", "").strip()
+        # Let's plays need YouTube search and Groq (Whisper and the conclusion); without both
+        # keys the worker simply skips them.
+        self._letsplays = (
+            LiveProviders(
+                youtube_key=youtube_key, groq_key=api_key, groq_base_url=base_url, client=client
+            )
+            if youtube_key and api_key
+            else None
+        )
         try:
             with Heartbeat("worker"):
                 if options["once"]:
@@ -98,7 +110,24 @@ class Command(BaseCommand):
             return
 
         self._maintain_similar_games(clock)
+        if self._advance_letsplays(clock):
+            return
         self.stdout.write("idle: no review or summary work due")
+
+    def _advance_letsplays(self, clock: Clock) -> bool:
+        """One let's-play step in idle time; a provider failure never stops the worker."""
+        if self._letsplays is None:
+            return False
+        report_progress("letsplays", deadline_seconds=300)
+        try:
+            outcome = letsplay_worker.advance(clock, self._letsplays)
+        except Exception as error:  # noqa: BLE001 - the job records classified errors itself
+            self.stderr.write(f"letsplays: unexpected {type(error).__name__}")
+            return False
+        if outcome is None:
+            return False
+        self.stdout.write(self.style.SUCCESS(f"letsplays {outcome}"))
+        return True
 
     def _maintain_similar_games(self, clock: Clock) -> None:
         """Idle-time upkeep of the similar-games index; a model failure never stops the worker."""

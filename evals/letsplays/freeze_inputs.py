@@ -22,8 +22,10 @@ CONTROLS = {
     "QA7CELP3s2M": ("Rogue Racer", "silence: Whisper returns filler only"),
     "iKyXn73EDs8": ("DOOM: The Dark Ages - Revelations", "cutscene dialogue only"),
 }
-# Read in the transcript before freezing: the creator says the stream is sponsored.
-SPONSORED = {"YQnC7ky6d24"}
+# Read in the transcript: the creator says the video or stream is sponsored. N84q1nzOuUw was
+# missed when the set was frozen (1.0.0) and found by the 2.0.0 eval run; the transcript says
+# "This video is sponsored by Graveyard Keeper 2" (correction 1.0.1, conclusion_results.md).
+SPONSORED = {"YQnC7ky6d24", "N84q1nzOuUw"}
 
 
 def english_texts() -> dict[str, tuple[str, str]]:
@@ -70,7 +72,10 @@ def main() -> None:
         for item in inputs:
             out.write(json.dumps(item, ensure_ascii=False) + "\n")
     frozen = {
-        "version": "1.0.0",
+        "version": "1.0.1",
+        "corrections": [
+            "1.0.1: LP-08 sponsored false -> true; the transcript states the sponsorship"
+        ],
         "inputs": ".artifacts/ytp02/conclusion_inputs.jsonl",
         "cases": records,
     }

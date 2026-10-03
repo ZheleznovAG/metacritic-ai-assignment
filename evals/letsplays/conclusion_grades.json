@@ -1,0 +1,39 @@
+{
+ "rubric": "evals/letsplays/metric.md (conclusion rubric 1.0.0)",
+ "grader": "AI assistant, by reading each answer next to its cited segments and the transcript; no blind second grader",
+ "cases_version": "1.0.1",
+ "runs": {
+  "2.0.0": {
+   "LP-01": {"GROUND": 1, "ATTRIBUTION": 2, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "two points lean on the next segment (Bloodborne, Celtic), not the cited one; one segment cited for two dislikes"},
+   "LP-02": {"GROUND": 2, "ATTRIBUTION": 1, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "describing scenery (messy office, littered street) counted as dislikes; the verdict repeats it"},
+   "LP-03": {"GROUND": 1, "ATTRIBUTION": 1, "BALANCE": 2, "INSUFFICIENT": 2, "FORMAT": 2, "note": "lighting point wider than the cut segment; clips on a promotional device are not the game"},
+   "LP-04": {"GROUND": 1, "ATTRIBUTION": 0, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "blocking": "interface text 'Environment level terrible' and a character-like line given as the creator's dislikes"},
+   "LP-05": {"GROUND": 2, "ATTRIBUTION": 1, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "affectionate 'annoying and a dork' about a character counted as a dislike"},
+   "LP-06": {"GROUND": 2, "ATTRIBUTION": 2, "BALANCE": 2, "INSUFFICIENT": 2, "FORMAT": 2},
+   "LP-07": {"GROUND": 2, "ATTRIBUTION": 1, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "self-deprecation about losing counted as a dislike"},
+   "LP-08": {"GROUND": 2, "ATTRIBUTION": 1, "BALANCE": 1, "INSUFFICIENT": 2, "DISCLOSURE": 2, "FORMAT": 2, "note": "found the sponsorship the frozen oracle missed (correction 1.0.1); 'mumbling nonsense' describes a voice mode, not a complaint"},
+   "LP-09": {"GROUND": 2, "ATTRIBUTION": 2, "BALANCE": 2, "INSUFFICIENT": 2, "DISCLOSURE": 2, "FORMAT": 2},
+   "LP-10": {"GROUND": 2, "ATTRIBUTION": 2, "BALANCE": 2, "INSUFFICIENT": 2, "FORMAT": 2},
+   "LP-11": {"GROUND": 2, "ATTRIBUTION": 1, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "horror reactions and sarcasm counted as dislikes"},
+   "LP-12": {"GROUND": 2, "ATTRIBUTION": 1, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "fear reactions counted as dislikes"},
+   "LP-13": {"INSUFFICIENT": 2, "FORMAT": 2},
+   "LP-14": {"INSUFFICIENT": 2, "FORMAT": 2}
+  },
+  "2.1.0": {
+   "LP-01": {"GROUND": 2, "ATTRIBUTION": 1, "BALANCE": 2, "INSUFFICIENT": 2, "FORMAT": 2, "note": "'so massive' is why the creator hesitated to start a series, not a complaint"},
+   "LP-02": {"GROUND": 2, "ATTRIBUTION": 1, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "scenery (messy office, an abandoned building) still counted as dislikes"},
+   "LP-03": {"GROUND": 1, "ATTRIBUTION": 1, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "lighting point wider than the cut segment; promotional device; the fog complaint split into two dislikes"},
+   "LP-04": {"GROUND": 1, "ATTRIBUTION": 0, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "blocking": "interface text 'Environment level terrible' again given as the creator's dislike"},
+   "LP-05": {"GROUND": 1, "ATTRIBUTION": 2, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "'jeez these menus' stretched into 'overly crisp and cluttered menus'"},
+   "LP-06": {"GROUND": 2, "ATTRIBUTION": 1, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "'worst luck' is a reaction, not a complaint about the game"},
+   "LP-07": {"GROUND": 2, "ATTRIBUTION": 2, "BALANCE": 2, "INSUFFICIENT": 2, "FORMAT": 2},
+   "LP-08": {"GROUND": 2, "ATTRIBUTION": 2, "BALANCE": 2, "INSUFFICIENT": 2, "DISCLOSURE": 1, "FORMAT": 2, "note": "sponsored flag set, but the verdict does not say so"},
+   "LP-09": {"GROUND": 1, "ATTRIBUTION": 1, "BALANCE": 2, "INSUFFICIENT": 2, "DISCLOSURE": 2, "FORMAT": 2, "note": "'Sexy. I'm out.' is too ambiguous for 'calls the game sexy'"},
+   "LP-10": {"GROUND": 2, "ATTRIBUTION": 2, "BALANCE": 2, "INSUFFICIENT": 2, "FORMAT": 2},
+   "LP-11": {"GROUND": 2, "ATTRIBUTION": 1, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "sarcasm and a scare still counted as dislikes despite the new rule"},
+   "LP-12": {"GROUND": 2, "ATTRIBUTION": 1, "BALANCE": 1, "INSUFFICIENT": 2, "FORMAT": 2, "note": "fear reactions still counted as dislikes"},
+   "LP-13": {"INSUFFICIENT": 2, "FORMAT": 2},
+   "LP-14": {"INSUFFICIENT": 2, "FORMAT": 2}
+  }
+ }
+}

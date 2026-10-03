@@ -1,0 +1,360 @@
+{
+ "contour_fingerprint": "b9dab99ddb4162e5930d4ae715a86f797be03bf79eb0c4044e79934150d1de57",
+ "contour_versions": {
+  "provider": "groq",
+  "api_kind": "chat_completions",
+  "requested_model": "openai/gpt-oss-120b",
+  "prompt_version": "1.1.0",
+  "prompt_sha256": "e5ca6f8cc924c265da2ee001fc749339811d2716d1a54d81d1366b0a9a3cf0cd",
+  "schema_version": "1.0.0",
+  "schema_sha256": "2e0639d0143ecf6b8518b7ae3f4817f6f17669c122fd68d3d39660ced961dc05",
+  "tokenizer_id": "o200k_harmony",
+  "tokenizer_version": "0.14.0",
+  "max_transcript_words": "2500",
+  "quote_rule_version": "1.1.0",
+  "quote_span_words": "80"
+ },
+ "cases": [
+  {
+   "case_id": "LP-01",
+   "game": "Elden Ring",
+   "expected_status": "sufficient",
+   "sponsored_expected": false,
+   "words_sent": 1974,
+   "estimated_prompt_tokens": 2804,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 2771,
+   "completion_tokens": 428,
+   "latency_ms": 5413,
+   "validation_errors": [
+    "likes[1].quote is not in the transcript"
+   ],
+   "status": "sufficient",
+   "sponsored": false,
+   "verdict": "The creator is highly enthusiastic about Elden Ring, praising its world, lore and combat mechanics, though they note performance issues and some visual annoyances.",
+   "likes": [
+    "Extremely excited, best hype since Bloodborne",
+    "Loves the Celtic‑inspired lore and setting",
+    "Enjoys power‑stancing weapons"
+   ],
+   "dislikes": [
+    "PC performance is poor, slows down a lot",
+    "Dislikes the yellowish cloud colors",
+    "Finds crafting mostly useless"
+   ]
+  },
+  {
+   "case_id": "LP-02",
+   "game": "Resident Evil Requiem",
+   "expected_status": "sufficient",
+   "sponsored_expected": false,
+   "words_sent": 2031,
+   "estimated_prompt_tokens": 3247,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 3208,
+   "completion_tokens": 438,
+   "latency_ms": 5739,
+   "validation_errors": [
+    "likes[1].quote is not in the transcript",
+    "likes[2].quote is not in the transcript"
+   ],
+   "status": "sufficient",
+   "sponsored": false,
+   "verdict": "The creator is impressed by the game’s realistic graphics and atmospheric setting, but is put off by odd boss designs, the absence of a map, and low ammunition.",
+   "likes": [
+    "Graphics look very realistic and cinematic",
+    "Atmosphere and setting are immersive",
+    "Story premise feels personal and intriguing"
+   ],
+   "dislikes": [
+    "Bosses look weird and unappealing",
+    "Lack of map makes navigation frustrating",
+    "Limited ammo adds tension"
+   ]
+  },
+  {
+   "case_id": "LP-03",
+   "game": "Silent Hill: Townfall",
+   "expected_status": "sufficient",
+   "sponsored_expected": false,
+   "words_sent": 1808,
+   "estimated_prompt_tokens": 2921,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 2878,
+   "completion_tokens": 666,
+   "latency_ms": 5885,
+   "validation_errors": [],
+   "status": "sufficient",
+   "sponsored": false,
+   "verdict": "The creator is clearly excited about Silent Hill: Townfall, praising its music, lighting and lived‑in world, though they wish it had more fog and find the controller slower.",
+   "likes": [
+    "Music by Pilot Priest sounds incredible",
+    "Lighting is top‑notch and looks great",
+    "Environment feels lived‑in and authentic"
+   ],
+   "dislikes": [
+    "Missing fog made the atmosphere feel off",
+    "Using a controller made gameplay slower"
+   ]
+  },
+  {
+   "case_id": "LP-04",
+   "game": "Pokemon Pokopia",
+   "expected_status": "sufficient",
+   "sponsored_expected": false,
+   "words_sent": 2217,
+   "estimated_prompt_tokens": 3529,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 3493,
+   "completion_tokens": 645,
+   "latency_ms": 5816,
+   "validation_errors": [
+    "likes[2].quote is not in the transcript"
+   ],
+   "status": "sufficient",
+   "sponsored": false,
+   "verdict": "The creator is intrigued by the game’s story and enjoys the building and music, but finds some transformations and cramped housing unsettling.",
+   "likes": [
+    "Intrigued by the unexpected story about dead humans",
+    "Enjoys the happy‑go‑lucky music while messing around",
+    "Likes being able to quickly build and customize habitats"
+   ],
+   "dislikes": [
+    "Ditto transformations feel scary",
+    "Finding the cramped Pokémon apartment setup nightmarish",
+    "The game feels like a weird, confusing mix of genres"
+   ]
+  },
+  {
+   "case_id": "LP-05",
+   "game": "Final Fantasy VII Remake Intergrade",
+   "expected_status": "sufficient",
+   "sponsored_expected": false,
+   "words_sent": 911,
+   "estimated_prompt_tokens": 1748,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 1715,
+   "completion_tokens": 772,
+   "latency_ms": 5993,
+   "validation_errors": [],
+   "status": "sufficient",
+   "sponsored": false,
+   "verdict": "The creator is impressed by the game's graphics and performance but is put off by Yuffie's annoying personality and the underwhelming depiction of Midgar.",
+   "likes": [
+    "Stunning visuals and high resolution",
+    "Runs smoothly at 60fps",
+    "Excellent attack animations for Yuffie"
+   ],
+   "dislikes": [
+    "Yuffie's character is annoying and dorky",
+    "Midgar feels like a garbage city, false advertising",
+    "Menus are cramped and confusing"
+   ]
+  },
+  {
+   "case_id": "LP-06",
+   "game": "DOOM: The Dark Ages - Revelations",
+   "expected_status": "sufficient",
+   "sponsored_expected": false,
+   "words_sent": 272,
+   "estimated_prompt_tokens": 1081,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 1048,
+   "completion_tokens": 389,
+   "latency_ms": 5786,
+   "validation_errors": [],
+   "status": "sufficient",
+   "sponsored": false,
+   "verdict": "The creator is frustrated by technical issues, noting severe desynchronization and driver problems.",
+   "likes": [],
+   "dislikes": [
+    "Game is heavily desynced, ruining experience",
+    "Bad luck blamed on new drivers shipped with DLC"
+   ]
+  },
+  {
+   "case_id": "LP-07",
+   "game": "Mina the Hollower",
+   "expected_status": "sufficient",
+   "sponsored_expected": false,
+   "words_sent": 2482,
+   "estimated_prompt_tokens": 3349,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 3316,
+   "completion_tokens": 870,
+   "latency_ms": 6600,
+   "validation_errors": [
+    "likes[0].quote is not in the transcript"
+   ],
+   "status": "sufficient",
+   "sponsored": false,
+   "verdict": "The creator loves the adorable Gameboy‑color art and praises the talented developers, but thinks the demo is frustratingly hard and the controls feel clunky.",
+   "likes": [
+    "Adorable art style with Gameboy Color look",
+    "Developers are talented and nice",
+    "Clever little polishes in the demo"
+   ],
+   "dislikes": [
+    "Game is very hard",
+    "Huge attack delay forces deliberate play",
+    "Key and burrow mechanics are confusing"
+   ]
+  },
+  {
+   "case_id": "LP-08",
+   "game": "Graveyard Keeper 2",
+   "expected_status": "sufficient",
+   "sponsored_expected": false,
+   "words_sent": 2500,
+   "estimated_prompt_tokens": 3800,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 3767,
+   "completion_tokens": 541,
+   "latency_ms": 5827,
+   "validation_errors": [],
+   "status": "sufficient",
+   "sponsored": true,
+   "verdict": "The creator enjoys the quirky character voices and the burial mechanics, and notes the video is sponsored.",
+   "likes": [
+    "Appreciates the ridiculous character voices",
+    "Excited about the burial quality system"
+   ],
+   "dislikes": []
+  },
+  {
+   "case_id": "LP-09",
+   "game": "SiN: Reloaded",
+   "expected_status": "sufficient",
+   "sponsored_expected": true,
+   "words_sent": 441,
+   "estimated_prompt_tokens": 1280,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 1248,
+   "completion_tokens": 203,
+   "latency_ms": 5026,
+   "validation_errors": [],
+   "status": "sufficient",
+   "sponsored": true,
+   "verdict": "The creator is enthusiastic about trying the game, showing clear excitement despite the sponsorship mention.",
+   "likes": [
+    "Excited to try the game"
+   ],
+   "dislikes": []
+  },
+  {
+   "case_id": "LP-10",
+   "game": "WilderDash",
+   "expected_status": "sufficient",
+   "sponsored_expected": false,
+   "words_sent": 654,
+   "estimated_prompt_tokens": 1546,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 1514,
+   "completion_tokens": 362,
+   "latency_ms": 3431,
+   "validation_errors": [],
+   "status": "sufficient",
+   "sponsored": false,
+   "verdict": "The creator sees some appealing art and music but is frustrated by unclear mechanics and broken gameplay, leading to a negative overall impression.",
+   "likes": [
+    "Enjoys the art style",
+    "Likes the music",
+    "Finds the visual look cool"
+   ],
+   "dislikes": [
+    "Game feels fundamentally broken",
+    "Lacks clear tower range info",
+    "Overall negative experience"
+   ]
+  },
+  {
+   "case_id": "LP-11",
+   "game": "Panic Files: Buried Sanity",
+   "expected_status": "sufficient",
+   "sponsored_expected": false,
+   "words_sent": 1409,
+   "estimated_prompt_tokens": 2503,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 2470,
+   "completion_tokens": 462,
+   "latency_ms": 6014,
+   "validation_errors": [
+    "dislikes[1].quote is not in the transcript"
+   ],
+   "status": "sufficient",
+   "sponsored": false,
+   "verdict": "The creator is excited by the game’s interesting mechanics and finds moments of fun, but is frustrated by the difficulty of operating without a gas mask and the lack of clear direction.",
+   "likes": [
+    "finds the panic mechanic interesting",
+    "expresses excitement and enjoyment",
+    "likes the explosive action"
+   ],
+   "dislikes": [
+    "dislikes the difficulty without a gas mask",
+    "frustrated by hard operation with mask",
+    "finds the situation not good"
+   ]
+  },
+  {
+   "case_id": "LP-12",
+   "game": "Active Matter",
+   "expected_status": "sufficient",
+   "sponsored_expected": false,
+   "words_sent": 510,
+   "estimated_prompt_tokens": 1320,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 1288,
+   "completion_tokens": 348,
+   "latency_ms": 5368,
+   "validation_errors": [],
+   "status": "sufficient",
+   "sponsored": false,
+   "verdict": "The creator is generally impressed by the game's visuals and movement features but is frustrated by some ineffective mechanics and high damage from enemies.",
+   "likes": [
+    "Appreciates the manual lean mechanic",
+    "Thinks the game looks good"
+   ],
+   "dislikes": [
+    "Finds a certain action ineffective",
+    "Frustrated by high damage from enemies",
+    "Feels scared to explore houses"
+   ]
+  },
+  {
+   "case_id": "LP-13",
+   "game": "Rogue Racer",
+   "expected_status": "insufficient",
+   "sponsored_expected": false,
+   "words_sent": 22,
+   "estimated_prompt_tokens": 754,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 721,
+   "completion_tokens": 70,
+   "latency_ms": 4524,
+   "validation_errors": [],
+   "status": "insufficient",
+   "sponsored": false,
+   "verdict": "",
+   "likes": [],
+   "dislikes": []
+  },
+  {
+   "case_id": "LP-14",
+   "game": "DOOM: The Dark Ages - Revelations",
+   "expected_status": "insufficient",
+   "sponsored_expected": false,
+   "words_sent": 172,
+   "estimated_prompt_tokens": 946,
+   "returned_model": "openai/gpt-oss-120b",
+   "prompt_tokens": 914,
+   "completion_tokens": 80,
+   "latency_ms": 7199,
+   "validation_errors": [],
+   "status": "insufficient",
+   "sponsored": false,
+   "verdict": "",
+   "likes": [],
+   "dislikes": []
+  }
+ ]
+}

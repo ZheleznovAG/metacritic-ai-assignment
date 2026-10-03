@@ -42,7 +42,12 @@ ALLOWED = frozenset(
         ("catalog", "metacritic"),
         ("catalog", "similarity"),
         ("config", "presentation"),
+        # Let's plays are kept per catalogue game.
+        ("letsplays", "catalog"),
+        # Let's-play Groq calls reuse the summaries adapter's URL check, errors and headers.
+        ("letsplays", "summaries"),
         ("presentation", "catalog"),
+        ("presentation", "letsplays"),
         ("presentation", "processing"),
         ("presentation", "reviews"),
         ("presentation", "summaries"),
@@ -51,6 +56,8 @@ ALLOWED = frozenset(
         ("processing", "reviews"),
         ("processing", "summaries"),
         ("reviews", "catalog"),
+        # The one worker process (reviews' run_worker) also advances let's plays when idle.
+        ("reviews", "letsplays"),
         ("reviews", "metacritic"),
         ("reviews", "processing"),
         ("reviews", "summaries"),
