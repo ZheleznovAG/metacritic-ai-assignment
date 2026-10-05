@@ -6,7 +6,7 @@ belongs only to [action_plan.md](../../action_plan.md).
 
 ## Scope and independent evidence
 
-[ADR-0002](../decisions/0002-genre-similarity-policy.md) records the selection of
+[ADR-0007](../decisions/0007-genre-similarity-policy.md) records the selection of
 `genre-jaccard` 1.0.0. The [comparison report](../../evals/similarity/comparison_report.json)
 contains both policies' results for every case, all eight invariants, oracle
 version/hash manifest and implementation hashes. The original frozen files and

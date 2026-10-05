@@ -1,0 +1,119 @@
+{
+  "task_ids": 46,
+  "gate_ids": 9,
+  "estimated_tasks": 29,
+  "must_requirements": 28,
+  "bonus_requirements": 3,
+  "acceptance_scenarios": 47,
+  "risks": 24,
+  "reserve_25_percent_hours": 37,
+  "base_with_reserve_hours": 182,
+  "early_public_slice_hours": 20,
+  "selected_bonus_scope": "bonus2",
+  "scenarios": {
+    "none": {
+      "work_hours": 145,
+      "dependency_hours": 103,
+      "longest_chain": [
+        "IMP-01",
+        "IMP-02",
+        "IMP-03",
+        "IMP-04",
+        "IMP-05",
+        "SIM-VER-01",
+        "IMP-07",
+        "HRD-05",
+        "HRD-06",
+        "PUB-01",
+        "PUB-02",
+        "PUB-03",
+        "BON-00",
+        "REL-02",
+        "REL-01",
+        "REL-04",
+        "REL-05"
+      ]
+    },
+    "bonus1": {
+      "work_hours": 165,
+      "dependency_hours": 123,
+      "longest_chain": [
+        "IMP-01",
+        "IMP-02",
+        "IMP-03",
+        "IMP-04",
+        "IMP-05",
+        "SIM-VER-01",
+        "IMP-07",
+        "HRD-05",
+        "HRD-06",
+        "PUB-01",
+        "PUB-02",
+        "PUB-03",
+        "BON-00",
+        "BON-11",
+        "BON-12",
+        "REL-02",
+        "REL-01",
+        "REL-04",
+        "REL-05"
+      ]
+    },
+    "bonus2": {
+      "work_hours": 177,
+      "dependency_hours": 135,
+      "longest_chain": [
+        "IMP-01",
+        "IMP-02",
+        "IMP-03",
+        "IMP-04",
+        "IMP-05",
+        "SIM-VER-01",
+        "IMP-07",
+        "HRD-05",
+        "HRD-06",
+        "PUB-01",
+        "PUB-02",
+        "PUB-03",
+        "BON-00",
+        "BON-21",
+        "BON-22",
+        "REL-02",
+        "REL-01",
+        "REL-04",
+        "REL-05"
+      ]
+    },
+    "bonus1+bonus2": {
+      "work_hours": 197,
+      "dependency_hours": 135,
+      "longest_chain": [
+        "IMP-01",
+        "IMP-02",
+        "IMP-03",
+        "IMP-04",
+        "IMP-05",
+        "SIM-VER-01",
+        "IMP-07",
+        "HRD-05",
+        "HRD-06",
+        "PUB-01",
+        "PUB-02",
+        "PUB-03",
+        "BON-00",
+        "BON-21",
+        "BON-22",
+        "REL-02",
+        "REL-01",
+        "REL-04",
+        "REL-05"
+      ]
+    }
+  }
+}
+..................
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.398s
+
+OK

@@ -1,0 +1,27 @@
+{
+  "observed_at_utc": "2026-10-05T13:03:24.553068+00:00",
+  "baseline": "3270226",
+  "build": {
+    "command": "docker compose --env-file .env.app build web checks",
+    "exit_code": 0
+  },
+  "canonical_checks": {
+    "command": "docker compose --project-name metacritic-ui-opt01-checks --env-file .env.app -f compose.yaml -f compose.ci.yaml run --rm checks",
+    "exit_code": 0,
+    "application_tests": 586,
+    "script_tests": 22,
+    "offline_evaluators": "passed",
+    "first_attempt": "586+22 passed; exact baseline scope format rejected; corrected and rebuilt before final complete pass"
+  },
+  "planning_tests": 18,
+  "local_smoke": {
+    "exit_code": 0,
+    "passed": 8
+  },
+  "application_and_frozen_evaluations_diff_from_baseline": [],
+  "limits": [
+    "Local checks only; no new hosted CI/deployment or remote availability verification.",
+    "Final documentation wording and evidence checked on host; application source unchanged from FIN-ARCH.",
+    "Documentation link audit checks local paths, not fragments or remote URLs."
+  ]
+}

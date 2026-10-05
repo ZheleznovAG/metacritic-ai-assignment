@@ -35,7 +35,7 @@ COPY evals/similarity ./evals/similarity
 COPY evals/letsplays ./evals/letsplays
 COPY docs ./docs
 COPY action_plan.md implementation_plan.md ./
-COPY intake.md assignment.md methodology.md AGENTS.md README.md ./
+COPY intake.md assignment.md methodology.md AGENTS.md README.md PROJECT_STATUS.md ./
 CMD ["python", "scripts/check.py"]
 
 FROM base AS runtime

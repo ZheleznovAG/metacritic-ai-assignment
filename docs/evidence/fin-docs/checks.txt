@@ -1,0 +1,66 @@
+FIN-DOCS verification excerpts (UTF-8/LF)
+Canonical Linux/Python 3.12/PostgreSQL 16; isolated checks project.
+
+First attempt: application/script tests passed; planning format rejected.
+Restored exact baseline scope line, rebuilt checks image, reran full suite.
+
+FIRST ATTEMPT
+CHECK: -m ruff format --check app scripts
+CHECK: -m ruff check app scripts
+CHECK: -m mypy
+CHECK: app/manage.py check
+CHECK: app/manage.py makemigrations --check --dry-run
+CHECK: app/manage.py collectstatic --noinput
+CHECK: app/manage.py test tests --noinput -v 2
+Ran 586 tests in 142.649s
+OK
+CHECK: -m unittest discover -s scripts/tests -p test_*.py
+Ran 22 tests in 0.648s
+OK
+CHECK: research/planning/check_plan.py
+PLAN CHECK FAILED: One explicit Bonus scope is required
+
+FINAL ATTEMPT (exit 0)
+CHECK: -m ruff format --check app scripts
+CHECK: -m ruff check app scripts
+CHECK: -m mypy
+CHECK: app/manage.py check
+CHECK: app/manage.py makemigrations --check --dry-run
+CHECK: app/manage.py collectstatic --noinput
+CHECK: app/manage.py test tests --noinput -v 2
+Ran 586 tests in 143.692s
+OK
+CHECK: -m unittest discover -s scripts/tests -p test_*.py
+Ran 22 tests in 0.625s
+OK
+CHECK: research/planning/check_plan.py
+CHECK: -m unittest discover -s research/planning -p test_*.py
+Ran 18 tests in 0.152s
+OK
+CHECK: evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
+CHECK: -m unittest discover -s evals/reviews -p test_*.py
+Ran 7 tests in 0.016s
+OK
+CHECK: -m unittest discover -s evals/review_selection -p test_*.py
+Ran 18 tests in 0.029s
+OK
+CHECK: evals/review_selection/score_selection.py --verify evals/review_selection/baseline_report.json
+CHECK: evals/review_selection/verify_candidate.py
+CHECK: evals/similarity/score_similarity.py --verify
+CHECK: evals/similarity/compare.py
+CHECK: -m unittest discover -s evals/similarity -p test_*.py
+Ran 29 tests in 0.053s
+OK
+CHECK: -m unittest discover -s evals/letsplays -p test_*.py
+Ran 10 tests in 0.015s
+OK
+
+LOCAL SMOKE (exit 0)
+PASS /: 200
+PASS /health/live/: 200
+PASS /health/ready/: 200
+PASS /.env: 404
+PASS /.env.app: 404
+PASS /admin/: 404
+PASS /unknown: 404
+PASS /static/presentation/app.9349550df068.css: CSS served

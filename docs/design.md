@@ -1,16 +1,16 @@
 # Внутренние контракты и модель данных
 
-- **Статус:** Verified design — retry/storage/evidence correction проверена; application capacity и quality policies не считаются доказанными
-- **Дата:** 2026-09-09 (Asia/Novosibirsk; корректировка baseline 0.18)
+- **Область:** реализованные внутренние контракты; первоначальный baseline PLN-02 сохранён ниже, статусы задач только в action_plan.md
+- **Дата baseline:** 2026-09-09; описание текущих границ сверено в FIN-DOCS, 2026-10-05
 - **Задача:** `PLN-02`
 - **Архитектура:** [`ADR-0001`](decisions/0001-minimal-stack-and-architecture.md)
 - **Связи:** `RUN-01`, `SEL-01–SEL-03`, `DATA-01–DATA-03`, `AI-01–AI-03`, `UI-01–UI-05`, `SIM-01–SIM-03`, `NFR-01–NFR-06`
 
 ## Область решения
 
-Документ задаёт тестируемые границы модулей, состояние PostgreSQL, транзакции и инварианты. Это логическая схема для будущих Django migrations, а не реализация.
+Документ задаёт тестируемые границы модулей, состояние PostgreSQL, транзакции и инварианты. Первоначальная логическая схема PLN-02 реализована миграциями и сервисами; текущие версии политик и ограничения перечислены в [PROJECT_STATUS.md](../PROJECT_STATUS.md). Design не заменяет исполнительное evidence и не подтверждает capacity/quality одним своим существованием.
 
-Расширение для Bonus 2 вынесено в отдельный [Candidate-контракт](bonus2_design.md): мониторинг процессов и защищённые manual requests. Его технические решения принимаются по evidence `BON-21`/`BON-22`; они не меняют этот принятый Must-контракт одним фактом планирования.
+Реализованное расширение Bonus 2 описывает [контракт](bonus2_design.md): мониторинг процессов и защищённые manual requests; независимое evidence — [BON-21](requirements/bon_21_review.md)/[BON-22](requirements/bon_22_review.md). Исторический planning baseline внутри контракта помечен отдельно.
 
 Must-контур использует только уже выбранные Django, PostgreSQL и три application processes внутри Compose: `web`, `scheduler`, `worker`. `worker` последовательно выполняет два вида сохранённой enrichment-работы: получение отзывов и AI-суммаризацию. Redis, Celery, отдельный search/vector store, object storage, event bus и новый monitoring service не добавляются.
 
@@ -292,13 +292,13 @@ YouTube Data API, 201 единица), прослушивание одного �
 ## Similarity policy `genre-jaccard` 1.0.0 (базовый метод, до 2026-09-21)
 
 
-[ADR-0002](decisions/0002-genre-similarity-policy.md) выбирает простой genre Jaccard
+[ADR-0007](decisions/0007-genre-similarity-policy.md) выбирает простой genre Jaccard
 по результатам [замороженного comparison](../evals/similarity/comparison_report.json).
 Исходный candidate `0.1.0` (`0.60 × genre_jaccard + 0.25 × platform_jaccard +
 0.15 × same_developer`, eligibility по genre либо developer, cutoff `>= 0.15`)
 сохранён в eval, но отвергнут: четыре случая нарушают `INV-NONMATCH`.
 
-Production policy использует только пересечение непустых сохранённых жанров:
+Историческая production policy использовала только пересечение непустых сохранённых жанров:
 `score = |genres(query) ∩ genres(candidate)| / |genres(query) ∪ genres(candidate)|`.
 Жанры сравниваются как множества целых labels после collapse whitespace/casefold;
 пустые labels исключаются, synonyms/перевод/parent genres не выводятся.

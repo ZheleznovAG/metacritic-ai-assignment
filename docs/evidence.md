@@ -1,13 +1,11 @@
-# Requirement → evidence index
+# Requirement -> evidence index
 
-`REL-02`. Maps every requirement ID from [requirements.md](requirements/requirements.md)
-to the review/evidence document that actually verified it. This index only points at
-evidence that already exists; it does not itself re-verify anything. Current task/gate
-status and the authoritative dependency graph stay in [action_plan.md](../action_plan.md) —
-if the two ever disagree, `action_plan.md` wins. `REL-01` and `REL-04` have both run
-([reviews](requirements/rel_01_review.md), [rel_04](requirements/rel_04_review.md)); only
-`REL-05` (actual delivery) remains. Treat `DEL-01`–`DEL-04` below as expected, not
-independently Verified by this index.
+Original take-home requirement IDs and dated verification evidence are preserved
+here. Current task/gate decisions belong only to [action_plan.md](../action_plan.md).
+This index does not re-verify a claim or guarantee continued availability of an old
+public endpoint. Later development is described separately in
+[PROJECT_STATUS.md](../PROJECT_STATUS.md). Original private/invite decisions and
+G4/G5/G6 evidence are historical; post-audit reacceptance is not inferred.
 
 ## Periodic run and selection
 
@@ -44,7 +42,7 @@ independently Verified by this index.
 | `UI-04` | Case-insensitive substring title search | [IMP-05 review](requirements/imp_05_review.md) (`?q=elden` → exactly 2 real rows) |
 | `UI-05` | Single cross-platform sort rule, missing scores included | [IMP-05 review](requirements/imp_05_review.md) |
 
-## Similar games
+## Similar games (original genre-policy acceptance)
 
 | ID | Requirement | Evidence |
 |---|---|---|
@@ -52,17 +50,17 @@ independently Verified by this index.
 | `SIM-02` | Similar games shown on the current game's card | [SIM-VER-01](requirements/sim_ver_01_review.md) (Elden Ring/Wo Long linked by real saved genres) |
 | `SIM-03` | Clicking a similar game's name opens that game's own card | [SIM-VER-01](requirements/sim_ver_01_review.md); [PUB-03](requirements/pub_03_review.md) (public navigation to an independently-discovered similar game) |
 
-## Bonus part 1 (not selected)
+## Bonus part 1 (excluded from original submission)
 
 | ID | Requirement | Status |
 |---|---|---|
 | `YT-01` | Letsplay discovery/summary for each applicable game | **Dropped** — [ADR-0002](decisions/0002-bonus2-scope.md): owner selected the second bonus branch (operational monitoring/manual run), not YouTube; [BON-00 review](requirements/bon_00_review.md) |
 
-## Bonus part 2 (selected)
+## Bonus part 2 (selected for original submission)
 
 | ID | Requirement | Evidence |
 |---|---|---|
-| `OPS-01` | Web UI shows real worker/processing state with consistent freshness | [BON-21 review](requirements/bon_21_review.md); public [`/ops/status/`](https://v978670.hosted-by-vdsina.com/ops/status/) |
+| `OPS-01` | Web UI shows real worker/processing state with consistent freshness | [BON-21 review](requirements/bon_21_review.md); [dated public execution evidence](evidence/bon-21-public-deploy.json) |
 | `OPS-02` | An authorized operator can force one processing run, without double-run or abuse | [BON-22 review](requirements/bon_22_review.md); [execution evidence](evidence/bon-22-public-deploy.json) (real manual run `id=36` on production, claimed by the live scheduler) |
 
 ## Delivery outcomes
@@ -70,9 +68,9 @@ independently Verified by this index.
 | ID | Requirement | Evidence |
 |---|---|---|
 | `DEL-01` | Reviewer gets a reachable link to a reproducible repository | [Public repository](https://github.com/ZheleznovAG/metacritic-ai-assignment), made public with the owner's approval on 2026-09-18; the earlier private + invite decision is superseded. [Anonymous-access and privacy evidence](evidence/repository-public-2026-09-18.json): repository/current CI/API return `200`; one old CI log containing the reviewer's email was deleted before publication, preserving the run record. [Local development](../README.md#local-development) reproduces from a clean checkout ([REL-01](requirements/rel_01_review.md): real `git clone`, full suite green). The earlier [Git-history cleanup](requirements/rel_01_review.md#why-this-candidate-was-re-frozen) remains in place. |
-| `DEL-02` | Reviewer gets a public link to a working service | `https://v978670.hosted-by-vdsina.com/` — live, real Let's Encrypt TLS ([PUB-01](requirements/pub_01_review.md)), kept running for as long as the review is ongoing (no fixed end date). Final external public smoke belongs to `REL-01`/`REL-04`. |
-| `DEL-03` | Relevant AI-assisted history in original record order | [REL-03 review](requirements/rel_03_review.md), [session-to-Git selection](evidence/ai-history-selection.json) and [audit manifest](evidence/ai-history-audit.json): 29 main conversations plus 44 substantive review workers, with explicit Git/artifact linkage and privacy verification. Refresh the cutoff and attachment hash in `REL-05`. |
-| `DEL-04` | The reviewed package is sent to the assignment's email address | `REL-05` (not yet due) |
+| `DEL-02` | Reviewer gets a public link to a working service | [PUB-01](requirements/pub_01_review.md) and REL-01/REL-04 record original trusted-TLS/public smoke. The original VDS was removed on 2026-09-21; later deployment observations are in [history](history/operations.md). These records do not establish current availability. |
+| `DEL-03` | Relevant AI-assisted history in original record order | [REL-03 review](requirements/rel_03_review.md), [session-to-Git selection](evidence/ai-history-selection.json) and [audit manifest](evidence/ai-history-audit.json): 29 main conversations plus 44 substantive review workers, with explicit Git/artifact linkage and privacy verification. The final delivery record is retained in action_plan.md and the [historical journal](history/operations.md). |
+| `DEL-04` | The reviewed package is sent to the assignment's email address | Original delivery and its lateness rejection are recorded in [action_plan.md](../action_plan.md) and [history](history/operations.md); post-submission work does not change that outcome. |
 
 ## Derived non-functional properties
 
@@ -90,13 +88,13 @@ independently Verified by this index.
 Consolidated from the sections below they're each documented in full:
 
 - **Local setup and run**: [README.md § Local development](../README.md#local-development).
-- **Full offline verification** (`ruff`/`mypy`/Django tests/evals): [README.md § Verification and container preview](../README.md#verification-and-container-preview) — `python -B scripts/check.py`.
+- **Full offline verification** (`ruff`/`mypy`/Django tests/evals): [README.md § Verification and container preview](../README.md#verification-and-container-preview) — canonical isolated container suite, which invokes `scripts/check.py` inside Linux/PostgreSQL.
 - **Container/CI parity**: same section — `docker compose ... build web checks`, `docker compose ... run --rm checks`, `docker compose ... --profile app up -d --wait`, `scripts/smoke.py`.
 - **Production deploy/upgrade**: [deploy/README.md](../deploy/README.md) (backup-first, image identity verification, `db_setup -> migrate -> db_grants -> web/scheduler/worker -> caddy`, TLS).
 - **Operator provisioning (BON-22)**: `docker compose ... run --rm --no-deps migrate python app/manage.py create_operator <username>` — [README § Manual run](../README.md#manual-run-bon-22).
 - **Diagnostics**: `scripts/diagnose.py`, `scripts/storage_report.py` — [README § Operations](../README.md#operations).
 
-## Schedule, scope and limitations
+## Original submission schedule, scope and limitations
 
 - All processing/monitoring timestamps are **UTC**; the scheduler checks the current hour
   slot at least once a minute ([design.md](design.md)).
@@ -108,8 +106,22 @@ Consolidated from the sections below they're each documented in full:
   here, to avoid a second, driftable copy: see each review document linked above, and
   [risks.md](risks.md) for the accepted residual risk register.
 
-## Availability
+## Post-submission application
 
-The public deployment at `https://v978670.hosted-by-vdsina.com/` is kept running for as
-long as the review is ongoing; there is no fixed decommission date. `scheduler`/`worker`
-keep processing automatically in the background the entire time (`PUB-01`/`PUB-02`).
+Running-source policies supersede the original genre method: text-hybrid 3.0.0
+([ADR-0003](decisions/0003-text-hybrid-similarity.md),
+[ADR-0004](decisions/0004-foreign-description-gate.md)); meaningful review selection
+[oracle](../evals/review_selection/README.md); experimental Let's Play
+[scope](decisions/0005-bonus1-after-submission.md) and
+[accepted conclusion limitation](decisions/0006-letsplay-conclusion-accepted-with-limitation.md).
+Historical YT-01 exclusion above remains the submitted scope.
+
+Local UI evidence: [UI-OPT-01](requirements/ui_opt_01_review.md),
+[UI-OPT-02](requirements/ui_opt_02_review.md),
+[UI-OPT-03](requirements/ui_opt_03_review.md). Architecture preservation:
+[FIN-ARCH](requirements/fin_arch_review.md). These are not a new public-release claim.
+
+Repository visibility and deployment observations, active policy versions and residual
+limits: [PROJECT_STATUS.md](../PROJECT_STATUS.md). Commands:
+[README](../README.md), [development guide](development.md),
+[deployment runbook](../deploy/README.md). Current acceptance decisions stay in the tracker.

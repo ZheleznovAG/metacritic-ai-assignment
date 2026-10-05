@@ -1,0 +1,10 @@
+{
+  "observed_at_utc": "2026-10-05T12:50:01.114684+00:00",
+  "command": "gh repo view --json nameWithOwner,isPrivate,url",
+  "response": {
+    "isPrivate": false,
+    "nameWithOwner": "ZheleznovAG/metacritic-ai-assignment",
+    "url": "https://github.com/ZheleznovAG/metacritic-ai-assignment"
+  },
+  "scope": "Repository visibility only; no remote application availability check."
+}

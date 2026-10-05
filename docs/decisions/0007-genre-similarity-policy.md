@@ -1,10 +1,17 @@
-# ADR-0002: Genre Jaccard similarity policy
+# ADR-0007: Genre Jaccard similarity policy
 
-- **Status:** Accepted — frozen comparison and application verification
+- **Status:** Historical accepted baseline; superseded for runtime by ADR-0003/0004
 - **Task:** `IMP-06`
 - **Verification:** [IMP-06 review](../requirements/imp_06_review.md)
 - **Requirements/risks:** `SIM-01`, `AC-SIM-01/03`, `ASM-20/21`, `R-SIM-01`
 - **Oracle:** accepted `SIM-EVAL-01` 1.0.0; current task status is in [action_plan.md](../../action_plan.md).
+
+## Identity correction
+
+This original IMP-06 decision was numbered ADR-0002, duplicating the later Bonus 2
+scope decision. FIN-DOCS reindexes this document as ADR-0007; its original decision,
+evaluation thresholds and frozen source/report hashes are preserved. References to
+ADR-0002 in dated genre-comparison evidence refer to this legacy identity.
 
 ## Decision
 

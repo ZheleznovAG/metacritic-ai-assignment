@@ -17,6 +17,7 @@
 !methodology.md
 !AGENTS.md
 !README.md
+!PROJECT_STATUS.md
 app/staticfiles/**
 app/build-version.txt
 **/__pycache__/**
