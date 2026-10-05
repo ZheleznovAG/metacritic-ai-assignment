@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Metacritic AI Assignment</title>
     <link rel="stylesheet" href="{% static 'presentation/app.css' %}">
+    <link rel="icon" href="{% static 'presentation/favicon.svg' %}" type="image/svg+xml">
   </head>
   <body>
     <main class="game-list">
@@ -67,7 +68,7 @@
                 {% if game.cover_url %}
                   <img class="game-list__cover" src="{{ game.cover_url }}" alt="{{ game.title }} cover art"
                     width="300" height="400" decoding="async"
-                    {% if forloop.counter > 4 %}loading="lazy"{% else %}fetchpriority="high"{% endif %}>
+                    {% if forloop.counter <= 2 %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>
                 {% else %}
                   <span class="game-list__cover game-list__cover--placeholder" aria-hidden="true"></span>
                 {% endif %}

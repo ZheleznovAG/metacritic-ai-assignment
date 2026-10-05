@@ -222,6 +222,11 @@ Update the reviewed selection before adding new conversations. No credentials or
 account stores belong in Git or the ZIP. These fixture-only tests also run through the
 existing `scripts/check.py`/CI script-test discovery; exporting real logs is local only.
 
+For separate live UI performance/accessibility measurements, see the
+[UI-OPT-03 browser audit commands](research/reviews/20261005_ui_opt_03/README.md).
+They use pinned local Lighthouse/axe tools and external cover requests; deterministic
+CI continues to run the fixture browser/query/image regressions in `checks`.
+
 Offline evidence checks from the repository root with Python 3.12 or later (standard library only; no API key or `.env` needed):
 
 ```powershell

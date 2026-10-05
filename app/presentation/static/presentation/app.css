@@ -86,7 +86,7 @@ button:disabled { opacity: .55; cursor: default; }
   border: 1px solid var(--accent); border-radius: .5rem; background: var(--accent); color: var(--accent-text);
   font-weight: 800; font-variant-numeric: tabular-nums;
 }
-.game-list__developer, .game-list__date { font-size: .84rem; opacity: .72; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.game-list__developer, .game-list__date { font-size: .84rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .game-list__platforms { margin-top: auto; padding-top: var(--space-1); border-top: 1px solid var(--border); font-size: .78rem; color: var(--muted); overflow-wrap: anywhere; }
 .filter-chips { margin: var(--space-2) 0; gap: var(--space-1); }
 .filter-chips a { display: inline-flex; align-items: center; gap: .65rem; min-height: 2.75rem; padding: .35rem .8rem; background: var(--surface); border: 1px solid var(--border); border-radius: 2rem; text-decoration: none; overflow-wrap: anywhere; }
@@ -98,7 +98,7 @@ button:disabled { opacity: .55; cursor: default; }
   display: inline-grid; place-items: center; min-width: 2.2rem; min-height: 2.2rem; padding: .2rem .45rem; border-radius: .45rem;
 }
 .pagination__current { background: ButtonText; color: ButtonFace; font-weight: 700; }
-.pagination__disabled, .pagination__ellipsis { opacity: .45; }
+.pagination__disabled, .pagination__ellipsis { color: var(--muted); }
 .pagination__position { display: none; font-size: .85rem; color: var(--muted); }
 
 /* Public game detail */

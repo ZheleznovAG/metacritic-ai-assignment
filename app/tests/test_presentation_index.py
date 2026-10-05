@@ -173,7 +173,7 @@ class PaginationPresentationTests(TestCase):
         detail = self.client.get(f"/games/{game.id}/?page=2")
         self.assertContains(detail, 'href="/?page=2"')
 
-    def test_catalog_marks_only_below_the_fold_covers_for_lazy_loading(self) -> None:
+    def test_catalog_prioritizes_first_mobile_row_and_defers_the_rest(self) -> None:
         for n in range(5):
             game = _game(n + 1, f"Cover Game {n + 1}")
             game.cover_url = f"https://example.invalid/{n + 1}.jpg"
@@ -181,8 +181,8 @@ class PaginationPresentationTests(TestCase):
 
         content = self.client.get("/").content.decode()
 
-        self.assertEqual(content.count('fetchpriority="high"'), 4)
-        self.assertEqual(content.count('loading="lazy"'), 1)
+        self.assertEqual(content.count('fetchpriority="high"'), 2)
+        self.assertEqual(content.count('loading="lazy"'), 3)
         self.assertEqual(content.count('decoding="async"'), 5)
         self.assertEqual(content.count('width="300" height="400"'), 5)
 

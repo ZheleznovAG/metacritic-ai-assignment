@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ game.title }} — Metacritic AI Assignment</title>
     <link rel="stylesheet" href="{% static 'presentation/app.css' %}">
+    <link rel="icon" href="{% static 'presentation/favicon.svg' %}" type="image/svg+xml">
   </head>
   <body>
     <main class="game-card">
@@ -24,7 +25,7 @@
         <div class="game-card__overview">
           <h1>{{ game.title }}</h1>
           <p class="game-card__developer">{{ game.developer|default:"Unknown developer" }}</p>
-          <div class="game-card__scores" aria-label="Highest saved scores across platforms">
+          <div class="game-card__scores" role="group" aria-label="Highest saved scores across platforms">
             <div><span class="score-badge">{% if game.metascore is not None %}{{ game.metascore }}{% else %}—{% endif %}</span><span>Metascore{% if game.metascore is None %} · Not available{% endif %}</span></div>
             <div><span class="score-badge score-badge--user">{% if game.userscore is not None %}{{ game.userscore }}{% else %}—{% endif %}</span><span>User score{% if game.userscore is None %} · Not available{% endif %}</span></div>
           </div>

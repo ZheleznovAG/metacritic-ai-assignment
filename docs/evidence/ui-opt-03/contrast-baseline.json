@@ -1,0 +1,494 @@
+[
+  {
+    "page": "catalog",
+    "width": 1280,
+    "color": "light",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ],
+        "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axeAPI",
+        "nodes": [
+          {
+            "any": [
+              {
+                "id": "color-contrast",
+                "data": {
+                  "fgColor": "#828d94",
+                  "bgColor": "#ffffff",
+                  "contrastRatio": 3.39,
+                  "fontSize": "10.1pt (13.44px)",
+                  "fontWeight": "normal",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1",
+                  "shadowColor": null,
+                  "colorParse": null
+                },
+                "relatedNodes": [
+                  {
+                    "html": "<a href=\"/games/37/\">",
+                    "target": [
+                      "a[href=\"/games/37/\"]"
+                    ]
+                  }
+                ],
+                "impact": "serious",
+                "message": "Element has insufficient color contrast of 3.39 (foreground color: #828d94, background color: #ffffff, font size: 10.1pt (13.44px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ],
+            "all": [],
+            "none": [],
+            "impact": "serious",
+            "html": "<span class=\"no-data\">Unknown developer</span>",
+            "target": [
+              ".no-data"
+            ],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.39 (foreground color: #828d94, background color: #ffffff, font size: 10.1pt (13.44px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "any": [
+              {
+                "id": "color-contrast",
+                "data": {
+                  "fgColor": "#929b9e",
+                  "bgColor": "#f5f7f6",
+                  "contrastRatio": 2.63,
+                  "fontSize": "12.0pt (16px)",
+                  "fontWeight": "normal",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1",
+                  "shadowColor": null,
+                  "colorParse": null
+                },
+                "relatedNodes": [
+                  {
+                    "html": "<body>",
+                    "target": [
+                      "body"
+                    ]
+                  }
+                ],
+                "impact": "serious",
+                "message": "Element has insufficient color contrast of 2.63 (foreground color: #929b9e, background color: #f5f7f6, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ],
+            "all": [],
+            "none": [],
+            "impact": "serious",
+            "html": "<span class=\"pagination__disabled\" aria-hidden=\"true\">\u2190 Previous</span>",
+            "target": [
+              ".pagination__disabled"
+            ],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.63 (foreground color: #929b9e, background color: #f5f7f6, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "catalog",
+    "width": 390,
+    "color": "light",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ],
+        "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axeAPI",
+        "nodes": [
+          {
+            "any": [
+              {
+                "id": "color-contrast",
+                "data": {
+                  "fgColor": "#828d94",
+                  "bgColor": "#ffffff",
+                  "contrastRatio": 3.39,
+                  "fontSize": "10.1pt (13.44px)",
+                  "fontWeight": "normal",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1",
+                  "shadowColor": null,
+                  "colorParse": null
+                },
+                "relatedNodes": [
+                  {
+                    "html": "<a href=\"/games/37/\">",
+                    "target": [
+                      "a[href=\"/games/37/\"]"
+                    ]
+                  }
+                ],
+                "impact": "serious",
+                "message": "Element has insufficient color contrast of 3.39 (foreground color: #828d94, background color: #ffffff, font size: 10.1pt (13.44px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ],
+            "all": [],
+            "none": [],
+            "impact": "serious",
+            "html": "<span class=\"no-data\">Unknown developer</span>",
+            "target": [
+              ".no-data"
+            ],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.39 (foreground color: #828d94, background color: #ffffff, font size: 10.1pt (13.44px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "any": [
+              {
+                "id": "color-contrast",
+                "data": {
+                  "fgColor": "#929b9e",
+                  "bgColor": "#f5f7f6",
+                  "contrastRatio": 2.63,
+                  "fontSize": "10.2pt (13.6px)",
+                  "fontWeight": "normal",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1",
+                  "shadowColor": null,
+                  "colorParse": null
+                },
+                "relatedNodes": [
+                  {
+                    "html": "<body>",
+                    "target": [
+                      "body"
+                    ]
+                  }
+                ],
+                "impact": "serious",
+                "message": "Element has insufficient color contrast of 2.63 (foreground color: #929b9e, background color: #f5f7f6, font size: 10.2pt (13.6px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ],
+            "all": [],
+            "none": [],
+            "impact": "serious",
+            "html": "<span class=\"pagination__disabled\" aria-hidden=\"true\">\u2190 Previous</span>",
+            "target": [
+              ".pagination__disabled"
+            ],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.63 (foreground color: #929b9e, background color: #f5f7f6, font size: 10.2pt (13.6px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "catalog",
+    "width": 320,
+    "color": "light",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ],
+        "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axeAPI",
+        "nodes": [
+          {
+            "any": [
+              {
+                "id": "color-contrast",
+                "data": {
+                  "fgColor": "#828d94",
+                  "bgColor": "#ffffff",
+                  "contrastRatio": 3.39,
+                  "fontSize": "10.1pt (13.44px)",
+                  "fontWeight": "normal",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1",
+                  "shadowColor": null,
+                  "colorParse": null
+                },
+                "relatedNodes": [
+                  {
+                    "html": "<a href=\"/games/37/\">",
+                    "target": [
+                      "a[href=\"/games/37/\"]"
+                    ]
+                  }
+                ],
+                "impact": "serious",
+                "message": "Element has insufficient color contrast of 3.39 (foreground color: #828d94, background color: #ffffff, font size: 10.1pt (13.44px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ],
+            "all": [],
+            "none": [],
+            "impact": "serious",
+            "html": "<span class=\"no-data\">Unknown developer</span>",
+            "target": [
+              ".no-data"
+            ],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.39 (foreground color: #828d94, background color: #ffffff, font size: 10.1pt (13.44px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "any": [
+              {
+                "id": "color-contrast",
+                "data": {
+                  "fgColor": "#929b9e",
+                  "bgColor": "#f5f7f6",
+                  "contrastRatio": 2.63,
+                  "fontSize": "10.2pt (13.6px)",
+                  "fontWeight": "normal",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1",
+                  "shadowColor": null,
+                  "colorParse": null
+                },
+                "relatedNodes": [
+                  {
+                    "html": "<body>",
+                    "target": [
+                      "body"
+                    ]
+                  }
+                ],
+                "impact": "serious",
+                "message": "Element has insufficient color contrast of 2.63 (foreground color: #929b9e, background color: #f5f7f6, font size: 10.2pt (13.6px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ],
+            "all": [],
+            "none": [],
+            "impact": "serious",
+            "html": "<span class=\"pagination__disabled\" aria-hidden=\"true\">\u2190 Previous</span>",
+            "target": [
+              ".pagination__disabled"
+            ],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.63 (foreground color: #929b9e, background color: #f5f7f6, font size: 10.2pt (13.6px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "catalog",
+    "width": 1280,
+    "color": "dark",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ],
+        "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axeAPI",
+        "nodes": [
+          {
+            "any": [
+              {
+                "id": "color-contrast",
+                "data": {
+                  "fgColor": "#747d80",
+                  "bgColor": "#111d22",
+                  "contrastRatio": 4.07,
+                  "fontSize": "12.0pt (16px)",
+                  "fontWeight": "normal",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1",
+                  "shadowColor": null,
+                  "colorParse": null
+                },
+                "relatedNodes": [
+                  {
+                    "html": "<body>",
+                    "target": [
+                      "body"
+                    ]
+                  }
+                ],
+                "impact": "serious",
+                "message": "Element has insufficient color contrast of 4.07 (foreground color: #747d80, background color: #111d22, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ],
+            "all": [],
+            "none": [],
+            "impact": "serious",
+            "html": "<span class=\"pagination__disabled\" aria-hidden=\"true\">\u2190 Previous</span>",
+            "target": [
+              ".pagination__disabled"
+            ],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.07 (foreground color: #747d80, background color: #111d22, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "catalog",
+    "width": 390,
+    "color": "dark",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ],
+        "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axeAPI",
+        "nodes": [
+          {
+            "any": [
+              {
+                "id": "color-contrast",
+                "data": {
+                  "fgColor": "#747d80",
+                  "bgColor": "#111d22",
+                  "contrastRatio": 4.07,
+                  "fontSize": "10.2pt (13.6px)",
+                  "fontWeight": "normal",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1",
+                  "shadowColor": null,
+                  "colorParse": null
+                },
+                "relatedNodes": [
+                  {
+                    "html": "<body>",
+                    "target": [
+                      "body"
+                    ]
+                  }
+                ],
+                "impact": "serious",
+                "message": "Element has insufficient color contrast of 4.07 (foreground color: #747d80, background color: #111d22, font size: 10.2pt (13.6px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ],
+            "all": [],
+            "none": [],
+            "impact": "serious",
+            "html": "<span class=\"pagination__disabled\" aria-hidden=\"true\">\u2190 Previous</span>",
+            "target": [
+              ".pagination__disabled"
+            ],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.07 (foreground color: #747d80, background color: #111d22, font size: 10.2pt (13.6px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "catalog",
+    "width": 320,
+    "color": "dark",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ],
+        "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axeAPI",
+        "nodes": [
+          {
+            "any": [
+              {
+                "id": "color-contrast",
+                "data": {
+                  "fgColor": "#747d80",
+                  "bgColor": "#111d22",
+                  "contrastRatio": 4.07,
+                  "fontSize": "10.2pt (13.6px)",
+                  "fontWeight": "normal",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1",
+                  "shadowColor": null,
+                  "colorParse": null
+                },
+                "relatedNodes": [
+                  {
+                    "html": "<body>",
+                    "target": [
+                      "body"
+                    ]
+                  }
+                ],
+                "impact": "serious",
+                "message": "Element has insufficient color contrast of 4.07 (foreground color: #747d80, background color: #111d22, font size: 10.2pt (13.6px), font weight: normal). Expected contrast ratio of 4.5:1"
+              }
+            ],
+            "all": [],
+            "none": [],
+            "impact": "serious",
+            "html": "<span class=\"pagination__disabled\" aria-hidden=\"true\">\u2190 Previous</span>",
+            "target": [
+              ".pagination__disabled"
+            ],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.07 (foreground color: #747d80, background color: #111d22, font size: 10.2pt (13.6px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
+  }
+]

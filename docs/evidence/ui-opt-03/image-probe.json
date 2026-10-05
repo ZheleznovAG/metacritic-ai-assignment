@@ -1,0 +1,44 @@
+[
+  {
+    "url": "https://www.metacritic.com/a/img/resize/88a8208879e13bcc630813868cda13c5c2f1eb23/catalog/provider/7/2/7-1790617003.jpg?auto=webp&fit=crop&height=675&width=1200",
+    "status": 200,
+    "bytes": 28828,
+    "sha256": "480754b8695e0790f314105e7b2ce43ab586e5b93f0eec83906c45e0319ecd07",
+    "contentType": "image/webp"
+  },
+  {
+    "url": "https://www.metacritic.com/a/img/resize/88a8208879e13bcc630813868cda13c5c2f1eb23/catalog/provider/7/2/7-1790617003.jpg?auto=webp&fit=crop&height=400&width=300",
+    "status": 403,
+    "bytes": 12,
+    "sha256": "2daca94f0d64cbd27e32a6d5344617a6182ec442e57eb9a0debeb8866a0a7001",
+    "contentType": "text/plain;charset=UTF-8"
+  },
+  {
+    "url": "https://www.metacritic.com/a/img/resize/bd1a1e32a6fa428d2443b0b2a1aeebf3ad8ccf1c/catalog/provider/7/2/7-1790005000.jpg?auto=webp&fit=crop&height=675&width=1200",
+    "status": 200,
+    "bytes": 228156,
+    "sha256": "0b99d3be83bdf801fc22315af34e8afd98a12484fcdab1249211164f39ee93c1",
+    "contentType": "image/webp"
+  },
+  {
+    "url": "https://www.metacritic.com/a/img/resize/bd1a1e32a6fa428d2443b0b2a1aeebf3ad8ccf1c/catalog/provider/7/2/7-1790005000.jpg?auto=webp&fit=crop&height=400&width=300",
+    "status": 403,
+    "bytes": 12,
+    "sha256": "2daca94f0d64cbd27e32a6d5344617a6182ec442e57eb9a0debeb8866a0a7001",
+    "contentType": "text/plain;charset=UTF-8"
+  },
+  {
+    "url": "https://www.metacritic.com/a/img/resize/e1f28c84d616f7cc4b60ebe3c484c047296477b6/catalog/provider/6/12/6-1-1189393-52.jpg?auto=webp&fit=crop&height=675&width=1200",
+    "status": 200,
+    "bytes": 62272,
+    "sha256": "5c7246096d299e4ca4db566ada97aba39bcd7df769c1446d86bdefec504de1de",
+    "contentType": "image/webp"
+  },
+  {
+    "url": "https://www.metacritic.com/a/img/resize/e1f28c84d616f7cc4b60ebe3c484c047296477b6/catalog/provider/6/12/6-1-1189393-52.jpg?auto=webp&fit=crop&height=400&width=300",
+    "status": 403,
+    "bytes": 12,
+    "sha256": "2daca94f0d64cbd27e32a6d5344617a6182ec442e57eb9a0debeb8866a0a7001",
+    "contentType": "text/plain;charset=UTF-8"
+  }
+]

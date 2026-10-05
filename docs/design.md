@@ -342,7 +342,7 @@ browser и public evidence принадлежат [SIM-VER-01](requirements/sim_
 9. Summary claims коммитятся только после schema, support, audience и length validation.
 10. Публичные queries не изменяют processing state и не получают secrets.
 
-## Public presentation: UI-OPT-01–02
+## Public presentation: UI-OPT-01–03
 
 Каталог — SSR/GET, 30 игр на страницу. PostgreSQL вычисляет фильтрованные Metascore и
 порядок; ID завершает порядок при равенстве. Labels платформ читаются одним batch SELECT
@@ -366,6 +366,13 @@ Monitoring показывает наблюдаемые busy/idle как Working/
 freshness и не меняет lease/state. No-JS отображает серверный снимок с теми же labels; refresh
 сохраняет keyboard region attributes таблицы. Публичный каталог/карточка имеют max-age=60;
 monitoring/health не кешируются.
+
+Обложки имеют intrinsic width/height, async decoding и зарезервированный aspect-ratio.
+Две первые обложки каталога (mobile-ряд при 390px, измеренные LCP-кандидаты) получают high
+priority; остальные — lazy. Detail hero получает high priority, Similar Games — lazy.
+Сохранённые URL внешнего CDN не переписываются: проверенные уменьшенные query variants
+отвечают 403. Предел DOM/SQL задаётся страницей, не размером полного каталога; live
+Lighthouse/axe evidence отделён от fixture-only CI.
 
 ## Проверочная трассировка
 

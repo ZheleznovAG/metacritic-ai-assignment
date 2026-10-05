@@ -1,0 +1,168 @@
+[
+  {
+    "page": "catalog",
+    "width": 1280,
+    "actions": "Type Quest and change native select by keyboard",
+    "events": [
+      {
+        "name": "pointerdown",
+        "duration": 24,
+        "inputDelay": 1,
+        "interactionId": 4171
+      },
+      {
+        "name": "pointerup",
+        "duration": 24,
+        "inputDelay": 2.4000000953674316,
+        "interactionId": 4171
+      },
+      {
+        "name": "click",
+        "duration": 24,
+        "inputDelay": 2.6000001430511475,
+        "interactionId": 4171
+      },
+      {
+        "name": "keydown",
+        "duration": 16,
+        "inputDelay": 1.7000000476837158,
+        "interactionId": 4178
+      },
+      {
+        "name": "keypress",
+        "duration": 16,
+        "inputDelay": 2,
+        "interactionId": 4178
+      },
+      {
+        "name": "keydown",
+        "duration": 16,
+        "inputDelay": 0.20000004768371582,
+        "interactionId": 4185
+      },
+      {
+        "name": "keypress",
+        "duration": 16,
+        "inputDelay": 0.3000001907348633,
+        "interactionId": 4185
+      },
+      {
+        "name": "keydown",
+        "duration": 16,
+        "inputDelay": 0.20000004768371582,
+        "interactionId": 4213
+      },
+      {
+        "name": "keydown",
+        "duration": 16,
+        "inputDelay": 0.2999999523162842,
+        "interactionId": 4220
+      },
+      {
+        "name": "keyup",
+        "duration": 16,
+        "inputDelay": 0.10000014305114746,
+        "interactionId": 4220
+      }
+    ]
+  },
+  {
+    "page": "detail",
+    "width": 1280,
+    "actions": "Five keyboard focus moves; disclosure toggles when available",
+    "events": [
+      {
+        "name": "keydown",
+        "duration": 16,
+        "inputDelay": 0.20000004768371582,
+        "interactionId": 7706
+      },
+      {
+        "name": "keyup",
+        "duration": 16,
+        "inputDelay": 0,
+        "interactionId": 7706
+      },
+      {
+        "name": "keydown",
+        "duration": 16,
+        "inputDelay": 0.2999999523162842,
+        "interactionId": 7713
+      },
+      {
+        "name": "keyup",
+        "duration": 16,
+        "inputDelay": 0.10000014305114746,
+        "interactionId": 7713
+      },
+      {
+        "name": "keydown",
+        "duration": 16,
+        "inputDelay": 0.20000004768371582,
+        "interactionId": 7734
+      },
+      {
+        "name": "keyup",
+        "duration": 16,
+        "inputDelay": 0.09999990463256836,
+        "interactionId": 7734
+      }
+    ]
+  },
+  {
+    "page": "catalog",
+    "width": 390,
+    "actions": "Type Quest and change native select by keyboard",
+    "events": [
+      {
+        "name": "pointerdown",
+        "duration": 24,
+        "inputDelay": 1,
+        "interactionId": 9015
+      },
+      {
+        "name": "pointerup",
+        "duration": 24,
+        "inputDelay": 2.0999999046325684,
+        "interactionId": 9015
+      },
+      {
+        "name": "click",
+        "duration": 24,
+        "inputDelay": 2.299999952316284,
+        "interactionId": 9015
+      },
+      {
+        "name": "keydown",
+        "duration": 16,
+        "inputDelay": 0.2999999523162842,
+        "interactionId": 9022
+      },
+      {
+        "name": "keypress",
+        "duration": 16,
+        "inputDelay": 0.2999999523162842,
+        "interactionId": 9022
+      }
+    ]
+  },
+  {
+    "page": "detail",
+    "width": 390,
+    "actions": "Five keyboard focus moves; disclosure toggles when available",
+    "events": [
+      {
+        "name": "keydown",
+        "duration": 16,
+        "inputDelay": 0.20000004768371582,
+        "interactionId": 9791
+      },
+      {
+        "name": "keyup",
+        "duration": 16,
+        "inputDelay": 0.09999990463256836,
+        "interactionId": 9791
+      }
+    ]
+  }
+]
