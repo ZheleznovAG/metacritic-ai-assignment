@@ -65,11 +65,22 @@ def index(request: HttpRequest) -> HttpResponse:
     if page.number > 1:
         detail_params["page"] = str(page.number)
 
+    platforms = list_platform_options()
+    active_filters = []
+    for key, label in (
+        ("q", f"Search: “{query}”"),
+        ("platform", next((p.name for p in platforms if p.slug == platform), platform or "")),
+    ):
+        if key in params:
+            remaining = {k: v for k, v in params.items() if k != key}
+            active_filters.append({"label": label, "url": "?" + urlencode(remaining)})
+
     context = {
         "version": settings.APP_VERSION,
         "games": page.items,
         "page": page,
-        "platforms": list_platform_options(),
+        "platforms": platforms,
+        "active_filters": active_filters,
         "query": query,
         "selected_platform": platform or "",
         "selected_sort": params.get("sort", "score"),

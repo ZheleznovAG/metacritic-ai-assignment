@@ -1,0 +1,41 @@
+CHECK: -m ruff format --check app scripts
+CHECK: -m ruff check app scripts
+All checks passed!
+CHECK: -m mypy
+Success: no issues found in 187 source files
+CHECK: app/manage.py check
+System check identified no issues (0 silenced).
+CHECK: app/manage.py makemigrations --check --dry-run
+No changes detected
+CHECK: app/manage.py collectstatic --noinput
+CHECK: app/manage.py test tests --noinput -v 2
+System check identified no issues (0 silenced).
+Ran 578 tests in 191.866s
+OK
+CHECK: -m unittest discover -s scripts/tests -p test_*.py
+Ran 22 tests in 0.998s
+OK
+CHECK: research/planning/check_plan.py
+CHECK: -m unittest discover -s research/planning -p test_*.py
+Ran 18 tests in 0.287s
+OK
+CHECK: evals/reviews/score_run.py evals/reviews/baseline/run.json --verify
+CHECK: -m unittest discover -s evals/reviews -p test_*.py
+Ran 7 tests in 0.017s
+OK
+CHECK: -m unittest discover -s evals/review_selection -p test_*.py
+Ran 18 tests in 0.025s
+OK
+CHECK: evals/review_selection/score_selection.py --verify evals/review_selection/baseline_report.json
+CHECK: evals/review_selection/verify_candidate.py
+PASS: the real candidate passes all 8 invariants on all applicable cases.
+PASS: INV-SENTIMENT-COVERAGE 1.1.0 on all 7 cases.
+PASS: INV-MEANINGFUL-ELIGIBILITY 1.2.0 on all 7 cases.
+CHECK: evals/similarity/score_similarity.py --verify
+CHECK: evals/similarity/compare.py
+CHECK: -m unittest discover -s evals/similarity -p test_*.py
+Ran 29 tests in 0.056s
+OK
+CHECK: -m unittest discover -s evals/letsplays -p test_*.py
+Ran 10 tests in 0.012s
+OK

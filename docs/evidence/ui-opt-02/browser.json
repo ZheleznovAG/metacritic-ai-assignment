@@ -1,0 +1,362 @@
+[
+  {
+    "width": 1280,
+    "color": "light",
+    "javascript": true,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 9.55,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  },
+  {
+    "width": 390,
+    "color": "light",
+    "javascript": true,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 9.55,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  },
+  {
+    "width": 320,
+    "color": "light",
+    "javascript": true,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 9.55,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  },
+  {
+    "width": 1280,
+    "color": "light",
+    "javascript": false,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 9.55,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  },
+  {
+    "width": 390,
+    "color": "light",
+    "javascript": false,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 9.55,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  },
+  {
+    "width": 320,
+    "color": "light",
+    "javascript": false,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 9.55,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  },
+  {
+    "width": 1280,
+    "color": "dark",
+    "javascript": true,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 8.31,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  },
+  {
+    "width": 390,
+    "color": "dark",
+    "javascript": true,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 8.31,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  },
+  {
+    "width": 320,
+    "color": "dark",
+    "javascript": true,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 8.31,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  },
+  {
+    "width": 1280,
+    "color": "dark",
+    "javascript": false,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 8.31,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  },
+  {
+    "width": 390,
+    "color": "dark",
+    "javascript": false,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 8.31,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  },
+  {
+    "width": 320,
+    "color": "dark",
+    "javascript": false,
+    "cards": 30,
+    "visible_cover_observations": [
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      },
+      {
+        "loaded": true,
+        "complete": true
+      }
+    ],
+    "similar_cards": 0,
+    "badge_contrast": 8.31,
+    "overflow": false,
+    "keyboard_and_history": "pass",
+    "filter_removal": "pass",
+    "monitoring_region_utc": "pass"
+  }
+]

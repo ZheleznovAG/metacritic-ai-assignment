@@ -210,7 +210,7 @@ class MandatoryJourneyTests(LiveServerTestCase):
         page.get_by_role("link").filter(has=page.get_by_text("Alpha Quest", exact=True)).click()
         expect(page.locator("h1")).to_have_text("Alpha Quest")
         self.assertEqual(urlsplit(page.url).path, f"/games/{anchor.id}/")
-        expect(page.locator(".game-card__facts")).to_contain_text("Example Studio")
+        expect(page.locator(".game-card__developer")).to_contain_text("Example Studio")
         expect(page.locator(".game-card__description")).to_contain_text(
             "A synthetic adventure with responsive combat and rewarding exploration."
         )
@@ -250,6 +250,20 @@ class MandatoryJourneyTests(LiveServerTestCase):
         if screenshot_dir:
             page.screenshot(
                 path=str(Path(screenshot_dir) / "imp-07-fixture-card.png"), full_page=True
+            )
+        expect(page.locator(".experimental-label")).to_contain_text("Experimental")
+        disclosure = page.locator(".summary-provenance").first
+        self.assertFalse(disclosure.evaluate("e => e.open"))
+        disclosure.locator("summary").focus()
+        page.keyboard.press("Enter")
+        self.assertTrue(disclosure.evaluate("e => e.open"))
+        expect(disclosure).to_contain_text("Contour fingerprint")
+        disclosure.locator("summary").click()
+        page.set_viewport_size({"width": 320, "height": 844})
+        self.assertTrue(page.evaluate("document.documentElement.scrollWidth <= innerWidth"))
+        if screenshot_dir:
+            page.screenshot(
+                path=str(Path(screenshot_dir) / "ui-opt-02-card-320.png"), full_page=True
             )
         page.set_viewport_size({"width": 390, "height": 844})
         self.assertTrue(page.evaluate("document.documentElement.scrollWidth <= innerWidth"))

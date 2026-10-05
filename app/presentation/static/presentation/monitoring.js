@@ -19,6 +19,33 @@
     return element;
   }
   function paragraph(text) { return node("p", text); }
+  function relativeTime(value) {
+    const observed = Date.parse(value);
+    if (!Number.isFinite(observed)) return "Not recorded";
+    const seconds = (Date.now() - observed) / 1000;
+    if (seconds < -5) return "In the future";
+    if (seconds < 60) return "Just now";
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} h ago`;
+    return `${Math.floor(seconds / 86400)} d ago`;
+  }
+  function observedTime(value) {
+    const element = node("time", relativeTime(value));
+    if (value) { element.dateTime = value; element.title = value; }
+    return element;
+  }
+  function stateToken(value, process = false) {
+    const labels = {busy: "Working", idle: "Waiting", stale: "Stale", stopped: "Stopped", unknown: "Unknown"};
+    const element = node("strong", process ? (labels[value] || value) : value, "ops__state");
+    element.dataset.state = value;
+    element.title = value;
+    return element;
+  }
+  function timeParagraph(label, value) {
+    const element = paragraph(label);
+    element.append(observedTime(value));
+    return element;
+  }
   function counts(states) {
     const list = node("dl", undefined, "ops__counts");
     Object.entries(states).forEach(([state, count]) => {
@@ -47,11 +74,10 @@
       processes.forEach((process) => {
         const panel = node("article", undefined, "ops__panel");
         panel.dataset.role = process.role;
-        const state = node("strong", process.status, "ops__state");
-        state.dataset.state = process.status;
+        const state = stateToken(process.status, true);
         panel.append(node("h3", process.label), state, paragraph(process.stage),
-          paragraph(`Last heartbeat: ${process.last_seen_at || "Not received"}`),
-          paragraph(`Last progress: ${process.last_progress_at || "Not recorded"}`));
+          timeParagraph("Last heartbeat: ", process.last_seen_at),
+          timeParagraph("Last progress: ", process.last_progress_at));
         if (process.run_id) panel.append(paragraph(`Run #${process.run_id}`));
         if (process.job_id) panel.append(paragraph(`Job #${process.job_id}`));
         if (process.overdue) panel.append(paragraph("Work is overdue; check the last progress time."));
@@ -91,7 +117,7 @@
       const table = node("table", undefined, "ops__table");
       const head = node("thead");
       const headings = node("tr");
-      ["Run", "Status", "Started (UTC)", "Selected", "Processed", "Failed"].forEach((label) => {
+      ["Run", "Status", "Started", "Selected", "Processed", "Failed"].forEach((label) => {
         const cell = node("th", label); cell.scope = "col"; headings.append(cell);
       });
       head.append(headings);
@@ -99,8 +125,11 @@
       history.forEach((run) => {
         const row = node("tr"); row.dataset.runId = run.id;
         const title = node("th", `#${run.id}`); title.scope = "row"; row.append(title);
-        [run.status, run.started_at || "Queued", run.selected, run.processed, run.failed]
-          .forEach((value) => row.append(node("td", value)));
+        const statusCell = node("td"); statusCell.append(stateToken(run.status));
+        const timeCell = node("td");
+        timeCell.append(run.started_at ? observedTime(run.started_at) : node("span", "Queued"));
+        row.append(statusCell, timeCell);
+        [run.selected, run.processed, run.failed].forEach((value) => row.append(node("td", value)));
         body.append(row);
       });
       if (!history.length) {
@@ -110,10 +139,15 @@
       table.append(head, body); wrapper.append(table);
       return [wrapper];
     });
-    timestamp.textContent = data.snapshot_at;
+    timestamp.textContent = relativeTime(data.snapshot_at);
     timestamp.dateTime = data.snapshot_at;
+    timestamp.title = data.snapshot_at;
   }
   function freshness() {
+    root.querySelectorAll("time[datetime]").forEach((element) => {
+      const text = relativeTime(element.dateTime);
+      if (element.textContent !== text) element.textContent = text;
+    });
     const stale = performance.now() - lastSuccess >= 5000;
     const text = stale ? "Connection lost / data may be stale" :
       document.hidden ? "Updates paused while this tab is hidden" : "Live · updates every second";

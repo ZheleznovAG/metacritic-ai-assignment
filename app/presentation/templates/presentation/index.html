@@ -14,7 +14,7 @@
         {% if monitoring_enabled %}<a href="{% url 'monitoring' %}">Service activity &rarr;</a>{% endif %}
       </div>
       <h1>Metacritic AI Assignment</h1>
-      <p class="page-intro">Search the catalog, compare Metascores, and open a game for critic/user AI summaries, Let's Play analysis, and similar titles.</p>
+      <p class="page-intro">Find your next game. Compare scores, explore AI review summaries and discover similar titles.</p>
 
       <form class="game-list__controls" method="get" action="{% url 'index' %}">
         <div class="field field--search">
@@ -46,6 +46,12 @@
         </div>
       </form>
 
+      {% if active_filters %}
+        <nav class="filter-chips" aria-label="Active filters">
+          {% for filter in active_filters %}<a href="{{ filter.url }}" aria-label="Remove {{ filter.label }}">{{ filter.label }} <span aria-hidden="true">×</span></a>{% endfor %}
+        </nav>
+      {% endif %}
+
       <div class="game-list__results" aria-live="polite">
         <p>
           <strong>{{ page.total_count }}</strong> game{{ page.total_count|pluralize }}
@@ -73,6 +79,7 @@
                 </span>
                 <span class="game-list__developer">{% if game.developer %}{{ game.developer }}{% else %}<span class="no-data">Unknown developer</span>{% endif %}</span>
                 <span class="game-list__date">{% if game.release_date %}{{ game.release_date|date:"j M Y" }}{% else %}<span class="no-data">No release date</span>{% endif %}</span>
+                <span class="game-list__platforms">{% if game.platforms %}{{ game.platforms|join:" · " }}{% else %}No platforms recorded{% endif %}</span>
               </a>
             </li>
           {% endfor %}
@@ -99,6 +106,8 @@
                 {% endif %}
               {% endfor %}
             </div>
+
+            <span class="pagination__position">Page {{ page.number }} of {{ page.num_pages }}</span>
 
             {% if page.has_next %}
               <a rel="next" href="?{% if pagination_query_string %}{{ pagination_query_string }}&amp;{% endif %}page={{ page.next_number }}">Next &rarr;</a>

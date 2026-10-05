@@ -1,4 +1,4 @@
-{% load static %}
+{% load static presentation_tags %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -14,20 +14,26 @@
         {% if monitoring_enabled %}<a href="{% url 'monitoring' %}">Service activity &rarr;</a>{% endif %}
       </div>
       <a class="game-card__back" href="{% url 'index' %}{% if back_query_string %}?{{ back_query_string }}{% endif %}">&larr; Back to results</a>
-      <h1>{{ game.title }}</h1>
 
       <section class="game-card__hero" aria-label="Game overview">
         {% if game.cover_url %}
-          <img class="game-card__cover" src="{{ game.cover_url }}" alt="{{ game.title }} cover art" decoding="async" fetchpriority="high">
+          <img class="game-card__cover" src="{{ game.cover_url }}" alt="{{ game.title }} cover art" width="300" height="400" decoding="async" fetchpriority="high">
+        {% else %}
+          <div class="game-card__cover game-card__cover--placeholder" aria-hidden="true">No cover available</div>
         {% endif %}
         <div class="game-card__overview">
+          <h1>{{ game.title }}</h1>
+          <p class="game-card__developer">{{ game.developer|default:"Unknown developer" }}</p>
+          <div class="game-card__scores" aria-label="Highest saved scores across platforms">
+            <div><span class="score-badge">{% if game.metascore is not None %}{{ game.metascore }}{% else %}—{% endif %}</span><span>Metascore{% if game.metascore is None %} · Not available{% endif %}</span></div>
+            <div><span class="score-badge score-badge--user">{% if game.userscore is not None %}{{ game.userscore }}{% else %}—{% endif %}</span><span>User score{% if game.userscore is None %} · Not available{% endif %}</span></div>
+          </div>
+          <p class="game-card__score-note">Highest saved scores across platforms · platform breakdown below.</p>
           <dl class="game-card__facts">
             <dt>Genre</dt>
             <dd>{% if game.genres %}{{ game.genres|join:", " }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
             <dt>Release date</dt>
             <dd>{% if game.release_date %}{{ game.release_date|date:"j M Y" }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
-            <dt>Developer</dt>
-            <dd>{% if game.developer %}{{ game.developer }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
             <dt>Publisher</dt>
             <dd>{% if game.publishers %}{{ game.publishers|join:", " }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
             <dt>Content rating</dt>
@@ -64,9 +70,11 @@
 
       <section class="game-card__section" aria-labelledby="summaries-heading">
         <h2 id="summaries-heading">AI review summaries</h2>
+        <p class="section-intro">What critics and players like, and what gets in the way. Based on a selection of saved reviews.</p>
         {% for summary in summaries %}
           <section class="game-card__summary">
             <h3>{{ summary.audience|title }}s</h3>
+            {% if summary.generated_at_utc %}<p class="summary-caption">Based on {{ summary.selected_count }} review{{ summary.selected_count|pluralize }} · Generated <time datetime="{{ summary.generated_at_utc }}" title="{{ summary.generated_at_utc }}">{{ summary.generated_at_utc|relative_time }}</time></p>{% endif %}
             {% if summary.state == "stale" %}
               <p class="summary-stale">Stale — showing the last valid summary. {{ summary.reason_message }}</p>
             {% endif %}
@@ -81,21 +89,24 @@
                 <div class="claim-group claim-group--positive">
                   <h4>Likes</h4>
                   <ul>
-                    {% for claim in summary.likes %}<li>{{ claim.text }}</li>{% endfor %}
+                    {% for claim in summary.likes %}<li>{{ claim.text }}</li>{% empty %}<li class="no-data">No supported positives in these reviews.</li>{% endfor %}
                   </ul>
                 </div>
                 <div class="claim-group claim-group--negative">
                   <h4>Dislikes</h4>
                   <ul>
-                    {% for claim in summary.dislikes %}<li>{{ claim.text }}</li>{% endfor %}
+                    {% for claim in summary.dislikes %}<li>{{ claim.text }}</li>{% empty %}<li class="no-data">No supported negatives in these reviews.</li>{% endfor %}
                   </ul>
                 </div>
               </div>
+            {% endif %}
+            {% if summary.generated_at_utc %}
               <details class="summary-provenance">
                 <summary>About this AI summary</summary>
                 <p>Model: {{ summary.model_id|default:"unknown" }} · Generated: {{ summary.generated_at_utc }} ·
                   {{ summary.selected_count }} of {{ summary.fetched_count }} fetched
                   ({{ summary.reported_count }} reported) reviews used.</p>
+                <dl><dt>Prompt version</dt><dd>{{ summary.prompt_version|default:"Not recorded" }}</dd><dt>Contour fingerprint</dt><dd><code>{{ summary.contour_hash|default:"Not recorded" }}</code></dd></dl>
               </details>
             {% endif %}
           </section>
@@ -104,6 +115,8 @@
 
       <section class="game-card__letsplay game-card__section" aria-labelledby="letsplay-heading">
         <h2 id="letsplay-heading">Let's play</h2>
+        <p class="experimental-label">Experimental Let's Play analysis</p>
+        <p class="section-intro">An AI reading of the opening minutes. It may confuse reactions, dialogue or sarcasm with the creator's opinion.</p>
         {% if letsplay.video_url %}
           <p class="letsplay__video">
             <a href="{{ letsplay.video_url }}" rel="noopener noreferrer" target="_blank">{{ letsplay.video_title }}</a>
@@ -153,9 +166,13 @@
           <ul class="similar-games">
             {% for similar in similar_games %}
               <li>
+                {% if similar.cover_url %}<img class="similar-games__cover" src="{{ similar.cover_url }}" alt="" width="90" height="120" loading="lazy" decoding="async">{% else %}<span class="similar-games__cover" aria-hidden="true"></span>{% endif %}
+                <div class="similar-games__body">
                 <a href="{% url 'game-detail' similar.id %}{% if back_query_string %}?{{ back_query_string }}{% endif %}">{{ similar.title }}</a>
+                <p class="similar-games__score">Metascore <strong>{% if similar.metascore is not None %}{{ similar.metascore }}{% else %}Not available{% endif %}</strong></p>
                 <p class="similar-games__genres">{% if similar.genres %}{{ similar.genres|join:", " }}{% else %}<span class="no-data">No genre</span>{% endif %}</p>
                 <p class="similar-games__why">{% if similar.shared_genre %}Same genre{% endif %}{% if similar.shared_genre and similar.shared_terms %} · {% endif %}{% if similar.shared_terms %}Both mention {{ similar.shared_terms|join:", " }}{% endif %}{% if not similar.shared_genre and not similar.shared_terms %}Similar {% if similar.by_title %}title{% else %}description{% endif %}{% endif %}</p>
+                </div>
               </li>
             {% endfor %}
           </ul>

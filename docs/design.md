@@ -342,6 +342,31 @@ browser и public evidence принадлежат [SIM-VER-01](requirements/sim_
 9. Summary claims коммитятся только после schema, support, audience и length validation.
 10. Публичные queries не изменяют processing state и не получают secrets.
 
+## Public presentation: UI-OPT-01–02
+
+Каталог — SSR/GET, 30 игр на страницу. PostgreSQL вычисляет фильтрованные Metascore и
+порядок; ID завершает порядок при равенстве. Labels платформ читаются одним batch SELECT
+только для ID текущей страницы (count + page + labels: 3 SELECT независимо от числа игр).
+Снятие одного фильтра сохраняет остальные фильтры/сортировку и сбрасывает page; переходы
+карточка → Similar Games → список сохраняют q/platform/sort/page.
+
+Hero показывает максимальные сохранённые Metascore и Userscore по всем платформам с явной
+подписью; это могут быть разные платформы. Полная таблица платформ остаётся источником
+разбивки. Similar Games добавляют cover и максимальный сохранённый Metascore к существующему
+второму SELECT; ранжирование и объяснения не пересчитываются в web. Score рекомендации не
+подаётся как вероятность или confidence.
+
+Summary provenance доступен через native details: модель, UTC, выбранные/fetched/reported
+counts, сохранённая prompt version успешной попытки и fingerprint job. Если попытки нет,
+версия не подменяется текущей конфигурацией. Stale/insufficient состояния сохраняют свой
+provenance. Let's Play имеет постоянно видимый experimental marker.
+
+Monitoring показывает наблюдаемые busy/idle как Working/Waiting, хранит raw state в атрибуте;
+относительное время имеет исходный UTC в datetime/title. Формат времени не определяет
+freshness и не меняет lease/state. No-JS отображает серверный снимок с теми же labels; refresh
+сохраняет keyboard region attributes таблицы. Публичный каталог/карточка имеют max-age=60;
+monitoring/health не кешируются.
+
 ## Проверочная трассировка
 
 | Требование / риск | Design oracle | Будущий evidence |

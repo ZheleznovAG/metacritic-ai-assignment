@@ -67,8 +67,9 @@ class GameDetailViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         content = response.content.decode()
-        # genre, release date, developer, publisher, content rating, description, trailer
-        self.assertEqual(content.count("No data"), 7)
+        # genre, release date, publisher, content rating, description, trailer
+        self.assertEqual(content.count("No data"), 6)
+        self.assertIn("Unknown developer", content)
 
     def test_unknown_game_id_is_404(self) -> None:
         response = self.client.get("/games/999999/")

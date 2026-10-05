@@ -36,6 +36,8 @@ class SummaryView:
     reported_count: int | None
     reason: str | None
     insufficient_data: bool = False
+    contour_hash: str | None = None
+    prompt_version: str | None = None
 
     @property
     def reason_message(self) -> str:
@@ -98,6 +100,12 @@ def _view_from_summary(
         reported_count=corpus.reported_count,
         reason=reason,
         insufficient_data=summary.status == "insufficient_data",
+        contour_hash=summary.job.contour_fingerprint,
+        prompt_version=(
+            summary.successful_attempt.contour_versions.get("prompt_version")
+            if summary.successful_attempt
+            else None
+        ),
     )
 
 

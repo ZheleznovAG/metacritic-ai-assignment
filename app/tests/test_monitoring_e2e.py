@@ -63,12 +63,19 @@ class MonitoringBrowserTests(LiveServerTestCase):
                     )
                 # A missing signal changes process observation, not the recorded run outcome.
                 expect(page.locator('[data-role="worker"] .ops__state')).to_have_text(
-                    "stale", timeout=5000
+                    "Stale", timeout=5000
                 )
                 expect(row.locator("td").nth(0)).to_have_text("failed")
+                wrapper = page.get_by_role("region", name="Recent processing runs")
+                expect(wrapper).to_have_attribute("tabindex", "0")
+                self.assertTrue(
+                    page.locator("#ops-timestamp").evaluate(
+                        "e => Boolean(e.dateTime) && e.title === e.dateTime"
+                    )
+                )
                 database_call(heartbeat.publish)
                 expect(page.locator('[data-role="worker"] .ops__state')).to_have_text(
-                    "busy", timeout=5000
+                    "Working", timeout=5000
                 )
 
                 def unavailable(route: Route) -> None:

@@ -1,4 +1,4 @@
-{% load static %}
+{% load static presentation_tags %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -34,7 +34,7 @@
       {% if run_request_id %}<p id="ops-run-status" role="status" aria-live="polite" data-request-id="{{ run_request_id }}">Request {{ run_request_id }}: checking&hellip;</p>{% endif %}
       <div class="ops__connection">
         <span id="ops-connection" role="status">{% if snapshot %}Snapshot loaded{% else %}Connection lost / data may be stale{% endif %}</span>
-        <span>Updated <time id="ops-timestamp">{{ snapshot.snapshot_at|default:"Unavailable" }}</time></span>
+        <span>Updated <time id="ops-timestamp" datetime="{{ snapshot.snapshot_at|default:'' }}" title="{{ snapshot.snapshot_at|default:'Unavailable' }}">{{ snapshot.snapshot_at|relative_time }}</time></span>
         <a id="ops-refresh" href="{% url 'monitoring' %}">Refresh now</a>
       </div>
       <noscript><p>Automatic updates need JavaScript. Use Refresh now to load a new snapshot.</p></noscript>
@@ -46,8 +46,8 @@
               {% for process in snapshot.processes %}
                 <article class="ops__panel">
                   <h3>{{ process.label }}</h3>
-                  <p><strong class="ops__state" data-state="{{ process.status }}">{{ process.status }}</strong> · {{ process.stage }}</p>
-                  <p>Last heartbeat: {{ process.last_seen_at|default:"Not received" }}</p>
+                  <p><strong class="ops__state" data-state="{{ process.status }}" title="{{ process.status }}">{{ process.status|process_label }}</strong> · {{ process.stage }}</p>
+                  <p>Last heartbeat: <time datetime="{{ process.last_seen_at|default:'' }}" title="{{ process.last_seen_at|default:'Not received' }}">{{ process.last_seen_at|relative_time }}</time></p>
                   {% if process.overdue %}<p>Work is overdue; check the last progress time.</p>{% endif %}
                 </article>
               {% endfor %}
@@ -77,7 +77,7 @@
           <section aria-labelledby="history-heading">
             <h2 id="history-heading">Recent runs</h2>
             <div class="ops__table-wrap" tabindex="0" role="region" aria-label="Recent processing runs">
-              <table class="ops__table"><thead><tr><th>Run</th><th>Status</th><th>Started (UTC)</th><th>Selected</th><th>Processed</th><th>Failed</th></tr></thead><tbody>{% for run in snapshot.history %}<tr><th scope="row">#{{ run.id }}</th><td>{{ run.status }}</td><td>{{ run.started_at|default:"Queued" }}</td><td>{{ run.selected }}</td><td>{{ run.processed }}</td><td>{{ run.failed }}</td></tr>{% empty %}<tr><td colspan="6">No runs recorded yet.</td></tr>{% endfor %}</tbody></table>
+              <table class="ops__table"><thead><tr><th scope="col">Run</th><th scope="col">Status</th><th scope="col">Started</th><th scope="col">Selected</th><th scope="col">Processed</th><th scope="col">Failed</th></tr></thead><tbody>{% for run in snapshot.history %}<tr><th scope="row">#{{ run.id }}</th><td><span class="ops__state" data-state="{{ run.status }}">{{ run.status }}</span></td><td>{% if run.started_at %}<time datetime="{{ run.started_at }}" title="{{ run.started_at }}">{{ run.started_at|relative_time }}</time>{% else %}Queued{% endif %}</td><td>{{ run.selected }}</td><td>{{ run.processed }}</td><td>{{ run.failed }}</td></tr>{% empty %}<tr><td colspan="6">No runs recorded yet.</td></tr>{% endfor %}</tbody></table>
             </div>
           </section>
         {% else %}<p>Activity is temporarily unavailable. Updates resume when the connection returns.</p>{% endif %}

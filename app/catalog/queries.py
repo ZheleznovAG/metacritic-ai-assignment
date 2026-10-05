@@ -4,7 +4,7 @@ UI-OPT-01 keeps catalog search/filter/sort in PostgreSQL and exposes a bounded p
 request path. Detail/similarity queries remain read-only and never perform ranking or enrichment.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 from decimal import Decimal
 
@@ -42,6 +42,14 @@ class GameDetailView:
     publishers: tuple[str, ...] = ()
     content_rating: str | None = None
 
+    @property
+    def metascore(self) -> int | None:
+        return max((p.metascore for p in self.platforms if p.metascore is not None), default=None)
+
+    @property
+    def userscore(self) -> Decimal | None:
+        return max((p.userscore for p in self.platforms if p.userscore is not None), default=None)
+
 
 @dataclass(frozen=True, slots=True)
 class GameListItemView:
@@ -51,6 +59,7 @@ class GameListItemView:
     cover_url: str | None
     metascore: int | None
     release_date: date | None = None
+    platforms: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -85,6 +94,8 @@ class SimilarGameView:
     shared_genre: bool = False
     shared_terms: tuple[str, ...] = ()
     by_title: bool = False
+    cover_url: str | None = None
+    metascore: int | None = None
 
 
 def _explanation(item: dict[str, object]) -> tuple[bool, tuple[str, ...], bool]:
@@ -119,10 +130,10 @@ def list_similar_games(game_id: int) -> list[SimilarGameView]:
                 continue
             reasons[item["id"]] = _explanation(item)
     games = {
-        pk: (title, genres)
-        for pk, title, genres in Game.objects.filter(pk__in=list(scores)).values_list(
-            "id", "title", "genres"
-        )
+        pk: (title, genres, cover, metascore)
+        for pk, title, genres, cover, metascore in Game.objects.filter(pk__in=list(scores))
+        .annotate(_similar_metascore=Max("platforms__metascore"))
+        .values_list("id", "title", "genres", "cover_url", "_similar_metascore")
     }
     return [
         SimilarGameView(
@@ -135,6 +146,8 @@ def list_similar_games(game_id: int) -> list[SimilarGameView]:
             shared_genre=reasons[pk][0],
             shared_terms=reasons[pk][1],
             by_title=reasons[pk][2],
+            cover_url=games[pk][2],
+            metascore=games[pk][3],
         )
         for pk, score in scores.items()
         if pk in games and pk != game_id
@@ -231,8 +244,17 @@ def paginate_games(
         value if isinstance(value, int) else None
         for value in paginator.get_elided_page_range(page_obj.number, on_each_side=2, on_ends=1)
     )
+    items = tuple(_row_to_item(row) for row in page_obj.object_list)
+    platform_names: dict[int, list[str]] = {item.id: [] for item in items}
+    for game_id, name in (
+        GamePlatform.objects.filter(game_id__in=platform_names)
+        .order_by("name", "id")
+        .values_list("game_id", "name")
+    ):
+        if name not in platform_names[game_id]:
+            platform_names[game_id].append(name)
     return CatalogPage(
-        items=tuple(_row_to_item(row) for row in page_obj.object_list),
+        items=tuple(replace(item, platforms=tuple(platform_names[item.id])) for item in items),
         number=page_obj.number,
         num_pages=paginator.num_pages,
         total_count=paginator.count,
