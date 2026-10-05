@@ -1,0 +1,40 @@
+{
+  "observed_at_utc": "2026-10-05T13:33:11.313485+00:00",
+  "baseline": "500305a",
+  "application_and_original_evals_unchanged": true,
+  "frozen_files": 83,
+  "offline_integrity_tests": {
+    "similarity": 29,
+    "letsplays": 10,
+    "freeze_negative_controls": 8
+  },
+  "image_match": {
+    "checked_application_eval_and_dependency_files": 74,
+    "checked_model_assets": 5,
+    "network": "none",
+    "passed": true
+  },
+  "images": {
+    "runtime": "sha256:f6f2607d4cd7c4429d1e313b1d6b8f961f7abcf9f323abce95e18a999ced15ec",
+    "checks": "sha256:2baed0e701ad4ff69d2cecc6072f610632a45d5a82728f5d54d703cd8472bc21"
+  },
+  "similarity": {
+    "snapshot_sha256_matches": true,
+    "historical_report_exactly_reproduced": false,
+    "repeated_linux_report_matches": true,
+    "new_set_two_ndcg": 0.548,
+    "historical_set_two_ndcg": 0.57,
+    "drift_cause": "not established",
+    "independent_holdout": false,
+    "quality_exception_authority": "ADR-0004; unchanged policy, no new waiver or threshold"
+  },
+  "letsplays": {
+    "saved_selector_replayed": true,
+    "saved_conclusion_outputs_validated": 14,
+    "semantic_quality_bar_passed": false,
+    "experimental": true,
+    "quality_exception_authority": "ADR-0006; unchanged contour, no new waiver or threshold"
+  },
+  "provider_calls": 0,
+  "verification_scope": "Offline frozen-source/model/input integrity and replay only; full application suite passed in FIN-DOCS and will be rerun for FIN-RELEASE. No application/evaluation policy change in this task."
+}

@@ -1,0 +1,17 @@
+FIN-RESEARCH executable verification excerpts
+Integrity is separate from semantic acceptance; frozen quality failures remain.
+
+OFFLINE CONTAINER SIMILARITY (exit 0)
+Ran 29 tests in 0.067s
+OK
+
+OFFLINE CONTAINER LETSPLAYS (exit 0)
+Ran 10 tests in 0.035s
+OK
+
+FREEZE NEGATIVE CONTROLS (exit 0)
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.038s
+
+OK

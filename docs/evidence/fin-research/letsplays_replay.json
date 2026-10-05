@@ -1,0 +1,21 @@
+{
+  "saved_speech_sha256": "767d2b258c9eb67569f17456cc4d773bacd2e5929aad9cf5b41eddd7cf16f0d5",
+  "selector_result": {
+    "accurate": 18,
+    "games": 20,
+    "false_positives": 0,
+    "violations": [],
+    "passed": true
+  },
+  "selector_trace_reproduced": true,
+  "selector_deterministic": true,
+  "conclusion_cases": 14,
+  "transcript_hashes_match": true,
+  "contour_fingerprint": "699c9943f24b42a9ad9a06ac1df203025111b07a412ba8c9715d133060520513",
+  "structurally_valid": 14,
+  "saved_quotes_reproduced": true,
+  "maximum_reserved_request_tokens": 4995,
+  "request_token_cap": 5000,
+  "provider_calls": 0,
+  "limits": "Original inputs and provider answers replayed; semantic grades unchanged, not independently reassessed."
+}

@@ -97,5 +97,8 @@ CLI and domain leases/state machines retain their interfaces.
 [ADRs](docs/decisions), [risk register](docs/risks.md) and
 [methodology](methodology.md) explain decisions and their limitations.
 Frozen evaluators test their stated oracles, not general AI/recommendation quality.
+The [research freeze](docs/research_freeze.md) pins current policies, keeps accepted
+quality failures and replay drift explicit, and proposes future independent holdout
+protocols without claiming they have been executed.
 Historical audit probes require their recorded source revision; commands and earlier
 observations remain in the [dated README archive](docs/history/readme-20261005.md).

@@ -1,0 +1,56 @@
+{
+  "baseline": "500305a",
+  "freeze_version": "1.0.0",
+  "frozen_files": 83,
+  "integrity_passed": true,
+  "similarity": {
+    "snapshot_sha256": "b6a216d57a77a222af73f0169b75eeba92ece6eac719686a16b030dd748de43c",
+    "snapshot_games": 1196,
+    "numeric_criteria": {
+      "set_two_improves_by_at_least_0_05": true,
+      "set_two_precision_not_lower": true,
+      "set_one_drop_at_most_0_03": false,
+      "coverage_not_lower": true
+    },
+    "set_one_regression": 0.227,
+    "full_quality_bar_passed": false,
+    "independent_holdout": false,
+    "hard_invariants": "Verified by original report/application tests; not inferred from aggregate scores"
+  },
+  "letsplay": {
+    "selection": {
+      "accurate": 18,
+      "games": 20,
+      "false_positives": 0,
+      "violations": [],
+      "passed": true
+    },
+    "conclusion": {
+      "total": 111,
+      "maximum": 132,
+      "share": 0.841,
+      "blocking": [
+        "LP-04"
+      ],
+      "must_be_two_missed": [
+        "LP-03:GROUND",
+        "LP-04:GROUND",
+        "LP-05:GROUND",
+        "LP-08:DISCLOSURE",
+        "LP-09:GROUND"
+      ],
+      "zeros": [
+        "LP-04:ATTRIBUTION"
+      ],
+      "passed": false
+    },
+    "structural_validity": {
+      "valid": 14,
+      "cases": 14
+    },
+    "independent_holdout": false,
+    "experimental": true,
+    "limit": "Published decisions/grades rescored; semantic judgments are not independently regraded"
+  },
+  "limits": "Integrity/recalculation only. Existing accepted failures remain; no independent holdout pass."
+}

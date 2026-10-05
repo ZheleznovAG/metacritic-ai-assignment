@@ -54,6 +54,10 @@ with the Bonus 2 scope ADR-0002. Frozen policy/report hashes are unchanged.
 - Similarity's 24-query second set was registered before tuning; its reported
   nDCG@5 is evaluation evidence, not an independent deployment holdout or proof of
   generalization. [Protocol and results](evals/similarity/text_comparison_v2.md).
+  [FIN-RESEARCH freeze](docs/research_freeze.md) pins current policies/data and records
+  real-model replay drift (set-2 nDCG 0.548 versus historical 0.570). The cause is
+  unresolved; neither result is an independent holdout. Existing owner-accepted
+  quality failures remain explicit; Let's Play stays experimental.
 - Source descriptions can belong to another game; Metacritic identities/counts can
   change. Bounded retries and identity checks preserve integrity, not source truth.
 - YouTube captions/IP blocking and search quotas constrain Let's Play throughput.
