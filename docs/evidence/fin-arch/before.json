@@ -1,0 +1,3033 @@
+{
+  "packages": [
+    "catalog",
+    "config",
+    "core",
+    "letsplays",
+    "metacritic",
+    "presentation",
+    "processing",
+    "reviews",
+    "similarity",
+    "summaries"
+  ],
+  "edges": {
+    "catalog->metacritic": [
+      "app/catalog/ingest.py",
+      "app/catalog/management/commands/backfill_game_metadata.py"
+    ],
+    "catalog->similarity": [
+      "app/catalog/queries.py",
+      "app/catalog/similarity_index.py"
+    ],
+    "config->presentation": [
+      "app/config/urls.py"
+    ],
+    "letsplays->catalog": [
+      "app/letsplays/worker.py"
+    ],
+    "letsplays->summaries": [
+      "app/letsplays/groq.py",
+      "app/letsplays/worker.py"
+    ],
+    "presentation->catalog": [
+      "app/presentation/letsplays.py",
+      "app/presentation/summaries.py",
+      "app/presentation/views.py"
+    ],
+    "presentation->letsplays": [
+      "app/presentation/letsplays.py"
+    ],
+    "presentation->processing": [
+      "app/presentation/monitoring.py",
+      "app/presentation/operators.py"
+    ],
+    "presentation->reviews": [
+      "app/presentation/summaries.py"
+    ],
+    "presentation->summaries": [
+      "app/presentation/summaries.py"
+    ],
+    "processing->catalog": [
+      "app/processing/diagnostics.py",
+      "app/processing/enrollment.py",
+      "app/processing/management/commands/add_rated_games.py",
+      "app/processing/manual_ingest.py",
+      "app/processing/runner.py",
+      "app/processing/selector.py",
+      "app/processing/storage_report.py"
+    ],
+    "processing->metacritic": [
+      "app/processing/dispatcher.py",
+      "app/processing/management/commands/add_rated_games.py",
+      "app/processing/management/commands/ingest_game.py",
+      "app/processing/management/commands/run_scheduler.py",
+      "app/processing/manual_ingest.py",
+      "app/processing/observed_gateway.py",
+      "app/processing/runner.py",
+      "app/processing/scheduler.py",
+      "app/processing/selector.py"
+    ],
+    "processing->reviews": [
+      "app/processing/diagnostics.py",
+      "app/processing/enrollment.py",
+      "app/processing/monitoring.py",
+      "app/processing/storage_report.py"
+    ],
+    "processing->summaries": [
+      "app/processing/diagnostics.py",
+      "app/processing/monitoring.py",
+      "app/processing/storage_report.py"
+    ],
+    "reviews->catalog": [
+      "app/reviews/collector.py",
+      "app/reviews/corpus.py",
+      "app/reviews/management/commands/run_worker.py",
+      "app/reviews/snapshots.py"
+    ],
+    "reviews->letsplays": [
+      "app/reviews/management/commands/run_worker.py"
+    ],
+    "reviews->metacritic": [
+      "app/reviews/collector.py",
+      "app/reviews/management/commands/run_worker.py"
+    ],
+    "reviews->processing": [
+      "app/reviews/management/commands/run_worker.py",
+      "app/reviews/snapshots.py"
+    ],
+    "reviews->summaries": [
+      "app/reviews/collector.py",
+      "app/reviews/corpus.py",
+      "app/reviews/dispatch.py",
+      "app/reviews/management/commands/refresh_summaries.py",
+      "app/reviews/management/commands/run_worker.py"
+    ],
+    "similarity->catalog": [
+      "app/similarity/policy.py"
+    ],
+    "summaries->reviews": [
+      "app/summaries/preflight.py",
+      "app/summaries/worker.py"
+    ]
+  },
+  "cycles": [
+    [
+      "catalog",
+      "similarity"
+    ],
+    [
+      "letsplays",
+      "summaries",
+      "reviews"
+    ],
+    [
+      "processing",
+      "reviews"
+    ],
+    [
+      "processing",
+      "summaries",
+      "reviews"
+    ],
+    [
+      "reviews",
+      "summaries"
+    ]
+  ],
+  "hotspots": [
+    {
+      "path": "app/summaries/worker.py",
+      "function": "process_job",
+      "line": 138,
+      "lines": 176,
+      "branch_nodes": 25
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "collect_one_page",
+      "line": 164,
+      "lines": 198,
+      "branch_nodes": 22
+    },
+    {
+      "path": "app/processing/selector.py",
+      "function": "run_batch",
+      "line": 109,
+      "lines": 129,
+      "branch_nodes": 22
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_hear",
+      "line": 200,
+      "lines": 84,
+      "branch_nodes": 19
+    },
+    {
+      "path": "app/processing/monitoring.py",
+      "function": "_snapshot",
+      "line": 77,
+      "lines": 86,
+      "branch_nodes": 18
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "validate_output",
+      "line": 149,
+      "lines": 57,
+      "branch_nodes": 18
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "validate_output",
+      "line": 218,
+      "lines": 49,
+      "branch_nodes": 18
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_listen",
+      "line": 286,
+      "lines": 75,
+      "branch_nodes": 15
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_conclude",
+      "line": 371,
+      "lines": 73,
+      "branch_nodes": 14
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "rank",
+      "line": 253,
+      "lines": 66,
+      "branch_nodes": 14
+    },
+    {
+      "path": "app/summaries/quota.py",
+      "function": "_blocks",
+      "line": 54,
+      "lines": 47,
+      "branch_nodes": 14
+    },
+    {
+      "path": "app/processing/scheduler.py",
+      "function": "run_manual",
+      "line": 97,
+      "lines": 73,
+      "branch_nodes": 12
+    },
+    {
+      "path": "app/metacritic/validation.py",
+      "function": "validate_game",
+      "line": 43,
+      "lines": 42,
+      "branch_nodes": 12
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "parse_game_detail",
+      "line": 124,
+      "lines": 70,
+      "branch_nodes": 11
+    },
+    {
+      "path": "app/presentation/operators.py",
+      "function": "run_view",
+      "line": 90,
+      "lines": 45,
+      "branch_nodes": 11
+    },
+    {
+      "path": "app/reviews/corpus.py",
+      "function": "build",
+      "line": 48,
+      "lines": 179,
+      "branch_nodes": 10
+    },
+    {
+      "path": "app/reviews/snapshots.py",
+      "function": "collection_state",
+      "line": 33,
+      "lines": 72,
+      "branch_nodes": 10
+    },
+    {
+      "path": "app/presentation/letsplays.py",
+      "function": "get_letsplay",
+      "line": 62,
+      "lines": 68,
+      "branch_nodes": 10
+    },
+    {
+      "path": "app/metacritic/review_parser.py",
+      "function": "parse_review_page",
+      "line": 66,
+      "lines": 44,
+      "branch_nodes": 9
+    },
+    {
+      "path": "app/metacritic/review_parser.py",
+      "function": "_parse_review_item",
+      "line": 26,
+      "lines": 38,
+      "branch_nodes": 9
+    },
+    {
+      "path": "app/processing/management/commands/add_rated_games.py",
+      "function": "collect",
+      "line": 25,
+      "lines": 33,
+      "branch_nodes": 9
+    },
+    {
+      "path": "app/processing/runner.py",
+      "function": "process_candidate",
+      "line": 32,
+      "lines": 85,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "_attempt",
+      "line": 162,
+      "lines": 68,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/summaries/groq_adapter.py",
+      "function": "_post",
+      "line": 103,
+      "lines": 47,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/letsplays/groq.py",
+      "function": "chat",
+      "line": 99,
+      "lines": 45,
+      "branch_nodes": 8
+    }
+  ],
+  "functions": [
+    {
+      "path": "app/catalog/genres.py",
+      "function": "normalize_label",
+      "line": 4,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/genres.py",
+      "function": "normalize_genres",
+      "line": 8,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/ingest.py",
+      "function": "_merge_field",
+      "line": 41,
+      "lines": 8,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/catalog/ingest.py",
+      "function": "save_fetch_evidence",
+      "line": 51,
+      "lines": 12,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/ingest.py",
+      "function": "_resolve_game",
+      "line": 65,
+      "lines": 66,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/catalog/ingest.py",
+      "function": "resolve_game_identity",
+      "line": 133,
+      "lines": 20,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/ingest.py",
+      "function": "_upsert_platform",
+      "line": 155,
+      "lines": 53,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/catalog/ingest.py",
+      "function": "_absolute_url",
+      "line": 210,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/ingest.py",
+      "function": "fetch_and_prepare",
+      "line": 215,
+      "lines": 44,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/catalog/ingest.py",
+      "function": "apply_game_dto",
+      "line": 261,
+      "lines": 50,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/catalog/labels.py",
+      "function": "saved_labels",
+      "line": 4,
+      "lines": 6,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/catalog/management/commands/backfill_game_metadata.py",
+      "function": "backfill",
+      "line": 27,
+      "lines": 30,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/catalog/management/commands/backfill_game_metadata.py",
+      "function": "fetch_game",
+      "line": 24,
+      "lines": 1,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/management/commands/backfill_game_metadata.py",
+      "function": "add_arguments",
+      "line": 62,
+      "lines": 5,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/management/commands/backfill_game_metadata.py",
+      "function": "handle",
+      "line": 68,
+      "lines": 7,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/models.py",
+      "function": "__str__",
+      "line": 70,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/models.py",
+      "function": "__str__",
+      "line": 104,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/models.py",
+      "function": "__str__",
+      "line": 154,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/models.py",
+      "function": "__str__",
+      "line": 202,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/queries.py",
+      "function": "_explanation",
+      "line": 101,
+      "lines": 10,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/catalog/queries.py",
+      "function": "list_similar_games",
+      "line": 113,
+      "lines": 42,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/catalog/queries.py",
+      "function": "list_platform_options",
+      "line": 157,
+      "lines": 6,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/catalog/queries.py",
+      "function": "_list_game_rows",
+      "line": 165,
+      "lines": 47,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/catalog/queries.py",
+      "function": "_row_to_item",
+      "line": 214,
+      "lines": 9,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/queries.py",
+      "function": "list_games",
+      "line": 225,
+      "lines": 5,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/queries.py",
+      "function": "paginate_games",
+      "line": 232,
+      "lines": 37,
+      "branch_nodes": 7
+    },
+    {
+      "path": "app/catalog/queries.py",
+      "function": "get_game_detail",
+      "line": 271,
+      "lines": 22,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/catalog/queries.py",
+      "function": "metascore",
+      "line": 46,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/queries.py",
+      "function": "userscore",
+      "line": 50,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "game_texts",
+      "line": 45,
+      "lines": 7,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "_digest",
+      "line": 54,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "_current_texts",
+      "line": 69,
+      "lines": 7,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "_saved_embeddings",
+      "line": 78,
+      "lines": 7,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "_pending",
+      "line": 87,
+      "lines": 8,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "embed_pending",
+      "line": 97,
+      "lines": 18,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "neighbors_stale",
+      "line": 117,
+      "lines": 9,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "_saved_item",
+      "line": 128,
+      "lines": 10,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "_neighbor_json",
+      "line": 140,
+      "lines": 8,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "rebuild_neighbors",
+      "line": 153,
+      "lines": 35,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "refresh",
+      "line": 190,
+      "lines": 8,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "_catalogue_signature",
+      "line": 200,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "fingerprint",
+      "line": 63,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "__init__",
+      "line": 209,
+      "lines": 13,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/catalog/similarity_index.py",
+      "function": "run_if_due",
+      "line": 223,
+      "lines": 23,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/config/safe_logging.py",
+      "function": "format",
+      "line": 8,
+      "lines": 12,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/config/settings.py",
+      "function": "required",
+      "line": 18,
+      "lines": 5,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/config/settings.py",
+      "function": "boolean",
+      "line": 25,
+      "lines": 5,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/core/clock.py",
+      "function": "now_utc",
+      "line": 8,
+      "lines": 1,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/core/clock.py",
+      "function": "now_utc",
+      "line": 12,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/budget.py",
+      "function": "lock",
+      "line": 60,
+      "lines": 5,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/letsplays/budget.py",
+      "function": "blocked_until",
+      "line": 67,
+      "lines": 26,
+      "branch_nodes": 7
+    },
+    {
+      "path": "app/letsplays/budget.py",
+      "function": "admit",
+      "line": 95,
+      "lines": 10,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/letsplays/budget.py",
+      "function": "finish",
+      "line": 107,
+      "lines": 15,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "sha256_bytes",
+      "line": 82,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "canonical_json",
+      "line": 86,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "_encoding",
+      "line": 91,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "count_tokens",
+      "line": 95,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "load_system_prompt",
+      "line": 99,
+      "lines": 6,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "api_schema",
+      "line": 107,
+      "lines": 13,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "segment",
+      "line": 122,
+      "lines": 22,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "build_payload",
+      "line": 146,
+      "lines": 19,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "_measure",
+      "line": 167,
+      "lines": 5,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "prepare",
+      "line": 174,
+      "lines": 19,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "contour_versions",
+      "line": 195,
+      "lines": 15,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "contour_fingerprint",
+      "line": 212,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "validate_output",
+      "line": 218,
+      "lines": 49,
+      "branch_nodes": 18
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "opinions",
+      "line": 269,
+      "lines": 12,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "words",
+      "line": 78,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/conclusion.py",
+      "function": "convert",
+      "line": 111,
+      "lines": 6,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/letsplays/groq.py",
+      "function": "_safe_error",
+      "line": 56,
+      "lines": 15,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/letsplays/groq.py",
+      "function": "_retry_after",
+      "line": 73,
+      "lines": 6,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/letsplays/groq.py",
+      "function": "_checked",
+      "line": 81,
+      "lines": 10,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/letsplays/groq.py",
+      "function": "_usage",
+      "line": 93,
+      "lines": 4,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/letsplays/groq.py",
+      "function": "chat",
+      "line": 99,
+      "lines": 45,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/letsplays/groq.py",
+      "function": "transcribe",
+      "line": 146,
+      "lines": 28,
+      "branch_nodes": 5
+    },
+    {
+      "path": "app/letsplays/models.py",
+      "function": "__str__",
+      "line": 51,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/models.py",
+      "function": "__str__",
+      "line": 69,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/models.py",
+      "function": "__str__",
+      "line": 101,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/models.py",
+      "function": "__str__",
+      "line": 141,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/providers.py",
+      "function": "__init__",
+      "line": 15,
+      "lines": 7,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/providers.py",
+      "function": "search",
+      "line": 23,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/providers.py",
+      "function": "facts",
+      "line": 26,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/providers.py",
+      "function": "captions",
+      "line": 29,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/providers.py",
+      "function": "whisper",
+      "line": 32,
+      "lines": 10,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/providers.py",
+      "function": "chat",
+      "line": 43,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/selection.py",
+      "function": "words",
+      "line": 102,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/selection.py",
+      "function": "name_words",
+      "line": 107,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/selection.py",
+      "function": "title_names_game",
+      "line": 111,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/selection.py",
+      "function": "speech_names_game",
+      "line": 115,
+      "lines": 19,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/letsplays/selection.py",
+      "function": "speech_touches_name",
+      "line": 136,
+      "lines": 7,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/selection.py",
+      "function": "about_this_game",
+      "line": 145,
+      "lines": 9,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/letsplays/selection.py",
+      "function": "is_english",
+      "line": 156,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/selection.py",
+      "function": "worth_listening",
+      "line": 160,
+      "lines": 6,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/letsplays/selection.py",
+      "function": "shortlist",
+      "line": 168,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/selection.py",
+      "function": "choose",
+      "line": 173,
+      "lines": 19,
+      "branch_nodes": 5
+    },
+    {
+      "path": "app/letsplays/selection.py",
+      "function": "words_per_minute",
+      "line": 80,
+      "lines": 3,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_next_game",
+      "line": 56,
+      "lines": 8,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "claim",
+      "line": 66,
+      "lines": 30,
+      "branch_nodes": 5
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_restart",
+      "line": 98,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_later",
+      "line": 104,
+      "lines": 5,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_error",
+      "line": 111,
+      "lines": 11,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_owned",
+      "line": 124,
+      "lines": 3,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "advance",
+      "line": 129,
+      "lines": 10,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_search",
+      "line": 141,
+      "lines": 57,
+      "branch_nodes": 7
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_hear",
+      "line": 200,
+      "lines": 84,
+      "branch_nodes": 19
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_listen",
+      "line": 286,
+      "lines": 75,
+      "branch_nodes": 15
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_not_found",
+      "line": 363,
+      "lines": 6,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_conclude",
+      "line": 371,
+      "lines": 73,
+      "branch_nodes": 14
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "_done",
+      "line": 446,
+      "lines": 8,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "search",
+      "line": 45,
+      "lines": 1,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "facts",
+      "line": 47,
+      "lines": 1,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "captions",
+      "line": 49,
+      "lines": 1,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "whisper",
+      "line": 51,
+      "lines": 1,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/worker.py",
+      "function": "chat",
+      "line": 53,
+      "lines": 1,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/youtube.py",
+      "function": "_seconds",
+      "line": 84,
+      "lines": 6,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/letsplays/youtube.py",
+      "function": "_api",
+      "line": 92,
+      "lines": 16,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/letsplays/youtube.py",
+      "function": "search_units",
+      "line": 110,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/youtube.py",
+      "function": "search",
+      "line": 114,
+      "lines": 44,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/letsplays/youtube.py",
+      "function": "facts",
+      "line": 160,
+      "lines": 32,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/letsplays/youtube.py",
+      "function": "captions",
+      "line": 194,
+      "lines": 38,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/letsplays/youtube.py",
+      "function": "audio_fragment",
+      "line": 234,
+      "lines": 44,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/letsplays/youtube.py",
+      "function": "temp_dir_ready",
+      "line": 280,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/letsplays/youtube.py",
+      "function": "__init__",
+      "line": 51,
+      "lines": 3,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "_find_game_record",
+      "line": 50,
+      "lines": 13,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "_parse_platform",
+      "line": 65,
+      "lines": 47,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "_extract_developer",
+      "line": 114,
+      "lines": 8,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "parse_game_detail",
+      "line": 124,
+      "lines": 70,
+      "branch_nodes": 11
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "_decode_entities",
+      "line": 196,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "_extract_release_date",
+      "line": 201,
+      "lines": 9,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "_extract_publishers",
+      "line": 212,
+      "lines": 10,
+      "branch_nodes": 5
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "_extract_content_rating",
+      "line": 224,
+      "lines": 6,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "_extract_genres",
+      "line": 232,
+      "lines": 11,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "_with_userscore",
+      "line": 245,
+      "lines": 12,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "_extract_user_score",
+      "line": 259,
+      "lines": 21,
+      "branch_nodes": 5
+    },
+    {
+      "path": "app/metacritic/detail_parser.py",
+      "function": "parse_platform_userscore",
+      "line": 282,
+      "lines": 17,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "_validate_url",
+      "line": 97,
+      "lines": 6,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "_validate_review_url",
+      "line": 105,
+      "lines": 6,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "_initial_review_url",
+      "line": 113,
+      "lines": 17,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "review_page_url",
+      "line": 132,
+      "lines": 2,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "fetch_game",
+      "line": 47,
+      "lines": 1,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "fetch_platform_userscore",
+      "line": 49,
+      "lines": 1,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "list_new_releases",
+      "line": 51,
+      "lines": 1,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "iter_browse",
+      "line": 53,
+      "lines": 1,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "fetch_review_page",
+      "line": 55,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "fetch_review_page",
+      "line": 64,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "__init__",
+      "line": 137,
+      "lines": 9,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "close",
+      "line": 147,
+      "lines": 3,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "_get",
+      "line": 151,
+      "lines": 10,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "_attempt",
+      "line": 162,
+      "lines": 68,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "_evidence",
+      "line": 231,
+      "lines": 20,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "fetch_game",
+      "line": 252,
+      "lines": 8,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "fetch_platform_userscore",
+      "line": 261,
+      "lines": 8,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "list_new_releases",
+      "line": 270,
+      "lines": 8,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "iter_browse",
+      "line": 279,
+      "lines": 16,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/metacritic/gateway.py",
+      "function": "fetch_review_page",
+      "line": 296,
+      "lines": 11,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/listing_parser.py",
+      "function": "_slug_from_href",
+      "line": 24,
+      "lines": 5,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/listing_parser.py",
+      "function": "_find_game_title_by_slug",
+      "line": 31,
+      "lines": 9,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/metacritic/listing_parser.py",
+      "function": "_identity_from_slug",
+      "line": 42,
+      "lines": 15,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/metacritic/listing_parser.py",
+      "function": "parse_new_releases",
+      "line": 59,
+      "lines": 21,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/metacritic/listing_parser.py",
+      "function": "_require_matching_browse_listing",
+      "line": 82,
+      "lines": 16,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/listing_parser.py",
+      "function": "parse_browse_page",
+      "line": 100,
+      "lines": 29,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/metacritic/page.py",
+      "function": "collapse",
+      "line": 14,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/page.py",
+      "function": "safe_url",
+      "line": 18,
+      "lines": 6,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/page.py",
+      "function": "resolve",
+      "line": 26,
+      "lines": 4,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/metacritic/page.py",
+      "function": "slug_from_url",
+      "line": 32,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/page.py",
+      "function": "extract_canonical_url",
+      "line": 36,
+      "lines": 12,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/metacritic/page.py",
+      "function": "require_matching_canonical",
+      "line": 50,
+      "lines": 12,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/page.py",
+      "function": "extract_json_ld",
+      "line": 64,
+      "lines": 11,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/metacritic/page.py",
+      "function": "extract_nuxt_payload",
+      "line": 77,
+      "lines": 11,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/metacritic/page.py",
+      "function": "find_by_testid",
+      "line": 90,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/page.py",
+      "function": "find_by_attr",
+      "line": 94,
+      "lines": 4,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/metacritic/page.py",
+      "function": "find_all_by_attr",
+      "line": 100,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/metacritic/review_parser.py",
+      "function": "_require_matching_review_route",
+      "line": 10,
+      "lines": 14,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/metacritic/review_parser.py",
+      "function": "_parse_review_item",
+      "line": 26,
+      "lines": 38,
+      "branch_nodes": 9
+    },
+    {
+      "path": "app/metacritic/review_parser.py",
+      "function": "parse_review_page",
+      "line": 66,
+      "lines": 44,
+      "branch_nodes": 9
+    },
+    {
+      "path": "app/metacritic/validation.py",
+      "function": "metascore",
+      "line": 10,
+      "lines": 6,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/validation.py",
+      "function": "userscore",
+      "line": 18,
+      "lines": 11,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/validation.py",
+      "function": "_text",
+      "line": 31,
+      "lines": 10,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/metacritic/validation.py",
+      "function": "validate_game",
+      "line": 43,
+      "lines": 42,
+      "branch_nodes": 12
+    },
+    {
+      "path": "app/presentation/letsplays.py",
+      "function": "_day",
+      "line": 58,
+      "lines": 2,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/presentation/letsplays.py",
+      "function": "get_letsplay",
+      "line": 62,
+      "lines": 68,
+      "branch_nodes": 10
+    },
+    {
+      "path": "app/presentation/letsplays.py",
+      "function": "_queue_message",
+      "line": 136,
+      "lines": 15,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/presentation/letsplays.py",
+      "function": "_opinions",
+      "line": 153,
+      "lines": 6,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/presentation/monitoring.py",
+      "function": "_enabled",
+      "line": 12,
+      "lines": 3,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/presentation/monitoring.py",
+      "function": "index",
+      "line": 27,
+      "lines": 15,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/presentation/monitoring.py",
+      "function": "status",
+      "line": 46,
+      "lines": 6,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/presentation/operators.py",
+      "function": "client_ip",
+      "line": 23,
+      "lines": 10,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/presentation/operators.py",
+      "function": "_throttled",
+      "line": 35,
+      "lines": 8,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/presentation/operators.py",
+      "function": "_wants_json",
+      "line": 45,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/presentation/operators.py",
+      "function": "csrf_failure",
+      "line": 49,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/presentation/operators.py",
+      "function": "login_view",
+      "line": 56,
+      "lines": 23,
+      "branch_nodes": 5
+    },
+    {
+      "path": "app/presentation/operators.py",
+      "function": "logout_view",
+      "line": 83,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/presentation/operators.py",
+      "function": "run_view",
+      "line": 90,
+      "lines": 45,
+      "branch_nodes": 11
+    },
+    {
+      "path": "app/presentation/operators.py",
+      "function": "run_status_view",
+      "line": 138,
+      "lines": 16,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/presentation/operators.py",
+      "function": "error",
+      "line": 98,
+      "lines": 11,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/presentation/summaries.py",
+      "function": "_without_summary",
+      "line": 59,
+      "lines": 13,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/presentation/summaries.py",
+      "function": "_view_from_summary",
+      "line": 74,
+      "lines": 36,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/presentation/summaries.py",
+      "function": "_summary_view",
+      "line": 112,
+      "lines": 39,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/presentation/summaries.py",
+      "function": "get_summaries",
+      "line": 153,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/presentation/summaries.py",
+      "function": "reason_message",
+      "line": 43,
+      "lines": 14,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/presentation/templatetags/presentation_tags.py",
+      "function": "relative_time",
+      "line": 13,
+      "lines": 17,
+      "branch_nodes": 7
+    },
+    {
+      "path": "app/presentation/templatetags/presentation_tags.py",
+      "function": "process_label",
+      "line": 33,
+      "lines": 8,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/presentation/views.py",
+      "function": "_list_params",
+      "line": 27,
+      "lines": 22,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/presentation/views.py",
+      "function": "index",
+      "line": 53,
+      "lines": 39,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/presentation/views.py",
+      "function": "game_detail",
+      "line": 96,
+      "lines": 14,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/presentation/views.py",
+      "function": "live",
+      "line": 114,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/presentation/views.py",
+      "function": "ready",
+      "line": 120,
+      "lines": 10,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/admission.py",
+      "function": "admit",
+      "line": 36,
+      "lines": 41,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/processing/admission.py",
+      "function": "lookup",
+      "line": 79,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/admission.py",
+      "function": "expire_stale",
+      "line": 84,
+      "lines": 8,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/diagnostics.py",
+      "function": "_iso",
+      "line": 22,
+      "lines": 2,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/diagnostics.py",
+      "function": "run_diagnostics",
+      "line": 26,
+      "lines": 17,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/diagnostics.py",
+      "function": "game_diagnostics",
+      "line": 45,
+      "lines": 48,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/processing/diagnostics.py",
+      "function": "_review_job_diagnostics",
+      "line": 95,
+      "lines": 17,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/diagnostics.py",
+      "function": "_summary_job_diagnostics",
+      "line": 114,
+      "lines": 13,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/diagnostics.py",
+      "function": "job_diagnostics",
+      "line": 129,
+      "lines": 7,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/diagnostics.py",
+      "function": "backlog_diagnostics",
+      "line": 138,
+      "lines": 29,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/dispatcher.py",
+      "function": "__init__",
+      "line": 30,
+      "lines": 5,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/dispatcher.py",
+      "function": "_tick",
+      "line": 36,
+      "lines": 12,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/dispatcher.py",
+      "function": "_loop",
+      "line": 49,
+      "lines": 22,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/processing/dispatcher.py",
+      "function": "__enter__",
+      "line": 72,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/dispatcher.py",
+      "function": "__exit__",
+      "line": 77,
+      "lines": 9,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/enrollment.py",
+      "function": "ensure_jobs",
+      "line": 9,
+      "lines": 14,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/processing/heartbeat.py",
+      "function": "report_progress",
+      "line": 22,
+      "lines": 10,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/heartbeat.py",
+      "function": "process_state",
+      "line": 162,
+      "lines": 6,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/processing/heartbeat.py",
+      "function": "__init__",
+      "line": 35,
+      "lines": 20,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/heartbeat.py",
+      "function": "activity",
+      "line": 56,
+      "lines": 20,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/processing/heartbeat.py",
+      "function": "register",
+      "line": 77,
+      "lines": 24,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/heartbeat.py",
+      "function": "publish",
+      "line": 102,
+      "lines": 13,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/heartbeat.py",
+      "function": "_loop",
+      "line": 116,
+      "lines": 25,
+      "branch_nodes": 7
+    },
+    {
+      "path": "app/processing/heartbeat.py",
+      "function": "__enter__",
+      "line": 142,
+      "lines": 6,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/heartbeat.py",
+      "function": "__exit__",
+      "line": 149,
+      "lines": 11,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/lease.py",
+      "function": "acquire_lease",
+      "line": 22,
+      "lines": 14,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/lease.py",
+      "function": "release_lease",
+      "line": 38,
+      "lines": 5,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/lease.py",
+      "function": "current_fencing_token",
+      "line": 45,
+      "lines": 3,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/lease.py",
+      "function": "verify_fencing_token",
+      "line": 50,
+      "lines": 14,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/management/commands/add_rated_games.py",
+      "function": "collect",
+      "line": 25,
+      "lines": 33,
+      "branch_nodes": 9
+    },
+    {
+      "path": "app/processing/management/commands/add_rated_games.py",
+      "function": "add_arguments",
+      "line": 63,
+      "lines": 10,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/management/commands/add_rated_games.py",
+      "function": "handle",
+      "line": 74,
+      "lines": 14,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/management/commands/create_operator.py",
+      "function": "add_arguments",
+      "line": 26,
+      "lines": 7,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/management/commands/create_operator.py",
+      "function": "handle",
+      "line": 34,
+      "lines": 26,
+      "branch_nodes": 5
+    },
+    {
+      "path": "app/processing/management/commands/diagnose.py",
+      "function": "add_arguments",
+      "line": 18,
+      "lines": 6,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/management/commands/diagnose.py",
+      "function": "handle",
+      "line": 25,
+      "lines": 26,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/processing/management/commands/ingest_game.py",
+      "function": "add_arguments",
+      "line": 17,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/management/commands/ingest_game.py",
+      "function": "handle",
+      "line": 20,
+      "lines": 25,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/management/commands/run_scheduler.py",
+      "function": "add_arguments",
+      "line": 26,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/management/commands/run_scheduler.py",
+      "function": "handle",
+      "line": 29,
+      "lines": 15,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/management/commands/run_scheduler.py",
+      "function": "_tick",
+      "line": 45,
+      "lines": 13,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/management/commands/storage_report.py",
+      "function": "add_arguments",
+      "line": 18,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/management/commands/storage_report.py",
+      "function": "handle",
+      "line": 23,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/manual_ingest.py",
+      "function": "_ensure_candidate",
+      "line": 38,
+      "lines": 24,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/manual_ingest.py",
+      "function": "ingest_game",
+      "line": 64,
+      "lines": 45,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/models.py",
+      "function": "__str__",
+      "line": 43,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/models.py",
+      "function": "__str__",
+      "line": 57,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/models.py",
+      "function": "__str__",
+      "line": 85,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/models.py",
+      "function": "__str__",
+      "line": 116,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/models.py",
+      "function": "__str__",
+      "line": 139,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/models.py",
+      "function": "__str__",
+      "line": 192,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/models.py",
+      "function": "__str__",
+      "line": 235,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/monitoring.py",
+      "function": "_iso",
+      "line": 48,
+      "lines": 2,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/monitoring.py",
+      "function": "_age",
+      "line": 52,
+      "lines": 2,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/monitoring.py",
+      "function": "_queue",
+      "line": 56,
+      "lines": 19,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/processing/monitoring.py",
+      "function": "_snapshot",
+      "line": 77,
+      "lines": 86,
+      "branch_nodes": 18
+    },
+    {
+      "path": "app/processing/monitoring.py",
+      "function": "snapshot",
+      "line": 165,
+      "lines": 10,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/observed_gateway.py",
+      "function": "_get",
+      "line": 18,
+      "lines": 11,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/progress.py",
+      "function": "progress_for_runs",
+      "line": 17,
+      "lines": 17,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/runner.py",
+      "function": "detail_url_for",
+      "line": 28,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/runner.py",
+      "function": "process_candidate",
+      "line": 32,
+      "lines": 85,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/processing/scheduler.py",
+      "function": "current_slot",
+      "line": 47,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/scheduler.py",
+      "function": "trigger_key_for_slot",
+      "line": 51,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/scheduler.py",
+      "function": "run_tick",
+      "line": 55,
+      "lines": 40,
+      "branch_nodes": 7
+    },
+    {
+      "path": "app/processing/scheduler.py",
+      "function": "run_manual",
+      "line": 97,
+      "lines": 73,
+      "branch_nodes": 12
+    },
+    {
+      "path": "app/processing/scheduler.py",
+      "function": "_try_resume",
+      "line": 172,
+      "lines": 17,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/scheduler.py",
+      "function": "_mark_running",
+      "line": 191,
+      "lines": 8,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/scheduler.py",
+      "function": "_execute_and_close",
+      "line": 201,
+      "lines": 7,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/scheduler.py",
+      "function": "_save_closure",
+      "line": 210,
+      "lines": 8,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/scheduler.py",
+      "function": "_execute_owned",
+      "line": 220,
+      "lines": 86,
+      "branch_nodes": 5
+    },
+    {
+      "path": "app/processing/selector.py",
+      "function": "_recover_stale_candidates",
+      "line": 49,
+      "lines": 27,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/selector.py",
+      "function": "_existing_source_game_ids",
+      "line": 78,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/selector.py",
+      "function": "_append_candidates",
+      "line": 84,
+      "lines": 23,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/processing/selector.py",
+      "function": "run_batch",
+      "line": 109,
+      "lines": 129,
+      "branch_nodes": 22
+    },
+    {
+      "path": "app/processing/selector.py",
+      "function": "_process_batch",
+      "line": 240,
+      "lines": 37,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/processing/storage_report.py",
+      "function": "_table_size_bytes",
+      "line": 24,
+      "lines": 13,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/storage_report.py",
+      "function": "_database_size_bytes",
+      "line": 39,
+      "lines": 5,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/storage_report.py",
+      "function": "_wal_size_bytes",
+      "line": 46,
+      "lines": 12,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/processing/storage_report.py",
+      "function": "_disk_headroom_bytes",
+      "line": 60,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/processing/storage_report.py",
+      "function": "storage_report",
+      "line": 65,
+      "lines": 44,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "_backoff_for",
+      "line": 48,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "_page_attempt_count",
+      "line": 53,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "_restart_generation",
+      "line": 59,
+      "lines": 13,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "_recover_stale_leases",
+      "line": 74,
+      "lines": 12,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "claim_next_job",
+      "line": 88,
+      "lines": 20,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "_still_owned",
+      "line": 110,
+      "lines": 13,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "_finish_fetch",
+      "line": 125,
+      "lines": 5,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "_normalize_text",
+      "line": 132,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "_identity_key",
+      "line": 136,
+      "lines": 17,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "_maybe_build_corpus_and_summary_job",
+      "line": 155,
+      "lines": 7,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/reviews/collector.py",
+      "function": "collect_one_page",
+      "line": 164,
+      "lines": 198,
+      "branch_nodes": 22
+    },
+    {
+      "path": "app/reviews/corpus.py",
+      "function": "_canonical_json",
+      "line": 28,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/corpus.py",
+      "function": "all_routes_terminal",
+      "line": 32,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/corpus.py",
+      "function": "_dedup_fingerprint",
+      "line": 36,
+      "lines": 9,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/corpus.py",
+      "function": "build",
+      "line": 48,
+      "lines": 179,
+      "branch_nodes": 10
+    },
+    {
+      "path": "app/reviews/corpus.py",
+      "function": "score",
+      "line": 134,
+      "lines": 5,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/reviews/dispatch.py",
+      "function": "claim_next",
+      "line": 13,
+      "lines": 15,
+      "branch_nodes": 6
+    },
+    {
+      "path": "app/reviews/management/commands/refresh_summaries.py",
+      "function": "refresh",
+      "line": 36,
+      "lines": 25,
+      "branch_nodes": 5
+    },
+    {
+      "path": "app/reviews/management/commands/refresh_summaries.py",
+      "function": "add_arguments",
+      "line": 66,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/management/commands/refresh_summaries.py",
+      "function": "handle",
+      "line": 70,
+      "lines": 7,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/management/commands/run_worker.py",
+      "function": "add_arguments",
+      "line": 34,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/management/commands/run_worker.py",
+      "function": "handle",
+      "line": 37,
+      "lines": 32,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/reviews/management/commands/run_worker.py",
+      "function": "_tick",
+      "line": 70,
+      "lines": 46,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/reviews/management/commands/run_worker.py",
+      "function": "_advance_letsplays",
+      "line": 117,
+      "lines": 14,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/reviews/management/commands/run_worker.py",
+      "function": "_maintain_similar_games",
+      "line": 132,
+      "lines": 11,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/reviews/models.py",
+      "function": "__str__",
+      "line": 98,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/models.py",
+      "function": "__str__",
+      "line": 135,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/models.py",
+      "function": "__str__",
+      "line": 167,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/models.py",
+      "function": "__str__",
+      "line": 206,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/models.py",
+      "function": "__str__",
+      "line": 229,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/selection.py",
+      "function": "count_tokens",
+      "line": 47,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/selection.py",
+      "function": "truncate_to_token_boundary",
+      "line": 51,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/selection.py",
+      "function": "_sort_key",
+      "line": 100,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/selection.py",
+      "function": "_deduplicate",
+      "line": 104,
+      "lines": 9,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/reviews/selection.py",
+      "function": "_sentiment",
+      "line": 115,
+      "lines": 8,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/reviews/selection.py",
+      "function": "_deterministic_order",
+      "line": 125,
+      "lines": 14,
+      "branch_nodes": 5
+    },
+    {
+      "path": "app/reviews/selection.py",
+      "function": "select_reviews",
+      "line": 141,
+      "lines": 42,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/reviews/selection.py",
+      "function": "meaningful_count",
+      "line": 80,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/snapshots.py",
+      "function": "_canonical_json",
+      "line": 13,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/reviews/snapshots.py",
+      "function": "known_routes",
+      "line": 17,
+      "lines": 7,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/reviews/snapshots.py",
+      "function": "collection_state",
+      "line": 33,
+      "lines": 72,
+      "branch_nodes": 10
+    },
+    {
+      "path": "app/reviews/versioning.py",
+      "function": "version_fingerprint",
+      "line": 7,
+      "lines": 12,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/embedder.py",
+      "function": "embed",
+      "line": 20,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/embedder.py",
+      "function": "__init__",
+      "line": 28,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/embedder.py",
+      "function": "_load",
+      "line": 32,
+      "lines": 11,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/similarity/embedder.py",
+      "function": "embed",
+      "line": 44,
+      "lines": 7,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/similarity/policy.py",
+      "function": "rank",
+      "line": 30,
+      "lines": 35,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "has_signal",
+      "line": 116,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "_squash",
+      "line": 121,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "description_problem",
+      "line": 125,
+      "lines": 23,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "game_text",
+      "line": 150,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "label_text",
+      "line": 154,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "tokenize",
+      "line": 158,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "_tfidf_weights",
+      "line": 162,
+      "lines": 11,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "_tfidf_matrix",
+      "line": 175,
+      "lines": 19,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "tfidf_similarity",
+      "line": 196,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "_zscore",
+      "line": 200,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "_fused",
+      "line": 206,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "rank_neighbors",
+      "line": 212,
+      "lines": 25,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "_shared_terms",
+      "line": 239,
+      "lines": 12,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/similarity/text.py",
+      "function": "rank",
+      "line": 253,
+      "lines": 66,
+      "branch_nodes": 14
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "sha256_bytes",
+      "line": 48,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "canonical_json",
+      "line": 52,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "load_system_prompt",
+      "line": 56,
+      "lines": 6,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "load_schema",
+      "line": 64,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "api_schema",
+      "line": 69,
+      "lines": 13,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "build_request_payload",
+      "line": 84,
+      "lines": 22,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "contour_versions",
+      "line": 108,
+      "lines": 15,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "contour_fingerprint",
+      "line": 125,
+      "lines": 5,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "normalize_output",
+      "line": 132,
+      "lines": 12,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "validate_output",
+      "line": 149,
+      "lines": 57,
+      "branch_nodes": 18
+    },
+    {
+      "path": "app/summaries/contour.py",
+      "function": "convert",
+      "line": 73,
+      "lines": 6,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/summaries/groq_adapter.py",
+      "function": "validate_base_url",
+      "line": 71,
+      "lines": 13,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/summaries/groq_adapter.py",
+      "function": "_safe_api_error",
+      "line": 86,
+      "lines": 15,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/summaries/groq_adapter.py",
+      "function": "_post",
+      "line": 103,
+      "lines": 47,
+      "branch_nodes": 8
+    },
+    {
+      "path": "app/summaries/groq_adapter.py",
+      "function": "_extract_output_text",
+      "line": 152,
+      "lines": 11,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/summaries/groq_adapter.py",
+      "function": "_safe_usage",
+      "line": 165,
+      "lines": 10,
+      "branch_nodes": 3
+    },
+    {
+      "path": "app/summaries/groq_adapter.py",
+      "function": "generate_summary",
+      "line": 177,
+      "lines": 67,
+      "branch_nodes": 7
+    },
+    {
+      "path": "app/summaries/groq_adapter.py",
+      "function": "__init__",
+      "line": 44,
+      "lines": 11,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/models.py",
+      "function": "__str__",
+      "line": 48,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/models.py",
+      "function": "__str__",
+      "line": 96,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/models.py",
+      "function": "__str__",
+      "line": 115,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/models.py",
+      "function": "__str__",
+      "line": 137,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/observability.py",
+      "function": "backlog_snapshot",
+      "line": 27,
+      "lines": 14,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/summaries/preflight.py",
+      "function": "measure",
+      "line": 27,
+      "lines": 16,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/summaries/preflight.py",
+      "function": "prepare",
+      "line": 45,
+      "lines": 5,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/summaries/quota.py",
+      "function": "lock_admission",
+      "line": 19,
+      "lines": 5,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/summaries/quota.py",
+      "function": "budget_halted",
+      "line": 26,
+      "lines": 4,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/quota.py",
+      "function": "_seconds",
+      "line": 32,
+      "lines": 12,
+      "branch_nodes": 4
+    },
+    {
+      "path": "app/summaries/quota.py",
+      "function": "_integer",
+      "line": 46,
+      "lines": 6,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/summaries/quota.py",
+      "function": "_blocks",
+      "line": 54,
+      "lines": 47,
+      "branch_nodes": 14
+    },
+    {
+      "path": "app/summaries/quota.py",
+      "function": "has_capacity",
+      "line": 103,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/quota.py",
+      "function": "next_available_at",
+      "line": 107,
+      "lines": 3,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/worker.py",
+      "function": "_backoff_for",
+      "line": 30,
+      "lines": 2,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/worker.py",
+      "function": "ensure_job",
+      "line": 34,
+      "lines": 9,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/worker.py",
+      "function": "_recover_stale_leases",
+      "line": 45,
+      "lines": 13,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/summaries/worker.py",
+      "function": "claim_next_job",
+      "line": 60,
+      "lines": 25,
+      "branch_nodes": 1
+    },
+    {
+      "path": "app/summaries/worker.py",
+      "function": "_still_owned",
+      "line": 87,
+      "lines": 16,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/summaries/worker.py",
+      "function": "_local_failure",
+      "line": 105,
+      "lines": 5,
+      "branch_nodes": 0
+    },
+    {
+      "path": "app/summaries/worker.py",
+      "function": "_attempt_failure",
+      "line": 112,
+      "lines": 24,
+      "branch_nodes": 2
+    },
+    {
+      "path": "app/summaries/worker.py",
+      "function": "process_job",
+      "line": 138,
+      "lines": 176,
+      "branch_nodes": 25
+    }
+  ]
+}

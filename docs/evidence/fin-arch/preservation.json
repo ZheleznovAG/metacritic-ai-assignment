@@ -1,0 +1,7 @@
+{
+  "collector_commit_transaction_ast_unchanged": true,
+  "collector_return_ast_unchanged": true,
+  "durable_dispatch_function_ast_unchanged": true,
+  "worker_command_class_ast_unchanged_except_dispatch_alias": true,
+  "method": "AST dump comparison ignoring source locations; node bodies remain identical to parent source, worker dispatch alias normalized."
+}

@@ -1,0 +1,42 @@
+.\.venv-app\Scripts\python.exe : test_domains_do_not_import_the_composition_root (tests.test_architecture.ModuleDepende
+ncyTests.test_domains_do_not_import_the_composition_root) ... ok
+At line:2 char:51
++ ...  check app; .\.venv-app\Scripts\python.exe app/manage.py test tests.t ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_domains_do...on_root) ... ok:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+test_every_production_package_is_scanned (tests.test_architecture.ModuleDependencyTests.test_every_production_package_i
+s_scanned) ... ok
+test_no_new_dependency_between_packages (tests.test_architecture.ModuleDependencyTests.test_no_new_dependency_between_p
+ackages) ... ok
+test_pure_packages_import_no_framework_or_network_client (tests.test_architecture.ModuleDependencyTests.test_pure_packa
+ges_import_no_framework_or_network_client) ... ok
+test_removed_dependencies_are_removed_from_the_allowlist (tests.test_architecture.ModuleDependencyTests.test_removed_de
+pendencies_are_removed_from_the_allowlist) ... ok
+test_the_foundation_imports_no_other_first_party_package (tests.test_architecture.ModuleDependencyTests.test_the_founda
+tion_imports_no_other_first_party_package) ... ok
+test_the_graph_is_derived_from_real_files (tests.test_architecture.ModuleDependencyTests.test_the_graph_is_derived_from
+_real_files) ... ok
+test_the_web_request_path_does_not_load_the_ranking_mathematics (tests.test_architecture.ModuleDependencyTests.test_the
+_web_request_path_does_not_load_the_ranking_mathematics) ... ok
+test_existing_public_command_is_discovered_in_the_composition_root (tests.test_worker_orchestration.WorkerOrchestration
+Tests.test_existing_public_command_is_discovered_in_the_composition_root) ... ok
+test_idle_maintenance_precedes_one_letsplay_step (tests.test_worker_orchestration.WorkerOrchestrationTests.test_idle_ma
+intenance_precedes_one_letsplay_step) ... ok
+test_idle_without_groq_key_maintains_similarity_but_skips_provider_work (tests.test_worker_orchestration.WorkerOrchestr
+ationTests.test_idle_without_groq_key_maintains_similarity_but_skips_provider_work) ... ok
+test_once_closes_both_http_clients_after_success_and_failure (tests.test_worker_orchestration.WorkerOrchestrationTests.
+test_once_closes_both_http_clients_after_success_and_failure) ... ok
+test_review_work_does_not_run_idle_maintenance_or_letsplays (tests.test_worker_orchestration.WorkerOrchestrationTests.t
+est_review_work_does_not_run_idle_maintenance_or_letsplays) ... ok
+test_unexpected_letsplay_failure_is_isolated_and_logs_only_its_type (tests.test_worker_orchestration.WorkerOrchestratio
+nTests.test_unexpected_letsplay_failure_is_isolated_and_logs_only_its_type) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.827s
+
+OK
+Found 14 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

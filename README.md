@@ -6,6 +6,14 @@ The application includes a read-only game catalog, platform filters and title se
 
 ## Local development
 
+The worker command is composed in `app/orchestration`: durable review/summary
+dispatch first, similarity and experimental Let's Play work only when idle.
+`python app/manage.py run_worker [--once]` and the Compose worker command keep
+their existing interface; the domain packages retain their claims, leases and state.
+The [FIN-ARCH review](docs/requirements/fin_arch_review.md) and
+[source-inspection commands](research/reviews/20261005_fin_arch/README.md) record
+the dependency graph, retained cycles and transaction-preservation evidence.
+
 Prerequisites: Docker Engine with Compose 2.24.4+ and uv **0.12.11** (`python -m pip install uv==0.12.11` if needed). The exact application interpreter is Python **3.12**; uv can download it. Keep the existing research `.venv` untouched: application commands use `.venv-app`.
 
 From a fresh checkout in PowerShell:
@@ -238,7 +246,9 @@ python -B -m unittest discover -s research/planning -p "test_*.py"
 
 These commands verify research evidence and the planning baseline, not a working application. Token-budget and optional live checks are documented separately in [evals/reviews](evals/reviews/README.md).
 
-To reproduce the historical `6551e42` audit after the local PostgreSQL setup above:
+The historical `6551e42` probe uses the reviewed revision's worker imports. After
+FIN-ARCH, reproduce it from a separate checkout of `6551e42` with that revision's
+database setup; it is excluded from the current application suite:
 
 ```powershell
 .\.venv-app\Scripts\python.exe -B research/reviews/6551e42/reproduce.py

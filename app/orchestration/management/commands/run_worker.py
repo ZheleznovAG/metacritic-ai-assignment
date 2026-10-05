@@ -1,4 +1,4 @@
-"""IMP-04 real worker entry point: `python scripts/run_worker.py [--once]`.
+"""IMP-04 / FIN-ARCH worker composition root: `manage.py run_worker [--once]`.
 
 One tick advances a review page or a summary attempt, alternating due queues durably. The
 summary queue is enabled when credentials are configured. Matches `docs/design.md`:
@@ -19,11 +19,12 @@ from letsplays.providers import LiveProviders
 from metacritic.gateway import ReviewGatewayProtocol
 from processing.heartbeat import Heartbeat, report_progress
 from processing.observed_gateway import ObservedGateway
+from reviews import collector
+from reviews.models import ReviewCollectionJob
 from summaries import groq_adapter
 from summaries import worker as summary_worker
 
-from reviews import collector, dispatch
-from reviews.models import ReviewCollectionJob
+from orchestration import jobs
 
 POLL_INTERVAL_SECONDS = 5
 
@@ -76,7 +77,7 @@ class Command(BaseCommand):
         base_url: str,
     ) -> None:
         report_progress("claiming", deadline_seconds=5)
-        job = dispatch.claim_next(clock, summaries_enabled=bool(api_key))
+        job = jobs.claim_next(clock, summaries_enabled=bool(api_key))
         if isinstance(job, ReviewCollectionJob):
             report_progress("reviews", job_id=job.pk, deadline_seconds=300)
             updated_review_job = collector.collect_one_page(gateway, clock, job)

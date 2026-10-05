@@ -8,7 +8,7 @@ it with `ALLOWED` in both directions:
 - a new edge fails until it is deliberately added here with a reason;
 - a removed edge fails until it is deleted here, so the list only ever shrinks when the code does.
 
-`ALLOWED` records the graph as found on 2026-09-30, including cycles (for example
+`ALLOWED` records the graph after FIN-ARCH, including cycles (for example
 `processing <-> reviews`) that are known debt, not a target. `core` is the foundation: every
 package may import it and it imports no other first-party package. Pure packages additionally must
 not import Django or network clients.
@@ -30,6 +30,7 @@ PACKAGES = frozenset(
         "core",
         "letsplays",
         "metacritic",
+        "orchestration",
         "presentation",
         "processing",
         "reviews",
@@ -46,6 +47,13 @@ ALLOWED = frozenset(
         ("letsplays", "catalog"),
         # Let's-play Groq calls reuse the summaries adapter's URL check, errors and headers.
         ("letsplays", "summaries"),
+        # Cross-domain composition lives above the domains; none imports it back.
+        ("orchestration", "catalog"),
+        ("orchestration", "letsplays"),
+        ("orchestration", "metacritic"),  # Worker entry-point gateway protocol.
+        ("orchestration", "processing"),
+        ("orchestration", "reviews"),
+        ("orchestration", "summaries"),
         ("presentation", "catalog"),
         ("presentation", "letsplays"),
         ("presentation", "processing"),
@@ -56,8 +64,6 @@ ALLOWED = frozenset(
         ("processing", "reviews"),
         ("processing", "summaries"),
         ("reviews", "catalog"),
-        # The one worker process (reviews' run_worker) also advances let's plays when idle.
-        ("reviews", "letsplays"),
         ("reviews", "metacritic"),
         ("reviews", "processing"),
         ("reviews", "summaries"),
@@ -99,6 +105,18 @@ def dependency_graph() -> dict[tuple[str, str], list[str]]:
 
 
 class ModuleDependencyTests(SimpleTestCase):
+    def test_every_production_package_is_scanned(self) -> None:
+        packages = {path.name for path in APP.iterdir() if (path / "__init__.py").is_file()} - {
+            "tests"
+        }
+        self.assertEqual(packages, PACKAGES)
+
+    def test_domains_do_not_import_the_composition_root(self) -> None:
+        incoming = {
+            edge: files for edge, files in dependency_graph().items() if edge[1] == "orchestration"
+        }
+        self.assertEqual(incoming, {})
+
     def test_no_new_dependency_between_packages(self) -> None:
         new = {edge: files for edge, files in dependency_graph().items() if edge not in ALLOWED}
         self.assertEqual(new, {}, "new package dependency; decide it explicitly in ALLOWED")

@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "summaries",
     "letsplays",
     "presentation",
+    "orchestration",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

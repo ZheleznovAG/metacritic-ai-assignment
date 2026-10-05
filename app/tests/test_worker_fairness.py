@@ -8,7 +8,7 @@ from unittest.mock import patch
 import httpx
 from django.db import connection
 from django.test import TestCase, TransactionTestCase
-from reviews.management.commands.run_worker import Command
+from orchestration.management.commands.run_worker import Command
 from summaries.models import SummaryJob
 
 from tests.test_reviews_collector import FakeClock, FakeGateway, _make_job

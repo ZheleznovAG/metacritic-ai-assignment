@@ -36,6 +36,7 @@ Core commit не ждёт отзывов или модели. Ошибка revie
 | Модуль | Ответственность | Не делает |
 |---|---|---|
 | `core` | Общие для всей программы основания: `Clock` | Не импортирует ни один другой пакет приложения |
+| `orchestration` | Composition root worker: durable review/summary dispatch, unchanged `run_worker`, idle similarity/Let's Play coordination | Не владеет domain rows, не заменяет lease/claim/state-machine services; домены не импортируют этот пакет |
 | `catalog` | Identity игры/платформ, non-destructive upsert, source fields и aliases | Не решает порядок дня, не создаёт daily candidates и review jobs, не вызывает AI |
 | `processing` | UTC slots, daily cycle, batch до 20, lease/fencing, attempts и run counters; после upsert записывает игру в дневной цикл и создаёт review jobs (`enrollment`, ручной путь `manual_ingest`) | Не разбирает HTML и не содержит UI rules |
 | `metacritic` | HTTP/parse adapter (парсеры разделены по типу страницы источника), typed DTO, `SourceFetch` evidence и классифицированные ошибки | Не пишет domain rows напрямую и не исправляет source semantics |
@@ -45,7 +46,7 @@ Core commit не ждёт отзывов или модели. Ошибка revie
 | `presentation` | Read-only list/detail queries и Django templates | Не запускает ingestion/enrichment через публичный Must UI |
 | `observability` | Structured events и представление persistent run/job state | Не является отдельным storage/monitoring service |
 
-Фактический граф импортов между пакетами проверяется тестом [`test_architecture.py`](../app/tests/test_architecture.py): новая связь или исчезнувшая, но оставшаяся в списке, роняют проверку. Список фиксирует и известный долг — циклы `processing ↔ reviews ↔ summaries` и `similarity → catalog` (устаревшая жанровая политика закреплена SHA-256 в замороженном отчёте сравнения); веб при загрузке маршрутов не импортирует `numpy`. Django ORM используется прямо внутри application services; универсальный repository layer не вводится. Протоколами изолируются только изменяемые границы: время, Metacritic и AI provider.
+Фактический граф импортов между пакетами проверяется тестом [`test_architecture.py`](../app/tests/test_architecture.py): новая связь или исчезнувшая, но оставшаяся в списке, роняют проверку. Проверка также требует учёта каждого production package и запрещает входящие импорты `orchestration`. FIN-ARCH устраняет цикл `reviews → letsplays → summaries → reviews`; оставшийся долг — циклы `processing ↔ reviews ↔ summaries` и `similarity → catalog` (устаревшая жанровая политика закреплена SHA-256 в замороженном отчёте сравнения); веб при загрузке маршрутов не импортирует `numpy`. Django ORM используется прямо внутри application services; универсальный repository layer не вводится. Протоколами изолируются только изменяемые границы: время, Metacritic и AI provider.
 
 ## Логическая модель PostgreSQL
 

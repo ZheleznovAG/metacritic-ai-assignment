@@ -1,12 +1,11 @@
-"""R14: persist alternation of due review and summary claims across workers/restarts."""
+"""R14 / FIN-ARCH: durable cross-domain dispatch over the existing EnrichmentTurn row."""
 
 from core.clock import Clock
 from django.db import transaction
-from summaries import worker as summary_worker
-from summaries.models import SummaryJob
-
 from reviews import collector
 from reviews.models import EnrichmentTurn, ReviewCollectionJob
+from summaries import worker as summary_worker
+from summaries.models import SummaryJob
 
 
 @transaction.atomic

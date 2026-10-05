@@ -25,7 +25,7 @@ from catalog.models import Game, SourceFetch
 from core.clock import Clock
 from django.db import transaction
 from django.db.models import Q
-from metacritic.dto import ReviewRecordDTO
+from metacritic.dto import FetchEvidence, ReviewPageDTO, ReviewRecordDTO
 from metacritic.gateway import ReviewGatewayProtocol, review_page_url
 from metacritic.parser import PARSER_CONTRACT_VERSION
 
@@ -200,7 +200,31 @@ def collect_one_page(
     page, evidence = gateway.fetch_review_page(
         job.audience, game_slug, platform.slug, job.next_cursor
     )
-    now = clock.now_utc()
+    return _commit_page(
+        job,
+        source_fetch,
+        page,
+        evidence,
+        now=clock.now_utc(),
+        page_attempt_count=page_attempt_count,
+    )
+
+
+def _commit_page(
+    job: ReviewCollectionJob,
+    source_fetch: SourceFetch,
+    page: ReviewPageDTO | None,
+    evidence: FetchEvidence,
+    *,
+    now: datetime,
+    page_attempt_count: int,
+) -> ReviewCollectionJob:
+    """Commit fetched data and terminal corpus/summary intent under the existing game lock.
+
+    The caller has completed HTTP outside the transaction; ownership is rechecked here.
+    """
+    platform = job.game_platform
+    game = platform.game
 
     with transaction.atomic():
         # Core upserts and all collection page commits take the game lock first. Besides

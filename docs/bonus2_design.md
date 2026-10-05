@@ -17,7 +17,7 @@
 | [run_tick](../app/processing/scheduler.py) и [lease](../app/processing/lease.py) | Scheduled trigger dedup, fencing и recovery переиспользуются; текущий entry point принимает только часовой slot |
 | [selector](../app/processing/selector.py), [runner](../app/processing/runner.py) | `selected_count` записывается до цикла; processed/failed — при закрытии run, отдельные CoreAttempt коммитятся по ходу |
 | [diagnostics](../app/processing/diagnostics.py) | Есть read-only CLI-проекции run/job/backlog; общего согласованного web snapshot и process heartbeat нет |
-| [scheduler loop](../app/processing/management/commands/run_scheduler.py), [worker loop](../app/reviews/management/commands/run_worker.py) | Интервалы idle polling 20/5 секунд; HTTP выполняется синхронно, поэтому heartbeat только между tick недостаточен |
+| [scheduler loop](../app/processing/management/commands/run_scheduler.py), [worker loop](../app/orchestration/management/commands/run_worker.py) | Интервалы idle polling 20/5 секунд; HTTP выполняется синхронно, поэтому heartbeat только между tick недостаточен |
 | [settings](../app/config/settings.py), [DB provisioning](../scripts/provision_db.py) | Auth/session apps отсутствуют; web имеет SELECT, scheduler/worker — широкие DML grants; новые auth-таблицы требуют пересмотра default grants |
 | [compose.yaml](../compose.yaml), [role tests](../scripts/tests/test_database_roles.py) | Supervision и ограниченные контейнеры уже есть; роли проверяются на настоящем PostgreSQL |
 
