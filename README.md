@@ -43,7 +43,16 @@ docker compose --env-file .env.app --profile app up -d --wait
 .\.venv-app\Scripts\python.exe scripts/smoke.py http://127.0.0.1:18081 --version local
 ```
 
-The first command runs format/lint/types, Django checks, migration drift, static build, PostgreSQL permission/integration tests, deployment-tool tests and offline research evidence checks. Run local/container suites sequentially: they create/drop `test_metacritic_checks`. The permission test creates and removes its own probe table in the development application's database. Never run tests against production. Formatting changes: `.\.venv-app\Scripts\python.exe -m ruff format app scripts`; lint-only: `.\.venv-app\Scripts\python.exe -m ruff check app scripts`; type-only: set `PYTHONPATH=app`, then `python -m mypy` in the application environment.
+The first command runs format/lint/types, Django checks, migration drift, static build, PostgreSQL permission/integration tests, deployment-tool tests and offline research evidence checks. Run local/container suites sequentially: they create/drop `test_metacritic_checks`. DB-role tests require an unmigrated application database: the manual-run grant test creates temporary tables with application table names. Once the local app has been started, use a separate checks project with the existing CI override:
+
+```powershell
+docker compose --env-file .env.app build web checks
+$env:COMPOSE_PROJECT_NAME = "metacritic-isolated-checks"
+docker compose --env-file .env.app -f compose.yaml -f compose.ci.yaml run --rm checks
+Remove-Item Env:COMPOSE_PROJECT_NAME
+```
+
+The separate project owns its own database volume and publishes no DB port. Do not start its app profile. Never run tests against production. Formatting changes: `.\.venv-app\Scripts\python.exe -m ruff format app scripts`; lint-only: `.\.venv-app\Scripts\python.exe -m ruff check app scripts`; type-only: set `PYTHONPATH=app`, then `python -m mypy` in the application environment.
 
 The same suite includes the `IMP-07` Playwright journey in `app/tests/test_e2e.py`.
 It starts a real scheduler tick on fake external catalog data, collects paginated

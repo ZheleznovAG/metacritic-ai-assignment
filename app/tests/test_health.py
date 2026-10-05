@@ -9,11 +9,12 @@ from django.test import TestCase
 
 
 class PublicScaffoldTests(TestCase):
-    def test_index_reports_build_without_response_caching(self) -> None:
+    def test_index_reports_build_with_short_public_cache(self) -> None:
         response = self.client.get("/")
         self.assertContains(response, settings.APP_VERSION)
         self.assertContains(response, 'class="game-list__controls"')
-        self.assertIn("no-store", response["Cache-Control"])
+        self.assertIn("public", response["Cache-Control"])
+        self.assertIn("max-age=60", response["Cache-Control"])
 
     def test_live_has_only_safe_fields(self) -> None:
         response = self.client.get("/health/live/")

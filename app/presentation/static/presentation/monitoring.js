@@ -85,6 +85,9 @@
     });
     section("history", "Recent runs", data.history, (history) => {
       const wrapper = node("div", undefined, "ops__table-wrap");
+      wrapper.tabIndex = 0;
+      wrapper.setAttribute("role", "region");
+      wrapper.setAttribute("aria-label", "Recent processing runs");
       const table = node("table", undefined, "ops__table");
       const head = node("thead");
       const headings = node("tr");

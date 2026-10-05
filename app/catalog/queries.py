@@ -1,13 +1,24 @@
-"""Read-only detail query for the public card (`presentation` never writes catalog rows)."""
+"""Read-only catalog queries for public presentation views.
+
+UI-OPT-01 keeps catalog search/filter/sort in PostgreSQL and exposes a bounded page to the
+request path. Detail/similarity queries remain read-only and never perform ranking or enrichment.
+"""
 
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 
+from django.core.paginator import Paginator
+from django.db.models import F, Max, Q, QuerySet
+from django.db.models.functions import Lower
 from similarity import contract as text_policy
 
 from catalog.labels import saved_labels
 from catalog.models import Game, GameNeighbors, GamePlatform
+
+CATALOG_PAGE_SIZE = 30
+
+GameListRow = tuple[int, str, str | None, str | None, int | None, date | None]
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,6 +51,21 @@ class GameListItemView:
     cover_url: str | None
     metascore: int | None
     release_date: date | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class CatalogPage:
+    items: tuple[GameListItemView, ...]
+    number: int
+    num_pages: int
+    total_count: int
+    start_index: int
+    end_index: int
+    has_previous: bool
+    has_next: bool
+    previous_number: int | None
+    next_number: int | None
+    page_numbers: tuple[int | None, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -123,55 +149,101 @@ def list_platform_options() -> list[PlatformOption]:
     return [PlatformOption(slug=slug, name=name) for slug, name in seen.items()]
 
 
-def list_games(
+def _list_game_rows(
     *, query: str = "", platform: str | None = None, sort: str = "score"
-) -> list[GameListItemView]:
-    """`ASM-15`: no filter -> Metascore is the max across all of a game's platforms; with a
-    platform filter -> the max among only the matched platform(s); a game with no scored platform
-    sorts after every scored game; ties sort by title (casefolded). `sort="release"` orders by
-    release date, newest first, games without a date last, then by title."""
+) -> QuerySet[Game, GameListRow]:
+    """Build the bounded catalog query without hydrating platforms or sorting in Python.
+
+    `ASM-15`: without a platform filter the displayed score is the maximum across all platforms;
+    with a filter it is the maximum among matched platforms only. PostgreSQL also performs the
+    title/release ordering, so request cost grows with one page rather than the whole catalog.
+    """
     games = Game.objects.all()
     if query:
         games = games.filter(title__icontains=query)
-    games = games.prefetch_related("platforms")
 
-    items: list[GameListItemView] = []
-    for game in games:
-        platforms = list(game.platforms.all())
-        if platform is not None:
-            platforms = [p for p in platforms if p.slug == platform]
-            if not platforms:
-                continue
-        scores = [p.metascore for p in platforms if p.metascore is not None]
-        metascore = max(scores) if scores else None
-        items.append(
-            GameListItemView(
-                id=game.id,
-                title=game.title,
-                developer=game.developer,
-                cover_url=game.cover_url,
-                metascore=metascore,
-                release_date=game.release_date,
-            )
-        )
-
-    if sort == "release":
-        items.sort(
-            key=lambda item: (
-                item.release_date is None,
-                -(item.release_date.toordinal() if item.release_date else 0),
-                item.title.casefold(),
-            )
+    if platform is not None:
+        games = games.filter(platforms__slug=platform).annotate(
+            _list_metascore=Max(
+                "platforms__metascore",
+                filter=Q(platforms__slug=platform),
+            ),
+            _list_title=Lower("title"),
         )
     else:
-        items.sort(
-            key=lambda item: (
-                item.metascore is None,
-                -(item.metascore or 0),
-                item.title.casefold(),
-            )
+        games = games.annotate(
+            _list_metascore=Max("platforms__metascore"),
+            _list_title=Lower("title"),
         )
-    return items
+    if sort == "release":
+        games = games.order_by(
+            F("release_date").desc(nulls_last=True),
+            "_list_title",
+            "id",
+        )
+    else:
+        games = games.order_by(
+            F("_list_metascore").desc(nulls_last=True),
+            "_list_title",
+            "id",
+        )
+
+    return games.values_list(
+        "id",
+        "title",
+        "developer",
+        "cover_url",
+        "_list_metascore",
+        "release_date",
+    )
+
+
+def _row_to_item(row: GameListRow) -> GameListItemView:
+    return GameListItemView(
+        id=row[0],
+        title=row[1],
+        developer=row[2],
+        cover_url=row[3],
+        metascore=row[4],
+        release_date=row[5],
+    )
+
+
+def list_games(
+    *, query: str = "", platform: str | None = None, sort: str = "score"
+) -> list[GameListItemView]:
+    """Compatibility helper used by domain tests; filtering/sorting itself is database-side."""
+    return [_row_to_item(row) for row in _list_game_rows(query=query, platform=platform, sort=sort)]
+
+
+def paginate_games(
+    *,
+    query: str = "",
+    platform: str | None = None,
+    sort: str = "score",
+    page: str | int | None = None,
+    per_page: int = CATALOG_PAGE_SIZE,
+) -> CatalogPage:
+    """Return one page; invalid numbers fall back to page 1 and oversized values to the last."""
+    paginator = Paginator(_list_game_rows(query=query, platform=platform, sort=sort), per_page)
+    page_obj = paginator.get_page(page)
+    page_numbers = tuple(
+        value if isinstance(value, int) else None
+        for value in paginator.get_elided_page_range(page_obj.number, on_each_side=2, on_ends=1)
+    )
+    return CatalogPage(
+        items=tuple(_row_to_item(row) for row in page_obj.object_list),
+        number=page_obj.number,
+        num_pages=paginator.num_pages,
+        total_count=paginator.count,
+        start_index=page_obj.start_index() if paginator.count else 0,
+        end_index=page_obj.end_index() if paginator.count else 0,
+        has_previous=page_obj.has_previous(),
+        has_next=page_obj.has_next(),
+        previous_number=page_obj.previous_page_number() if page_obj.has_previous() else None,
+        next_number=page_obj.next_page_number() if page_obj.has_next() else None,
+        page_numbers=page_numbers,
+    )
 
 
 def get_game_detail(game_id: int) -> GameDetailView | None:

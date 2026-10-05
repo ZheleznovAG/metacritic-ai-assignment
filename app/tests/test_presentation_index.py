@@ -145,3 +145,52 @@ class ReleaseSortTests(TestCase):
         self.assertIn(f"/games/{game.id}/?q=Game&amp;sort=release", content)
         back = self.client.get(f"/games/{game.id}/?q=Game&sort=release").content.decode()
         self.assertIn('href="/?q=Game&amp;sort=release"', back)
+
+
+class PaginationPresentationTests(TestCase):
+    def test_oversized_page_parameter_does_not_break_detail_or_catalog(self) -> None:
+        game = _game(1, "Boundary")
+        page = "9" * 5000
+        self.assertEqual(self.client.get("/", {"page": page}).status_code, 200)
+        detail = self.client.get(f"/games/{game.id}/", {"page": page})
+        self.assertContains(detail, 'href="/"')
+
+    def test_catalog_renders_only_one_page_and_preserves_page_in_game_links(self) -> None:
+        for n in range(31):
+            _game(n + 1, f"Game {n + 1:02d}")
+
+        first = self.client.get("/")
+        self.assertEqual(len(first.context["games"]), 30)
+        self.assertEqual(first.context["page"].total_count, 31)
+        self.assertContains(first, 'aria-label="Catalog pages"')
+        self.assertContains(first, "page=2")
+
+        second = self.client.get("/?page=2")
+        self.assertEqual(len(second.context["games"]), 1)
+        game = second.context["games"][0]
+        self.assertContains(second, f"/games/{game.id}/?page=2")
+
+        detail = self.client.get(f"/games/{game.id}/?page=2")
+        self.assertContains(detail, 'href="/?page=2"')
+
+    def test_catalog_marks_only_below_the_fold_covers_for_lazy_loading(self) -> None:
+        for n in range(5):
+            game = _game(n + 1, f"Cover Game {n + 1}")
+            game.cover_url = f"https://example.invalid/{n + 1}.jpg"
+            game.save()
+
+        content = self.client.get("/").content.decode()
+
+        self.assertEqual(content.count('fetchpriority="high"'), 4)
+        self.assertEqual(content.count('loading="lazy"'), 1)
+        self.assertEqual(content.count('decoding="async"'), 5)
+        self.assertEqual(content.count('width="300" height="400"'), 5)
+
+    def test_filter_query_is_preserved_in_pagination_links(self) -> None:
+        for n in range(31):
+            game = _game(n + 1, f"Quest {n + 1:02d}")
+            _platform(game, "pc", "PC", metascore=100 - (n % 50))
+
+        content = self.client.get("/", {"q": "Quest", "platform": "pc"}).content.decode()
+
+        self.assertIn("?q=Quest&amp;platform=pc&amp;page=2", content)

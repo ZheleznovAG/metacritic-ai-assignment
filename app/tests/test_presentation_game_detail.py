@@ -111,3 +111,28 @@ class GameDetailViewTests(TestCase):
         content = response.content.decode()
         self.assertNotIn(payload, content)
         self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", content)
+
+
+class GameDetailPresentationUxTests(TestCase):
+    def test_detail_uses_short_public_cache_and_accessible_platform_scroller(self) -> None:
+        game = Game.objects.create(
+            source="metacritic",
+            source_game_id="cache-1",
+            canonical_locator="/game/cache-test/",
+            title="Cache Test",
+        )
+        GamePlatform.objects.create(
+            game=game,
+            source="metacritic",
+            source_platform_id="cache-p1",
+            source_game_platform_id="cache-r1",
+            slug="pc",
+            name="PC",
+        )
+
+        response = self.client.get(f"/games/{game.id}/")
+
+        self.assertIn("public", response["Cache-Control"])
+        self.assertIn("max-age=60", response["Cache-Control"])
+        self.assertContains(response, 'role="region" aria-label="Platform scores"')
+        self.assertContains(response, 'class="game-card__description"')

@@ -9,88 +9,100 @@
   </head>
   <body>
     <main class="game-card">
-      <p class="eyebrow">Game details</p>
-      {% if monitoring_enabled %}<p><a href="{% url 'monitoring' %}">Service activity &rarr;</a></p>{% endif %}
+      <div class="page-topline">
+        <p class="eyebrow">Game details</p>
+        {% if monitoring_enabled %}<a href="{% url 'monitoring' %}">Service activity &rarr;</a>{% endif %}
+      </div>
       <a class="game-card__back" href="{% url 'index' %}{% if back_query_string %}?{{ back_query_string }}{% endif %}">&larr; Back to results</a>
       <h1>{{ game.title }}</h1>
-      {% if game.cover_url %}
-        <img class="game-card__cover" src="{{ game.cover_url }}" alt="{{ game.title }} cover art">
-      {% endif %}
-      <dl class="game-card__facts">
-        <dt>Genre</dt>
-        <dd>{% if game.genres %}{{ game.genres|join:", " }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
-        <dt>Release date</dt>
-        <dd>{% if game.release_date %}{{ game.release_date|date:"j M Y" }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
-        <dt>Developer</dt>
-        <dd>{% if game.developer %}{{ game.developer }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
-        <dt>Publisher</dt>
-        <dd>{% if game.publishers %}{{ game.publishers|join:", " }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
-        <dt>Content rating</dt>
-        <dd>{% if game.content_rating %}{{ game.content_rating }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
-        <dt>Description</dt>
-        <dd>{% if game.description %}{{ game.description }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
-        <dt>Trailer</dt>
-        <dd>
-          {% if game.video_url %}
-            <a href="{{ game.video_url }}">Watch trailer</a>
-          {% else %}
-            <span class="no-data">No data</span>
-          {% endif %}
-        </dd>
-      </dl>
-      <h2>Platforms</h2>
-      <table class="game-card__platforms">
-        <thead>
-          <tr><th scope="col">Platform</th><th scope="col">Metascore</th><th scope="col">Userscore</th></tr>
-        </thead>
-        <tbody>
-          {% for platform in game.platforms %}
-            <tr>
-              <th scope="row">{{ platform.name }}</th>
-              <td>{% if platform.metascore is not None %}{{ platform.metascore }}{% else %}<span class="no-data">No data</span>{% endif %}</td>
-              <td>{% if platform.userscore is not None %}{{ platform.userscore }}{% else %}<span class="no-data">No data</span>{% endif %}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
 
-      <h2>AI review summaries</h2>
-      {% for summary in summaries %}
-        <section class="game-card__summary">
-          <h3>{{ summary.audience|title }}s</h3>
-          {% if summary.state == "stale" %}
-            <p class="summary-stale">Stale — showing the last valid summary. {{ summary.reason_message }}</p>
-          {% endif %}
-          {% if summary.state == "pending" %}
-            <p class="no-data">Pending — {% if summary.reason %}{{ summary.reason_message }}{% else %}review collection or summarisation has not completed yet.{% endif %}</p>
-          {% elif summary.state == "unavailable" %}
-            <p class="no-data">Unavailable — {{ summary.reason_message }}</p>
-          {% elif summary.insufficient_data %}
-            <p class="no-data">Not enough meaningful reviews yet to summarise.</p>
-          {% else %}
-            <div class="game-card__summary-claims">
-              <div>
-                <h4>Likes</h4>
-                <ul>
-                  {% for claim in summary.likes %}<li>{{ claim.text }}</li>{% endfor %}
-                </ul>
+      <section class="game-card__hero" aria-label="Game overview">
+        {% if game.cover_url %}
+          <img class="game-card__cover" src="{{ game.cover_url }}" alt="{{ game.title }} cover art" decoding="async" fetchpriority="high">
+        {% endif %}
+        <div class="game-card__overview">
+          <dl class="game-card__facts">
+            <dt>Genre</dt>
+            <dd>{% if game.genres %}{{ game.genres|join:", " }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
+            <dt>Release date</dt>
+            <dd>{% if game.release_date %}{{ game.release_date|date:"j M Y" }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
+            <dt>Developer</dt>
+            <dd>{% if game.developer %}{{ game.developer }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
+            <dt>Publisher</dt>
+            <dd>{% if game.publishers %}{{ game.publishers|join:", " }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
+            <dt>Content rating</dt>
+            <dd>{% if game.content_rating %}{{ game.content_rating }}{% else %}<span class="no-data">No data</span>{% endif %}</dd>
+          </dl>
+
+          <section class="game-card__description" aria-labelledby="about-heading">
+            <h2 id="about-heading">About</h2>
+            <p>{% if game.description %}{{ game.description }}{% else %}<span class="no-data">No data</span>{% endif %}</p>
+            <p class="game-card__trailer"><strong>Trailer:</strong> {% if game.video_url %}<a href="{{ game.video_url }}">Watch trailer &rarr;</a>{% else %}<span class="no-data">No data</span>{% endif %}</p>
+          </section>
+        </div>
+      </section>
+
+      <section aria-labelledby="platforms-heading">
+        <h2 id="platforms-heading">Platforms</h2>
+        <div class="game-card__table-wrap" tabindex="0" role="region" aria-label="Platform scores">
+          <table class="game-card__platforms">
+            <thead>
+              <tr><th scope="col">Platform</th><th scope="col">Metascore</th><th scope="col">Userscore</th></tr>
+            </thead>
+            <tbody>
+              {% for platform in game.platforms %}
+                <tr>
+                  <th scope="row">{{ platform.name }}</th>
+                  <td>{% if platform.metascore is not None %}{{ platform.metascore }}{% else %}<span class="no-data">No data</span>{% endif %}</td>
+                  <td>{% if platform.userscore is not None %}{{ platform.userscore }}{% else %}<span class="no-data">No data</span>{% endif %}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="game-card__section" aria-labelledby="summaries-heading">
+        <h2 id="summaries-heading">AI review summaries</h2>
+        {% for summary in summaries %}
+          <section class="game-card__summary">
+            <h3>{{ summary.audience|title }}s</h3>
+            {% if summary.state == "stale" %}
+              <p class="summary-stale">Stale — showing the last valid summary. {{ summary.reason_message }}</p>
+            {% endif %}
+            {% if summary.state == "pending" %}
+              <p class="no-data">Pending — {% if summary.reason %}{{ summary.reason_message }}{% else %}review collection or summarisation has not completed yet.{% endif %}</p>
+            {% elif summary.state == "unavailable" %}
+              <p class="no-data">Unavailable — {{ summary.reason_message }}</p>
+            {% elif summary.insufficient_data %}
+              <p class="no-data">Not enough meaningful reviews yet to summarise.</p>
+            {% else %}
+              <div class="game-card__summary-claims">
+                <div class="claim-group claim-group--positive">
+                  <h4>Likes</h4>
+                  <ul>
+                    {% for claim in summary.likes %}<li>{{ claim.text }}</li>{% endfor %}
+                  </ul>
+                </div>
+                <div class="claim-group claim-group--negative">
+                  <h4>Dislikes</h4>
+                  <ul>
+                    {% for claim in summary.dislikes %}<li>{{ claim.text }}</li>{% endfor %}
+                  </ul>
+                </div>
               </div>
-              <div>
-                <h4>Dislikes</h4>
-                <ul>
-                  {% for claim in summary.dislikes %}<li>{{ claim.text }}</li>{% endfor %}
-                </ul>
-              </div>
-            </div>
-            <p class="summary-provenance">
-              Model: {{ summary.model_id|default:"unknown" }} · Generated: {{ summary.generated_at_utc }} ·
-              {{ summary.selected_count }} of {{ summary.fetched_count }} fetched
-              ({{ summary.reported_count }} reported) reviews used.
-            </p>
-          {% endif %}
-        </section>
-      {% endfor %}
-      <section class="game-card__letsplay" aria-labelledby="letsplay-heading">
+              <details class="summary-provenance">
+                <summary>About this AI summary</summary>
+                <p>Model: {{ summary.model_id|default:"unknown" }} · Generated: {{ summary.generated_at_utc }} ·
+                  {{ summary.selected_count }} of {{ summary.fetched_count }} fetched
+                  ({{ summary.reported_count }} reported) reviews used.</p>
+              </details>
+            {% endif %}
+          </section>
+        {% endfor %}
+      </section>
+
+      <section class="game-card__letsplay game-card__section" aria-labelledby="letsplay-heading">
         <h2 id="letsplay-heading">Let's play</h2>
         {% if letsplay.video_url %}
           <p class="letsplay__video">
@@ -102,23 +114,24 @@
           {% if letsplay.sponsored %}<p class="letsplay__sponsored">The creator says this video is sponsored.</p>{% endif %}
           <p class="letsplay__verdict">{{ letsplay.verdict }}</p>
           <div class="game-card__summary-claims">
-            <div>
+            <div class="claim-group claim-group--positive">
               <h4>Likes</h4>
               <ul>
                 {% for opinion in letsplay.likes %}<li>{{ opinion.point }}<q class="letsplay__quote">{{ opinion.quote }}</q></li>{% empty %}<li class="no-data">No praise in the part heard.</li>{% endfor %}
               </ul>
             </div>
-            <div>
+            <div class="claim-group claim-group--negative">
               <h4>Dislikes</h4>
               <ul>
                 {% for opinion in letsplay.dislikes %}<li>{{ opinion.point }}<q class="letsplay__quote">{{ opinion.quote }}</q></li>{% empty %}<li class="no-data">No complaints in the part heard.</li>{% endfor %}
               </ul>
             </div>
           </div>
-          <p class="letsplay__provenance">
-            From {{ letsplay.source }} of the first {{ letsplay.minutes }} min · Model: {{ letsplay.model_id|default:"unknown" }} · Generated: {{ letsplay.generated_on }}.
-            An AI reading of the first minutes: it can mistake a reaction for an opinion. Each quote is the transcript itself, a machine transcription.
-          </p>
+          <details class="letsplay__provenance">
+            <summary>About this AI reading</summary>
+            <p>From {{ letsplay.source }} of the first {{ letsplay.minutes }} min · Model: {{ letsplay.model_id|default:"unknown" }} · Generated: {{ letsplay.generated_on }}.
+            It can mistake a reaction for an opinion. Each quote is the transcript itself, a machine transcription.</p>
+          </details>
         {% elif letsplay.state == "insufficient" %}
           <p class="no-data">{{ letsplay.message }}</p>
           <p class="letsplay__provenance">Heard: {{ letsplay.source }} of the first {{ letsplay.minutes }} min.</p>
@@ -130,7 +143,8 @@
           <p class="no-data">In progress — {{ letsplay.message }}</p>
         {% endif %}
       </section>
-      <section class="game-card__similar" aria-labelledby="similar-games-heading">
+
+      <section class="game-card__similar game-card__section" aria-labelledby="similar-games-heading">
         <h2 id="similar-games-heading">Similar games</h2>
         {% if similar_games %}
           {% if similar_games.0.by_title %}

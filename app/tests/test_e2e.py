@@ -37,6 +37,49 @@ from tests.test_summary_admission import process
 
 
 @tag("e2e")
+class CatalogPaginationJourneyTests(LiveServerTestCase):
+    def test_three_pages_and_return_context_at_all_viewports_without_javascript(self) -> None:
+        Game.objects.bulk_create(
+            Game(
+                source_game_id=f"page-{n}",
+                canonical_locator=f"/game/page-{n}/",
+                title=f"Page Game {n:02d}",
+            )
+            for n in range(61)
+        )
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(headless=True)
+            try:
+                for javascript in (True, False):
+                    context = browser.new_context(java_script_enabled=javascript)
+                    page = context.new_page()
+                    for width in (1280, 390, 320):
+                        page.set_viewport_size({"width": width, "height": 900})
+                        page.goto(self.live_server_url + "/?q=Page&sort=release")
+                        for number, count in ((1, 30), (2, 30), (3, 1)):
+                            expect(page.locator(".game-list__item")).to_have_count(count)
+                            self.assertTrue(
+                                page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+                            )
+                            page.locator(".game-list__item a").first.click()
+                            expect(page.locator("h1")).to_be_visible()
+                            self.assertTrue(
+                                page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+                            )
+                            back = page.locator(".game-card__back").get_attribute("href")
+                            self.assertIn("q=Page&sort=release", back or "")
+                            if number > 1:
+                                self.assertIn(f"page={number}", back or "")
+                            page.locator(".game-card__back").click()
+                            expect(page.locator(".game-list__item")).to_have_count(count)
+                            if number < 3:
+                                page.get_by_role("link", name="Next", exact=False).click()
+                    context.close()
+            finally:
+                browser.close()
+
+
+@tag("e2e")
 class MandatoryJourneyTests(LiveServerTestCase):
     def test_processing_search_filter_sort_summaries_and_similar_navigation(self) -> None:
         clock = FakeClock(datetime(2026, 9, 15, 10, tzinfo=UTC))
@@ -168,7 +211,7 @@ class MandatoryJourneyTests(LiveServerTestCase):
         expect(page.locator("h1")).to_have_text("Alpha Quest")
         self.assertEqual(urlsplit(page.url).path, f"/games/{anchor.id}/")
         expect(page.locator(".game-card__facts")).to_contain_text("Example Studio")
-        expect(page.locator(".game-card__facts")).to_contain_text(
+        expect(page.locator(".game-card__description")).to_contain_text(
             "A synthetic adventure with responsive combat and rewarding exploration."
         )
         expect(page.get_by_role("link", name="Watch trailer")).to_have_attribute(

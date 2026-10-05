@@ -1,7 +1,7 @@
 from datetime import date
 
 from catalog.models import Game, GamePlatform
-from catalog.queries import list_games, list_platform_options
+from catalog.queries import CATALOG_PAGE_SIZE, list_games, list_platform_options, paginate_games
 from django.test import TestCase
 
 
@@ -190,3 +190,38 @@ class ListPlatformOptionsTests(TestCase):
         self.assertEqual(
             [(o.slug, o.name) for o in options], [("pc", "PC"), ("ps5", "PlayStation 5")]
         )
+
+
+class CatalogPaginationTests(TestCase):
+    def test_page_size_bounds_the_result_set(self) -> None:
+        for n in range(CATALOG_PAGE_SIZE + 1):
+            _game(n + 1, f"Game {n + 1:02d}")
+
+        first = paginate_games(page=1)
+        second = paginate_games(page=2)
+
+        self.assertEqual(len(first.items), CATALOG_PAGE_SIZE)
+        self.assertEqual(len(second.items), 1)
+        self.assertEqual(first.total_count, CATALOG_PAGE_SIZE + 1)
+        self.assertEqual(first.num_pages, 2)
+        self.assertTrue(first.has_next)
+        self.assertEqual(first.next_number, 2)
+        self.assertTrue(second.has_previous)
+        self.assertEqual(second.previous_number, 1)
+
+    def test_invalid_page_falls_back_to_first_and_large_page_to_last(self) -> None:
+        for n in range(CATALOG_PAGE_SIZE + 1):
+            _game(n + 1, f"Game {n + 1:02d}")
+
+        self.assertEqual(paginate_games(page="bogus").number, 1)
+        self.assertEqual(paginate_games(page="999").number, 2)
+
+    def test_list_query_executes_without_platform_prefetch(self) -> None:
+        game = _game(1, "One Query")
+        _platform(game, "pc", "PC", metascore=90)
+        _platform(game, "ps5", "PlayStation 5", metascore=95)
+
+        with self.assertNumQueries(1):
+            results = list_games()
+
+        self.assertEqual(results[0].metascore, 95)

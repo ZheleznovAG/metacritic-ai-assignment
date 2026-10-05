@@ -1,25 +1,30 @@
-"""IMP-01 public scaffold, extended by IMP-05 with a stateless search/filter/sort list: no
-ingestion, user accounts, AI endpoints, or server-side session — the list's state lives entirely
-in the URL's `q`/`platform` query params, which is also how a detail page can link back to the
-exact list a visitor came from (`AC-UI-06`) without any new persisted state.
+"""Public presentation views.
+
+UI-OPT-01 keeps the catalog URL-addressable while bounding each response to one database-backed
+page. A detail page carries q/platform/sort/page back to the exact catalog page without sessions.
 """
 
 from urllib.parse import urlencode
 
 from catalog.models import Game
-from catalog.queries import get_game_detail, list_games, list_platform_options, list_similar_games
+from catalog.queries import (
+    get_game_detail,
+    list_platform_options,
+    list_similar_games,
+    paginate_games,
+)
 from django.conf import settings
 from django.db import DatabaseError, connection
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_control, never_cache
 from django.views.decorators.http import require_safe
 
 from presentation.letsplays import get_letsplay
 from presentation.summaries import get_summaries
 
 
-def _list_params(request: HttpRequest) -> dict[str, str]:
+def _list_params(request: HttpRequest, *, include_page: bool = True) -> dict[str, str]:
     params: dict[str, str] = {}
     query = request.GET.get("q", "").strip()
     if query:
@@ -32,30 +37,51 @@ def _list_params(request: HttpRequest) -> dict[str, str]:
         # Kept even when empty so a card's "back" link reproduces the list URL exactly; any
         # value other than `release` means the default order.
         params["sort"] = "release" if sort.strip() == "release" else ""
+    if include_page:
+        raw_page = request.GET.get("page", "").strip()
+        try:
+            page_number = int(raw_page) if raw_page.isdecimal() else 1
+        except ValueError:
+            page_number = 1
+        if page_number > 1:
+            params["page"] = str(page_number)
     return params
 
 
 @require_safe
-@never_cache
+@cache_control(public=True, max_age=60)
 def index(request: HttpRequest) -> HttpResponse:
-    params = _list_params(request)
+    params = _list_params(request, include_page=False)
     query = params.get("q", "")
     platform = params.get("platform")
+    page = paginate_games(
+        query=query,
+        platform=platform,
+        sort=params.get("sort", "score"),
+        page=request.GET.get("page"),
+    )
+
+    detail_params = dict(params)
+    if page.number > 1:
+        detail_params["page"] = str(page.number)
+
     context = {
         "version": settings.APP_VERSION,
-        "games": list_games(query=query, platform=platform, sort=params.get("sort", "score")),
+        "games": page.items,
+        "page": page,
         "platforms": list_platform_options(),
         "query": query,
         "selected_platform": platform or "",
         "selected_sort": params.get("sort", "score"),
-        "query_string": urlencode(params),
+        "query_string": urlencode(detail_params),
+        "pagination_query_string": urlencode(params),
         "monitoring_enabled": settings.OPS_MONITORING_ENABLED,
     }
     return render(request, "presentation/index.html", context)
 
 
 @require_safe
-@never_cache
+@cache_control(public=True, max_age=60)
 def game_detail(request: HttpRequest, game_id: int) -> HttpResponse:
     detail = get_game_detail(game_id)
     if detail is None:

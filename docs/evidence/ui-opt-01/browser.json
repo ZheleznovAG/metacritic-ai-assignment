@@ -1,0 +1,164 @@
+[
+  {
+    "js": true,
+    "width": 1280,
+    "page": 1,
+    "cards": 30,
+    "detail": "/games/8/",
+    "back": "/",
+    "overflow": false
+  },
+  {
+    "js": true,
+    "width": 1280,
+    "page": 2,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  },
+  {
+    "js": true,
+    "width": 1280,
+    "page": 3,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  },
+  {
+    "js": true,
+    "width": 390,
+    "page": 1,
+    "cards": 30,
+    "detail": "/games/8/",
+    "back": "/",
+    "overflow": false
+  },
+  {
+    "js": true,
+    "width": 390,
+    "page": 2,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  },
+  {
+    "js": true,
+    "width": 390,
+    "page": 3,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  },
+  {
+    "js": true,
+    "width": 320,
+    "page": 1,
+    "cards": 30,
+    "detail": "/games/8/",
+    "back": "/",
+    "overflow": false
+  },
+  {
+    "js": true,
+    "width": 320,
+    "page": 2,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  },
+  {
+    "js": true,
+    "width": 320,
+    "page": 3,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  },
+  {
+    "js": false,
+    "width": 1280,
+    "page": 1,
+    "cards": 30,
+    "detail": "/games/8/",
+    "back": "/",
+    "overflow": false
+  },
+  {
+    "js": false,
+    "width": 1280,
+    "page": 2,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  },
+  {
+    "js": false,
+    "width": 1280,
+    "page": 3,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  },
+  {
+    "js": false,
+    "width": 390,
+    "page": 1,
+    "cards": 30,
+    "detail": "/games/8/",
+    "back": "/",
+    "overflow": false
+  },
+  {
+    "js": false,
+    "width": 390,
+    "page": 2,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  },
+  {
+    "js": false,
+    "width": 390,
+    "page": 3,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  },
+  {
+    "js": false,
+    "width": 320,
+    "page": 1,
+    "cards": 30,
+    "detail": "/games/8/",
+    "back": "/",
+    "overflow": false
+  },
+  {
+    "js": false,
+    "width": 320,
+    "page": 2,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  },
+  {
+    "js": false,
+    "width": 320,
+    "page": 3,
+    "cards": 10,
+    "detail": "/games/22/?page=2",
+    "back": "/?page=2",
+    "overflow": false
+  }
+]

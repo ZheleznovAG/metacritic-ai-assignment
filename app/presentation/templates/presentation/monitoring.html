@@ -31,7 +31,7 @@
         </form>
       {% endif %}
       {% if run_error %}<p role="alert" class="ops__note">{{ run_error }}</p>{% endif %}
-      {% if run_request_id %}<p id="ops-run-status" data-request-id="{{ run_request_id }}">Request {{ run_request_id }}: checking&hellip;</p>{% endif %}
+      {% if run_request_id %}<p id="ops-run-status" role="status" aria-live="polite" data-request-id="{{ run_request_id }}">Request {{ run_request_id }}: checking&hellip;</p>{% endif %}
       <div class="ops__connection">
         <span id="ops-connection" role="status">{% if snapshot %}Snapshot loaded{% else %}Connection lost / data may be stale{% endif %}</span>
         <span>Updated <time id="ops-timestamp">{{ snapshot.snapshot_at|default:"Unavailable" }}</time></span>
@@ -46,7 +46,7 @@
               {% for process in snapshot.processes %}
                 <article class="ops__panel">
                   <h3>{{ process.label }}</h3>
-                  <p><strong>{{ process.status }}</strong> · {{ process.stage }}</p>
+                  <p><strong class="ops__state" data-state="{{ process.status }}">{{ process.status }}</strong> · {{ process.stage }}</p>
                   <p>Last heartbeat: {{ process.last_seen_at|default:"Not received" }}</p>
                   {% if process.overdue %}<p>Work is overdue; check the last progress time.</p>{% endif %}
                 </article>
