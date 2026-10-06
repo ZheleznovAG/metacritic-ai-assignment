@@ -1,0 +1,15 @@
+# LOCAL-01: saved production data on one computer, with loopback HTTP only.
+# Apply after compose.yaml; never combine with the production ingress override.
+services:
+  db:
+    ports: !reset []
+    networks: !override [backend]
+  web:
+    build: !reset null
+    image: ${APP_IMAGE:?Set the restored immutable runtime image}
+  caddy:
+    ports: !override
+      - "127.0.0.1:${APP_HTTP_PORT:-18081}:8080"
+    # Docker Desktop needs a routable network for published loopback ports.
+    # The binding above still restricts access to the host computer.
+    networks: !override [backend, edge]

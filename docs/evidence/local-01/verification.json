@@ -1,0 +1,61 @@
+{
+  "task": "LOCAL-01",
+  "observed_at": "2026-10-06/07",
+  "source": "b1e4b4f20141d30e939dab5a1896c39946e2bc67",
+  "runtime_image_id": "sha256:6431a0a0b5232079ef14601f8e8aecf787e4f46b29d5e4aa90108b3abee503f6",
+  "export": {
+    "private_directory": ".artifacts/service-export-20261006/",
+    "writers_stopped_before_dump": true,
+    "files_checksum_verified": 13,
+    "total_bytes": 480238880,
+    "database_dump_bytes": 26786577,
+    "database_dump_sha256": "2d2363611e78842fe6c51831d602bce3fce909983c4acc0d38731ed683d08788",
+    "games": 2484,
+    "reviews": 29015,
+    "summary_records": 10106,
+    "operator_accounts": 1,
+    "all_public_tables": 40
+  },
+  "local": {
+    "project": "metacritic-personal",
+    "url": "http://127.0.0.1:18081",
+    "http_smoke_passed": 8,
+    "http_smoke_total": 8,
+    "browser_passed": 12,
+    "browser_total": 12,
+    "worker_provider_key_present": true,
+    "manual_run": {
+      "id": 498,
+      "status": "partial",
+      "selected": 20,
+      "processed": 19,
+      "failed": 1,
+      "error": "IdentityConflict",
+      "game": "Football Agent"
+    },
+    "backup": {
+      "path": ".artifacts/local-backups/database-20261007-003851.dump",
+      "pg_restore_list_exit_code": 0,
+      "toc_entries": 432
+    }
+  },
+  "server_retirement": {
+    "command": "docker compose -p metacritic-imp01-prod --env-file .env.app -f compose.yaml -f compose.production.yaml --profile app down",
+    "exit_code": 0,
+    "remaining_project_containers": 0,
+    "retained_volumes": [
+      "metacritic-imp01-prod_caddy_config",
+      "metacritic-imp01-prod_caddy_data",
+      "metacritic-imp01-prod_postgres_data"
+    ],
+    "public_http_curl_exit_code": 7,
+    "vds_deleted": false,
+    "rental_terminated": false
+  },
+  "limits": [
+    "Automatic collection requires the computer and Docker Desktop to remain running.",
+    "Football Agent source identity conflict remains isolated.",
+    "Provider quotas and existing AI quality limitations remain unchanged.",
+    "Keep an independent export copy before irreversible VDS deletion."
+  ]
+}

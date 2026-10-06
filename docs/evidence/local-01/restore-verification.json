@@ -1,0 +1,12 @@
+{
+  "exact-counts": {
+    "tables": 40,
+    "equal": true,
+    "sha256": "67ce70d0ce32fbb2e5ec2e3d385b43b9be211e91d3ef7b87f98b8eafde12bba0"
+  },
+  "fingerprints": {
+    "tables": 40,
+    "equal": true,
+    "sha256": "00f61a795853a27b8efc0c4a0732505a75cc44ce714859eb4f203374e0f5c568"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "verified": 13,
+  "files": [
+    {
+      "file": "database.dump",
+      "bytes": 26786577,
+      "sha256": "2d2363611e78842fe6c51831d602bce3fce909983c4acc0d38731ed683d08788"
+    },
+    {
+      "file": "database-globals.sql",
+      "bytes": 1825,
+      "sha256": "86eb2f85751ac13a5ba345936abd22f4a635141ccdf699bf50482687a592036b"
+    },
+    {
+      "file": "dump-list.txt",
+      "bytes": 38914,
+      "sha256": "2a922ea3eaba371a506ab2490fc156ee631abd5783d5a9831f624d5ed4a64a41"
+    },
+    {
+      "file": "exact-counts.sql",
+      "bytes": 217,
+      "sha256": "7b602ece6d934ea328a2370682bb78bbda6b65c9e48a38e35490c7f0a5c259dc"
+    },
+    {
+      "file": "exact-counts.server.txt",
+      "bytes": 1041,
+      "sha256": "67ce70d0ce32fbb2e5ec2e3d385b43b9be211e91d3ef7b87f98b8eafde12bba0"
+    },
+    {
+      "file": "fingerprints.sql",
+      "bytes": 308,
+      "sha256": "eb2b3792325e6e1f083a5d7e75b4eb55e909eb2fa7be6e0b381419300c98c0f1"
+    },
+    {
+      "file": "fingerprints.server.txt",
+      "bytes": 2204,
+      "sha256": "00f61a795853a27b8efc0c4a0732505a75cc44ce714859eb4f203374e0f5c568"
+    },
+    {
+      "file": "server-config-and-secrets.tgz",
+      "bytes": 21587,
+      "sha256": "57264addfc76fc1694ca52246687f46be41404abe05b182d6ffd68baf237aaa7"
+    },
+    {
+      "file": "historical-backups.tgz",
+      "bytes": 170744736,
+      "sha256": "1081cbbf8f1bc24f547e020455000960b0f63cbd41d375279d4862404ef17a10"
+    },
+    {
+      "file": "caddy-data.tgz",
+      "bytes": 996,
+      "sha256": "1a2e939f17aec057e73f8aa97c052cfe263f77aa46d4dedf91b6b84857fbf15d"
+    },
+    {
+      "file": "caddy-config.tgz",
+      "bytes": 461,
+      "sha256": "58878e495c180ea99dec6265833847ba8f50d5e40a9bb19fa937d4b58ab5acd8"
+    },
+    {
+      "file": "image-id.txt",
+      "bytes": 72,
+      "sha256": "6165181c715cc150ca931b0f4e673a0f42bc5c097d2dd0027e26e08962ccb546"
+    },
+    {
+      "file": "image-b1e4b4f.tar.gz",
+      "bytes": 282639942,
+      "sha256": "8e197435de8b812500d13fb6c04b2f3b88a0d2d9a99f412e737e8871e1527f4f"
+    }
+  ]
+}

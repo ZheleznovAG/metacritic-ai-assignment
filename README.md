@@ -13,6 +13,15 @@ are distinguished there and in [historical observations](docs/history/operations
 
 ## Local development
 
+For the restored personal service with accumulated data, use
+`.\scripts\local_service.ps1 start` and open
+[http://127.0.0.1:18081](http://127.0.0.1:18081).
+`status`, `logs`, `backup` and `stop` are also available. Docker Desktop must be
+running. The dedicated instance keeps its private configuration under
+`.artifacts/local-service/` and publishes no database port.
+[Personal-service instructions](deploy/relocation_runbook.md#личный-локальный-экземпляр-local-01).
+The development setup below is separate from that restored database.
+
 Prerequisites: Docker Engine/Compose 2.24.4+, Python 3.12 and uv 0.12.11.
 Use `.venv-app`; preserve the existing research `.venv`. From PowerShell:
 

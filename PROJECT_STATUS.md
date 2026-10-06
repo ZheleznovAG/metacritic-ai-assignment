@@ -1,8 +1,9 @@
-# Project snapshot — 2026-10-05
+# Project snapshot — 2026-10-07
 
 This is a dated description of code and evidence, not a task/gate tracker.
 [action_plan.md](action_plan.md) owns all acceptance decisions and dependencies.
-Source baseline: FIN-ARCH `3270226`; FIN-DOCS changes documentation only.
+Running source: `b1e4b4f` (FIN-INGEST-01), privately restored by LOCAL-01.
+The earlier FIN-ARCH/FIN-DOCS baseline remains historical evidence.
 
 ## Current application
 
@@ -90,18 +91,26 @@ Secrets, private deployment configuration, raw transcripts and database exports 
 outside Git.
 
 The original VDS was deleted on 2026-09-21; its former hostname is historical.
-The existing service host was upgraded on 2026-10-06 from `5658162` to
-server-built `edc0914`. [Deployment evidence](docs/evidence/fin-release/deployment.json)
-records source/image identity, backups, HTTP smoke and production browser checks.
-The earlier FIN-RELEASE fresh-install/VPN-host assumption was a wrong-target error;
-the owner corrected the target and removed that installation. The subsequent `b1e4b4f` [listing correction](docs/requirements/fin_ingest_01_review.md)
-restored real processing (19/20 in manual and scheduled runs; one source identity
-conflict remains). The [capacity audit](docs/evidence/fin-release/capacity.md) recommends
-keeping 2 GB RAM and identifies obsolete build artifacts. The service remains
-HTTP-only; trusted TLS and final release/tag completion are still outstanding.
-Local preview: [http://127.0.0.1:18081](http://127.0.0.1:18081).
+The replacement public deployment was retired on 2026-10-06/07 at the owner's
+request. Its containers are removed and its three volumes retained for recovery.
+The rented VDS itself remains active: billing has not been terminated.
 
-Local/CI preview uses HTTP; production uses an immutable versioned image, internal
-PostgreSQL, backups, explicit image identity and separately configured trusted TLS.
-[Deployment runbook](deploy/README.md) and [relocation procedure](deploy/relocation_runbook.md)
-describe the process. New local checks do not prove hosted CI, deployment or release.
+The personal service now runs at [http://127.0.0.1:18081](http://127.0.0.1:18081)
+in the independent `metacritic-personal` project, using the exact `b1e4b4f` runtime
+image. Only loopback HTTP is published; PostgreSQL has no host port. All 40 table
+counts and row fingerprints matched the server snapshot before background work
+resumed: 2,484 games, 29,015 reviews, 10,106 summary records and the existing operator.
+Summary records include non-generated outcomes. Configuration, provider credentials,
+historical backups and the immutable image are retained in ignored local artifacts.
+
+Automatic discovery/review/AI processing remains enabled while the computer and
+Docker Desktop are running. HTTP smoke passed 8/8, Chromium passed 12/12, and real
+local processing completed 19/20 candidates; Football Agent's existing source
+identity conflict remains isolated. [Migration observations](docs/evidence/local-01/verification.json)
+and [criterion mapping](docs/requirements/local_01_review.md) document the limits.
+
+Use `scripts/local_service.ps1` with `start`, `stop`, `status`, `logs` or `backup`.
+[Personal-service instructions](deploy/relocation_runbook.md#личный-локальный-экземпляр-local-01)
+describe the private configuration and preserved volumes. Copy the full export to
+independent storage before deleting the rented server. Public TLS/release work is
+superseded by the private-local scope; historical submission gates remain unchanged.

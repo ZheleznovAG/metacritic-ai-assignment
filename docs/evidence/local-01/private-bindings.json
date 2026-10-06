@@ -1,0 +1,47 @@
+{
+  "project": "metacritic-personal",
+  "services": [
+    {
+      "name": "metacritic-personal-web-1",
+      "state": "running",
+      "image_id": "sha256:6431a0a0b5232079ef14601f8e8aecf787e4f46b29d5e4aa90108b3abee503f6",
+      "health": "healthy",
+      "published_ports": {}
+    },
+    {
+      "name": "metacritic-personal-scheduler-1",
+      "state": "running",
+      "image_id": "sha256:6431a0a0b5232079ef14601f8e8aecf787e4f46b29d5e4aa90108b3abee503f6",
+      "health": null,
+      "published_ports": {}
+    },
+    {
+      "name": "metacritic-personal-worker-1",
+      "state": "running",
+      "image_id": "sha256:6431a0a0b5232079ef14601f8e8aecf787e4f46b29d5e4aa90108b3abee503f6",
+      "health": null,
+      "published_ports": {}
+    },
+    {
+      "name": "metacritic-personal-db-1",
+      "state": "running",
+      "image_id": "sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94",
+      "health": "healthy",
+      "published_ports": {}
+    },
+    {
+      "name": "metacritic-personal-caddy-1",
+      "state": "running",
+      "image_id": "sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648",
+      "health": "healthy",
+      "published_ports": {
+        "8080/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18081"
+          }
+        ]
+      }
+    }
+  ]
+}
