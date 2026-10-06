@@ -18,7 +18,9 @@ from metacritic.page import (
     resolve,
 )
 
-_GAME_HREF = re.compile(r"/game/([a-z0-9][a-z0-9-]*)/?$")
+# Metacritic publishes slugs such as "-aomi-". Keep the source spelling, while
+# requiring at least one letter/digit and excluding path separators/escapes.
+_GAME_HREF = re.compile(r"/game/([a-z0-9-]*[a-z0-9][a-z0-9-]*)/?$")
 
 
 def _slug_from_href(href: object) -> str | None:

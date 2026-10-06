@@ -44,8 +44,33 @@ class ParseNewReleasesTests(SimpleTestCase):
                 NEW_RELEASES_URL,
             )
 
+    def test_source_slug_can_start_and_end_with_a_hyphen(self) -> None:
+        original = self.expected[0]
+        html = _read("new_releases.min.html").replace(original["slug"], "-aomi-")
+        games = parse_new_releases(html, NEW_RELEASES_URL)
+        self.assertEqual(len(games), 20)
+        self.assertEqual(games[0].canonical_locator, "/game/-aomi-/")
+        self.assertEqual(games[0].source_game_id, original["source_game_id"])
+
 
 class ParseBrowsePageTests(SimpleTestCase):
+    def test_hyphen_wrapped_slug_does_not_block_the_whole_page(self) -> None:
+        original = _expected()["browse_page_1"]["games"][0]
+        html = _read("browse_page_1.min.html").replace(original["slug"], "-aomi-")
+        page = parse_browse_page(html, f"{BROWSE_BASE}?page=4")
+        self.assertEqual(len(page.games), len(_expected()["browse_page_1"]["games"]))
+        self.assertTrue(page.has_next_page)
+        self.assertEqual(page.games[0].canonical_locator, "/game/-aomi-/")
+        self.assertEqual(page.games[0].source_game_id, original["source_game_id"])
+
+    def test_malformed_slugs_still_reject_the_page(self) -> None:
+        original = _expected()["browse_page_1"]["games"][0]
+        for slug in ("---", "", "../other", "a%2Fb", "a_b"):
+            with self.subTest(slug=slug):
+                html = _read("browse_page_1.min.html").replace(original["slug"], slug)
+                with self.assertRaises(MetacriticParseError):
+                    parse_browse_page(html, f"{BROWSE_BASE}?page=4")
+
     def test_page_one_has_a_next_page(self) -> None:
         expected = _expected()["browse_page_1"]
         url = f"{BROWSE_BASE}?page=1"
