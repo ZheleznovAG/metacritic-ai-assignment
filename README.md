@@ -102,3 +102,20 @@ quality failures and replay drift explicit, and proposes future independent hold
 protocols without claiming they have been executed.
 Historical audit probes require their recorded source revision; commands and earlier
 observations remain in the [dated README archive](docs/history/readme-20261005.md).
+
+## Verified fixture demo
+
+[Desktop catalog, game card and mobile screenshots](docs/evidence/fin-release/README.md)
+come from a fresh isolated processing-to-browser journey with controlled fake inputs.
+They demonstrate UI behavior without adding demonstration data to production.
+
+```mermaid
+flowchart LR
+    Browser --> Caddy --> Web[Django web]
+    Web -->|catalog reads; narrow operator writes| PG[(PostgreSQL 16)]
+    Scheduler[Hourly scheduler] --> PG
+    Worker[Enrichment worker] --> PG
+    Scheduler --> Metacritic
+    Worker --> Metacritic
+    Worker --> Providers[Groq / YouTube]
+```

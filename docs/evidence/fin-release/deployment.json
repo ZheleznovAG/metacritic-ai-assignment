@@ -1,0 +1,69 @@
+{
+  "task": "FIN-RELEASE",
+  "date": "2026-10-06",
+  "source_sha": "edc09146ca27668a6050f3d416fc7616af1125c6",
+  "archive_sha256": "8bcd7836888dad64bf2af241097745f61c7971d94f5a1e3a99df99447fa43427",
+  "archive_note": "A fresh git archive of the same source commit; server checksum matched before extraction. Earlier verification.json records a different packaging of the same source.",
+  "target": "Owner-corrected service host from ignored operator .env; hostname, interface address and existing project verified before mutation; VPN server excluded.",
+  "build": {
+    "location": "service host",
+    "image": "metacritic-imp01:edc0914",
+    "image_id": "sha256:4e046d659c67552eb615268fa15b16aeec7d2f188fade2cad744e525d3a62606",
+    "result": "PASS",
+    "builder": "classic Docker 29.1.3",
+    "compose": "5.5.1",
+    "extraction_umask": "022"
+  },
+  "previous_image": {
+    "tag": "metacritic-imp01:5658162",
+    "id": "sha256:dbac2d322ee35f88d8c13340d21594a93cbc1ef7411f48b2608509a7cdf463fc",
+    "retained": true
+  },
+  "backup": {
+    "directory": "~/backups/fin-release-20261006T085643Z",
+    "database": "database.dump; pg_restore --list PASS",
+    "configuration": "config.tgz includes .env.app/.env.worker/Compose/deploy/scripts; secrets remain only on host",
+    "previous_image": "previous-image.txt"
+  },
+  "upgrade": {
+    "image_identity_services": [
+      "web",
+      "scheduler",
+      "worker"
+    ],
+    "image_identity": "PASS all three",
+    "runtime_uid_check": "PASS readable scripts and pure imports as 65532:65532",
+    "schema_changes": "None: git diff 5658162..edc0914 app/*/migrations empty",
+    "compose_changes": "None: git diff 5658162..edc0914 compose.yaml compose.production.yaml empty",
+    "preserved": "Existing database, volumes, Caddy ingress and worker credentials; db/Caddy container uptime unchanged",
+    "background_writers": "Stopped before backup; restarted on new image",
+    "rollback": "Failure trap prepared to restore configuration and restart prior image; not triggered or claimed as tested"
+  },
+  "verification": {
+    "internal_http_smoke": "8/8 PASS",
+    "public_http_smoke_from_server": "8/8 PASS",
+    "public_http_smoke_from_workstation": "8/8 PASS",
+    "external_chromium": "12/12 PASS; production-browser.json",
+    "catalog_games": 2475,
+    "public_home_sample_seconds": 0.419594,
+    "process_heartbeat": "Fresh scheduler and worker, idle, no overdue work"
+  },
+  "resources_after_upgrade": {
+    "web_mib": 99.26,
+    "scheduler_mib": 50.85,
+    "worker_mib": 139.1,
+    "database_mib": 160.9,
+    "caddy_mib": 18.49,
+    "host_cpu_cores": 1,
+    "host_ram_mib": 1967,
+    "disk_free_gb_before": 26,
+    "swap_mib": 0
+  },
+  "limitations": [
+    "HTTP only; trusted TLS remains unmet.",
+    "Final release/tag remains outstanding; FIN-RELEASE stays In Progress.",
+    "No independent AI/similarity holdout acceptance is claimed.",
+    "Server-side source build avoids the previously recorded slow proxy image transfer; upload speed was not benchmarked in this upgrade."
+  ],
+  "preflight_correction": "First attempt imported ORM modules without Django setup and stopped before service mutation; replaced with file-readability and pure-import checks."
+}

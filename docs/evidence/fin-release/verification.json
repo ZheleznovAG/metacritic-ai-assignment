@@ -1,0 +1,31 @@
+{
+  "source_sha": "edc09146ca27668a6050f3d416fc7616af1125c6",
+  "source_archive_sha256": "8d54584c1d9840e515c35ae883686e63b8e9a59ffaf1c60c966fd5f1b3ace636",
+  "canonical_build": "PASS",
+  "canonical_suite": {
+    "application_tests": 586,
+    "script_tests": 22,
+    "offline_evaluators": "PASS",
+    "result": "PASS"
+  },
+  "fresh_isolated_demo": {
+    "tests": 4,
+    "result": "PASS",
+    "database": "Disposable test database, created and destroyed",
+    "external_inputs": "Controlled fixtures; no live provider calls",
+    "screenshots": "Fake scenario data, not production catalog"
+  },
+  "hosted_ci": {
+    "url": "https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/37320856301",
+    "sha": "edc09146ca27668a6050f3d416fc7616af1125c6",
+    "conclusion": "success"
+  },
+  "local_candidate_image_id": "sha256:e2c77f1a436bf3fa0b6173e48c40e0472aa1ecce66d58add35daac11449146ba",
+  "production": "Corrected-host upgrade verified on HTTP; see deployment.json. Trusted TLS and release/tag outstanding.",
+  "research_freeze_integrity": {
+    "files": 83,
+    "result": "PASS",
+    "quality_limits": "Existing accepted failures and lack of independent holdout remain"
+  },
+  "planning_contract": "PASS"
+}

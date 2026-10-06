@@ -1,0 +1,84 @@
+{
+  "source": "edc0914",
+  "checks": [
+    {
+      "name": "catalog HTTP 200",
+      "pass": true
+    },
+    {
+      "name": "source shown",
+      "pass": true
+    },
+    {
+      "name": "saved games shown",
+      "pass": true
+    },
+    {
+      "name": "pagination",
+      "pass": true
+    },
+    {
+      "name": "filter and search",
+      "pass": true
+    },
+    {
+      "name": "game card",
+      "pass": true
+    },
+    {
+      "name": "return preserves query",
+      "pass": true
+    },
+    {
+      "name": "monitoring HTTP 200",
+      "pass": true
+    },
+    {
+      "name": "monitoring shown",
+      "pass": true
+    },
+    {
+      "name": "mobile no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "no JavaScript errors",
+      "pass": true
+    },
+    {
+      "name": "background heartbeats",
+      "pass": true
+    }
+  ],
+  "console_errors": [],
+  "monitoring": {
+    "snapshot_at": "2026-10-06T09:49:38.224+00:00",
+    "processes": [
+      {
+        "role": "scheduler",
+        "label": "Scheduler",
+        "status": "idle",
+        "stage": "Waiting for work",
+        "last_seen_at": "2026-10-06T09:49:37.711+00:00",
+        "last_progress_at": "2026-10-06T09:49:24.183+00:00",
+        "progress_age_seconds": 14,
+        "run_id": null,
+        "job_id": null,
+        "overdue": false
+      },
+      {
+        "role": "worker",
+        "label": "Reviews & AI worker",
+        "status": "idle",
+        "stage": "Waiting for work",
+        "last_seen_at": "2026-10-06T09:49:38.113+00:00",
+        "last_progress_at": "2026-10-06T09:49:33.217+00:00",
+        "progress_age_seconds": 5,
+        "run_id": null,
+        "job_id": null,
+        "overdue": false
+      }
+    ],
+    "active_run": null
+  }
+}

@@ -90,9 +90,12 @@ Secrets, private deployment configuration, raw transcripts and database exports 
 outside Git.
 
 The original VDS was deleted on 2026-09-21; its former hostname is historical.
-A new host deployment is recorded on 2026-09-30. The last recorded public source
-revision is `5658162`, with [hosted CI 37108527777](https://github.com/ZheleznovAG/metacritic-ai-assignment/actions/runs/37108527777).
-FIN-DOCS does not check current remote availability or supply an unverified new URL.
+The existing service host was upgraded on 2026-10-06 from `5658162` to
+server-built `edc0914`. [Deployment evidence](docs/evidence/fin-release/deployment.json)
+records source/image identity, backups, HTTP smoke and production browser checks.
+The earlier FIN-RELEASE fresh-install/VPN-host assumption was a wrong-target error;
+the owner corrected the target and removed that installation. The service remains
+HTTP-only; trusted TLS and final release/tag completion are still outstanding.
 Local preview: [http://127.0.0.1:18081](http://127.0.0.1:18081).
 
 Local/CI preview uses HTTP; production uses an immutable versioned image, internal

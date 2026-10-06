@@ -153,3 +153,12 @@ Use the same Compose project, configuration and volumes. A later release needs v
 To stop while retaining state, use the same Compose command with `--profile app down`. Never add `-v`, prune volumes, alter another project or remove the whole deploy home. Preserve the image/configuration archives used for verification and recovery. Firewall/SSH/system package changes are outside this procedure.
 
 Host reboot, application hourly windows, backup/restore and production capacity are `PUB-02` scope, recorded there once performed rather than duplicated here. TLS/DNS/80/443 are covered above (`PUB-01`); an *unauthorized* external smoke pass over the resulting HTTPS URL, run from outside this host, is `PUB-03`. GitHub CI never deploys. An unfinished candidate/correction may be committed locally with its actual status; repository publication still requires the owner's selected remote and authorization. Hosted run URL and tested SHA are recorded after the run, and CI also checks the evidence commit.
+
+## Target verification before upgrade
+
+FIN-RELEASE initially reached the wrong host because the operator `.env` named a
+VPN server. After the owner corrected it, the service host already had the application
+and data. Confirm the SSH destination, remote hostname, network address and existing
+project containers before preparing a deployment. A proxy used to reach the service
+is separate from the deployment target. Preserve the existing host-specific ingress;
+this upgrade retains HTTP and does not certify trusted TLS.
