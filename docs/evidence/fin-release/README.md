@@ -21,3 +21,8 @@ search/filter/pagination, card return, monitoring, mobile overflow and heartbeat
 Production screenshots: [catalog](production-catalog.png),
 [card](production-card.png), [mobile](production-mobile.png).
 The source CI is independent of deployment and tests the same source SHA.
+
+The subsequent [listing correction](ingest-correction.json) deploys `b1e4b4f`;
+two real runs resume processing with one explicit source-identity conflict each.
+[Capacity and cleanup audit](capacity.md) distinguishes saved application data,
+rollback backups, obsolete build artifacts and measured working memory.

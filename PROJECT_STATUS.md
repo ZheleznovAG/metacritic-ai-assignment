@@ -94,7 +94,10 @@ The existing service host was upgraded on 2026-10-06 from `5658162` to
 server-built `edc0914`. [Deployment evidence](docs/evidence/fin-release/deployment.json)
 records source/image identity, backups, HTTP smoke and production browser checks.
 The earlier FIN-RELEASE fresh-install/VPN-host assumption was a wrong-target error;
-the owner corrected the target and removed that installation. The service remains
+the owner corrected the target and removed that installation. The subsequent `b1e4b4f` [listing correction](docs/requirements/fin_ingest_01_review.md)
+restored real processing (19/20 in manual and scheduled runs; one source identity
+conflict remains). The [capacity audit](docs/evidence/fin-release/capacity.md) recommends
+keeping 2 GB RAM and identifies obsolete build artifacts. The service remains
 HTTP-only; trusted TLS and final release/tag completion are still outstanding.
 Local preview: [http://127.0.0.1:18081](http://127.0.0.1:18081).
 

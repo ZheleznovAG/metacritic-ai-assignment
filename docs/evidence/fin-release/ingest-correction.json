@@ -1,0 +1,79 @@
+{
+  "task": "FIN-INGEST-01",
+  "source_sha": "b1e4b4f20141d30e939dab5a1896c39946e2bc67",
+  "archive_sha256": "c78b5fa802362be71e2bc9d902da8dae82fd255218b08d2ef79fe1de6c6fc4ff",
+  "image_id": "sha256:6431a0a0b5232079ef14601f8e8aecf787e4f46b29d5e4aa90108b3abee503f6",
+  "previous_image": "metacritic-imp01:edc0914",
+  "backup": "~/backups/fin-ingest-20261006T151148Z",
+  "regression_before_fix": "Two tests reproduced Unrecognised browse/New Releases card href /game/-aomi-/",
+  "local_offline_parser_adapter_tests": 71,
+  "linux_runtime_offline_parser_adapter_tests": 71,
+  "ruff": "PASS lint/format",
+  "identity_services": [
+    "web",
+    "scheduler",
+    "worker"
+  ],
+  "smoke": {
+    "internal": "8/8 PASS",
+    "public_from_host": "8/8 PASS",
+    "public_from_workstation": "8/8 PASS"
+  },
+  "live_source_probe": {
+    "page": 4,
+    "http_status": 200,
+    "game_id": 1300769260,
+    "slug": "-aomi-",
+    "cards": 24
+  },
+  "real_runs": [
+    {
+      "id": 495,
+      "trigger": "manual",
+      "status": "partial",
+      "selected": 20,
+      "processed": 19,
+      "failed": 1
+    },
+    {
+      "id": 496,
+      "trigger": "scheduled",
+      "status": "partial",
+      "selected": 20,
+      "processed": 19,
+      "failed": 1
+    }
+  ],
+  "browse_fetch_evidence": [
+    {
+      "id": 39113,
+      "page": 4,
+      "outcome": "succeeded",
+      "http_status": 200
+    },
+    {
+      "id": 39175,
+      "page": 4,
+      "outcome": "succeeded",
+      "http_status": 200
+    },
+    {
+      "id": 39176,
+      "page": 5,
+      "outcome": "succeeded",
+      "http_status": 200
+    }
+  ],
+  "residual_candidate_error": {
+    "game": "Football Agent",
+    "locator": "/game/football-agent/",
+    "error": "IdentityConflict",
+    "action": "Integrity rejection preserved; no manual data changes"
+  },
+  "hosted_ci": "Not run for this correction; no push authorized or performed",
+  "status_snapshot": "post-correction-status.json",
+  "limitations": [
+    "Listing blockage fixed; source identity conflict remains.",
+    "No new independent quality acceptance or trusted TLS claimed."
+  ]
+}

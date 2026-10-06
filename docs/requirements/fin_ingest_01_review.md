@@ -30,6 +30,22 @@ Review checked malformed paths, matching Nuxt identity, source order and next-pa
 preservation, shared usage by both listing parsers, unchanged detail/review URL
 handling, and incident timing. No database/schema or heuristic policy changes.
 
-Production correction remains pending: server build, image identity, backed-up
-upgrade and a real processing run must pass. HTTP and heartbeat checks alone
-did not prove processing health in the previous release evidence.
+Candidate `b1e4b4f` was built on the service host from its checksum-verified Git
+archive. The same 71 tests passed in the actual read-only Linux runtime image
+with network disabled. After a fresh database/configuration backup, all three
+application containers passed image identity; internal and public HTTP smoke
+passed 8/8. [Incident evidence](../evidence/fin-release/ingest-correction.json).
+
+The real manual request used existing operator admission and the normal dispatcher.
+Run 495 and the following automatic hourly run 496 each processed 19 of 20 games.
+Browse pages 4 and 5 now succeed. Their one candidate failure is a separate
+`IdentityConflict` for Football Agent (`/game/football-agent/`); source/detail
+identity disagrees with the saved locator. Existing integrity protection remains
+in place; no game IDs, aliases, counters or historical failed runs were rewritten.
+The shared-listing defect is verified locally and in production. New hosted CI
+has not been run; source and evidence commits are local. Remaining source-identity
+conflict and trusted TLS are explicitly not claimed fixed.
+
+HTTP and heartbeat checks alone did not prove processing health in the previous
+release evidence. Future upgrade verification must include a real completed
+processing outcome, with per-candidate failures examined rather than hidden.
